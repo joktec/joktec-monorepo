@@ -27,12 +27,7 @@
     "build": "nest build -p tsconfig.json",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -f /^@ynm*/ -u",
-    "release": "standard-version",
-    "release:major": "yarn release --release-as major",
-    "release:minor": "yarn release --release-as minor",
-    "release:patch": "yarn release --release-as patch",
-    "publish": "npm publish --access public"
+    "dep:upgrade": "ncu -p yarn -f /^@ynm*/ -u"
   },
   "dependencies": {
     "@bull-board/api": "^4.6.1",
@@ -107,5 +102,5 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
-  "gitHead": "0c074c57d7aece821897e58117231d175f908081"
+  "gitHead": "e195a0dae93ab19d1d269540ab90a58f1dd9aa4a"
 }
