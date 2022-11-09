@@ -24,5 +24,4 @@ import { MicroModule } from '@core/infras/micro/micro.module';
     MicroModule,
   ],
 })
-export class CoreModule {
-}
+export class CoreModule {}
