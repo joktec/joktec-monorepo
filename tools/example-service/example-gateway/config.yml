@@ -1,0 +1,54 @@
+gateway:
+  port: 9010
+
+log:
+  level: info
+  logStash:
+    host: 51.222.44.17
+    port: 31658
+    enable: false
+
+file:
+  directory: data
+
+httpClient:
+  timeout: 10000
+  method: 'GET'
+  baseURL: https://api.service.hmrc.gov.uk
+  url: hello/world
+  raxConfig:
+    retry: 5
+
+breaker:
+  timeout: 7000
+  errorThresholdPercentage: 10
+  resetTimeout: 10000
+
+mysql:
+  host: mysql-jobhop-dev.jobhopin.com
+  port: 3306
+  user: jobhop_dev
+  password: tDYidUDJscyoTM7W
+  database: jobhop_dev
+  connectTimeout: 20000
+
+rabbit:
+  protocol: amqp
+  hostname: 127.0.0.1
+  port: 30814
+  username: user
+  password: S5gQ5qZV2j
+  heartbeat: 1
+  retry:
+    # forever: true
+    retries: 5
+    factor: 1
+    minTimeout: 1000
+    maxTimeout: 10000
+
+es:
+  url: http://elasticsearch-jobhop-dev.jobhopin.com:9200
+  maxRetries: 1
+  requestTimeout: 60000
+  pingTimeout: 60000
+  sniffOnStart: true

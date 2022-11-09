@@ -1,0 +1,42 @@
+fullnameOverride: mysql-service
+
+args: ["npm", "run", "start:prod"]
+
+extraEnvVars:
+  - name: JWT_TOKEN_SECRET
+    value: JWTMrJobhopSecretKey
+  - name: JWT_TOKEN_EXPIRES
+    value: "30"
+  - name: MYSQL_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: MYSQL_SERVICE_RABITMQ_QUEUE
+    value: mysql_queue
+  - name: MYSQL_HOST
+    value: staging-db-master.cnkx3mfw6lyk.ap-southeast-1.rds.amazonaws.com
+  - name: MYSQL_PORT
+    value: "3306"
+  - name: MYSQL_USERNAME
+    value: admin
+  - name: MYSQL_PASSWORD
+    value: Jobhop2020
+  - name: MYSQL_DATABASE
+    value: jobhop_staging  
+  - name: ASSET_URL
+    value: https://assets.jobhopin.com
+  - name: DEFAULT_PAGE_SIZE
+    value: "20"
+
+nodeAffinityPreset:
+  type: "hard"
+
+livenessProbe:
+  path: /health
+
+readinessProbe:
+  path: /health
+
+containerSecurityContext:
+  enabled: false
+
+podSecurityContext:
+  enabled: false

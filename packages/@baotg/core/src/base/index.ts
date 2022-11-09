@@ -1,0 +1,27 @@
+export { NestFactory } from '@nestjs/core';
+export {
+  Injectable,
+  Inject,
+  Controller,
+  Global,
+  DynamicModule,
+  Module,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  Headers,
+  OnModuleInit,
+  OnModuleDestroy,
+  Query as QueryParam,
+  HttpException,
+  UseInterceptors,
+  UsePipes,
+  Scope,
+  PipeTransform,
+  ArgumentMetadata,
+  HttpStatus,
+} from '@nestjs/common';
+export * from './app';

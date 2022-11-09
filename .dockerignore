@@ -1,0 +1,27 @@
+# Env
+.env
+.nvmrc
+
+# Dependencies
+node_modules/
+
+# Git
+.git
+.gitignore
+.gitlab-ci.yml
+
+# Docker
+Dockerfile*
+docker-compose*
+.docker
+docker-compose.local.yml
+
+# IDE
+.idea
+.vscode
+
+# Other
+*.md
+backup
+log
+dist

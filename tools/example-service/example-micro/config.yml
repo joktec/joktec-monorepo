@@ -1,0 +1,20 @@
+micro:
+  port: 8010
+
+log:
+  level: info
+  logStash:
+    host: 51.222.44.17
+    port: 31658
+    enable: false
+
+httpClient:
+  timeout: 18000000
+
+es:
+  nodes: elasticsearch-jobhop-dev.jobhopin.com:9200
+  maxRetries: 1
+  requestTimeout: 60000
+  pingTimeout: 60000
+  sniffOnStart: true
+  auth: null

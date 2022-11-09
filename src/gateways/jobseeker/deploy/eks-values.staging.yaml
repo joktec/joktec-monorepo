@@ -1,0 +1,95 @@
+fullnameOverride: jobseeker-gateway
+
+args: ["npm", "run", "start:prod"]
+
+extraEnvVars:
+  - name: JWT_TOKEN_SECRET
+    value: JWTMrJobhopSecretKey
+  - name: JWT_TOKEN_EXPIRES
+    value: "30"
+  - name: ASSET_URL
+    value: https://assets.jobhopin.com
+  - name: CDN_URL
+    value: https://cdn-staging.jobhopin.com
+  - name: DEFAULT_PAGE_SIZE
+    value: "20"
+  - name: AUTH_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: AUTH_SERVICE_RABITMQ_QUEUE
+    value: auth_queue
+  - name: USER_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: USER_SERVICE_RABITMQ_QUEUE
+    value: user_queue  
+  - name: CANDIDATE_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: CANDIDATE_SERVICE_RABITMQ_QUEUE
+    value: candidate_queue
+  - name: NOTIFICATION_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: NOTIFICATION_SERVICE_RABITMQ_QUEUE
+    value: notification_queue
+  - name: CV_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: CV_SERVICE_RABITMQ_QUEUE
+    value: cv_queue       
+  - name: INTERVIEW_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: INTERVIEW_SERVICE_RABITMQ_QUEUE
+    value: interview_queue 
+  - name: MARKET_INSIGHT_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: MARKET_INSIGHT_SERVICE_RABITMQ_QUEUE
+    value: market_insight_queue    
+  - name: QUIZZ_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: QUIZZ_SERVICE_RABITMQ_QUEUE
+    value: quizz_queue
+  - name: LUCKY_SPIN_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: LUCKY_SPIN_SERVICE_RABITMQ_QUEUE
+    value: lucky_spin_queue
+  - name: ORGANIZATION_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: ORGANIZATION_SERVICE_RABITMQ_QUEUE
+    value: organization_queue
+  - name: JOB_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: JOB_SERVICE_RABITMQ_QUEUE
+    value: job_queue
+  - name: JOBSEEKER_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: JOBSEEKER_SERVICE_RABITMQ_QUEUE
+    value: jobseeker_queue
+  - name: MYSQL_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: MYSQL_SERVICE_RABITMQ_QUEUE
+    value: mysql_queue    
+
+livenessProbe:
+  path: /health
+
+readinessProbe:
+  path: /health
+
+containerSecurityContext:
+  enabled: false
+
+podSecurityContext:
+  enabled: false
+
+ingress:
+  enabled: true
+  ingressClassName: alb
+  pathType: Prefix
+  hostname: jobseeker-jobhop-staging.jobhopin.com
+  path: /
+  annotations:
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/success-codes: "200"
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: jobhop-staging
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-1:496324956666:certificate/4fa5f0fc-4053-47db-8753-ff8682d24b5e

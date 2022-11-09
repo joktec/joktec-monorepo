@@ -1,0 +1,419 @@
+stages:
+  - aio
+
+variables:
+  REPOSITORY_NAME: jh-${CI_JOB_NAME}
+  SERVICE_DIR: src/microservices
+
+before_script:
+  # Config AWS
+  - aws configure set aws_access_key_id $CI_ACCESS_KEY_ID
+  - aws configure set aws_secret_access_key $CI_SECRET_ACCESS_KEY
+  - echo $CI_CONFIG_AUTH | base64 -d > ~/.aws/config
+  - export AWS_PROFILE=$CI_RUNNER_PROFILE
+  - export AWS_SDK_LOAD_CONFIG=1
+
+.default_rules:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+      changes:
+        - ${SERVICE_DIR}/${SERVICE_NAME}/**/*
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH == "staging"'
+      changes:
+        - ${SERVICE_DIR}/${SERVICE_NAME}/**/*
+      when: on_success
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      changes:
+        - ${SERVICE_DIR}/${SERVICE_NAME}/**/*
+      when: on_success
+
+# Build
+.build:
+  script:
+    - cd ${SERVICE_DIR}/${SERVICE_NAME}
+    - aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_REPOSITORY}
+    - docker build -t ${ECR_REPOSITORY}/${REPOSITORY_NAME}:git-${CI_COMMIT_SHA} -t ${ECR_REPOSITORY}/${REPOSITORY_NAME}:${CI_COMMIT_BRANCH} .
+    - docker push ${ECR_REPOSITORY}/${REPOSITORY_NAME}:git-${CI_COMMIT_SHA}
+    - docker push ${ECR_REPOSITORY}/${REPOSITORY_NAME}:${CI_COMMIT_BRANCH}
+
+# Test
+.test:
+  script:
+    - echo "Test"
+
+# Deploy
+.deploy:
+  script:
+    - git clone https://jobhop-ci-token:${JOBHOP_CI_TOKEN}@gitlab.com/jobhopvn/devops/infrastructure/helm/api.git
+    - aws eks --region ${AWS_REGION} update-kubeconfig --name ${EKS_CLUSTER}
+    - helm --namespace ${APP_NAMESPACE} upgrade --install ${CI_JOB_NAME} --set image.registry=${ECR_REPOSITORY} --set image.repository=${REPOSITORY_NAME} --set image.tag=git-${CI_COMMIT_SHA} -f deploy/${SERVICE_CONFIG_FILE} api/
+
+admin-gateway:
+  stage: aio
+  variables:
+    SERVICE_DIR: src/gateways
+    SERVICE_NAME: admin
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+jobseeker-gateway:
+  stage: aio
+  variables:
+    SERVICE_DIR: src/gateways
+    SERVICE_NAME: jobseeker
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+migration-gateway:
+  stage: aio
+  variables:
+    SERVICE_DIR: src/gateways
+    SERVICE_NAME: migration
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+public-gateway:
+  stage: aio
+  variables:
+    SERVICE_DIR: src/gateways
+    SERVICE_NAME: public
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+recruiter-gateway:
+  stage: aio
+  variables:
+    SERVICE_DIR: src/gateways
+    SERVICE_NAME: recruiter
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+lucky-spin-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: lucky-spin
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+quizz-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: quizz
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+candidate-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: candidate
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+organization-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: organization
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+jobseeker-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: jobseeker
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+# migration-mysql-binlog-service:
+#   stage: aio
+#   variables:
+#     SERVICE_NAME: migration-mysql-binlog
+#   script:
+#     - !reference [.build, script]
+#     - !reference [.test, script]
+#     - !reference [.deploy, script]
+#   rules:
+#     - !reference [.default_rules, rules]
+#   environment:
+#     name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+# migration-mysql-snapshot-service:
+#   stage: aio
+#   variables:
+#     SERVICE_NAME: migration-mysql-snapshot
+#   script:
+#     - !reference [.build, script]
+#     - !reference [.test, script]
+#     - !reference [.deploy, script]
+#   rules:
+#     - !reference [.default_rules, rules]
+#   environment:
+#     name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+# migration-mongo-service:
+#   stage: aio
+#   variables:
+#     SERVICE_NAME: migration-mongo
+#   script:
+#     - !reference [.build, script]
+#     - !reference [.test, script]
+#     - !reference [.deploy, script]
+#   rules:
+#     - !reference [.default_rules, rules]
+#   environment:
+#     name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+job-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: job
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+blog-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: blog
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+# chat-service:
+#   stage: aio
+#   variables:
+#     SERVICE_NAME: chat
+#   script:
+#     - !reference [.build, script]
+#     - !reference [.test, script]
+#     - !reference [.deploy, script]
+#   rules:
+#     - !reference [.default_rules, rules]
+#   environment:
+#     name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+cv-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: cv
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+interview-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: interview
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+market-insight-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: market-insight
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+marketing-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: marketing
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+notification-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: notification
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+recruiter-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: recruiter
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+# shared-service:
+#   stage: aio
+#   variables:
+#     SERVICE_NAME: shared
+#   script:
+#     - !reference [.build, script]
+#     - !reference [.test, script]
+#     - !reference [.deploy, script]
+#   rules:
+#     - !reference [.default_rules, rules]
+#   environment:
+#     name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+user-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: user
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+auth-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: auth
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+activity-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: activity
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+mysql-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: mysql
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}
+
+common-service:
+  stage: aio
+  variables:
+    SERVICE_NAME: common
+  script:
+    - !reference [.build, script]
+    - !reference [.test, script]
+    - !reference [.deploy, script]
+  rules:
+    - !reference [.default_rules, rules]
+  environment:
+    name: ${CI_COMMIT_BRANCH}/${CI_JOB_NAME}    

@@ -1,0 +1,34 @@
+fullnameOverride: marketing-service
+
+args: ["npm", "run", "start:prod"]
+
+extraEnvVars:
+  - name: JWT_TOKEN_SECRET
+    value: JWTMrJobhopSecretKey
+  - name: JWT_TOKEN_EXPIRES
+    value: "30"
+  - name: MARKETING_SERVICE_MONGODB_URL
+    value: mongodb://main:StrongP%40ssword@mongodb-0-external.data.svc.cluster.local/main
+  - name: MARKETING_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: MARKETING_SERVICE_RABITMQ_QUEUE
+    value: marketing_queue
+  - name: ASSET_URL
+    value: https://assets.jobhopin.com
+  - name: DEFAULT_PAGE_SIZE
+    value: "20"
+
+nodeAffinityPreset:
+  type: "hard"
+
+livenessProbe:
+  path: /health
+
+readinessProbe:
+  path: /health
+
+containerSecurityContext:
+  enabled: false
+
+podSecurityContext:
+  enabled: false

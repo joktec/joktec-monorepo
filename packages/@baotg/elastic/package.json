@@ -1,0 +1,41 @@
+{
+  "name": "@baotg/elastic",
+  "description": "JobHopin - ElasticSearch",
+  "version": "0.0.0",
+  "private": false,
+  "license": "UNLICENSED",
+  "author": "JobHopin",
+  "main": "dist/index",
+  "types": "dist/index",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "purge": "rm -rf node_modules",
+    "dev": "rollup -cw",
+    "prebuild": "yarn clean",
+    "build": "nest build -p tsconfig.json",
+    "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
+    "lint": "eslint --fix \"./src/**/*.ts\"",
+    "dep:upgrade": "ncu -p yarn -f /^@ynm*/ -u",
+    "release": "standard-version",
+    "release:major": "yarn release --release-as major",
+    "release:minor": "yarn release --release-as minor",
+    "release:patch": "yarn release --release-as patch",
+    "publish": "npm publish --access public"
+  },
+  "dependencies": {
+    "@elastic/elasticsearch": "^8.4.0",
+    "@baotg/core": "^0.0.0",
+    "@nestjs/elasticsearch": "^9.0.0"
+  },
+  "devDependencies": {
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

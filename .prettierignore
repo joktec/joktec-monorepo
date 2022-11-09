@@ -1,0 +1,12 @@
+apps/**/*.d.ts
+apps/**/*.js
+
+packages/**/*.d.ts
+packages/**/*.js
+
+libs/**/*.d.ts
+libs/**/*.js
+
+src/**/*.d.ts
+build/
+dist/

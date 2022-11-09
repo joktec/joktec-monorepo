@@ -1,0 +1,19 @@
+# source
+**/*.ts
+*.ts
+
+# definitions
+!**/*.d.ts
+!*.d.ts
+
+# configuration
+package-lock.json
+yarn.lock
+tslint.json
+tsconfig.json
+.prettierrc
+.prettierignore
+.commitlintrc.json
+.dockerignore
+.eslintignore
+.eslintrc.json

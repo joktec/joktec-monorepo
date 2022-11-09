@@ -1,0 +1,46 @@
+{
+  "packages": [
+    "packages/@baotg/*",
+    "tools/example-service/**/*"
+  ],
+  "command": {
+    "publish": {
+      "ignoreChanges": [
+        "ignored-file",
+        "*.md",
+        "**/deploy/**"
+      ],
+      "message": "ci(release): publish",
+      "registry": "https://btg-693456651862.d.codeartifact.ap-southeast-1.amazonaws.com/npm/btg-npm/",
+      "conventionalCommits": true,
+      "yes": true,
+      "version": {
+        "allowBranch": [
+          "master",
+          "develop",
+          "feature/*",
+          "hotfix/*"
+        ]
+      }
+    },
+    "bootstrap": {
+      "ignore": "component-*",
+      "npmClientArgs": [
+        "--no-package-lock"
+      ]
+    }
+  },
+  "version": "independent",
+  "useWorkspaces": true,
+  "npmClient": "yarn",
+  "useNx": true,
+  "lerna-dockerize": {
+    "logLevel": "info",
+    "templateDockerfileName": "./docker/Dockerfile.template",
+    "baseDockerfileName": "./docker/Dockerfile.base",
+    "finalStage": false,
+    "packageManager": "npm",
+    "hoist": true,
+    "addPrepareStages": true
+  }
+}

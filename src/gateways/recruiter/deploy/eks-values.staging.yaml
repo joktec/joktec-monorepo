@@ -1,0 +1,72 @@
+fullnameOverride: recruiter-gateway
+
+args: ["npm", "run", "start:prod"]
+
+extraEnvVars:
+  - name: JWT_TOKEN_SECRET
+    value: JWTMrJobhopSecretKey
+  - name: JWT_TOKEN_EXPIRES
+    value: "30"
+  - name: ASSET_URL
+    value: https://assets.jobhopin.com
+  - name: DEFAULT_PAGE_SIZE
+    value: "20"
+    
+  - name: CANDIDATE_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: CANDIDATE_SERVICE_RABITMQ_QUEUE
+    value: candidate_queue
+
+  - name: RECRUITER_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: RECRUITER_SERVICE_RABITMQ_QUEUE
+    value: recruiter_queue   
+
+  - name: USER_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: USER_SERVICE_RABITMQ_QUEUE
+    value: user_queue  
+
+  - name: COMMON_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: COMMON_SERVICE_RABITMQ_QUEUE
+    value: common_queue  
+
+  - name: CV_SERVICE_RABITMQ_URL
+    value: amqp://jobhop_staging:_R]8k4s8FT:Xcewt@rabbitmq.data.svc.cluster.local:5672
+  - name: CV_SERVICE_RABITMQ_QUEUE
+    value: cv_queue  
+
+  - name: SPREADSHEET_ID
+    value: 1CiuOhFG2klSa5tkncn7tfJbzFb2-RPsXu9pUhtqvpOU
+  - name: GOOGLE_AUTH_SCOPES
+    value: https://www.googleapis.com/auth/spreadsheets 
+  - name: CREDENTIAL_PATH
+    value: credentials/credentials.staging.json
+livenessProbe:
+  path: /health
+
+readinessProbe:
+  path: /health
+
+containerSecurityContext:
+  enabled: false
+
+podSecurityContext:
+  enabled: false
+
+ingress:
+  enabled: true
+  ingressClassName: alb
+  pathType: Prefix
+  hostname: recruiter-jobhop-staging.jobhopin.com
+  path: /
+  annotations:
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/success-codes: "200"
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.name: jobhop-staging
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-southeast-1:496324956666:certificate/4fa5f0fc-4053-47db-8753-ff8682d24b5e

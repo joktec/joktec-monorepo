@@ -1,0 +1,37 @@
+service: jobhop-image-resize-functions
+
+plugins:
+  - serverless-plugin-tracing
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: ${env:STAGE, 'dev'}
+  profile: ${env:PROFILE, 'default'}
+  region: ${env:REGION, 'ap-southeast-1'}
+  environment:
+    BUCKET: ${env:BUCKET}
+    REGION: ${env:REGION}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource: "arn:aws:s3:::${env:BUCKET}"
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+      Resource: "arn:aws:s3:::${env:BUCKET}"
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
+
+functions:
+  resize:
+    handler: resize.handler
+    events:
+      - http:
+          path: resize
+          method: get

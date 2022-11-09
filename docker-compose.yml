@@ -1,0 +1,155 @@
+version: "3.7"
+services:
+  recruiter-gw:
+    build: ./src/gateways/recruiter
+    restart: always
+    hostname: recruiter
+    env_file:
+      - .env
+    ports:
+      - "8082:3000"
+    networks:
+      - backend
+      - frontend
+    volumes:
+      - ./src/gateways/recruiter:/var/www/recruiter-gw
+    command: "npm run build && npm run start:prod"
+
+  jobseeker-gw:
+    build: ./src/gateways/jobseeker
+    restart: always
+    hostname: jobseeker
+    env_file:
+      - .env
+    ports:
+      - "8080:3000"
+    networks:
+      - backend
+      - frontend
+    volumes:
+      - ./src/gateways/jobseeker:/var/www/jobseeker-gw
+    command: "npm run build && npm run start:prod"
+
+  public:
+    build: ./src/gateways/public
+    restart: always
+    hostname: public
+    env_file:
+      - .env
+    ports:
+      - "8080:3000"
+    networks:
+      - backend
+      - frontend
+    volumes:
+      - ./src/gateways/public:/var/www/public
+    command: "npm run build && npm run start:prod"  
+
+  quizz:
+    build: ./src/microservices/quizz
+    restart: always
+    hostname: quizz
+    env_file:
+      - .env
+    networks:
+      - backend
+    volumes:
+      - ./src/microservices/quizz:/var/www/quizz
+    command: "npm run build && npm run start:prod"
+
+  lucky-spin:
+    build: ./src/microservices/lucky-spin
+    restart: always
+    hostname: lucky-spin
+    env_file:
+      - .env
+    networks:
+      - backend
+    volumes:
+      - ./src/microservices/lucky-spin:/var/www/lucky-spin
+    command: "npm run build && npm run start:prod"
+
+  candidate:
+    build: ./src/microservices/candidate
+    restart: always
+    hostname: candidate
+    env_file:
+      - .env
+    networks:
+      - backend
+    volumes:
+      - ./src/microservices/candidate:/var/www/candidate
+    command: "npm run build && npm run start:prod"
+
+  recruiter:
+    build: ./src/microservices/recruiter
+    restart: always
+    hostname: recruiter
+    env_file:
+      - .env
+    networks:
+      - backend
+    volumes:
+      - ./src/microservices/recruiter:/var/www/recruiter
+    command: "npm run build && npm run start:prod"  
+
+  notification:
+    build: ./src/microservices/notification
+    restart: always
+    hostname: notification
+    env_file:
+      - .env
+    networks:
+      - backend
+    volumes:
+      - ./src/microservices/notification:/var/www/notification
+    command: "npm run build && npm run start:prod"  
+
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_management
+    environment:
+      - RABBITMQ_DEFAULT_USER=myuser
+      - RABBITMQ_DEFAULT_PASS=mypassword
+    ports:
+      # AMQP protocol port
+      - "5672:5672"
+      # HTTP management UI
+      - "15672:15672"
+    restart: always
+    networks:
+      - frontend
+      - backend
+
+  
+  migration-mysql:
+    build: ./src/microservices/migration-mysql
+    restart: always
+    hostname: migration-mysql
+    env_file:
+      - .env
+    networks:
+      - backend
+    volumes:
+      - ./src/microservices/migration-mysql:/var/www/migration-mysql
+    command: "npm run build && npm run start:prod"  
+
+  migration-mongo:
+    build: ./src/microservices/migration-mongo
+    restart: always
+    hostname: migration-mongo
+    env_file:
+      - .env
+    networks:
+      - backend
+    volumes:
+      - ./src/microservices/migration-mongo:/var/www/migration-mongo
+    command: "npm run build && npm run start:prod"     
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    external:
+      name: infrastructure

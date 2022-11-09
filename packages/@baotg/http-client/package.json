@@ -1,0 +1,45 @@
+{
+  "name": "@baotg/http-client",
+  "description": "JobHopin - Http Client Service",
+  "version": "0.0.0",
+  "private": false,
+  "license": "UNLICENSED",
+  "author": "JobHopin",
+  "main": "dist/index",
+  "types": "dist/index",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "purge": "rm -rf node_modules",
+    "dev": "rollup -cw",
+    "prebuild": "yarn clean",
+    "build": "nest build -p tsconfig.json",
+    "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
+    "lint": "eslint --fix \"./src/**/*.ts\"",
+    "dep:upgrade": "ncu -p yarn -f /^@ynm*/ -u",
+    "release": "standard-version",
+    "release:major": "yarn release --release-as major",
+    "release:minor": "yarn release --release-as minor",
+    "release:patch": "yarn release --release-as patch",
+    "publish": "npm publish --access public"
+  },
+  "dependencies": {
+    "@baotg/core": "^0.0.0",
+    "@nestjs/axios": "^0.1.0",
+    "http-proxy-agent": "^5.0.0",
+    "https-proxy-agent": "^5.0.1",
+    "merge-deep": "^3.0.3",
+    "valid-url": "^1.0.9"
+  },
+  "devDependencies": {
+    "@types/merge-deep": "^3.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
