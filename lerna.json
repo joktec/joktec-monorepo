@@ -16,10 +16,9 @@
       "yes": true,
       "version": {
         "allowBranch": [
-          "master",
-          "develop",
-          "feature/*",
-          "hotfix/*"
+          "main",
+          "staging",
+          "develop"
         ]
       }
     },
