@@ -1,7 +1,7 @@
 {
   "name": "@baotg/elastic",
   "description": "JobHopin - ElasticSearch",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": false,
   "license": "UNLICENSED",
   "author": "JobHopin",
@@ -27,11 +27,9 @@
     "publish": "npm publish --access public"
   },
   "dependencies": {
+    "@baotg/core": "^0.0.1",
     "@elastic/elasticsearch": "^8.4.0",
-    "@baotg/core": "^0.0.0",
     "@nestjs/elasticsearch": "^9.0.0"
-  },
-  "devDependencies": {
   },
   "config": {
     "commitizen": {
