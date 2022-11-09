@@ -3,7 +3,7 @@
   "description": "JobHopin - Example Gateway",
   "version": "0.0.3",
   "author": "JobHopin",
-  "private": true,
+  "private": false,
   "license": "UNLICENSED",
   "scripts": {
     "clean": "rm -rf dist",
