@@ -26,7 +26,7 @@
     "purge": "rimraf -rf ./node_modules && lerna run purge",
     "dep:upgrade": "lerna run --stream dep:upgrade",
     "graph": "nx affected:graph",
-    "release": "lerna run release",
+    "release": "lerna version",
     "publish:major": "lerna publish major --exact",
     "publish:minor": "lerna publish minor --exact",
     "publish:patch": "lerna publish patch --exact"
