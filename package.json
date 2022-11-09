@@ -27,6 +27,7 @@
     "dep:upgrade": "lerna run --stream dep:upgrade",
     "graph": "nx affected:graph",
     "release": "lerna version",
+    "co:login": "aws codeartifact login --tool npm --repository btg-npm --domain btg --domain-owner 693456651862 --region ap-southeast-1",
     "publish:major": "lerna publish major --exact",
     "publish:minor": "lerna publish minor --exact",
     "publish:patch": "lerna publish patch --exact"
