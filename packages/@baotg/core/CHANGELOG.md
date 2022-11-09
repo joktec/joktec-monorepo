@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.4](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/core@0.0.3...@baotg/core@0.0.4) (2022-11-09)
+
+
+### Bug Fixes
+
+* update something ([bed678e](https://github.com/BaoTran1203/nodejs-monorepo/commit/bed678e7901c21746ebffe7585d01282f1963e4a))
+
+
+
+
+
 ## [0.0.3](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/core@0.0.2...@baotg/core@0.0.3) (2022-11-09)
 
 
