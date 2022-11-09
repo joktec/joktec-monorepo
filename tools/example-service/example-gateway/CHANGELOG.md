@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@0.0.5...@baotg/example-gateway@0.1.0) (2022-11-09)
+
+
+### Bug Fixes
+
+* disable package publish ([87c90f9](https://github.com/BaoTran1203/nodejs-monorepo/commit/87c90f9608f3f39a6c89ad326c2fc82faea77459))
+
+
+
+
+
 ## [0.0.5](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@0.0.4...@baotg/example-gateway@0.0.5) (2022-11-09)
 
 
