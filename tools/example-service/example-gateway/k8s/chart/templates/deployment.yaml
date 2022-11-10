@@ -25,7 +25,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          command: [ 'sh', '-c', 'CATEGORY_CRAWLER_WORKER_INDEX=${HOSTNAME##*-} ./ynm-run-service.sh']
+          command: [ 'sh', '-c', './baotg-run-service.sh']
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: NODE_ENV
