@@ -1,7 +1,7 @@
 {
   "name": "@baotg/http-client",
   "description": "JobHopin - Http Client Service",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": false,
   "license": "UNLICENSED",
   "author": "JobHopin",
@@ -22,7 +22,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@baotg*/ -u"
   },
   "dependencies": {
-    "@baotg/core": "1.0.0",
+    "@baotg/core": "1.0.1",
     "@nestjs/axios": "^0.1.0",
     "http-proxy-agent": "^5.0.0",
     "https-proxy-agent": "^5.0.1",

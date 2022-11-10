@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/elastic@1.0.0...@baotg/elastic@1.0.1) (2022-11-10)
+
+
+### Bug Fixes
+
+* update ([80a5544](https://github.com/BaoTran1203/nodejs-monorepo/commit/80a5544b97864b953fec146ec0d8b63982458abb))
+
+
+
+
+
 # [1.0.0](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/elastic@0.1.0...@baotg/elastic@1.0.0) (2022-11-10)
 
 
