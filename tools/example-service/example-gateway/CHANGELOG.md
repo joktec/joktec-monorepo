@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@0.1.0...@baotg/example-gateway@1.0.0) (2022-11-10)
+
+
+### Features
+
+* import k8s ([1ee5589](https://github.com/BaoTran1203/nodejs-monorepo/commit/1ee55892b2b0e9a8f37304f16bdbe1a0dc1189dd))
+
+
+
+
+
 # [0.1.0](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@0.0.5...@baotg/example-gateway@0.1.0) (2022-11-09)
 
 
