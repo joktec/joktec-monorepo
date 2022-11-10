@@ -28,9 +28,9 @@
     "dep:upgrade": "lerna run --stream dep:upgrade",
     "graph": "nx affected:graph",
     "release": "lerna version",
-    "publish:dev": "lerna publish major --exact --no-private --yes",
+    "publish:dev": "lerna publish patch --exact --no-private --yes",
     "publish:stag": "lerna publish minor --exact --no-private --yes",
-    "publish:prod": "lerna publish patch --exact --no-private --yes",
+    "publish:prod": "lerna publish major --exact --no-private --yes",
     "deploy": "lerna run deploy -- --ns baotg-namespace --helm helm"
   },
   "dependencies": {},
