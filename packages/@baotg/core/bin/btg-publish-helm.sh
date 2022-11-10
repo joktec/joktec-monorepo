@@ -21,15 +21,15 @@ const DOCK_REGISTRY = 'registry.jobhopin.com';
 const pkg = JSON.parse(fs.readFileSync('./package.json').toString());
 const chartPath = options.chartDir ?? './k8s/chart'
 
-const setAppVersion = (chartFile, verion) => {
+const setAppVersion = (chartFile, version) => {
   const chart = yaml.load(fs.readFileSync(chartFile, 'utf8'));
-  chart.appVersion = chart.verion = verion;
+  chart.appVersion = chart.version = version;
   const chartYaml = yaml.dump(chart);
   fs.writeFileSync(chartFile, chartYaml)
 }
 
-const installOrUpgrade = (chartPath, verion) => {
-  setAppVersion(`${chartPath}/Chart.yaml`, verion)
+const installOrUpgrade = (chartPath, version) => {
+  setAppVersion(`${chartPath}/Chart.yaml`, version)
   const { name } = yaml.load(fs.readFileSync(`${chartPath}/Chart.yaml`, 'utf8'));
   const env = options.ns.split('-')[1];
   const chartName = env == 'production' ? name : `${name}-${env}`;
