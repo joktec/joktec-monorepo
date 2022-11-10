@@ -17,6 +17,7 @@
     "start": "cross-env NODE_ENV=development nest start",
     "serve": "cross-env NODE_ENV=production node dist/main",
     "dep:upgrade": "ncu -p yarn -f /^@ynm*/ -u",
+    "deploy": "btg-publish-helm --chart-dir ./k8s/chart",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",

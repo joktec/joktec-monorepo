@@ -16,9 +16,9 @@
     "templates"
   ],
   "bin": {
-    "jhi-client-generator": "bin/jhi-client-generator.sh",
-    "jhi-publish-docker": "bin/jhi-publish-docker.sh",
-    "jhi-publish-helm": "bin/jhi-publish-helm.sh"
+    "btg-client-generator": "bin/btg-client-generator.sh",
+    "btg-publish-docker": "bin/btg-publish-docker.sh",
+    "btg-publish-helm": "bin/btg-publish-helm.sh"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -27,7 +27,7 @@
     "build": "nest build -p tsconfig.json",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -f /^@ynm*/ -u"
+    "dep:upgrade": "ncu -p yarn -f /^@baotg*/ -u"
   },
   "dependencies": {
     "@bull-board/api": "^4.6.1",

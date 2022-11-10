@@ -5,6 +5,7 @@
   "private": true,
   "license": "UNLICENSED",
   "author": "JobHopin",
+  "repository": "https://github.com/BaoTran1203/nodejs-monorepo.git",
   "engines": {
     "node": ">=14"
   },
@@ -27,10 +28,10 @@
     "dep:upgrade": "lerna run --stream dep:upgrade",
     "graph": "nx affected:graph",
     "release": "lerna version",
-    "co:login": "aws codeartifact login --tool npm --repository btg-npm --domain btg --domain-owner 693456651862 --region ap-southeast-1",
-    "publish:major": "lerna publish major --exact",
-    "publish:minor": "lerna publish minor --exact",
-    "publish:patch": "lerna publish patch --exact"
+    "publish:dev": "lerna publish major --exact --no-private --yes",
+    "publish:stag": "lerna publish minor --exact --no-private --yes",
+    "publish:prod": "lerna publish patch --exact --no-private --yes",
+    "deploy": "lerna run deploy -- --ns baotg-namespace --helm helm"
   },
   "dependencies": {},
   "devDependencies": {

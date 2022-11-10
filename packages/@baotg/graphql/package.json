@@ -22,7 +22,7 @@
     "build": "nest build -p tsconfig.json",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -f /^@ynm*/ -u"
+    "dep:upgrade": "ncu -p yarn -f /^@baotg*/ -u"
   },
   "dependencies": {
     "@nestjs/apollo": "^10.1.3",

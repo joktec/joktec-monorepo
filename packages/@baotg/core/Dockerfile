@@ -9,7 +9,7 @@ RUN apk add build-base && \
 
 WORKDIR /app
 
-COPY ./bin/jhi-run-service.sh ./jhi-run-service.sh
+COPY bin/btg-run-service.sh ./btg-run-service.sh
 
 EXPOSE 9010
 EXPOSE 9011
