@@ -1,7 +1,7 @@
 {
   "name": "@baotg/mysql",
   "description": "JobHopin - MySql Service",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": false,
   "license": "UNLICENSED",
   "author": "JobHopin",
@@ -24,7 +24,7 @@
     "gen:entity": "./bin/generate-entity.ts && yarn format && yarn lint"
   },
   "dependencies": {
-    "@baotg/core": "1.0.5",
+    "@baotg/core": "1.0.6",
     "knex": "^2.3.0",
     "knex-schema-inspector": "^3.0.0",
     "mysql": "2.18.1",

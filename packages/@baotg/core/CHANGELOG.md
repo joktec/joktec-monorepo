@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.6](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/core@1.0.5...@baotg/core@1.0.6) (2022-11-11)
+
+
+### Bug Fixes
+
+* npmrc ([b60af9e](https://github.com/BaoTran1203/nodejs-monorepo/commit/b60af9eb0fdbdcbb57a4cfaf9a17bf77a694a113))
+
+
+
+
+
 ## [1.0.5](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/core@1.0.4...@baotg/core@1.0.5) (2022-11-11)
 
 
