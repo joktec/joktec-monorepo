@@ -5,6 +5,9 @@
   "author": "JobHopin",
   "private": false,
   "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "purge": "rm -rf node_modules",
@@ -46,5 +49,5 @@
     ],
     "testEnvironment": "node"
   },
-  "gitHead": "18252b63a2c3ca92ceed368c2bf2a3a7b42fd593"
+  "gitHead": "5901629d9b444da5e74943ada345c61ada2e8caf"
 }

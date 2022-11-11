@@ -35,9 +35,6 @@
     "deploy:stag": "lerna run deploy -- --ns baotg-staging --helm helm",
     "deploy:prod": "lerna run deploy -- --ns baotg-production --helm helm"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "dependencies": {},
   "devDependencies": {
     "@commitlint/cli": "^17.1.2",
