@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.4](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.3...@baotg/example-gateway@1.0.4) (2022-11-11)
+
+
+### Bug Fixes
+
+* change npm registry ([ec4be7d](https://github.com/BaoTran1203/nodejs-monorepo/commit/ec4be7d0607e77551e01ff2ffef35e5493849b98))
+
+
+
+
+
 ## [1.0.3](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.2...@baotg/example-gateway@1.0.3) (2022-11-11)
 
 
