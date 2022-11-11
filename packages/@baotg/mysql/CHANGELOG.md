@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.10](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/mysql@1.0.9...@baotg/mysql@1.0.10) (2022-11-11)
+
+
+### Bug Fixes
+
+* change npm registry ([167e1f1](https://github.com/BaoTran1203/nodejs-monorepo/commit/167e1f18c091e6b9e576fb2b9e63d87ec5f1376f))
+
+
+
+
+
 ## [1.0.9](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/mysql@1.0.8...@baotg/mysql@1.0.9) (2022-11-11)
 
 

@@ -1,7 +1,7 @@
 {
   "name": "@baotg/elastic",
   "description": "JobHopin - ElasticSearch",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "private": false,
   "license": "UNLICENSED",
   "author": "JobHopin",
@@ -25,7 +25,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@baotg*/ -u"
   },
   "dependencies": {
-    "@baotg/core": "1.0.9",
+    "@baotg/core": "1.0.10",
     "@elastic/elasticsearch": "^8.4.0",
     "@nestjs/elasticsearch": "^9.0.0"
   },
