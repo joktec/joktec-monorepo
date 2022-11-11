@@ -11,7 +11,7 @@
         "**/deploy/**"
       ],
       "message": "ci(release): publish",
-      "registry": "https://btg-693456651862.d.codeartifact.ap-southeast-1.amazonaws.com/npm/btg-npm/",
+      "registry": "https://registry.npmjs.org/",
       "conventionalCommits": true,
       "version": {
         "allowBranch": [
