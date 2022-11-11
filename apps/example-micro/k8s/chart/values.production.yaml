@@ -1,0 +1,18 @@
+environment: production
+
+evnVariables:
+  - name: LOG_LEVEL
+    value: info
+  - name: LOG_LOG_STASH_HOST
+    value: 51.222.44.17
+  - name: LOG_LOG_STASH_PORT
+    value: "'31658'"
+  - name: LOG_LOG_STASH_ENABLE
+    value: "'false'"
+  - name: MYSQL_HOST
+    value: mysql-jobhop-dev.jobhopin.com
+  - name: MYSQL_PORT
+    value: "'3306'"
+  - name: MYSQL_DATABASE
+    value: jobhop_dev
+
