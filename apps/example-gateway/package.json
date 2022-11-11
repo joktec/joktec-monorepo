@@ -5,6 +5,14 @@
   "author": "JobHopin",
   "private": false,
   "license": "UNLICENSED",
+  "files": [
+    "dist",
+    "bin",
+    "config.yml",
+    "migrations",
+    "k8s",
+    "Dockerfile"
+  ],
   "publishConfig": {
     "access": "public"
   },

@@ -8,7 +8,7 @@
       "ignoreChanges": [
         "ignored-file",
         "*.md",
-        "**/deploy/**"
+        "**/k8s/**"
       ],
       "message": "ci(release): publish",
       "registry": "https://registry.npmjs.org/",

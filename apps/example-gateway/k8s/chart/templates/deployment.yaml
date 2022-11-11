@@ -24,7 +24,7 @@ spec:
         - name: local-registry
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
           command: [ 'sh', '-c', './btg-run-service.sh']
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
@@ -51,10 +51,6 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       restartPolicy: Always
-{{/*      {{- with .Values.nodeSelector }}*/}}
-{{/*      nodeSelector:*/}}
-{{/*        {{- toYaml . | nindent 8 }}*/}}
-{{/*      {{- end }}*/}}
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
