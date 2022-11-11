@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.2](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/core@1.0.1...@baotg/core@1.0.2) (2022-11-11)
+
+
+### Bug Fixes
+
+* disable path ([6b9cebb](https://github.com/BaoTran1203/nodejs-monorepo/commit/6b9cebba7cf16167bd327090989cf8e7bc25015e))
+* helm chart key ([099b9c5](https://github.com/BaoTran1203/nodejs-monorepo/commit/099b9c5a7a385221d46bc5dff19f7d006ea15ac0))
+* update ([0e00959](https://github.com/BaoTran1203/nodejs-monorepo/commit/0e009596add74509fe208d7c717ea634955e13c3))
+
+
+
+
+
 ## [1.0.1](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/core@1.0.0...@baotg/core@1.0.1) (2022-11-10)
 
 
