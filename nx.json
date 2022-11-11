@@ -1,11 +1,11 @@
 {
   "extends": "nx/presets/npm.json",
   "affected": {
-    "defaultBase": "master"
+    "defaultBase": "main"
   },
   "workspaceLayout": {
-    "appsDir": "src",
-    "libsDir": "packages"
+    "appsDir": "apps",
+    "libsDir": "packages/@baotg"
   },
   "implicitDependencies": {
     "package.json": {

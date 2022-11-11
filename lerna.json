@@ -1,7 +1,7 @@
 {
   "packages": [
     "packages/@baotg/*",
-    "tools/example-service/**/*"
+    "apps/*"
   ],
   "command": {
     "publish": {

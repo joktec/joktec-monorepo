@@ -11,7 +11,7 @@
   },
   "workspaces": [
     "packages/@baotg/*",
-    "tools/example-service/**/*"
+    "apps/*"
   ],
   "scripts": {
     "ls": "lerna ls -la && nx print-affected",
