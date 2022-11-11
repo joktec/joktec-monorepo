@@ -5,7 +5,10 @@
   "private": true,
   "license": "UNLICENSED",
   "author": "JobHopin",
-  "repository": "https://github.com/BaoTran1203/nodejs-monorepo.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BaoTran1203/nodejs-monorepo.git"
+  },
   "engines": {
     "node": ">=14"
   },
