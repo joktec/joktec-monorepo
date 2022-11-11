@@ -7,7 +7,7 @@ import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import Queue from 'bull';
 import * as bodyParser from 'body-parser';
-import { DEFAULT_GATEWAY_PORT, GatewayConfig } from '@core/infras';
+import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
 import { join } from 'path';
 import * as csurf from 'csurf';
 import { ValidationPipeOptions } from '@nestjs/common/pipes/validation.pipe';
@@ -21,8 +21,8 @@ export class GatewayService {
     const logger = new Logger('GatewayService');
 
     app.setGlobalPrefix(gatewayConfig.contextPath);
-    app.use(bodyParser.json({ limit: '50mb' }));
-    app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+    app.use(bodyParser.json({limit: '50mb'}));
+    app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
     GatewayService.setupSecurity(app);
     GatewayService.setupSwagger(app);
@@ -56,7 +56,7 @@ export class GatewayService {
       return;
     }
 
-    const { description } = config.get('swagger') ?? {};
+    const {description} = config.get('swagger') ?? {};
     const _description = description ?? config.get('description');
     const options = new DocumentBuilder()
       .addBearerAuth()
@@ -66,7 +66,7 @@ export class GatewayService {
       .build();
 
     const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('swagger', app, document, { swaggerUrl: 'swagger' });
+    SwaggerModule.setup('swagger', app, document, {swaggerUrl: 'swagger'});
   }
 
   private static setUpViewEngine(app: NestExpressApplication) {
@@ -77,16 +77,16 @@ export class GatewayService {
 
   private static setUpBullBoard(app: NestExpressApplication) {
     const config = app.get(ConfigService);
-    const { host, port, queue, password } = config.get('bull') ?? {};
+    const {host, port, queue, password} = config.get('bull') ?? {};
 
     const queues = queue?.map(q => {
-      return new BullMQAdapter(new Queue(q, { redis: { host, port, password } }));
+      return new BullMQAdapter(new Queue(q, {redis: {host, port, password}}));
     });
 
     if (host && queues?.length) {
       const serverAdapter = new ExpressAdapter();
       serverAdapter.setBasePath('/bulls');
-      createBullBoard({ queues, serverAdapter });
+      createBullBoard({queues, serverAdapter});
       app.use('/bulls', serverAdapter.getRouter());
     }
   }
@@ -95,8 +95,8 @@ export class GatewayService {
     const config = app.get(ConfigService);
     const gatewayConfig = config.get<GatewayConfig>('gateway');
     if (gatewayConfig?.pipes && gatewayConfig?.pipes !== 'off') {
-      const defaultPipe: ValidationPipeOptions = { transform: true, whitelist: true, forbidNonWhitelisted: true };
-      app.useGlobalPipes(new ValidationPipe({ ...defaultPipe, ...gatewayConfig.pipes }));
+      const defaultPipe: ValidationPipeOptions = {transform: true, whitelist: true, forbidNonWhitelisted: true};
+      app.useGlobalPipes(new ValidationPipe({...defaultPipe, ...gatewayConfig.pipes}));
     }
   }
 }

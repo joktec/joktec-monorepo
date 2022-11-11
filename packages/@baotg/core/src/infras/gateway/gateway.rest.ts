@@ -1,7 +1,7 @@
-import { AppConfig, config } from '@core/config';
+import { AppConfig, config } from '../../config';
 import { Controller, Get } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { toBool } from '@core/utils';
+import { toBool } from '../../utils';
 
 @Controller()
 export class GatewayRest {

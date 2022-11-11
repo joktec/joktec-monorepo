@@ -1,4 +1,4 @@
-import { RuntimeException } from '@core/errors';
+import { RuntimeException } from "../../../errors";
 
 export class MicroMethodNotFoundException extends RuntimeException {
   constructor(msg = 'Server Error') {

@@ -4,7 +4,7 @@ import { createPinoHttp, LoggerModule } from './log';
 import { MetricModule } from './metric';
 import { CqrsModule } from '@nestjs/cqrs';
 import { GatewayModule } from './infras/gateway/gateway.module';
-import { MicroModule } from '@core/infras/micro/micro.module';
+import { MicroModule } from './infras/micro/micro.module';
 
 @Global()
 @Module({

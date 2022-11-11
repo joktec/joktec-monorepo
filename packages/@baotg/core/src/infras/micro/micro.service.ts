@@ -1,9 +1,9 @@
-import { ConfigService, ENV } from '@core/config';
+import { ConfigService, ENV } from '../../config';
 import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { MicroConfig } from '@core/infras';
+import { MicroConfig } from '../../infras';
 import { getTransport } from './micro.utils';
-import { DEFAULT_MICRO_PORT, MicroTransport } from '@core/infras/micro/micro.config';
+import { DEFAULT_MICRO_PORT, MicroTransport } from './micro.config';
 import { NestHybridApplicationOptions } from '@nestjs/common/interfaces';
 import { GrpcOptions } from '@nestjs/microservices/interfaces/microservice-configuration.interface';
 import glob = require('glob');

@@ -3,8 +3,8 @@ import { ModuleRef } from '@nestjs/core';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { MicroServiceNotFoundException } from './errors/micro-service-not-found.exception';
 import { MicroMethodNotFoundException } from './errors/micro-method-not-found.exception';
-import { AppConfig, config } from '@core/config';
-import { toBool } from '@core/utils';
+import { AppConfig, config } from '../../config';
+import { toBool } from '../../utils';
 
 @Controller()
 export class MicroRest {
