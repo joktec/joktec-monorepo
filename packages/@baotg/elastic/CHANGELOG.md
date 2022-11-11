@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.9](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/elastic@1.0.8...@baotg/elastic@1.0.9) (2022-11-11)
+
+
+### Bug Fixes
+
+* change npm registry ([ad852f3](https://github.com/BaoTran1203/nodejs-monorepo/commit/ad852f38a8e17fdfe97f5e929c4ebeb4ab029fad))
+
+
+
+
+
 ## [1.0.8](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/elastic@1.0.7...@baotg/elastic@1.0.8) (2022-11-11)
 
 
