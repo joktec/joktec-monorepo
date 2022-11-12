@@ -1,7 +1,7 @@
 {
   "name": "@baotg/example-gateway",
   "description": "JobHopin - Example Gateway",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "author": "JobHopin",
   "private": false,
   "license": "UNLICENSED",
@@ -34,10 +34,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@baotg/core": "1.0.13",
-    "@baotg/elastic": "1.0.13",
-    "@baotg/graphql": "1.0.3",
-    "@baotg/mysql": "1.0.13"
+    "@baotg/core": "1.0.14",
+    "@baotg/elastic": "1.0.14",
+    "@baotg/graphql": "1.0.4",
+    "@baotg/mysql": "1.0.14"
   },
   "jest": {
     "moduleFileExtensions": [

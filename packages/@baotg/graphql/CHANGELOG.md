@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.4](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/graphql@1.0.3...@baotg/graphql@1.0.4) (2022-11-12)
+
+
+### Bug Fixes
+
+* change package ([cb521f8](https://github.com/BaoTran1203/nodejs-monorepo/commit/cb521f8dcb8586a8e25ee6faf1d344bab4458b0e))
+
+
+
+
+
 ## [1.0.3](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/graphql@1.0.2...@baotg/graphql@1.0.3) (2022-11-11)
 
 
