@@ -80,6 +80,7 @@
     "pluralize": "^8.0.0",
     "prom-client": "13.0.0",
     "qs": "^6.7.0",
+    "reflect-metadata": "^0.1.13",
     "retry": "0.13.1",
     "retry-axios": "2.4.0",
     "rxjs": "^7.2.0",
