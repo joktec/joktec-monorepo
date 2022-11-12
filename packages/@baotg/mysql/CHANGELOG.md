@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.11](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/mysql@1.0.10...@baotg/mysql@1.0.11) (2022-11-12)
+
+
+### Bug Fixes
+
+* deployment ([48c0437](https://github.com/BaoTran1203/nodejs-monorepo/commit/48c0437209c29bb8ee41835a78dd4682c91372b9))
+
+
+
+
+
 ## [1.0.10](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/mysql@1.0.9...@baotg/mysql@1.0.10) (2022-11-11)
 
 
