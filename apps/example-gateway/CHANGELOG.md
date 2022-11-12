@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.15](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.14...@baotg/example-gateway@1.0.15) (2022-11-12)
+
+
+### Bug Fixes
+
+* add reflect-metadata ([fa86944](https://github.com/BaoTran1203/nodejs-monorepo/commit/fa8694437de4ea29f2ab437912af71568bc93c18))
+
+
+
+
+
 ## [1.0.14](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.13...@baotg/example-gateway@1.0.14) (2022-11-12)
 
 
