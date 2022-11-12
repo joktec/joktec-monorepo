@@ -1,4 +1,4 @@
-environment: develop
+environment: development
 
 evnVariables:
   - name: LOG_LEVEL

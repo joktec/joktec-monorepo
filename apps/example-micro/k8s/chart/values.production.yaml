@@ -15,4 +15,3 @@ evnVariables:
     value: "'3306'"
   - name: MYSQL_DATABASE
     value: jobhop_dev
-
