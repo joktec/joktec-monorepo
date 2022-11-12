@@ -17,7 +17,7 @@ const options = program.opts();
 const { execSync } = require('child_process');
 
 const pkg = JSON.parse(fs.readFileSync('./package.json').toString());
-const chartPath = options.chartDir ?? './k8s/chart'
+const chartPath = options.chartDir ?? './k8s/chart';
 
 const setAppVersion = (chartFile, version) => {
   const chart = yaml.load(fs.readFileSync(chartFile, 'utf8'));
@@ -27,7 +27,7 @@ const setAppVersion = (chartFile, version) => {
 }
 
 const installOrUpgrade = (chartPath, version) => {
-  setAppVersion(`${chartPath}/Chart.yaml`, version)
+  setAppVersion(`${chartPath}/Chart.yaml`, version);
   const { name } = yaml.load(fs.readFileSync(`${chartPath}/Chart.yaml`, 'utf8'));
   const env = options.ns.split('-')[1];
   const chartName = env === 'production' ? name : `${name}-${env}`;
