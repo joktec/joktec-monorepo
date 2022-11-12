@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.13](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.12...@baotg/example-gateway@1.0.13) (2022-11-12)
+
+
+### Bug Fixes
+
+* tsconfig ([677340a](https://github.com/BaoTran1203/nodejs-monorepo/commit/677340a0c4d2c8d78d07fd563a53237cd1028aa9))
+
+
+
+
+
 ## [1.0.12](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.11...@baotg/example-gateway@1.0.12) (2022-11-12)
 
 
