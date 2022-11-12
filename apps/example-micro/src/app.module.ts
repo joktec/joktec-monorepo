@@ -1,8 +1,7 @@
-import { CoreModule, Module } from '@jobhopin/core';
-import { ElasticExampleModule } from '@app/elastic/elastic.module';
+import { CoreModule, Module } from '@baotg/core';
 
 @Module({
-  imports: [CoreModule, ElasticExampleModule],
-  exports: [ElasticExampleModule],
+  imports: [CoreModule],
+  exports: [],
 })
 export class AppModule {}

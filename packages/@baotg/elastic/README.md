@@ -6,10 +6,10 @@
 
 ## Installation
 
-Use the package manager to install @jobhopin/elastic (if you have been published to npm registry)
+Use the package manager to install @baotg/elastic (if you have been published to npm registry)
 
 ```bash
-yarn add @jobhopin/elastic
+yarn add @baotg/elastic
 ```
 
 ## Local Development
@@ -20,12 +20,12 @@ For development, a package can be linked into another project. This is often use
   yarn link
 ```
 
-Use `yarn link @jobhopin/elastic` to link another package that you’d like to test into your current project.
+Use `yarn link @baotg/elastic` to link another package that you’d like to test into your current project.
 
 ## Usage
 
 ```javascript
-import { isDev } from '@jobhopin/elastic/dist/utils';
+import { isDev } from '@baotg/elastic/dist/utils';
 
 isDev();
 ```

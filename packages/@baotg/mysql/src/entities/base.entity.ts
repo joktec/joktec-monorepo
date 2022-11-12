@@ -1,4 +1,4 @@
-import { Expose } from '@jobhopin/core';
+import { Expose } from '@baotg/core';
 
 @Expose()
 export class BaseEntity {}

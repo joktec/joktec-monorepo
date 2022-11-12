@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable, AbstractClientService, DEFAULT_CON_ID } from '@jobhopin/core';
+import { Inject, Injectable, AbstractClientService, DEFAULT_CON_ID } from '@baotg/core';
 import { cloneDeep } from 'lodash';
 import { Observable } from 'rxjs';
 import { HttpClientConfig } from './http-client.config';

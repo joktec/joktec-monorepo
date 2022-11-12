@@ -24,7 +24,7 @@ async function writeEntity(tableName: string) {
   const className = upperFirst(camelCase(tableName + 'Entity'));
   const classMapper = upperFirst(camelCase(tableName + 'Mapper'));
   const lines: string[] = [
-    `import { Expose, instanceToPlain, IsDate, IsInt, IsNotEmpty, IsOptional, IsString, plainToInstance } from '@jobhopin/core';`,
+    `import { Expose, instanceToPlain, IsDate, IsInt, IsNotEmpty, IsOptional, IsString, plainToInstance } from '@baotg/core';`,
     `import { BaseEntity } from '../base.entity';`,
     `import { MysqlMapper } from '../../models';`,
     ``,
@@ -112,7 +112,7 @@ async function writeRepo(tableName: string) {
   const className = upperFirst(camelCase(tableName + 'Repo'));
   const classMapper = upperFirst(camelCase(tableName + 'Mapper'));
   const fileContent = `
-      import { Injectable } from '@jobhopin/core';
+      import { Injectable } from '@baotg/core';
       import { ${entityName}, ${classMapper} } from '../../entities';
       import { MysqlRepo } from '../mysql.repo';
       import { MysqlService } from '../../mysql.service';

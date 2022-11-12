@@ -1,5 +1,5 @@
-import { Injectable } from '@jobhopin/core';
-import { JobEntity, JobMapper, MysqlService } from '@jobhopin/mysql';
+import { Injectable } from '@baotg/core';
+import { JobEntity, JobMapper, MysqlService } from '@baotg/mysql';
 
 @Injectable()
 export class JobService {
@@ -9,7 +9,7 @@ export class JobService {
 
   public async queryJob(): Promise<JobEntity[]> {
     const qb = this.mysqlService
-      .qb<JobEntity>(this.table)
+      .qb(this.table)
       .where('salaryMin', '>', 1000)
       .orWhere(builder => {
         return builder.where('salaryMin', '>', 100).where('salaryMax', '<', 800);

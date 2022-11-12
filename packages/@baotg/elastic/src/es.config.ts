@@ -1,4 +1,4 @@
-import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@jobhopin/core';
+import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@baotg/core';
 import { ApiKeyAuth, BasicAuth, BearerAuth } from '@elastic/transport/lib/types';
 
 export class EsConfig extends ClientConfig {

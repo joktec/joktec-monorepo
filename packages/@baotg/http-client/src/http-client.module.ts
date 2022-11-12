@@ -6,7 +6,7 @@ import {
   HTTP_CLIENT_TOTAL_METRIC,
   HttpClientMetricService,
 } from './http-client.metric';
-import { CounterProviders, HistogramProviders } from '@jobhopin/core';
+import { CounterProviders, HistogramProviders } from '@baotg/core';
 
 @Global()
 @Module({

@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { ClientConfig, toBool, toInt } from '@jobhopin/core';
+import { ClientConfig, toBool, toInt } from '@baotg/core';
 
 export class MysqlConfig extends ClientConfig implements Knex.MySqlConnectionConfig {
   host?: string;

@@ -1,4 +1,4 @@
-import { Injectable } from '@jobhopin/core';
+import { Injectable } from '@baotg/core';
 import { JobInterviewCsInChargeEntity, JobInterviewCsInChargeMapper } from '../../entities';
 import { MysqlRepo } from '../mysql.repo';
 import { MysqlService } from '../../mysql.service';

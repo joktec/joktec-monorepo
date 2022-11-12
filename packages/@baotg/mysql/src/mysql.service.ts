@@ -1,4 +1,4 @@
-import { Injectable, Retry, AbstractClientService } from '@jobhopin/core';
+import { Injectable, Retry, AbstractClientService } from '@baotg/core';
 import { MysqlConfig } from './mysql.config';
 import { MysqlClient } from './mysql.client';
 import { Knex, knex } from 'knex';

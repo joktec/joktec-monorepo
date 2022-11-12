@@ -761,7 +761,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### Features
 
-* add @jobhopin/core to quizz ([8e2fc6c](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/8e2fc6c))
+* add @baotg/core to quizz ([8e2fc6c](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/8e2fc6c))
 * add base configs ([9ef9fe0](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/9ef9fe0))
 * add base controller by DTOs ([4175b7a](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/4175b7a))
 * add base controllers & base microservice controller ([051bf20](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/051bf20))
@@ -804,8 +804,8 @@ All notable changes to this project will be documented in this file. See [standa
 * update quizz inputs in controllers ([dd891e5](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/dd891e5))
 * update quizz schema ([205dd3a](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/205dd3a))
 * update typedef quizz & input graphql ([b10a16e](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/b10a16e))
-* **@jobhopin/core:** add base controllers & base microservice controller ([51f95eb](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/51f95eb))
-* **@jobhopin/core:** add base controllers & base microservice controller ([74d6bbd](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/74d6bbd))
+* **@baotg/core:** add base controllers & base microservice controller ([51f95eb](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/51f95eb))
+* **@baotg/core:** add base controllers & base microservice controller ([74d6bbd](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/74d6bbd))
 * /gamification/api/v1/quizzes/check-in/ ([353efcc](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/353efcc))
 * /gamification/api/v1/quizzes/check-in/ ([daea67d](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/daea67d))
 * /gamification/api/v1/quizzes/check-in/ ([9cc9562](https://gitlab.com/jobhopvn/backend/central-admin-microservices/commit/9cc9562))

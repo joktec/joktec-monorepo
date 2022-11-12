@@ -1,5 +1,5 @@
-import { Module } from '@jobhopin/core';
-import { JobRepo, MysqlModule } from '@jobhopin/mysql';
+import { Module } from '@baotg/core';
+import { JobRepo, MysqlModule } from '@baotg/mysql';
 import { JobService } from '@app/mysql/job';
 import { MysqlExampleService } from '@app/mysql/mysql.service';
 

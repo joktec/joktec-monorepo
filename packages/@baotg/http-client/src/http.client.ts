@@ -1,4 +1,4 @@
-import { Client } from '@jobhopin/core';
+import { Client } from '@baotg/core';
 import { Observable } from 'rxjs';
 import { HttpClientConfig } from './http-client.config';
 import { HttpClientRequest, HttpClientResponse } from './models';

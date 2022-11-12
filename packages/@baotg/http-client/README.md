@@ -6,10 +6,10 @@
 
 ## Installation
 
-Use the package manager to install @jobhopin/http-client (if you have been published to npm registry)
+Use the package manager to install @baotg/http-client (if you have been published to npm registry)
 
 ```bash
-yarn add @jobhopin/http-client
+yarn add @baotg/http-client
 ```
 
 ## Local Development
@@ -20,12 +20,12 @@ For development, a package can be linked into another project. This is often use
   yarn link
 ```
 
-Use `yarn link @jobhopin/http-client` to link another package that you’d like to test into your current project.
+Use `yarn link @baotg/http-client` to link another package that you’d like to test into your current project.
 
 ## Usage
 
 ```javascript
-import { isDev } from '@jobhopin/http-client/dist/utils';
+import { isDev } from '@baotg/http-client/dist/utils';
 
 isDev();
 ```

@@ -6,10 +6,10 @@
 
 ## Installation
 
-Use the package manager to install @jobhopin/core (if you have been published to npm registry)
+Use the package manager to install @baotg/core (if you have been published to npm registry)
 
 ```bash
-yarn add @jobhopin/core
+yarn add @baotg/core
 ```
 
 ## Local Development
@@ -20,12 +20,12 @@ For development, a package can be linked into another project. This is often use
   yarn link
 ```
 
-Use `yarn link @jobhopin/core` to link another package that you’d like to test into your current project.
+Use `yarn link @baotg/core` to link another package that you’d like to test into your current project.
 
 ## Usage
 
 ```javascript
-import { isDev } from '@jobhopin/core';
+import { isDev } from '@baotg/core';
 
 isDev();
 ```

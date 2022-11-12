@@ -1,5 +1,5 @@
-import { Injectable, LogService, OnModuleInit } from '@jobhopin/core';
-import { JobEntity, JobRepo, PageableResponse } from '@jobhopin/mysql';
+import { Injectable, LogService, OnModuleInit } from '@baotg/core';
+import { JobEntity, JobRepo, PageableResponse } from '@baotg/mysql';
 import { JobService } from './job';
 
 @Injectable()

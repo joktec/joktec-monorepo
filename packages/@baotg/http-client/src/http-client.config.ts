@@ -10,7 +10,7 @@ import {
   IsTypes,
   LogService,
   ClientConfig,
-} from '@jobhopin/core';
+} from '@baotg/core';
 import { HttpMethod } from './models';
 import mergeDeep from 'merge-deep';
 

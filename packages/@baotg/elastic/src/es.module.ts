@@ -1,4 +1,4 @@
-import { Module, Global, CoreModule } from '@jobhopin/core';
+import { Module, Global, CoreModule } from '@baotg/core';
 import { EsService } from './es.service';
 
 @Global()

@@ -1,4 +1,4 @@
-import { BaseMethodDecorator, CallbackDecoratorOptions, Injectable, DEFAULT_CON_ID } from '@jobhopin/core';
+import { BaseMethodDecorator, CallbackDecoratorOptions, Injectable, DEFAULT_CON_ID } from '@baotg/core';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { AxiosError, AxiosResponse } from 'axios';
 import { throwError } from 'rxjs';

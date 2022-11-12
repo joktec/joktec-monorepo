@@ -4,6 +4,6 @@ const createFluentd = require('pino-fluentd');
 
 export const createFluentdStream = (cfg: FluentdConfig) =>
   createFluentd({
-    tag: '@jobhopin/services',
+    tag: '@baotg/services',
     ...cfg,
   });

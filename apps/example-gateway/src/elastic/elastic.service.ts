@@ -1,5 +1,5 @@
-import { Injectable, LogService, OnModuleInit } from '@jobhopin/core';
-import { EsService } from '@jobhopin/elastic';
+import { Injectable, LogService, OnModuleInit } from '@baotg/core';
+import { EsService } from '@baotg/elastic';
 
 @Injectable()
 export class ElasticExampleService implements OnModuleInit {

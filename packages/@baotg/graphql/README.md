@@ -6,10 +6,10 @@
 
 ## Installation
 
-Use the package manager to install @jobhopin/graphql (if you have been published to npm registry)
+Use the package manager to install @baotg/graphql (if you have been published to npm registry)
 
 ```bash
-yarn add @jobhopin/graphql
+yarn add @baotg/graphql
 ```
 
 ## Local Development
@@ -20,12 +20,12 @@ For development, a package can be linked into another project. This is often use
   yarn link
 ```
 
-Use `yarn link @jobhopin/graphql` to link another package that you’d like to test into your current project.
+Use `yarn link @baotg/graphql` to link another package that you’d like to test into your current project.
 
 ## Usage
 
 ```javascript
-import { isDev } from '@jobhopin/graphql/dist/utils';
+import { isDev } from '@baotg/graphql/dist/utils';
 
 isDev();
 ```

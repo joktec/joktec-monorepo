@@ -1,6 +1,6 @@
 import { startCase, lowerCase } from 'lodash';
 import { AxiosError } from 'axios';
-import { ExceptionStatus, Exception, RuntimeException, InternalServerException } from '@jobhopin/core';
+import { ExceptionStatus, Exception, RuntimeException, InternalServerException } from '@baotg/core';
 
 export function httpClientExceptionHandler(err: AxiosError): Exception {
   const status = err?.response?.status;

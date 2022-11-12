@@ -1,5 +1,5 @@
-import { Module } from '@jobhopin/core';
-import { EsModule } from '@jobhopin/elastic';
+import { Module } from '@baotg/core';
+import { EsModule } from '@baotg/elastic';
 import { ElasticExampleService } from '@app/elastic/elastic.service';
 
 @Module({

@@ -1,4 +1,4 @@
-import { AbstractClientService, Injectable, Retry } from '@jobhopin/core';
+import { AbstractClientService, Injectable, Retry } from '@baotg/core';
 import { EsConfig } from './es.config';
 import { EsInterface } from './es.interface';
 import {

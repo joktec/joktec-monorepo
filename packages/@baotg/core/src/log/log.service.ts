@@ -34,7 +34,7 @@ export const createPinoHttp = (configService: ConfigService) => {
     pinoHttp: [
       {
         level: config.level,
-        name: configService.get('name').replace('@jobhopin/', ''),
+        name: configService.get('name').replace('@baotg/', ''),
         messageKey: 'message',
         enabled: true,
         ...pinoConfig,

@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
   plainToInstance,
-} from '@jobhopin/core';
+} from '@baotg/core';
 import { BaseEntity } from '../base.entity';
 import { MysqlMapper } from '../../models';
 
