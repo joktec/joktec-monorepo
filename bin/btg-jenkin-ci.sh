@@ -54,5 +54,5 @@ if (!files.length) {
 console.log('Commit after deploy!');
 execSync(`git add .`);
 execSync(`git commit -m "ci(release): deploy"`);
-execSync(`git push -u origin main`);
+execSync(`git push -u origin ${branch}`);
 console.log('✨ Success');
