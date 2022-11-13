@@ -13,12 +13,12 @@ const options = program.opts();
 const { execSync } = require('child_process');
 
 const files = execSync(`git diff HEAD --name-only`).toString(); // .split(`\n`);
-console.log(files);
-
 if (!files.length) {
+  console.log('No file to commit');
   return;
 }
 
+console.log('Commit after deploy!');
 execSync(`git add .`);
 execSync(`git commit -m "ci(release): deploy"`);
 execSync(`git push -u origin main`);
