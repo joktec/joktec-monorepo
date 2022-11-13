@@ -31,14 +31,13 @@
     "dep:upgrade": "lerna run --stream dep:upgrade",
     "graph": "nx affected:graph",
     "release": "lerna version",
-    "published": "./bin/btg-publish.sh",
     "publish:dev": "lerna publish patch --exact --no-private --yes",
     "publish:stag": "lerna publish minor --exact --no-private --yes",
     "publish:prod": "lerna publish major --exact --no-private --yes",
-    "deploy": "./bin/btg-deploy.sh",
-    "deploy:dev": "lerna run deploy -- --ns baotg-develop --helm helm && ./bin/btg-post-deploy.sh",
-    "deploy:stag": "lerna run deploy -- --ns baotg-staging --helm helm && ./bin/btg-post-deploy.sh",
-    "deploy:prod": "lerna run deploy -- --ns baotg-production --helm helm && ./bin/btg-post-deploy.sh"
+    "deploy:dev": "lerna run deploy -- --ns baotg-develop --helm helm",
+    "deploy:stag": "lerna run deploy -- --ns baotg-staging --helm helm",
+    "deploy:prod": "lerna run deploy -- --ns baotg-production --helm helm",
+    "ci": "./bin/btg-jenkin-ci.sh"
   },
   "dependencies": {},
   "devDependencies": {
