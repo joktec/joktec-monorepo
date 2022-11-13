@@ -18,8 +18,7 @@
   "bin": {
     "btg-client-generator": "bin/btg-client-generator.sh",
     "btg-publish-docker": "bin/btg-publish-docker.sh",
-    "btg-publish-helm": "bin/btg-publish-helm.sh",
-    "btg-post-helm": "bin/btg-post-helm.sh"
+    "btg-publish-helm": "bin/btg-publish-helm.sh"
   },
   "publishConfig": {
     "access": "public"
