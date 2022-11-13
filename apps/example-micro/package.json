@@ -25,7 +25,7 @@
     "dev": "nest start --watch -p tsconfig.json",
     "build": "nest build -p tsconfig.json",
     "start": "node dist/main",
-    "dep:upgrade": "ncu -p yarn -f /^@btg*/ -u",
+    "dep:upgrade": "ncu -p yarn -f /^@baotg*/ -u",
     "deploy": "publish-helm --chart-dir ./k8s/chart",
     "test": "echo 'Test done.'",
     "test:watch": "jest --watch",
@@ -34,9 +34,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@baotg/core": "^1.0.17",
-    "@baotg/elastic": "^1.0.17",
-    "@baotg/graphql": "^1.0.4"
+    "@baotg/core": "^1.0.18",
+    "@baotg/elastic": "^1.0.18",
+    "@baotg/graphql": "^1.0.5"
   },
   "lint-staged": {
     "*.ts": [

@@ -19,6 +19,11 @@ const { execSync } = require('child_process');
 const pkg = JSON.parse(fs.readFileSync('./package.json').toString());
 const chartPath = options.chartDir ?? './k8s/chart';
 
+if (pkg.private == true || pkg.private == "true") {
+  console.log(`Package ${pkg.name} is skipped deploy!`);
+  return;
+}
+
 const setAppVersion = (chartFile, version) => {
   const chart = yaml.load(fs.readFileSync(chartFile, 'utf8'));
   chart.appVersion = chart.version = version;
