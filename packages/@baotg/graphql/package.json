@@ -54,7 +54,7 @@
     "jwt-simple": "^0.5.6"
   },
   "lint-staged": {
-    "src/**": [
+    "*.ts": [
       "yarn format",
       "yarn lint",
       "git add ."

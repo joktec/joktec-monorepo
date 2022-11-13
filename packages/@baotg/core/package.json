@@ -102,7 +102,7 @@
     "@types/qs": "^6.5.3"
   },
   "lint-staged": {
-    "src/**": [
+    "*.ts": [
       "yarn format",
       "yarn lint",
       "git add ."

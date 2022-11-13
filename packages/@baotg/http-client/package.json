@@ -36,7 +36,7 @@
     "@types/merge-deep": "^3.0.0"
   },
   "lint-staged": {
-    "src/**": [
+    "*.ts": [
       "yarn format",
       "yarn lint",
       "git add ."

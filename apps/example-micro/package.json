@@ -39,7 +39,7 @@
     "@baotg/graphql": "^1.0.4"
   },
   "lint-staged": {
-    "src/**": [
+    "*.ts": [
       "yarn format",
       "yarn lint",
       "git add ."

@@ -38,7 +38,7 @@
     "@types/mysql": "^2.15.17"
   },
   "lint-staged": {
-    "src/**": [
+    "*.ts": [
       "yarn format",
       "yarn lint",
       "git add ."
