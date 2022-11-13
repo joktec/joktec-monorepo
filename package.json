@@ -17,13 +17,13 @@
     "apps/*"
   ],
   "scripts": {
+    "postinstall": "chmod u+x ./bin/*",
     "ls": "lerna ls -la && nx print-affected",
     "dev": "lerna run dev",
     "build": "lerna run build",
     "serve": "lerna run serve",
     "test": "lerna run test",
     "e2e": "lerna run e2e",
-    "prebuild": "lerna run prebuild",
     "format": "lerna run format",
     "lint": "lerna run lint",
     "clean": "lerna run clean",
@@ -34,7 +34,7 @@
     "publish:dev": "lerna publish patch --exact --no-private --yes",
     "publish:stag": "lerna publish minor --exact --no-private --yes",
     "publish:prod": "lerna publish major --exact --no-private --yes",
-    "deploy:dev": "lerna run deploy -- --ns baotg-develop --helm helm",
+    "deploy:dev": "lerna run deploy -- --ns baotg-develop --helm helm && ./bin/btg-post-helm.sh",
     "deploy:stag": "lerna run deploy -- --ns baotg-staging --helm helm",
     "deploy:prod": "lerna run deploy -- --ns baotg-production --helm helm"
   },
