@@ -9,8 +9,8 @@ RUN apk add build-base && \
 
 WORKDIR /app
 
-COPY bin/btg-run-service.sh ./btg-run-service.sh
-RUN chmod +x btg-run-service.sh
+COPY bin/run-service.sh ./run-service.sh
+RUN chmod +x run-service.sh
 
 EXPOSE 9010
 EXPOSE 9011

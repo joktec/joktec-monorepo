@@ -37,6 +37,13 @@
     "@types/knex": "^0.16.1",
     "@types/mysql": "^2.15.17"
   },
+  "lint-staged": {
+    "src/**": [
+      "yarn format",
+      "yarn lint",
+      "git add ."
+    ]
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"

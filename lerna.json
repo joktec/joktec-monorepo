@@ -6,8 +6,15 @@
   "command": {
     "publish": {
       "ignoreChanges": [
-        "ignored-file",
-        "*.md",
+        "**/*.md",
+        "**/__fixtures__/**",
+        "**/__tests__/**",
+        ".commitlint*",
+        ".editorconfig",
+        ".eslint*",
+        ".prettier*",
+        "**/docker-compose*",
+        "Makefile",
         "**/k8s/**"
       ],
       "message": "ci(release): publish",
@@ -16,8 +23,10 @@
       "version": {
         "allowBranch": [
           "main",
+          "master",
           "staging",
-          "develop"
+          "develop",
+          "hotfix/*"
         ]
       }
     },

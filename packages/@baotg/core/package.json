@@ -16,9 +16,9 @@
     "templates"
   ],
   "bin": {
-    "btg-client-generator": "bin/btg-client-generator.sh",
-    "btg-publish-docker": "bin/btg-publish-docker.sh",
-    "btg-publish-helm": "bin/btg-publish-helm.sh"
+    "client-generator": "bin/client-generator.sh",
+    "publish-docker": "bin/publish-docker.sh",
+    "publish-helm": "bin/publish-helm.sh"
   },
   "publishConfig": {
     "access": "public"
@@ -100,6 +100,13 @@
     "@types/mongoose": "^5.5.3",
     "@types/passport-jwt": "^3.0.6",
     "@types/qs": "^6.5.3"
+  },
+  "lint-staged": {
+    "src/**": [
+      "yarn format",
+      "yarn lint",
+      "git add ."
+    ]
   },
   "config": {
     "commitizen": {

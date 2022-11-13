@@ -53,6 +53,13 @@
     "cz-conventional-changelog": "3.0.2",
     "jwt-simple": "^0.5.6"
   },
+  "lint-staged": {
+    "src/**": [
+      "yarn format",
+      "yarn lint",
+      "git add ."
+    ]
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"

@@ -90,4 +90,3 @@ for (let file of files) {
 }
 
 execSync(`tsproto --path ${clientDir}/src`, {stdio: 'inherit'})
-

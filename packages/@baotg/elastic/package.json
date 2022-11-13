@@ -29,6 +29,13 @@
     "@elastic/elasticsearch": "^8.4.0",
     "@nestjs/elasticsearch": "^9.0.0"
   },
+  "lint-staged": {
+    "src/**": [
+      "yarn format",
+      "yarn lint",
+      "git add ."
+    ]
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"

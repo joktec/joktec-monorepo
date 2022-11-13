@@ -19,6 +19,7 @@ console.log('✨ Success');
 
 // --------- Step 2: Testing
 console.log('👉 Step 2:', 'Testing');
+execSync(`yarn test`);
 console.log('✨ Success');
 
 // --------- Step 3: Publish
@@ -30,6 +31,7 @@ if (['main', 'master', 'prod', 'production'].includes(branch)) {
 } else if (['develop', 'development', 'testing'].includes(branch)) {
   execSync(`lerna publish patch --exact --no-private --yes`);
 }
+execSync(`yarn`);
 console.log('✨ Success');
 
 // --------- Step 4: Deploy

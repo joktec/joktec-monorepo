@@ -35,6 +35,13 @@
   "devDependencies": {
     "@types/merge-deep": "^3.0.0"
   },
+  "lint-staged": {
+    "src/**": [
+      "yarn format",
+      "yarn lint",
+      "git add ."
+    ]
+  },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"

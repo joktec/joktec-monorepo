@@ -25,19 +25,26 @@
     "dev": "nest start --watch -p tsconfig.json",
     "build": "nest build -p tsconfig.json",
     "start": "node dist/main",
-    "dep:upgrade": "ncu -p yarn -f /^@ynm*/ -u",
-    "deploy": "btg-publish-helm --chart-dir ./k8s/chart",
-    "test": "jest",
+    "dep:upgrade": "ncu -p yarn -f /^@baotg*/ -u",
+    "deploy": "publish-helm --chart-dir ./k8s/chart",
+    "test": "echo 'Test done.'",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@baotg/core": "1.0.17",
-    "@baotg/elastic": "1.0.17",
-    "@baotg/graphql": "1.0.4",
-    "@baotg/mysql": "1.0.17"
+    "@baotg/core": "^1.0.17",
+    "@baotg/elastic": "^1.0.17",
+    "@baotg/graphql": "^1.0.4",
+    "@baotg/mysql": "^1.0.17"
+  },
+  "lint-staged": {
+    "src/**": [
+      "yarn format",
+      "yarn lint",
+      "git add ."
+    ]
   },
   "jest": {
     "moduleFileExtensions": [
