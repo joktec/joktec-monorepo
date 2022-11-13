@@ -13,6 +13,8 @@ const options = program.opts();
 const { execSync } = require('child_process');
 
 const files = execSync(`git diff HEAD --name-only`).toString().split(`\n`);
+console.log(files);
+
 if (!files.length) {
   return;
 }
