@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.16](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/http-client@1.0.15...@baotg/http-client@1.0.16) (2022-11-13)
+
+**Note:** Version bump only for package @baotg/http-client
+
+
+
+
+
 ## [1.0.15](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/http-client@1.0.14...@baotg/http-client@1.0.15) (2022-11-12)
 
 **Note:** Version bump only for package @baotg/http-client
