@@ -9,13 +9,9 @@
         "**/*.md",
         "**/__fixtures__/**",
         "**/__tests__/**",
-        ".commitlint*",
-        ".editorconfig",
-        ".eslint*",
-        ".prettier*",
+        "**/k8s/**",
         "**/docker-compose*",
-        "Makefile",
-        "**/k8s/**"
+        "**/Makefile*"
       ],
       "message": "ci(release): publish",
       "registry": "https://registry.npmjs.org/",
