@@ -12,7 +12,7 @@ const options = program.opts();
 
 const { execSync } = require('child_process');
 
-const files = execSync(`git diff HEAD --name-only`).toString(); // .split(`\n`);
+const files = execSync(`git diff HEAD --name-only`).toString().trim();
 if (!files.length) {
   console.log('No file to commit');
   return;
