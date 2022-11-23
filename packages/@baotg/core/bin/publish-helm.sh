@@ -9,7 +9,8 @@ program
   .version('0.0.1')
   .option('--ns <ns>', 'K8s Namespace')
   .option('--chart-dir <token>', 'Chart Dir')
-  .option('--helm <token>', 'Helm Command');
+  .option('--helm <token>', 'Helm Command')
+  .option('--force', 'Force deploy');
 
 program.parse(process.argv);
 const options = program.opts();
@@ -43,7 +44,7 @@ const installOrUpgrade = (chartPath, version) => {
   const chartList = execSync(`helm list --filter ${chartName} --namespace ${options.ns} --output json`);
   const charts = JSON.parse(chartList.toString());
   const isInstalled = charts.some(chart => chart.name == chartName && chart.app_version == version);
-  if (isInstalled) {
+  if (!options.force && isInstalled) {
     return;
   }
 

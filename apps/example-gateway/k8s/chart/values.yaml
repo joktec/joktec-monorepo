@@ -33,3 +33,23 @@ podAnnotations:
 affinity: { }
 
 tolerations: [ ]
+
+livenessProbe:
+  httpGet:
+    port: 9010
+    path: /health
+  initialDelaySeconds: 300
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    port: 9010
+    path: /health
+  initialDelaySeconds: 300
+  periodSeconds: 10
+
+containerSecurityContext:
+  enabled: false
+
+podSecurityContext:
+  enabled: false

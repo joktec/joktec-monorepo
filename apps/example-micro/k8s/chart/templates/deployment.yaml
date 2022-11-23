@@ -37,19 +37,27 @@ spec:
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
-                  name: baotg-mysql{{ include "evn.suffix" $ }}
+                  name: baotg-mysql{{ include "env.suffix" $ }}
                   key: username
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: baotg-mysql{{ include "evn.suffix" $ }}
+                  name: baotg-mysql{{ include "env.suffix" $ }}
                   key: password
-            {{- range .Values.evnVariables }}
+            {{- range .Values.envVariables }}
             - name: {{ .name }}
               value: {{ .value }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       restartPolicy: Always
       {{- with .Values.affinity }}
       affinity:
