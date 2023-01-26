@@ -5,29 +5,35 @@ import { toArray } from '../utils';
 import { isEmpty } from 'lodash';
 import { ClientConfig, DEFAULT_CON_ID } from './client.config';
 import { Client } from './client';
-import { InvalidClientConfigException } from './errors';
+import { InvalidClientConfigException } from './client.exception';
+import mergeDeep from 'merge-deep';
 
-export abstract class AbstractClientService<Config extends ClientConfig, C = any>
-  implements Client<Config, C>, OnModuleInit, OnModuleDestroy
+export abstract class AbstractClientService<IConfig extends ClientConfig, IClient = any>
+  implements Client<IConfig, IClient>, OnModuleInit, OnModuleDestroy
 {
-  private configs: { [conId: string]: Config } = {};
-  private clients: { [conId: string]: C } = {};
+  private configs: { [conId: string]: IConfig } = {};
+  private clients: { [conId: string]: IClient } = {};
 
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
 
-  protected constructor(protected service: string, protected configClass: new (props: Config) => Config) {}
+  protected constructor(protected service: string, protected configClass: new (props: IConfig) => IConfig) {}
 
   async onModuleInit(): Promise<void> {
     this.logService.setContext(this.constructor.name);
-    const config = this.configService.get(this.service);
+    const config: IConfig = this.configService.get<IConfig>(this.service);
+
     if (isEmpty(config)) {
       this.logService.warn('%s service not found config!', this.service);
     }
-    for (const cfg of toArray(config)) await this.clientInit(cfg);
+
+    const configList = toArray<IConfig>(config);
+    for (const cfg of configList) {
+      await this.clientInit(mergeDeep({}, configList[0], cfg));
+    }
   }
 
-  protected async clientInit(config: Config, first: boolean = true) {
+  protected async clientInit(config: IConfig, first: boolean = true) {
     const { conId = DEFAULT_CON_ID } = config;
     const beginMessage = first ? 'initializing...' : 're-initializing...';
     const endMessage = first ? 'initialized' : 're-initialized';
@@ -41,15 +47,13 @@ export abstract class AbstractClientService<Config extends ClientConfig, C = any
     await this.start(this.clients[conId], conId);
   }
 
-  private validateConfig(config: Config): Config {
+  private validateConfig(config: IConfig): IConfig {
     const cfg = new this.configClass(config);
-
     const error = cfg.validate();
     if (error?.length) {
       this.logService.error(error, `${this.service} invalid config`);
       throw new InvalidClientConfigException('Invalid Config', error);
     }
-
     return cfg;
   }
 
@@ -57,17 +61,17 @@ export abstract class AbstractClientService<Config extends ClientConfig, C = any
     Object.values(this.clients).forEach(client => this.stop(client));
   }
 
-  getConfig(conId = DEFAULT_CON_ID): Config {
+  getConfig(conId = DEFAULT_CON_ID): IConfig {
     return this.configs[conId];
   }
 
-  getClient(conId = DEFAULT_CON_ID): C {
+  getClient(conId = DEFAULT_CON_ID): IClient {
     return this.clients[conId];
   }
 
-  protected abstract init(config: Config): Promise<C>;
+  protected abstract init(config: IConfig): Promise<IClient>;
 
-  protected abstract stop(client: C, conId?: string): Promise<void>;
+  protected abstract start(client: IClient, conId?: string): Promise<void>;
 
-  protected abstract start(client: C, conId?: string): Promise<void>;
+  protected abstract stop(client: IClient, conId?: string): Promise<void>;
 }

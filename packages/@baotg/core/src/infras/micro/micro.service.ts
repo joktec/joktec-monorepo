@@ -1,66 +1,40 @@
-import { ConfigService, ENV } from '../../config';
-import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { MicroConfig } from '../../infras';
-import { getTransport } from './micro.utils';
-import { DEFAULT_MICRO_PORT, MicroTransport } from './micro.config';
-import { NestHybridApplicationOptions } from '@nestjs/common/interfaces';
-import { GrpcOptions } from '@nestjs/microservices/interfaces/microservice-configuration.interface';
-import glob = require('glob');
-import fs = require('fs');
+import { ConfigService } from '../../config';
+import { DEFAULT_MICRO_PORT, IMicroserviceConfig, MicroConfig } from './micro.config';
+import { MicroExceptionFilter } from '../../exceptions';
+import { LogService } from '../../log';
+import { toArray, toBool } from '../../utils';
+import mergeDeep from 'merge-deep';
 
 export class MicroService {
-  static async bootstrap(app: INestApplication) {
+  static async bootstrap(app: INestApplication, builtInConfig?: IMicroserviceConfig) {
     const config = app.get(ConfigService);
-    const microConfig = config.get<MicroConfig>('micro' as any);
+    const microConfig: MicroConfig = config.get<MicroConfig>('micro' as any);
     if (!microConfig) return;
 
-    const logger = new Logger('MicroService');
+    const logger = await app.resolve(LogService);
+    logger.setContext(MicroService.name);
 
+    const description = config.get('description');
     const port = microConfig.port ?? DEFAULT_MICRO_PORT;
-    const microOptions: MicroserviceOptions = MicroService.buildMicroserviceOptions(app);
-    const hybridOptions: NestHybridApplicationOptions = { inheritAppConfig: true, ...microConfig.hybridOptions };
 
-    await app.connectMicroservice<MicroserviceOptions>(microOptions, hybridOptions);
-    app.useGlobalPipes(new ValidationPipe());
-    await app.startAllMicroservices();
-    await app.listen(port).then(() => logger.log(`Microservice is listening on port ${port}`));
-  }
-
-  private static buildMicroserviceOptions(app: INestApplication): MicroserviceOptions {
-    const config = app.get(ConfigService);
-    const microConfig = config.get<MicroConfig>('micro' as any);
-    if (microConfig.transport === MicroTransport.GRPC) {
-      return MicroService.buildGRPC(app);
-    }
-
-    return {
-      strategy: undefined,
-      transport: getTransport(microConfig.transport),
-      options: { ...microConfig.microOptions.options },
-    };
-  }
-
-  private static buildGRPC(app: INestApplication): GrpcOptions {
-    const config = app.get(ConfigService);
-    const microConfig = config.get<MicroConfig>('micro' as any);
-    const port = microConfig.port ?? DEFAULT_MICRO_PORT;
-    const files = glob.sync(`${config.get('env') == ENV.DEV ? 'src' : 'dist'}/**/*.proto`);
-    const packages = files.map(
-      file =>
-        fs
-          .readFileSync(file)
-          .toString()
-          .match(/package (.*);/)[1],
-    );
-    return {
-      transport: Transport.GRPC,
+    const hybridOptions = { inheritAppConfig: toBool(microConfig.inheritAppConfig, true) };
+    const microOptions: MicroserviceOptions = mergeDeep(builtInConfig?.microserviceOptions || {}, {
+      transport: Transport.RMQ,
       options: {
-        package: packages,
-        url: `0.0.0.0:${port}`,
-        protoPath: files,
-        ...(microConfig.microOptions.options as any),
+        urls: toArray<string>(microConfig.rabbitUrls),
+        queue: microConfig.rabbitQueue,
+        queueOptions: {
+          durable: toBool(microConfig.rabbitDurable, false),
+        },
       },
-    };
+    });
+
+    app.useGlobalFilters(new MicroExceptionFilter(logger));
+    app.useGlobalPipes(new ValidationPipe());
+    await app.connectMicroservice(microOptions, hybridOptions);
+    await app.startAllMicroservices();
+    await app.listen(port, () => logger.info('%s - %s is listening on port %s', description, microConfig.name, port));
   }
 }

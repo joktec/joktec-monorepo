@@ -1,18 +1,13 @@
 import { Global, Module } from '@nestjs/common';
-import { config, ConfigModule, ConfigService } from './config';
+import { ConfigModule, ConfigService, initConfig } from './config';
 import { createPinoHttp, LoggerModule } from './log';
 import { MetricModule } from './metric';
-import { CqrsModule } from '@nestjs/cqrs';
-import { GatewayModule } from './infras/gateway/gateway.module';
-import { MicroModule } from './infras/micro/micro.module';
+import { CqrsModule, GatewayModule, MicroModule } from './infras';
 
 @Global()
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [config],
-    }),
+    ConfigModule.forRoot({ isGlobal: true, load: [initConfig] }),
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

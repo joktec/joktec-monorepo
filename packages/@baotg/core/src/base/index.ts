@@ -1,7 +1,10 @@
 export { NestFactory } from '@nestjs/core';
+export { ClientsModule, MessagePattern, RpcException } from '@nestjs/microservices';
 export {
+  ArgumentsHost,
   Injectable,
   Inject,
+  Catch,
   Controller,
   Global,
   DynamicModule,
@@ -23,5 +26,14 @@ export {
   PipeTransform,
   ArgumentMetadata,
   HttpStatus,
+  CacheModule,
+  UseGuards,
 } from '@nestjs/common';
 export * from './app';
+
+// export * from './controllers';
+export * from './data-loaders';
+export * from './guards';
+export * from './middlewares';
+// export * from './repository';
+// export * from './services';

@@ -1,9 +1,9 @@
 import { Controller, Post, Body, Param, Get } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { MicroServiceNotFoundException } from './errors/micro-service-not-found.exception';
-import { MicroMethodNotFoundException } from './errors/micro-method-not-found.exception';
-import { AppConfig, config } from '../../config';
+import { MicroServiceNotFoundException } from './exceptions/micro-service-not-found.exception';
+import { MicroMethodNotFoundException } from './exceptions/micro-method-not-found.exception';
+import { AppConfig, initConfig } from '../../config';
 import { toBool } from '../../utils';
 
 @Controller()
@@ -13,7 +13,7 @@ export class MicroRest {
   @Get('/')
   @ApiResponse({ type: Object })
   async getHello() {
-    const appConfig: AppConfig = await config();
+    const appConfig: AppConfig = initConfig();
     return {
       name: appConfig.name.replace('@', '').replace('/', '-'),
       description: appConfig.description,

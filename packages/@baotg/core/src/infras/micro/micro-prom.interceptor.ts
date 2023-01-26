@@ -38,10 +38,7 @@ export class MicroPromInterceptor implements NestInterceptor {
       .pipe(
         map(data => {
           this.latencyMetric.set(
-            {
-              service: `${service}#${method}`,
-              status: 'SUCCESS',
-            },
+            { service: `${service}#${method}`, status: 'SUCCESS' },
             new Date().getTime() - startedAt,
           );
           return data;
@@ -50,10 +47,7 @@ export class MicroPromInterceptor implements NestInterceptor {
       .pipe(
         catchError(err => {
           this.latencyMetric.set(
-            {
-              service: `${service}#${method}`,
-              status: err.status,
-            },
+            { service: `${service}#${method}`, status: err.status },
             new Date().getTime() - startedAt,
           );
           return throwError(err);

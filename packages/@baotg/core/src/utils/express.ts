@@ -17,6 +17,7 @@ interface Query {
   readonly select: Array<string>;
   readonly populate: Array<string>;
 }
+
 interface OriginalListQuery {
   readonly sort?: string;
   readonly direction?: string;
@@ -27,8 +28,10 @@ interface OriginalListQuery {
   readonly search?: string;
   readonly q?: string;
   readonly filter?: string;
-  readonly [key: string]: any; // tslint:disable-line: no-mixed-interface
+
+  readonly [key: string]: any;
 }
+
 interface ListQuery {
   readonly query: {
     readonly [key: string]: string | Array<string> | any;
@@ -44,6 +47,7 @@ const DEFAULT_QUERY: Query = {
   select: [],
   populate: [],
 };
+
 const DEFAULT_LIST_QUERY: ListQuery = {
   query: {},
   select: [],

@@ -1,6 +1,6 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ExpressAdapter } from '@bull-board/express';
 import { createBullBoard } from '@bull-board/api';
@@ -9,8 +9,10 @@ import Queue from 'bull';
 import * as bodyParser from 'body-parser';
 import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
 import { join } from 'path';
-import * as csurf from 'csurf';
+import csurf from 'csurf';
 import { ValidationPipeOptions } from '@nestjs/common/pipes/validation.pipe';
+import { GatewayExceptionsFilter } from '../../exceptions';
+import { LogService } from '../../log';
 
 export class GatewayService {
   static async bootstrap(app: NestExpressApplication) {
@@ -18,35 +20,23 @@ export class GatewayService {
     const gatewayConfig = config.get<GatewayConfig>('gateway');
     if (!gatewayConfig) return;
 
-    const logger = new Logger('GatewayService');
+    const logger = await app.resolve(LogService);
+    logger.setContext(GatewayService.name);
 
+    app.useGlobalFilters(new GatewayExceptionsFilter(logger));
     app.setGlobalPrefix(gatewayConfig.contextPath);
     app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-    GatewayService.setupSecurity(app);
     GatewayService.setupSwagger(app);
     GatewayService.setupValidationPipe(app);
     GatewayService.setUpBullBoard(app);
     GatewayService.setUpViewEngine(app);
+    GatewayService.setupSecurity(app);
 
+    const gatewayName = config.get('description') || 'Gateway';
     const port = gatewayConfig.port ?? DEFAULT_GATEWAY_PORT;
-    await app.listen(port, () => logger.log(`Gateway is listening on port ${port}`));
-  }
-
-  /**
-   * Cross-site request forgery (also known as CSRF or XSRF) is a type of malicious exploit of a website
-   * where unauthorized commands are transmitted from a user that the web application trusts.
-   * To mitigate this kind of attack you can use the csurf package.
-   * @private
-   */
-  private static setupSecurity(app: NestExpressApplication) {
-    const config = app.get(ConfigService);
-    const gatewayConfig = config.get<GatewayConfig>('gateway');
-    if (gatewayConfig.csrf) {
-      app.use(csurf());
-    }
-    app.enableCors();
+    await app.listen(port, () => logger.info(`%s is listening on port %s`, gatewayName, port));
   }
 
   private static setupSwagger(app: NestExpressApplication) {
@@ -69,10 +59,13 @@ export class GatewayService {
     SwaggerModule.setup('swagger', app, document, { swaggerUrl: 'swagger' });
   }
 
-  private static setUpViewEngine(app: NestExpressApplication) {
-    app.useStaticAssets(join(__dirname, '..', 'public'));
-    app.setBaseViewsDir(join(__dirname, '..', 'views'));
-    app.setViewEngine('hbs');
+  private static setupValidationPipe(app: NestExpressApplication) {
+    const config = app.get(ConfigService);
+    const gatewayConfig = config.get<GatewayConfig>('gateway');
+    if (gatewayConfig?.pipes && gatewayConfig?.pipes !== 'off') {
+      const defaultPipe: ValidationPipeOptions = { transform: true, whitelist: true, forbidNonWhitelisted: true };
+      app.useGlobalPipes(new ValidationPipe({ ...defaultPipe, ...gatewayConfig.pipes }));
+    }
   }
 
   private static setUpBullBoard(app: NestExpressApplication) {
@@ -91,12 +84,22 @@ export class GatewayService {
     }
   }
 
-  private static setupValidationPipe(app: NestExpressApplication) {
+  private static setUpViewEngine(app: NestExpressApplication) {
+    app.useStaticAssets(join(__dirname, '..', 'public'));
+    app.setBaseViewsDir(join(__dirname, '..', 'views'));
+    app.setViewEngine('hbs');
+  }
+
+  /**
+   * Cross-site request forgery (also known as CSRF or XSRF) is a type of malicious exploit of a website
+   * where unauthorized commands are transmitted from a user that the web application trusts.
+   * To mitigate this kind of attack you can use the csurf package.
+   * @private
+   */
+  private static setupSecurity(app: NestExpressApplication) {
     const config = app.get(ConfigService);
     const gatewayConfig = config.get<GatewayConfig>('gateway');
-    if (gatewayConfig?.pipes && gatewayConfig?.pipes !== 'off') {
-      const defaultPipe: ValidationPipeOptions = { transform: true, whitelist: true, forbidNonWhitelisted: true };
-      app.useGlobalPipes(new ValidationPipe({ ...defaultPipe, ...gatewayConfig.pipes }));
-    }
+    if (gatewayConfig.csrf) app.use(csurf());
+    if (gatewayConfig.cors) app.enableCors(gatewayConfig.cors);
   }
 }

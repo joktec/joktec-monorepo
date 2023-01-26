@@ -1,6 +1,8 @@
 import { makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
 import { startCase } from 'lodash';
 
+export { Counter, Histogram } from 'prom-client';
+export { InjectMetric } from '@willsoto/nestjs-prometheus';
 export * from './metric.module';
 
 export const CounterProviders = (

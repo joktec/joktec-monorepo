@@ -1,6 +1,6 @@
-import { AppConfig, config } from '../../config';
 import { Controller, Get } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
+import { AppConfig, initConfig } from '../../config';
 import { toBool } from '../../utils';
 
 @Controller()
@@ -8,7 +8,7 @@ export class GatewayRest {
   @Get('/')
   @ApiResponse({ type: Object })
   async getHello() {
-    const appConfig: AppConfig = await config();
+    const appConfig: AppConfig = initConfig();
     return {
       name: appConfig.name.replace('@', '').replace('/', '-'),
       description: appConfig.description,

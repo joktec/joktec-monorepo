@@ -6,8 +6,8 @@ const UUID_COMPONENTS = 4;
 const BASE_16 = 16;
 
 // Object
-export const flattenKeys = (obj: object, currentPath: string | null) => {
-  let paths = [];
+export const flattenKeys = (obj: object, currentPath: string | null): string[] => {
+  let paths: string[] = [];
 
   for (const k in obj) {
     if (isPlainObject(obj[k]) || isArray(obj[k])) {

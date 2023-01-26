@@ -92,6 +92,7 @@ export const timestampsPlugin = (schema: Schema, _: any) => {
   Object.assign(schema.methods, {
     $create() {
       (this as any).set({
+        _id: uuid(),
         createdAt: Date.now(),
         createDate: Date.now(),
       });

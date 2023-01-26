@@ -4,8 +4,9 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
 import { GatewayConfig, GatewayService, MicroConfig, MicroService } from '../infras';
+import { IMicroserviceConfig } from '../infras/micro/micro.config';
 
-export type ApplicationOptions = NestApplicationOptions;
+export type ApplicationOptions = NestApplicationOptions & { microserviceConfig: IMicroserviceConfig };
 export type Module = NestModule;
 
 export class Application {
@@ -33,10 +34,7 @@ export class Application {
   }
 
   static async bootstrap(module: any, opts?: ApplicationOptions) {
-    const app = await NestFactory.create<NestExpressApplication>(module, {
-      logger: ['debug', 'error', 'warn'],
-      ...opts,
-    });
+    const app = await NestFactory.create<NestExpressApplication>(module, { logger: console, ...opts });
 
     const logger = app.get(Logger);
     app.useLogger(logger);
@@ -48,6 +46,6 @@ export class Application {
     if (gatewayConfig) await GatewayService.bootstrap(app);
 
     const microConfig = config.get<MicroConfig>('micro');
-    if (microConfig) await MicroService.bootstrap(app);
+    if (microConfig) await MicroService.bootstrap(app, opts?.microserviceConfig);
   }
 }

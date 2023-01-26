@@ -1,4 +1,4 @@
-import { IsString, IsOptional, validateSync, ValidationError } from 'class-validator';
+import { IsString, IsOptional, validateSync, ValidationError } from '../validation';
 
 export const DEFAULT_CON_ID = 'default';
 
