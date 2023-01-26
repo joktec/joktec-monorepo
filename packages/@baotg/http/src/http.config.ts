@@ -1,6 +1,5 @@
-import { AxiosRequestConfig, Method, AxiosBasicCredentials as Auth, AxiosError } from 'axios';
-import { RetryConfig } from 'retry-axios';
 import {
+  ClientConfig,
   IsString,
   IsOptional,
   IsPositive,
@@ -9,13 +8,14 @@ import {
   IsNotEmpty,
   IsTypes,
   LogService,
-  ClientConfig,
 } from '@baotg/core';
-import { HttpMethod } from './models';
+import { AxiosRequestConfig, Method, AxiosBasicCredentials as Auth, AxiosError } from 'axios';
+import { RetryConfig } from 'retry-axios';
 import mergeDeep from 'merge-deep';
+import { HttpMethod } from './models';
 
 const defaultRetryConfig = {
-  retry: 3,
+  retry: 0,
   retryDelay: 1000,
   httpMethodsToRetry: ['GET', 'POST'],
 };
@@ -35,7 +35,7 @@ class AxiosBasicCredentials {
   }
 }
 
-export class HttpClientConfig extends ClientConfig implements AxiosRequestConfig {
+export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
   @IsOptional()
   @IsString()
   url?: string;
@@ -47,9 +47,6 @@ export class HttpClientConfig extends ClientConfig implements AxiosRequestConfig
   @IsOptional()
   @IsString()
   baseURL?: string;
-
-  headers?: any;
-  params?: any;
 
   @IsOptional()
   @IsPositive()
@@ -68,11 +65,21 @@ export class HttpClientConfig extends ClientConfig implements AxiosRequestConfig
   @IsPositive()
   maxRedirects: number = 3;
 
-  raxConfig: RetryConfig = defaultRetryConfig;
+  @IsOptional()
+  headers?: any;
 
-  constructor(props: HttpClientConfig) {
+  @IsOptional()
+  params?: any;
+
+  @IsOptional()
+  raxConfig?: RetryConfig;
+
+  constructor(props: HttpConfig) {
     super(props);
     mergeDeep(this, props);
+    if (!props.raxConfig) this.raxConfig = defaultRetryConfig;
+    if (!props.headers) this.headers = { accept: 'application/json' };
+    if (!props.params) this.params = {};
   }
 
   onRetryAttempt(log: LogService) {
