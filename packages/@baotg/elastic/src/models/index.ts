@@ -1,2 +1,2 @@
-export * from './es-write.option';
-export * from './es-read.option';
+export * from './elastic.request';
+export * from './elastic.response';

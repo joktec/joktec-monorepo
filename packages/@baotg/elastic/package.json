@@ -4,7 +4,7 @@
   "version": "1.0.20",
   "private": false,
   "license": "UNLICENSED",
-  "author": "JobHopin",
+  "author": "BaoTran",
   "main": "dist/index",
   "types": "dist/index",
   "typings": "dist/index.d.ts",
@@ -26,14 +26,22 @@
   },
   "dependencies": {
     "@baotg/core": "1.0.20",
-    "@elastic/elasticsearch": "^8.4.0",
-    "@nestjs/elasticsearch": "^9.0.0"
+    "@elastic/elasticsearch": "^8.5.0",
+    "@nestjs/axios": "^1.0.1",
+    "@nestjs/elasticsearch": "^9.0.0",
+    "axios": "^1.2.1",
+    "lodash": "^4.17.21",
+    "merge-deep": "^3.0.3",
+    "retry-axios": "^3.0.0",
+    "rxjs": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/merge-deep": "^3.0.0"
   },
   "lint-staged": {
     "*.ts": [
-      "yarn format",
-      "yarn lint",
-      "git add ."
+      "prettier --write --ignore-path ./.prettierignore",
+      "eslint --fix"
     ]
   },
   "config": {
