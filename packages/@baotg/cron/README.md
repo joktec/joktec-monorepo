@@ -1,15 +1,15 @@
 <div align="center">
-  <h1>jobhopin-http-client</h1>
+  <h1>jobhopin-redis</h1>
   <p>Core Libraries such as type definitions, api clients and utils serving for backend services and frontend services</p>
   </div>
 </div>
 
 ## Installation
 
-Use the package manager to install @baotg/http-client (if you have been published to npm registry)
+Use the package manager to install @baotg/redis (if you have been published to npm registry)
 
 ```bash
-yarn add @baotg/http-client
+yarn add @baotg/redis
 ```
 
 ## Local Development
@@ -20,12 +20,12 @@ For development, a package can be linked into another project. This is often use
   yarn link
 ```
 
-Use `yarn link @baotg/http-client` to link another package that you’d like to test into your current project.
+Use `yarn link @baotg/redis` to link another package that you’d like to test into your current project.
 
 ## Usage
 
 ```javascript
-import { isDev } from '@baotg/http-client/dist/utils';
+import { isDev } from '@baotg/redis/dist/utils';
 
 isDev();
 ```

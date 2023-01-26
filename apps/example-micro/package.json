@@ -2,7 +2,7 @@
   "name": "@baotg/example-micro",
   "description": "JobHopin - Example Microservice",
   "version": "0.1.0",
-  "author": "JobHopin",
+  "author": "BaoTran",
   "private": true,
   "license": "UNLICENSED",
   "files": [
@@ -34,8 +34,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@baotg/core": "^1.0.18",
-    "@baotg/elastic": "^1.0.18",
+    "@baotg/core": "^1.0.20",
+    "@baotg/elastic": "^1.0.20",
     "@baotg/graphql": "^1.0.5"
   },
   "lint-staged": {
