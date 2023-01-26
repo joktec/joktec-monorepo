@@ -1,26 +1,30 @@
-import { PageableRequest, PageableResponse } from './models';
 import { Knex } from 'knex';
+import { PageableRequest, PageableResponse } from './models';
 
 export interface MysqlClient {
-  getKnex(conId?: string): Knex.Client;
+  getKnex(conId?: string): Knex;
 
-  schema(conId?: string): Knex.SchemaBuilder;
-
-  qb(table: string, conId?: string): Knex.QueryBuilder;
+  getSlaveKnex(node?: string, conId?: string): Knex;
 
   exec<T>(qb: Knex.QueryBuilder): Promise<T | T[]>;
 }
 
-export interface MysqlRepoClient<T, ID> {
+export interface MysqlReadRepoClient<T, ID> {
   findAll(req: PageableRequest): Promise<PageableResponse<T>>;
 
   count(req: PageableRequest): Promise<number>;
 
-  findOne(id: ID): Promise<T>;
+  findOne(id: ID): Promise<T | null>;
 
-  insert(entity: T): Promise<void>;
+  findMany(ids: ID[]): Promise<T[]>;
+}
 
-  update(entity: T): Promise<void>;
+export interface MysqlWriteRepoClient<T, ID> {
+  insert(entity: T): Promise<T>;
 
-  delete(entity: T): Promise<void>;
+  update(id: ID, entity: T): Promise<T>;
+
+  updateFields(id: ID, updatedValue: object): Promise<void>;
+
+  delete(ids: ID | ID[]): Promise<number>;
 }

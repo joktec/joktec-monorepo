@@ -1,9 +1,9 @@
-import { Module, Global, CoreModule } from '@baotg/core';
+import { Global, Module } from '@baotg/core';
 import { MysqlService } from './mysql.service';
 
 @Global()
 @Module({
-  imports: [CoreModule],
+  imports: [],
   providers: [MysqlService],
   exports: [MysqlService],
 })

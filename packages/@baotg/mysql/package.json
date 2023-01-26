@@ -4,12 +4,13 @@
   "version": "1.0.20",
   "private": false,
   "license": "UNLICENSED",
-  "author": "JobHopin",
+  "author": "BaoTran",
   "main": "dist/index",
   "types": "dist/index",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "publishConfig": {
     "access": "public"
@@ -23,14 +24,14 @@
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
     "dep:upgrade": "ncu -p yarn -f /^@baotg*/ -u",
-    "gen:entity": "./bin/generate-entity.ts && yarn format && yarn lint"
+    "gen:entity": "./bin/generate-entity.sh && yarn format && yarn lint"
   },
   "dependencies": {
     "@baotg/core": "1.0.20",
     "knex": "^2.3.0",
     "knex-schema-inspector": "^3.0.0",
+    "lodash": "^4.17.21",
     "mysql": "2.18.1",
-    "mysql2": "^2.3.3",
     "pluralize": "^8.0.0"
   },
   "devDependencies": {
@@ -39,9 +40,8 @@
   },
   "lint-staged": {
     "*.ts": [
-      "yarn format",
-      "yarn lint",
-      "git add ."
+      "prettier --write --ignore-path ./.prettierignore",
+      "eslint --fix"
     ]
   },
   "config": {
