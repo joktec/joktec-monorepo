@@ -1,0 +1,46 @@
+{
+  "name": "@baotg/storage",
+  "description": "JobHopin - Storage Service",
+  "version": "0.0.0",
+  "private": false,
+  "license": "UNLICENSED",
+  "author": "BaoTran",
+  "main": "dist/index",
+  "types": "dist/index",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "purge": "rm -rf node_modules",
+    "dev": "rollup -cw",
+    "prebuild": "yarn clean",
+    "build": "nest build -p tsconfig.json",
+    "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
+    "lint": "eslint --fix \"./src/**/*.ts\"",
+    "dep:upgrade": "ncu -p yarn -f /^@baotg*/ -u"
+  },
+  "dependencies": {
+    "@baotg/core": "1.0.20",
+    "lodash": "^4.17.21",
+    "aws-sdk": "^2.1267.0"
+  },
+  "devDependencies": {
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write --ignore-path ./.prettierignore",
+      "eslint --fix"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "gitHead": "b74397663527dd2bd67714cddaefe03c1b9112d2"
+}
