@@ -1,155 +1,159 @@
-version: "3.7"
+version: '3.8'
+
 services:
-  recruiter-gw:
-    build: ./src/gateways/recruiter
-    restart: always
-    hostname: recruiter
-    env_file:
-      - .env
+  mongo:
+    container_name: jhi-mongo
+    image: mongo:4.2.2
     ports:
-      - "8082:3000"
-    networks:
-      - backend
-      - frontend
+      - '27017:27017'
     volumes:
-      - ./src/gateways/recruiter:/var/www/recruiter-gw
-    command: "npm run build && npm run start:prod"
-
-  jobseeker-gw:
-    build: ./src/gateways/jobseeker
+      - .docker/mongo/data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=StrongP%40ssword
+      - MONGODB_USER=main
+      - MONGODB_PASS=StrongP%40ssword
+      - MONGODB_DATABASE=main
     restart: always
-    hostname: jobseeker
-    env_file:
-      - .env
+    networks:
+      - jhi-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo db:27017/speech-api --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  mysql:
+    container_name: jhi-mysql
+    image: mysql:8.0.30
     ports:
-      - "8080:3000"
-    networks:
-      - backend
-      - frontend
+      - '3306:3306'
     volumes:
-      - ./src/gateways/jobseeker:/var/www/jobseeker-gw
-    command: "npm run build && npm run start:prod"
-
-  public:
-    build: ./src/gateways/public
+      - .docker/mysql/data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=jobhop_dev
+      - MYSQL_USER=jobhop_dev
+      - MYSQL_PASSWORD=tDYidUDJscyoTM7W
+      - MYSQL_ROOT_PASSWORD=FZyNFRNUcnuDvJD5
     restart: always
-    hostname: public
-    env_file:
-      - .env
-    ports:
-      - "8080:3000"
     networks:
-      - backend
-      - frontend
-    volumes:
-      - ./src/gateways/public:/var/www/public
-    command: "npm run build && npm run start:prod"  
+      - jhi-network
 
-  quizz:
-    build: ./src/microservices/quizz
-    restart: always
-    hostname: quizz
-    env_file:
-      - .env
-    networks:
-      - backend
-    volumes:
-      - ./src/microservices/quizz:/var/www/quizz
-    command: "npm run build && npm run start:prod"
-
-  lucky-spin:
-    build: ./src/microservices/lucky-spin
-    restart: always
-    hostname: lucky-spin
-    env_file:
-      - .env
-    networks:
-      - backend
-    volumes:
-      - ./src/microservices/lucky-spin:/var/www/lucky-spin
-    command: "npm run build && npm run start:prod"
-
-  candidate:
-    build: ./src/microservices/candidate
-    restart: always
-    hostname: candidate
-    env_file:
-      - .env
-    networks:
-      - backend
-    volumes:
-      - ./src/microservices/candidate:/var/www/candidate
-    command: "npm run build && npm run start:prod"
-
-  recruiter:
-    build: ./src/microservices/recruiter
-    restart: always
-    hostname: recruiter
-    env_file:
-      - .env
-    networks:
-      - backend
-    volumes:
-      - ./src/microservices/recruiter:/var/www/recruiter
-    command: "npm run build && npm run start:prod"  
-
-  notification:
-    build: ./src/microservices/notification
-    restart: always
-    hostname: notification
-    env_file:
-      - .env
-    networks:
-      - backend
-    volumes:
-      - ./src/microservices/notification:/var/www/notification
-    command: "npm run build && npm run start:prod"  
-
-  
   rabbitmq:
+    container_name: jhi-rabbitmq
     image: rabbitmq:3-management
-    container_name: rabbitmq_management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - .docker/rabbitmq/data:/var/lib/rabbitmq/mnesia
     environment:
       - RABBITMQ_DEFAULT_USER=myuser
       - RABBITMQ_DEFAULT_PASS=mypassword
+    restart: always
+    networks:
+      - jhi-network
+
+  redis:
+    container_name: jhi-redis
+    image: redis:6.0.5
     ports:
-      # AMQP protocol port
-      - "5672:5672"
-      # HTTP management UI
-      - "15672:15672"
-    restart: always
-    networks:
-      - frontend
-      - backend
-
-  
-  migration-mysql:
-    build: ./src/microservices/migration-mysql
-    restart: always
-    hostname: migration-mysql
-    env_file:
-      - .env
-    networks:
-      - backend
+      - '6379:6379'
     volumes:
-      - ./src/microservices/migration-mysql:/var/www/migration-mysql
-    command: "npm run build && npm run start:prod"  
-
-  migration-mongo:
-    build: ./src/microservices/migration-mongo
+      - .docker/redis/data:/var/lib/redis/data
+      - .docker/redis/config/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server --save 20 1 --loglevel warning --requirepass jC2qe6890UxcxPKv
     restart: always
-    hostname: migration-mongo
-    env_file:
-      - .env
     networks:
-      - backend
-    volumes:
-      - ./src/microservices/migration-mongo:/var/www/migration-mongo
-    command: "npm run build && npm run start:prod"     
+      - jhi-network
+    healthcheck:
+      test: [ 'CMD', 'redis-cli','ping' ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
+  setup:
+    container_name: jhi-elk-setup
+    build:
+      context: setup/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    init: true
+    volumes:
+      - ./docker/setup/entrypoint.sh:/entrypoint.sh:ro,Z
+      - ./docker/setup/helpers.sh:/helpers.sh:ro,Z
+      - ./docker/setup/roles:/roles:ro,Z
+      - setup:/state:Z
+    environment:
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      METRICBEAT_INTERNAL_PASSWORD: ${METRICBEAT_INTERNAL_PASSWORD:-}
+      FILEBEAT_INTERNAL_PASSWORD: ${FILEBEAT_INTERNAL_PASSWORD:-}
+      HEARTBEAT_INTERNAL_PASSWORD: ${HEARTBEAT_INTERNAL_PASSWORD:-}
+      MONITORING_INTERNAL_PASSWORD: ${MONITORING_INTERNAL_PASSWORD:-}
+      BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
+    networks:
+      - jhi-network
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    container_name: jhi-elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+    volumes:
+      - .docker/elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
+      - .docker/elk/elasticsearch/data:/usr/share/elasticsearch/data:Z
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      node.name: elasticsearch
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      discovery.type: single-node
+    networks:
+      - jhi-network
+
+  logstash:
+    container_name: jhi-logstash
+    image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
+    volumes:
+      - .docker/elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
+      - .docker/elk/logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
+    ports:
+      - "5044:5044"
+      - "50000:50000/tcp"
+      - "50000:50000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+    networks:
+      - jhi-network
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    container_name: jhi-kibana
+    image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
+    volumes:
+      - .docker/elk/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+    ports:
+      - "5601:5601"
+    environment:
+      KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    networks:
+      - jhi-network
+    depends_on:
+      - elasticsearch
+
+# Docker Networks
 networks:
-  backend:
+  jhi-network:
+    name: jhi-network
     driver: bridge
-  frontend:
-    external:
-      name: infrastructure
+
+volumes:
+  setup:
+  elasticsearch:

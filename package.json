@@ -17,7 +17,7 @@
     "apps/*"
   ],
   "scripts": {
-    "postinstall": "chmod u+x ./bin/*",
+    "postinstall": "chmod u+x ./bin/* && husky install",
     "ls": "lerna ls -la && nx print-affected",
     "dev": "lerna run dev",
     "build": "lerna run build",
