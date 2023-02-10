@@ -55,9 +55,8 @@
   },
   "lint-staged": {
     "*.ts": [
-      "yarn format",
-      "yarn lint",
-      "git add ."
+      "prettier --write --ignore-path ./.prettierignore",
+      "eslint --fix"
     ]
   },
   "config": {
