@@ -12,3 +12,8 @@ export interface StorageDownloadResponse {
   eTag?: string;
   contentType?: string;
 }
+
+export interface StoragePreSignedResponse {
+  key: string;
+  url: string;
+}

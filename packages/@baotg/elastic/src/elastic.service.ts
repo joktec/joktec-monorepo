@@ -29,13 +29,8 @@ export class ElasticService extends AbstractClientService<ElasticConfig, NestHtt
     // Do nothing
   }
 
-  private getBaseUrl(index: string, conId: string = DEFAULT_CON_ID): string {
-    const { protocol, host, port } = this.getConfig(conId);
-    return `${protocol}://${host}:${port}/${index}`;
-  }
-
   private getQueryUrl(id: string, index: string, conId: string = DEFAULT_CON_ID): string {
-    const baseUrl = this.getBaseUrl(index, conId);
+    const baseUrl = this.getConfig(conId).buildUrl(index);
     return `${baseUrl}/_doc/${id}`;
   }
 
@@ -45,7 +40,7 @@ export class ElasticService extends AbstractClientService<ElasticConfig, NestHtt
     conId: string = DEFAULT_CON_ID,
   ): Promise<EsSearchResponse<TDoc, TAgg>> {
     const config: AxiosRequestConfig = mergeDeep(cloneDeep(this.getConfig(conId)), {
-      url: this.getBaseUrl(index) + '/_search',
+      url: this.getConfig(conId).buildUrl(index) + '/_search',
       method: 'GET',
       data: { ...req },
       params: { pretty: true },

@@ -20,10 +20,8 @@ export const HTTP_TOTAL_METRIC = 'http_total';
 @Injectable()
 export class HttpMetricService {
   constructor(
-    @InjectMetric(HTTP_DURATION_SECONDS_METRIC)
-    private httpDurationSecondsMetrics: Histogram<string>,
-    @InjectMetric(HTTP_TOTAL_METRIC)
-    private httpTotalMetric: Counter<string>,
+    @InjectMetric(HTTP_DURATION_SECONDS_METRIC) private httpDurationSecondsMetrics: Histogram<string>,
+    @InjectMetric(HTTP_TOTAL_METRIC) private httpTotalMetric: Counter<string>,
   ) {}
 
   duration(path: string) {

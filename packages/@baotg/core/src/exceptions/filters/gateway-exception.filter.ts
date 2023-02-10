@@ -75,7 +75,7 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
 
   private handleGqlException(exception: any, host: ArgumentsHost): GraphQLError {
     let message: string = exception?.message || ExceptionMessage.INTERNAL_SERVER_ERROR;
-    let status: number = exception?.status || ExceptionStatus.INTERNAL_SERVER_ERROR;
+    let status: string | number = exception?.status || ExceptionStatus.INTERNAL_SERVER_ERROR;
     let data: any = exception?.data;
 
     if (exception instanceof RpcException) {
@@ -99,7 +99,6 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
     // Hidden message in Production
     const env: ENV = (process.env['NODE_ENV'] ?? ENV.DEV) as ENV;
     if (env === ENV.PROD) {
-      // message = ExceptionStatus[status];
       data = {};
     }
 

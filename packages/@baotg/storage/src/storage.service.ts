@@ -8,9 +8,11 @@ import {
   StorageUploadResponse,
   GetObjectRequest,
   PutObjectRequest,
+  StoragePreSignedRequest,
+  StoragePreSignedResponse,
 } from './models';
 import path from 'path';
-import { DownloadRedisMetric, UploadRedisMetric } from './storage.metric';
+import { StorageMetric, StorageMetricType } from './storage.metric';
 
 const RETRY_OPTS = 'storage.retry';
 
@@ -37,7 +39,7 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
     // Do nothing
   }
 
-  @DownloadRedisMetric()
+  @StorageMetric(StorageMetricType.DOWNLOAD)
   async download(req: StorageDownloadRequest, conId: string = DEFAULT_CON_ID): Promise<StorageDownloadResponse> {
     const config = this.getConfig(conId);
     const key = req.key.replace(config.endpoint, '');
@@ -51,7 +53,7 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
     };
   }
 
-  @UploadRedisMetric()
+  @StorageMetric(StorageMetricType.UPLOAD)
   async upload(req: StorageUploadRequest, conId: string = DEFAULT_CON_ID): Promise<StorageUploadResponse> {
     const config = this.getConfig(conId);
     const key = path.posix.join(req.prefix || '', req.filename);
@@ -68,5 +70,21 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
       link: config.endpoint + '/' + key,
       eTag: data.ETag,
     };
+  }
+
+  @StorageMetric(StorageMetricType.PRE_SIGNED)
+  async preSignedUrl(req: StoragePreSignedRequest, conId: string = DEFAULT_CON_ID): Promise<StoragePreSignedResponse> {
+    const config = this.getConfig(conId);
+    const params = {
+      Bucket: req.bucket || config.bucket,
+      Key: req.key,
+      Expires: req.expires || 60 * 5,
+      ACL: req.acl || 'public-read',
+      ContentType: req.contentType,
+    };
+
+    const operation = req.operation || 'getObject';
+    const url: string = this.getClient(conId).getSignedUrl(operation, params);
+    return { url, key: req.key };
   }
 }

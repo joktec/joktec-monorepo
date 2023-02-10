@@ -91,4 +91,9 @@ export class ElasticConfig extends ClientConfig implements AxiosRequestConfig {
       log.error('%s %s error, currentRetryAttempt: %s', method, url, raxConfig.currentRetryAttempt);
     };
   }
+
+  public buildUrl(index: string): string {
+    const { protocol, host, port } = this;
+    return `${protocol}://${host}:${port}/${index}`;
+  }
 }

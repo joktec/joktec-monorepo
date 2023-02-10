@@ -6,10 +6,10 @@ export function httpExceptionHandler(err: AxiosError): Exception {
   // The request was made and the server responded with a status code that falls out of the range of 2xx
   if (err?.response) {
     const status: number = err.response?.status;
-    for (const statusKey in ExceptionStatus) {
-      if (status === toInt(ExceptionStatus[statusKey])) {
-        const msg = startCase(lowerCase(statusKey));
-        return new RuntimeException(msg, status, err.response?.data || err);
+    for (const message in ExceptionStatus) {
+      if (status === ExceptionStatus[message]) {
+        const msg = startCase(lowerCase(message));
+        return new RuntimeException(msg, startCase(message), err.response);
       }
     }
   }

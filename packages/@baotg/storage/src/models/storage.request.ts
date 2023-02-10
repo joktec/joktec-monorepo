@@ -27,3 +27,12 @@ export interface StorageDownloadRequest {
   bucket?: string;
   key: string;
 }
+
+export interface StoragePreSignedRequest {
+  operation: 'putObject' | 'getObject' | string;
+  key: string;
+  bucket?: string;
+  expires?: number;
+  acl?: StorageACL;
+  contentType?: string;
+}

@@ -7,16 +7,10 @@ import {
   InjectMetric,
 } from '@baotg/core';
 import { StorageConfig } from './storage.config';
-import { StorageDownloadResponse, StorageUploadResponse } from './models';
 
 export const TRACK_STATUS_STORAGE_METRIC = 'track_status_storage_metric';
 
-export enum UploadStatus {
-  SUCCESS = 'SUCCESS',
-  ERROR = 'ERROR',
-}
-
-export enum DownloadStatus {
+export enum StorageMetricStatus {
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
 }
@@ -24,6 +18,7 @@ export enum DownloadStatus {
 export enum StorageMetricType {
   UPLOAD = 'UPLOAD',
   DOWNLOAD = 'DOWNLOAD',
+  PRE_SIGNED = 'PRE_SIGNED',
 }
 
 @Injectable()
@@ -31,8 +26,8 @@ export class StorageMetricService {
   constructor(@InjectMetric(TRACK_STATUS_STORAGE_METRIC) private trackMetric: Counter<string>) {}
 
   track(
-    type: StorageMetricType,
-    status: UploadStatus | DownloadStatus,
+    type: StorageMetricType | string,
+    status: StorageMetricStatus | string,
     bucket: string,
     conId: string = DEFAULT_CON_ID,
   ) {
@@ -40,7 +35,7 @@ export class StorageMetricService {
   }
 }
 
-export const DownloadRedisMetric = () => {
+export const StorageMetric = (action: StorageMetricType | string) => {
   return BaseMethodDecorator(
     async (options: CallbackDecoratorOptions): Promise<any> => {
       const { method, args, services } = options;
@@ -49,43 +44,21 @@ export const DownloadRedisMetric = () => {
       const bucket = req.bucket || services.configService.get<StorageConfig>('storage').bucket;
 
       try {
-        const value: StorageDownloadResponse = await method(...args);
+        const value: any = await method(...args);
         const { key } = value;
-        services.pinoLogger.debug('`%s` Storage download file `%s` in bucket `%s` success', conId, key, bucket);
-        storageMetricService.track(StorageMetricType.DOWNLOAD, DownloadStatus.SUCCESS, bucket, conId);
+        services.pinoLogger.debug('`%s` Storage %s file `%s` in bucket `%s` success', conId, action, key, bucket);
+        storageMetricService.track(action, StorageMetricStatus.SUCCESS, bucket, conId);
         return value;
       } catch (error) {
         services.pinoLogger.error(
           error,
-          '`%s` Storage download file `%s` in bucket `%s` failed',
+          '`%s` Storage %s file `%s` in bucket `%s` failed',
           conId,
+          action,
           req.key,
           bucket,
         );
-        storageMetricService.track(StorageMetricType.DOWNLOAD, DownloadStatus.ERROR, bucket, conId);
-      }
-    },
-    [StorageMetricService],
-  );
-};
-
-export const UploadRedisMetric = () => {
-  return BaseMethodDecorator(
-    async (options: CallbackDecoratorOptions): Promise<any> => {
-      const { method, args, services } = options;
-      const [req, conId = DEFAULT_CON_ID] = args;
-      const storageMetricService: StorageMetricService = services.storageMetricService;
-      const bucket = req.bucket || services.configService.get<StorageConfig>('storage').bucket;
-
-      try {
-        const value: StorageUploadResponse = await method(...args);
-        const { key } = value;
-        services.pinoLogger.debug('`%s` Storage upload file `%s` in bucket `%s` success', conId, key, bucket);
-        storageMetricService.track(StorageMetricType.UPLOAD, UploadStatus.SUCCESS, req.bucket, conId);
-        return value;
-      } catch (error) {
-        services.pinoLogger.error(error, '`%s` Storage upload file `%s` in bucket `%s` failed', conId, req.key, bucket);
-        storageMetricService.track(StorageMetricType.UPLOAD, UploadStatus.ERROR, req.bucket, conId);
+        storageMetricService.track(action, StorageMetricStatus.ERROR, bucket, conId);
       }
     },
     [StorageMetricService],

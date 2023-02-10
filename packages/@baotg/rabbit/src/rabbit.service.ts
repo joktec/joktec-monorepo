@@ -170,7 +170,7 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
     await this.createChannel(conId);
   }
 
-  protected async stop(client: Connection): Promise<void> {
+  protected async stop(client: Connection, conId: string = DEFAULT_CON_ID): Promise<void> {
     await client.close();
   }
 }
