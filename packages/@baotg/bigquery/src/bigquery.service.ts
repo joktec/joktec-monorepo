@@ -3,7 +3,7 @@ import { BigQuery, Dataset, Table } from '@google-cloud/bigquery';
 import { File, TableMetadata } from '@google-cloud/bigquery/build/src/table';
 import { BigQueryRequest, BigQuerySchema, ISort, Row, SortOrder } from './models';
 import { BigQueryConfig } from './bigquery.config';
-import { BigQueryUtils } from './bigQueryUtils';
+import { BigQueryUtils } from './bigquery.utils';
 import { BigQueryClient } from './bigquery.client';
 
 const RETRY_OPTS = 'bigquery.retry';
