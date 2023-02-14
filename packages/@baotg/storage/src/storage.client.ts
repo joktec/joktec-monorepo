@@ -10,9 +10,11 @@ import {
   StorageUploadResponse,
 } from './models';
 
-export class S3Client extends AWS.S3 {}
+export interface StorageClient extends Client<StorageConfig, AWS.S3> {
+  bucketExists(bucket: string, conId?: string): Promise<boolean>;
 
-export interface StorageClient extends Client<StorageConfig, S3Client> {
+  makeBucket(bucket: string, conId?: string): Promise<void>;
+
   upload(req: StorageUploadRequest, conId?: string): Promise<StorageUploadResponse>;
 
   download(req: StorageDownloadRequest, conId?: string): Promise<StorageDownloadResponse>;

@@ -26,10 +26,13 @@
   },
   "dependencies": {
     "@baotg/core": "1.0.20",
+    "aws-sdk": "^2.1267.0",
+    "image-downloader": "^4.3.0",
     "lodash": "^4.17.21",
-    "aws-sdk": "^2.1267.0"
+    "merge-deep": "^3.0.3"
   },
   "devDependencies": {
+    "@types/merge-deep": "^3.0.0"
   },
   "lint-staged": {
     "*.ts": [

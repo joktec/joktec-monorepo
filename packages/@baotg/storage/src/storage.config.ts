@@ -1,5 +1,5 @@
-import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@baotg/core';
-import AWS from 'aws-sdk';
+import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toBool } from '@baotg/core';
+import { StorageACL } from './models';
 
 class StorageCredentials {
   @IsString()
@@ -9,20 +9,32 @@ class StorageCredentials {
   @IsString()
   @IsNotEmpty()
   secretAccessKey: string;
+
+  @IsString()
+  @IsOptional()
+  sessionToken?: string;
 }
 
-export class StorageConfig extends ClientConfig implements AWS.S3.Types.ClientConfiguration {
-  @IsString()
-  @IsNotEmpty()
-  bucket!: string;
-
+export class StorageConfig extends ClientConfig {
   @IsString()
   @IsNotEmpty()
   region!: string;
 
+  @IsTypes([StorageCredentials])
+  @IsNotEmpty()
+  credentials!: StorageCredentials;
+
+  @IsString()
+  @IsNotEmpty()
+  bucket?: string;
+
   @IsString()
   @IsOptional()
   endpoint?: string;
+
+  @IsString()
+  @IsOptional()
+  acl?: StorageACL;
 
   @IsBoolean()
   @IsOptional()
@@ -40,15 +52,31 @@ export class StorageConfig extends ClientConfig implements AWS.S3.Types.ClientCo
   @IsOptional()
   maxRetries?: number;
 
-  @IsTypes([StorageCredentials])
-  @IsNotEmpty()
-  credentials!: StorageCredentials;
+  @IsBoolean()
+  @IsOptional()
+  sslEnabled?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  s3ForcePathStyle?: boolean;
+
+  @IsInt()
+  @IsOptional()
+  partSize: number;
+
+  @IsOptional()
+  transport: object;
 
   constructor(props: StorageConfig) {
     super(props);
     Object.assign(this, {
       ...props,
+      region: props.region || 'ap-southeast-1',
+      acl: props.acl || StorageACL.PUBLIC_READ,
       credentials: { ...props.credentials },
+      sslEnabled: toBool(props.sslEnabled, false),
+      s3ForcePathStyle: toBool(props.s3ForcePathStyle, false),
+      useDualstack: toBool(props.useDualstack, false),
     });
   }
 }

@@ -7,7 +7,7 @@ export interface StorageUploadResponse {
 }
 
 export interface StorageDownloadResponse {
-  file: Buffer | Uint8Array | string | Readable;
+  file: Buffer | Uint8Array | string | Readable | ReadableStream;
   key: string;
   eTag?: string;
   contentType?: string;

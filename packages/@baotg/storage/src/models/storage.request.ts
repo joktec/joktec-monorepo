@@ -4,15 +4,20 @@ export type GetObjectRequest = AWS.S3.Types.GetObjectRequest;
 
 export type PutObjectRequest = AWS.S3.Types.PutObjectRequest;
 
-export type StorageACL =
-  | 'private'
-  | 'public-read'
-  | 'public-read-write'
-  | 'authenticated-read'
-  | 'aws-exec-read'
-  | 'bucket-owner-read'
-  | 'bucket-owner-full-control'
-  | string;
+export enum StorageACL {
+  PRIVATE = 'private',
+  PUBLIC_READ = 'public-read',
+  PUBLIC_READ_WRITE = 'public-read-write',
+  AUTHENTICATED_READ = 'authenticated-read',
+  AWS_EXEC_READ = 'aws-exec-read',
+  BUCKET_OWNER_READ = 'bucket-owner-read',
+  BUCKET_OWNER_FULL_CONTROL = 'bucket-owner-full-control',
+}
+
+export enum StorageOperation {
+  PUT_OBJECT = 'putObject',
+  GET_OBJECT = 'getObject',
+}
 
 export interface StorageUploadRequest {
   file: Buffer;
@@ -29,7 +34,7 @@ export interface StorageDownloadRequest {
 }
 
 export interface StoragePreSignedRequest {
-  operation: 'putObject' | 'getObject' | string;
+  operation: StorageOperation;
   key: string;
   bucket?: string;
   expires?: number;
