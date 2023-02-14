@@ -1,0 +1,10 @@
+mailer:
+  - conId: default
+    source: mailgun
+    apiKey: XXX
+    domain: mydomain.com
+    sender: admin@mydomain.com
+    templateDir: /template
+  - conId: secondary
+    source: sendgrid
+    apiKey: XXX
