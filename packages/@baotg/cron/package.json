@@ -27,13 +27,12 @@
   "dependencies": {
     "@baotg/core": "1.0.20",
     "@baotg/mysql": "1.0.20",
+    "@nestjs/schedule": "^2.2.0",
     "async": "^3.2.0",
     "async-retry": "^1.3.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.40"
-  },
-  "devDependencies": {
   },
   "lint-staged": {
     "*.ts": [

@@ -1,27 +1,13 @@
-import { mongoose } from '@typegoose/typegoose';
-import { PipelineStage, PopulateOptions, SortOrder } from 'mongoose';
+import mongoose, { PipelineStage, PopulateOptions } from 'mongoose';
+import { IBaseRequest } from '@baotg/core';
 
 export type ObjectId = mongoose.Types.ObjectId;
+export type MongoId = ObjectId | string;
 export type MongoBulkRequest = { conditions?: string[]; operator?: string; selectedFields?: string[] };
-export type MongoAggregation = PipelineStage;
-export type MongoCondition = { [key: string]: any };
-export type MongoLanguage = '*' | 'vi' | 'en';
-export type MongoSortOrder = SortOrder;
-export type MongoSort =
-  | string
-  | { [key: string]: MongoSortOrder | { $meta: 'textScore' } }
-  | [string, MongoSortOrder][]
-  | undefined
-  | null;
+export type IMongoAggregation = PipelineStage;
 
-export interface MongoQuery {
-  condition: MongoCondition;
-  language?: MongoLanguage;
-  limit?: number;
-  page?: number;
-  select?: string;
-  sort?: MongoSort;
+export interface IMongoRequest extends IBaseRequest {
   populate?: PopulateOptions[];
-  match?: MongoCondition;
+  match?: { [key: string]: any };
   lean?: boolean;
 }

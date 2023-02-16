@@ -1,1 +1,2 @@
-export * from './base.dto';
+export * from './base.request';
+export * from './base.response';

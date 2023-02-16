@@ -1,4 +1,4 @@
-import { ConfigService, Inject, LogService, sleep } from '@baotg/core';
+import { ConfigService, Inject, LogService, OnModuleInit, sleep } from '@baotg/core';
 import { CronRepo } from './cron.repo';
 import { Cron, CronStatus } from './models';
 import { CronQueue } from './cron.queue';
@@ -8,7 +8,7 @@ import { CronWorkerConfig } from './cron.worker.config';
 
 const FORMAT = 'YYYY-MM-DD';
 
-export abstract class CronWorker<C extends Cron> {
+export abstract class CronWorker<C extends Cron> implements OnModuleInit {
   @Inject() protected logService: LogService;
   @Inject() protected configService: ConfigService;
   @Inject() private cronRepo: CronRepo;
@@ -66,7 +66,7 @@ export abstract class CronWorker<C extends Cron> {
 
     await this.processOnCronStartHook(cron);
     nextCron.updatedAt = new Date();
-    await this.cronRepo.upsert(nextCron, this.getConfig().conId);
+    await this.cronRepo.upsert({}, nextCron);
 
     if (nextCron.status == CronStatus.DONE) {
       await this.processOnCronDoneHook(nextCron);

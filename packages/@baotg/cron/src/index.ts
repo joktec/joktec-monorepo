@@ -6,3 +6,4 @@ export * from './cron.processor.config';
 export * from './cron.batch.processor';
 export * from './cron.repo';
 export * from './models';
+export * from '@nestjs/schedule';

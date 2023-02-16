@@ -31,9 +31,8 @@ export {
 } from '@nestjs/common';
 export * from './app';
 
-// export * from './controllers';
 export * from './data-loaders';
 export * from './guards';
 export * from './middlewares';
-// export * from './repository';
-// export * from './services';
+export * from './models';
+export * from './repositories';

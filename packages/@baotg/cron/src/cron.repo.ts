@@ -1,60 +1,47 @@
 import { Injectable, DEFAULT_CON_ID } from '@baotg/core';
-import { MysqlRepo, MysqlService } from '@baotg/mysql';
-import { Cron, CronMapper, CronStatus } from './models';
-import { chain } from 'lodash';
+import { MysqlRepo, MysqlService, Op } from '@baotg/mysql';
+import { Cron, CronStatus } from './models';
+import { chunk } from 'lodash';
 
 @Injectable()
 export class CronRepo extends MysqlRepo<Cron, string> {
   constructor(protected mysqlService: MysqlService) {
-    super('cron', mysqlService, new CronMapper());
+    super(mysqlService, Cron, DEFAULT_CON_ID);
   }
 
-  public async upsert(cron: Cron, conId: string = DEFAULT_CON_ID): Promise<void> {
-    const q = this.mysqlService
-      .getClient(conId)
-      .table(this.table)
-      .insert(this.mapper.toPersistence(cron))
-      .onConflict('id')
-      .merge();
-    await this.exec(q);
-  }
-
-  public async batchUpsert(crons: Cron[], conId: string = DEFAULT_CON_ID): Promise<void> {
-    const trx = await this.mysqlService.getKnex(conId).transaction();
+  public async batchUpsert(crons: Cron[]): Promise<Cron[]> {
+    const transaction = await this.mysqlService.getClient(this.conId).transaction();
     try {
-      const chunkCrons = chain(crons).map(this.mapper.toPersistence).chunk(100).value();
+      const newCrons: Cron[] = [];
+      const chunkCrons = chunk(crons, 100);
       for (const subCrons of chunkCrons) {
-        await trx(this.table).insert(subCrons).onConflict('id').merge();
+        const rows = await this.model.bulkCreate(crons, { transaction, updateOnDuplicate: ['id'], returning: true });
+        newCrons.push(...rows);
       }
-      await trx.commit();
+      await transaction.commit();
+      return newCrons;
     } catch (e) {
-      await trx.rollback(e);
+      await transaction.rollback();
+      return crons;
     }
   }
 
-  public async getCrons(type: string, ids: string[] = [], conId: string = DEFAULT_CON_ID): Promise<Cron[]> {
-    const q = this.mysqlService
-      .getClient(conId)
-      .table(this.table)
-      .where('type', type)
-      .whereIn('id', ids)
-      .orderBy('date', 'asc');
-    const data = await this.exec(q);
-    return data.map(this.mapper.toDomain);
+  public async getCrons(type: string, ids: string[] = []): Promise<Cron[]> {
+    return this.model.findAll({
+      where: { type, id: { [Op.in]: ids } },
+      order: ['date', 'ASC'],
+    });
   }
 
-  public async getDependCrons(types: string[], date: string, conId: string = DEFAULT_CON_ID): Promise<Cron[]> {
-    if (!types.length) {
-      return [];
-    }
-    const q = this.mysqlService
-      .getClient(conId)
-      .table(this.table)
-      .whereIn('type', types)
-      .where('date', date)
-      .whereNot('status', CronStatus.DONE)
-      .orderBy('date', 'asc');
-    const data = await this.exec(q);
-    return data.map(this.mapper.toDomain);
+  public async getDependCrons(types: string[], date: string): Promise<Cron[]> {
+    if (!types.length) return [];
+    return this.model.findAll({
+      where: {
+        type: { [Op.in]: types },
+        date,
+        status: { [Op.not]: CronStatus.DONE },
+      },
+      order: ['date', 'ASC'],
+    });
   }
 }

@@ -1,15 +1,19 @@
 import {
-  ClassTransformOptions,
-  Expose,
-  instanceToPlain,
-  IsDate,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  plainToInstance,
-  Transform,
-} from '@baotg/core';
-import { MysqlMapper } from '@baotg/mysql';
+  AllowNull,
+  BeforeCreate,
+  BeforeUpdate,
+  Column,
+  CreatedAt,
+  DataType,
+  Default,
+  Is,
+  IsUppercase,
+  Model,
+  PrimaryKey,
+  Table,
+  UpdatedAt,
+} from '@baotg/mysql';
+import { snakeCase, upperCase } from 'lodash';
 
 export enum CronStatus {
   DONE = 'DONE',
@@ -17,52 +21,41 @@ export enum CronStatus {
   TODO = 'TODO',
 }
 
-@Expose({ name: 'cron' })
-export class Cron {
-  constructor(payload: Partial<Cron>) {
-    Object.assign(this, { ...payload });
-  }
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-  @Expose({ name: 'id' })
-  @IsNotEmpty()
-  @IsString()
+@Table({ tableName: 'cron', timestamps: true, underscored: true, paranoid: false })
+export class Cron extends Model<Cron> {
+  @PrimaryKey
   id!: string;
 
-  @Expose({ name: 'type' })
-  @IsNotEmpty()
-  @IsString()
+  @Column(DataType.STRING(255))
+  @AllowNull(false)
+  @IsUppercase
   type!: string;
 
-  @Expose({ name: 'date' })
-  @IsNotEmpty()
-  @IsDate()
+  @Column(DataType.STRING(10))
+  @AllowNull(false)
+  @Is(DATE_REGEX)
   date!: string;
 
-  @Expose({ name: 'status' })
-  @IsNotEmpty()
-  @Transform(({ value }) => CronStatus[value])
-  status: CronStatus;
+  @Column(DataType.ENUM(...Object.values(CronStatus)))
+  @AllowNull(false)
+  @Default(CronStatus.TODO)
+  status!: CronStatus;
 
-  @Expose({ name: 'data' })
-  @IsOptional()
-  @Transform(({ value }) => JSON.parse(value || '{}'), { toClassOnly: true })
-  @Transform(({ value }) => JSON.stringify(value || {}), { toPlainOnly: true })
-  data: object;
+  @Column(DataType.JSON)
+  @Default({})
+  data!: Record<string, any>;
 
-  @Expose({ name: 'created_at' })
-  @IsOptional()
-  @IsDate()
+  @CreatedAt
   createdAt?: Date;
 
-  @Expose({ name: 'updated_at' })
-  @IsOptional()
-  @IsDate()
+  @UpdatedAt
   updatedAt?: Date;
-}
 
-export class CronMapper extends MysqlMapper<Cron> {
-  toPersistence = (domainModel: Cron, opts?: ClassTransformOptions) =>
-    instanceToPlain<Cron>(new Cron(domainModel), opts);
-  toDomain = (persistenceModel: any, opts?: ClassTransformOptions): Cron =>
-    plainToInstance<Cron, any>(Cron, persistenceModel, opts);
+  @BeforeUpdate
+  @BeforeCreate
+  static makeUpperCase(instance: Cron) {
+    instance.type = upperCase(snakeCase(instance.type));
+  }
 }

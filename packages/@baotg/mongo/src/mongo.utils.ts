@@ -1,10 +1,19 @@
-import { ExceptionStatus, RuntimeException } from '@baotg/core';
+import { ExceptionStatus, ICondition, RuntimeException } from '@baotg/core';
 import { mongoose } from '@typegoose/typegoose';
-import { ObjectId } from './models';
+import { IMongoRequest, ObjectId } from './models';
 import { Buffer } from 'buffer';
 import { ObjectIdLike } from 'bson';
 import _ from 'lodash';
 import moment from 'moment';
+
+export const preHandleQuery = (query: IMongoRequest): ICondition => {
+  const { condition, keyword } = query;
+  const overrideCondition: ICondition = { ...condition };
+  if (keyword) {
+    Object.entries(keyword).map(([k, v]) => (overrideCondition[k] = { $regex: v, $options: 'i' }));
+  }
+  return overrideCondition;
+};
 
 export const preHandleBody = <T extends {} = any>(body: T): T => {
   const processBody: any = { ...body };

@@ -1,6 +1,3 @@
-export interface MongoPageableResponse<T> {
-  data: T[];
-  total: number;
-  page?: number;
-  pageSize?: number;
-}
+import { IPageableResponse } from '@baotg/core';
+
+export interface IMongoResponse<T> extends IPageableResponse<T> {}

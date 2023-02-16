@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mongo:
-    container_name: jhi-mongo
+    container_name: btg-mongo
     image: mongo:4.2.2
     ports:
       - '27017:27017'
@@ -16,7 +16,7 @@ services:
       - MONGODB_DATABASE=main
     restart: always
     networks:
-      - jhi-network
+      - btg-network
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo db:27017/speech-api --quiet
       interval: 30s
@@ -24,7 +24,7 @@ services:
       retries: 5
 
   mysql:
-    container_name: jhi-mysql
+    container_name: btg-mysql
     image: mysql:8.0.30
     ports:
       - '3306:3306'
@@ -37,10 +37,10 @@ services:
       - MYSQL_ROOT_PASSWORD=FZyNFRNUcnuDvJD5
     restart: always
     networks:
-      - jhi-network
+      - btg-network
 
   rabbitmq:
-    container_name: jhi-rabbitmq
+    container_name: btg-rabbitmq
     image: rabbitmq:3-management
     ports:
       - "5672:5672"
@@ -52,10 +52,10 @@ services:
       - RABBITMQ_DEFAULT_PASS=mypassword
     restart: always
     networks:
-      - jhi-network
+      - btg-network
 
   redis:
-    container_name: jhi-redis
+    container_name: btg-redis
     image: redis:6.0.5
     ports:
       - '6379:6379'
@@ -65,7 +65,7 @@ services:
     command: redis-server --save 20 1 --loglevel warning --requirepass jC2qe6890UxcxPKv
     restart: always
     networks:
-      - jhi-network
+      - btg-network
     healthcheck:
       test: [ 'CMD', 'redis-cli','ping' ]
       interval: 30s
@@ -73,7 +73,7 @@ services:
       retries: 5
 
   setup:
-    container_name: jhi-elk-setup
+    container_name: btg-elk-setup
     build:
       context: setup/
       args:
@@ -94,12 +94,12 @@ services:
       MONITORING_INTERNAL_PASSWORD: ${MONITORING_INTERNAL_PASSWORD:-}
       BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
     networks:
-      - jhi-network
+      - btg-network
     depends_on:
       - elasticsearch
 
   elasticsearch:
-    container_name: jhi-elasticsearch
+    container_name: btg-elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
     volumes:
       - .docker/elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
@@ -113,10 +113,10 @@ services:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
       discovery.type: single-node
     networks:
-      - jhi-network
+      - btg-network
 
   logstash:
-    container_name: jhi-logstash
+    container_name: btg-logstash
     image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
     volumes:
       - .docker/elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
@@ -130,12 +130,12 @@ services:
       LS_JAVA_OPTS: -Xms256m -Xmx256m
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
     networks:
-      - jhi-network
+      - btg-network
     depends_on:
       - elasticsearch
 
   kibana:
-    container_name: jhi-kibana
+    container_name: btg-kibana
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
     volumes:
       - .docker/elk/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
@@ -144,14 +144,14 @@ services:
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
     networks:
-      - jhi-network
+      - btg-network
     depends_on:
       - elasticsearch
 
 # Docker Networks
 networks:
-  jhi-network:
-    name: jhi-network
+  btg-network:
+    name: btg-network
     driver: bridge
 
 volumes:
