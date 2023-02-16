@@ -28,15 +28,14 @@
   },
   "dependencies": {
     "@baotg/core": "1.0.20",
-    "knex": "^2.3.0",
-    "knex-schema-inspector": "^3.0.0",
     "lodash": "^4.17.21",
     "mysql": "2.18.1",
-    "pluralize": "^8.0.0"
+    "sequelize": "^6.28.0",
+    "sequelize-typescript": "^2.1.5"
   },
   "devDependencies": {
-    "@types/knex": "^0.16.1",
-    "@types/mysql": "^2.15.17"
+    "@types/mysql": "^2.15.17",
+    "@types/validator": "^13.7.12"
   },
   "lint-staged": {
     "*.ts": [

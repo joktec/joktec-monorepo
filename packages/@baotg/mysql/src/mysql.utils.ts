@@ -1,79 +1,33 @@
-import { Knex } from 'knex';
-import { SearchKeyword, SortFiled, Where, WhereField } from './models';
-import { SchemaInspector } from 'knex-schema-inspector/lib/types/schema-inspector';
-import { chain, has, snakeCase, isEmpty } from 'lodash';
-import { isNil, toInt } from '@baotg/core';
+import { ICondition, IDataType, IKeyword, IOperation } from '@baotg/core';
+import { FindOptions, Op } from 'sequelize';
 
-const dateKeys = ['deleted_at', 'delete_at'];
-const boolKeys = ['is_deleted', 'is_delete', 'deleted'];
+export const preHandleQuery = (condition: ICondition | string | number, keyword?: IKeyword): FindOptions => {
+  const where: Record<string | symbol, any> = {};
 
-export const buildSorter = (qb: Knex.QueryBuilder, sortField: SortFiled) => {
-  chain(sortField || {})
-    .keys()
-    .filter(key => !isNil(key) && !isEmpty(key))
-    .map(key => qb.orderBy(snakeCase(key), sortField[key] || 'asc'))
-    .value();
-};
-
-export const buildKeyword = (qb: Knex.QueryBuilder, searchKeyword: SearchKeyword) => {
-  const { columns, value } = searchKeyword || {};
-  if (isEmpty(searchKeyword.columns) || !searchKeyword.value) return;
-
-  const keys: string[] = columns.map(snakeCase);
-  const firstKey = keys.shift();
-  qb.where(builder => {
-    builder.where(snakeCase(firstKey), 'like', `%${value}%`);
-    keys.map(key => builder.orWhere(snakeCase(key), 'like', `%${value}%`));
-  });
-};
-
-export const buildQuery = (qb: Knex.QueryBuilder, where: Where): void => {
-  where.map((clause: WhereField) => {
-    const [column, operation, value, not] = clause;
-    if (not) {
-      qb.whereNot(snakeCase(column), operation, value);
+  for (const [key, value] of Object.entries(condition)) {
+    if (key === '$and') {
+      where[Op.and] = (value as ICondition[]).map(c => preHandleQuery(c));
+    } else if (key === '$or') {
+      where[Op.or] = (value as ICondition[]).map(c => preHandleQuery(c));
+    } else if (typeof value === 'object') {
+      const entries = Object.entries(value) as [IOperation, IDataType][];
+      for (const [op, val] of entries) {
+        where[key] = {
+          ...where[key],
+          [Op[op]]: val,
+        };
+      }
     } else {
-      qb.where(snakeCase(column), operation, value);
-    }
-  });
-};
-
-export const excludeDeleted = async (qb: Knex.QueryBuilder, tableName: string, inspector: SchemaInspector) => {
-  for (const key of dateKeys) {
-    if (!(await inspector.hasColumn(tableName, key))) {
-      continue;
-    }
-
-    const column = await inspector.columnInfo(tableName, key);
-    if (['datetime', 'date', 'timestamp', 'time'].includes(column?.data_type)) {
-      qb.whereNull(key);
-      return;
+      where[key] = value;
     }
   }
 
-  for (const key of boolKeys) {
-    if (!(await inspector.hasColumn(tableName, key))) {
-      continue;
-    }
-
-    const column = await inspector.columnInfo(tableName, key);
-    if (['int', 'tinyint'].includes(column?.data_type)) {
-      qb.whereNot(key, 1);
-      return;
-    }
-  }
-};
-
-export const isDeleted = (entity: any): boolean => {
-  if (!entity) return true;
-
-  for (const key of dateKeys) {
-    if (has(entity, key) && !isNil(entity[key])) return true;
+  // Add keyword search
+  if (keyword) {
+    Object.entries(keyword).map(([key, value]) => {
+      where[key] = { [Op.substring]: value };
+    });
   }
 
-  for (const key of boolKeys) {
-    if (has(entity, key) && toInt(entity[key], 0) === 1) return true;
-  }
-
-  return false;
+  return { where };
 };

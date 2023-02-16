@@ -1,11 +1,3 @@
-export interface PageableResponse<T> {
-  total: number;
-  data: T[];
-}
+import { IPageableResponse } from '@baotg/core';
 
-export interface PaginationResponse<T> {
-  totalRecord?: number;
-  page?: number;
-  pageSize?: number;
-  collection?: T[];
-}
+export interface IMysqlResponse<T> extends IPageableResponse<T> {}

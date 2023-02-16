@@ -1,42 +1,70 @@
-import { Knex } from 'knex';
-import { ClientConfig, toBool, toInt } from '@baotg/core';
+import { ClientConfig, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toInt } from '@baotg/core';
 import { omit } from 'lodash';
+import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
+import { ConnectionOptions } from 'sequelize/types/sequelize';
 
-export const DEFAULT_SLAVE_NODE = 'default';
+export class MysqlSlaveConfig implements ConnectionOptions {
+  @IsString()
+  @IsNotEmpty()
+  host: string;
 
-export class MySqlSlaveConfig implements Knex.MySqlConnectionConfig {
-  node?: string;
-  host?: string;
-  port?: number;
-  username?: string;
-  password?: string;
-  database?: string;
-  charset?: string;
-  timezone?: string;
-  connectTimeout?: number;
-  debug?: boolean;
-  trace?: boolean;
+  @IsInt()
+  @IsNotEmpty()
+  port: number;
 
-  constructor(props: MySqlSlaveConfig) {
-    Object.assign(this, {
-      ...props,
-      node: props.node || DEFAULT_SLAVE_NODE,
-    });
+  @IsString()
+  @IsNotEmpty()
+  username: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+
+  @IsString()
+  @IsNotEmpty()
+  database: string;
+
+  constructor(props: MysqlSlaveConfig) {
+    Object.assign(this, { ...props });
   }
 }
 
-export class MysqlConfig extends ClientConfig implements Knex.MySqlConnectionConfig {
-  host?: string;
-  port?: number;
-  username?: string;
-  password?: string;
-  database?: string;
+export class MysqlConfig extends ClientConfig implements SequelizeOptions {
+  @IsString()
+  @IsNotEmpty()
+  host: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  port: number;
+
+  @IsString()
+  @IsNotEmpty()
+  username: string;
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+
+  @IsString()
+  @IsNotEmpty()
+  database: string;
+
+  @IsString()
+  @IsOptional()
   charset?: string;
+
+  @IsString()
+  @IsOptional()
   timezone?: string;
-  connectTimeout?: number;
-  debug?: boolean;
-  trace?: boolean;
-  slaves?: MySqlSlaveConfig[];
+
+  @IsString()
+  @IsOptional()
+  timeout?: number;
+
+  @IsTypes([MysqlSlaveConfig])
+  @IsOptional()
+  slaves?: MysqlSlaveConfig[];
 
   constructor(props: MysqlConfig) {
     super(props);
@@ -44,15 +72,13 @@ export class MysqlConfig extends ClientConfig implements Knex.MySqlConnectionCon
       ...props,
       host: props?.host || 'localhost',
       port: toInt(props?.port, 3306),
-      connectTimeout: toInt(props?.connectTimeout, 20000),
-      debug: toBool(props?.debug, false),
-      trace: toBool(props?.trace, false),
+      timeout: toInt(props?.timeout, 20000),
       slaves: [],
     });
 
     if (props?.slaves?.length) {
       const masterConfig = omit(props, ['slaves']);
-      this.slaves = props.slaves.map(slave => new MySqlSlaveConfig({ ...slave, ...masterConfig }));
+      this.slaves = props.slaves.map(slave => new MysqlSlaveConfig(Object.assign({}, slave, masterConfig)));
     }
   }
 }
