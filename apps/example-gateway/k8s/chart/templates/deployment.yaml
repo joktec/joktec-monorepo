@@ -37,12 +37,12 @@ spec:
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
-                  name: baotg-mysql{{ include "env.suffix" $ }}
+                  name: joktec-mysql{{ include "env.suffix" $ }}
                   key: username
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: baotg-mysql{{ include "env.suffix" $ }}
+                  name: joktec-mysql{{ include "env.suffix" $ }}
                   key: password
             {{- range .Values.envVariables }}
             - name: {{ .name }}

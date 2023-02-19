@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [1.0.20](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.19...@baotg/example-gateway@1.0.20) (2022-11-23)
+## [1.0.20](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.19...@joktec/example-gateway@1.0.20) (2022-11-23)
 
 
 ### Bug Fixes
@@ -15,23 +15,23 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.19](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.18...@baotg/example-gateway@1.0.19) (2022-11-13)
+## [1.0.19](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.18...@joktec/example-gateway@1.0.19) (2022-11-13)
 
-**Note:** Version bump only for package @baotg/example-gateway
-
-
-
-
-
-## [1.0.18](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.17...@baotg/example-gateway@1.0.18) (2022-11-13)
-
-**Note:** Version bump only for package @baotg/example-gateway
+**Note:** Version bump only for package @joktec/example-gateway
 
 
 
 
 
-## [1.0.17](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.16...@baotg/example-gateway@1.0.17) (2022-11-13)
+## [1.0.18](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.17...@joktec/example-gateway@1.0.18) (2022-11-13)
+
+**Note:** Version bump only for package @joktec/example-gateway
+
+
+
+
+
+## [1.0.17](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.16...@joktec/example-gateway@1.0.17) (2022-11-13)
 
 
 ### Bug Fixes
@@ -42,15 +42,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.16](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.15...@baotg/example-gateway@1.0.16) (2022-11-13)
+## [1.0.16](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.15...@joktec/example-gateway@1.0.16) (2022-11-13)
 
-**Note:** Version bump only for package @baotg/example-gateway
-
-
+**Note:** Version bump only for package @joktec/example-gateway
 
 
 
-## [1.0.15](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.14...@baotg/example-gateway@1.0.15) (2022-11-12)
+
+
+## [1.0.15](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.14...@joktec/example-gateway@1.0.15) (2022-11-12)
 
 
 ### Bug Fixes
@@ -61,7 +61,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.14](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.13...@baotg/example-gateway@1.0.14) (2022-11-12)
+## [1.0.14](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.13...@joktec/example-gateway@1.0.14) (2022-11-12)
 
 
 ### Bug Fixes
@@ -72,7 +72,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.13](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.12...@baotg/example-gateway@1.0.13) (2022-11-12)
+## [1.0.13](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.12...@joktec/example-gateway@1.0.13) (2022-11-12)
 
 
 ### Bug Fixes
@@ -83,7 +83,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.12](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.11...@baotg/example-gateway@1.0.12) (2022-11-12)
+## [1.0.12](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.11...@joktec/example-gateway@1.0.12) (2022-11-12)
 
 
 ### Bug Fixes
@@ -94,7 +94,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.11](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.10...@baotg/example-gateway@1.0.11) (2022-11-12)
+## [1.0.11](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.10...@joktec/example-gateway@1.0.11) (2022-11-12)
 
 
 ### Bug Fixes
@@ -106,7 +106,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.10](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.9...@baotg/example-gateway@1.0.10) (2022-11-11)
+## [1.0.10](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.9...@joktec/example-gateway@1.0.10) (2022-11-11)
 
 
 ### Bug Fixes
@@ -117,7 +117,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.9](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.8...@baotg/example-gateway@1.0.9) (2022-11-11)
+## [1.0.9](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.8...@joktec/example-gateway@1.0.9) (2022-11-11)
 
 
 ### Bug Fixes
@@ -128,7 +128,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.8](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.7...@baotg/example-gateway@1.0.8) (2022-11-11)
+## [1.0.8](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.7...@joktec/example-gateway@1.0.8) (2022-11-11)
 
 
 ### Bug Fixes
@@ -139,7 +139,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.7](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.6...@baotg/example-gateway@1.0.7) (2022-11-11)
+## [1.0.7](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.6...@joktec/example-gateway@1.0.7) (2022-11-11)
 
 
 ### Bug Fixes
@@ -150,7 +150,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.6](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.5...@baotg/example-gateway@1.0.6) (2022-11-11)
+## [1.0.6](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.5...@joktec/example-gateway@1.0.6) (2022-11-11)
 
 
 ### Bug Fixes
@@ -161,7 +161,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.5](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.4...@baotg/example-gateway@1.0.5) (2022-11-11)
+## [1.0.5](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.4...@joktec/example-gateway@1.0.5) (2022-11-11)
 
 
 ### Bug Fixes
@@ -172,7 +172,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.4](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.3...@baotg/example-gateway@1.0.4) (2022-11-11)
+## [1.0.4](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.3...@joktec/example-gateway@1.0.4) (2022-11-11)
 
 
 ### Bug Fixes
@@ -183,7 +183,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.3](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.2...@baotg/example-gateway@1.0.3) (2022-11-11)
+## [1.0.3](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.2...@joktec/example-gateway@1.0.3) (2022-11-11)
 
 
 ### Bug Fixes
@@ -194,15 +194,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [1.0.2](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.1...@baotg/example-gateway@1.0.2) (2022-11-11)
+## [1.0.2](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.1...@joktec/example-gateway@1.0.2) (2022-11-11)
 
-**Note:** Version bump only for package @baotg/example-gateway
-
-
+**Note:** Version bump only for package @joktec/example-gateway
 
 
 
-## [1.0.1](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@1.0.0...@baotg/example-gateway@1.0.1) (2022-11-10)
+
+
+## [1.0.1](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@1.0.0...@joktec/example-gateway@1.0.1) (2022-11-10)
 
 
 ### Bug Fixes
@@ -213,7 +213,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-# [1.0.0](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@0.1.0...@baotg/example-gateway@1.0.0) (2022-11-10)
+# [1.0.0](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@0.1.0...@joktec/example-gateway@1.0.0) (2022-11-10)
 
 
 ### Features
@@ -224,7 +224,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-# [0.1.0](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@0.0.5...@baotg/example-gateway@0.1.0) (2022-11-09)
+# [0.1.0](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@0.0.5...@joktec/example-gateway@0.1.0) (2022-11-09)
 
 
 ### Bug Fixes
@@ -235,7 +235,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [0.0.5](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@0.0.4...@baotg/example-gateway@0.0.5) (2022-11-09)
+## [0.0.5](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@0.0.4...@joktec/example-gateway@0.0.5) (2022-11-09)
 
 
 ### Bug Fixes
@@ -246,7 +246,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [0.0.4](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@0.0.3...@baotg/example-gateway@0.0.4) (2022-11-09)
+## [0.0.4](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@0.0.3...@joktec/example-gateway@0.0.4) (2022-11-09)
 
 
 ### Bug Fixes
@@ -257,9 +257,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## [0.0.3](https://github.com/BaoTran1203/nodejs-monorepo/compare/@baotg/example-gateway@0.0.2...@baotg/example-gateway@0.0.3) (2022-11-09)
+## [0.0.3](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/example-gateway@0.0.2...@joktec/example-gateway@0.0.3) (2022-11-09)
 
-**Note:** Version bump only for package @baotg/example-gateway
+**Note:** Version bump only for package @joktec/example-gateway
 
 
 
@@ -267,4 +267,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## 0.0.2 (2022-11-09)
 
-**Note:** Version bump only for package @baotg/example-gateway
+**Note:** Version bump only for package @joktec/example-gateway

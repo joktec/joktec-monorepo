@@ -37,11 +37,11 @@ console.log('✨ Success');
 // --------- Step 4: Deploy
 console.log('👉 Step 4:', 'Deploy helm chart');
 if (['main', 'master', 'prod', 'production'].includes(branch)) {
-  execSync(`lerna run deploy -- --ns baotg-production --helm helm`);
+  execSync(`lerna run deploy -- --ns joktec-production --helm helm`);
 } else if (['staging', 'stag', 'preprod', 'pre-production'].includes(branch)) {
-  execSync(`lerna run deploy -- --ns baotg-staging --helm helm`);
+  execSync(`lerna run deploy -- --ns joktec-staging --helm helm`);
 } else if (['develop', 'development', 'testing'].includes(branch)) {
-  execSync(`lerna run deploy -- --ns baotg-develop --helm helm`);
+  execSync(`lerna run deploy -- --ns joktec-develop --helm helm`);
 }
 console.log('✨ Success');
 

@@ -1,5 +1,5 @@
 {
-  "name": "baotg",
+  "name": "joktec",
   "description": "BaoTG - Monorepo with lerna template",
   "version": "0.0.0",
   "private": true,
@@ -13,7 +13,7 @@
     "node": ">=14"
   },
   "workspaces": [
-    "packages/@baotg/*",
+    "packages/@joktec/*",
     "apps/*"
   ],
   "scripts": {
@@ -34,9 +34,9 @@
     "publish:dev": "lerna publish patch --exact --no-private --yes",
     "publish:stag": "lerna publish minor --exact --no-private --yes",
     "publish:prod": "lerna publish major --exact --no-private --yes",
-    "deploy:dev": "lerna run deploy -- --ns baotg-develop --helm helm",
-    "deploy:stag": "lerna run deploy -- --ns baotg-staging --helm helm",
-    "deploy:prod": "lerna run deploy -- --ns baotg-production --helm helm",
+    "deploy:dev": "lerna run deploy -- --ns joktec-develop --helm helm",
+    "deploy:stag": "lerna run deploy -- --ns joktec-staging --helm helm",
+    "deploy:prod": "lerna run deploy -- --ns joktec-production --helm helm",
     "ci": "bin/jenkin-ci.sh"
   },
   "dependencies": {},

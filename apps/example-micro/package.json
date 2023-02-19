@@ -1,5 +1,5 @@
 {
-  "name": "@baotg/example-micro",
+  "name": "@joktec/example-micro",
   "description": "JobHopin - Example Microservice",
   "version": "0.1.0",
   "author": "BaoTran",
@@ -25,7 +25,7 @@
     "dev": "nest start --watch -p tsconfig.json",
     "build": "nest build -p tsconfig.json",
     "start": "node dist/main",
-    "dep:upgrade": "ncu -p yarn -f /^@baotg*/ -u",
+    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
     "deploy": "publish-helm --chart-dir ./k8s/chart",
     "test": "echo 'Test done.'",
     "test:watch": "jest --watch",
@@ -34,9 +34,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@baotg/core": "^1.0.20",
-    "@baotg/elastic": "^1.0.20",
-    "@baotg/graphql": "^1.0.5"
+    "@joktec/core": "^1.0.20",
+    "@joktec/elastic": "^1.0.20",
+    "@joktec/graphql": "^1.0.5"
   },
   "lint-staged": {
     "*.ts": [

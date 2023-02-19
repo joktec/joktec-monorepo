@@ -5,7 +5,7 @@
   },
   "workspaceLayout": {
     "appsDir": "apps",
-    "libsDir": "packages/@baotg"
+    "libsDir": "packages/@joktec"
   },
   "implicitDependencies": {
     "package.json": {

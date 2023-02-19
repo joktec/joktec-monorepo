@@ -741,9 +741,9 @@
     "@types/yargs" "^17.0.8"
     "chalk" "^4.0.0"
 
-"@baotg/core@^1.60.0":
+"@joktec/core@^1.60.0":
   "integrity" "sha512-r2n6xvti/7+ZcWHEs6OjLqgRTI1gUiuN6skmQjGswUu2sGyttz3q/+rofENUYo77y2oOUYVVBKbunMIP8ffuZg=="
-  "resolved" "https://registry.npmjs.org/@baotg/core/-/core-1.60.0.tgz"
+  "resolved" "https://registry.npmjs.org/@joktec/core/-/core-1.60.0.tgz"
   "version" "1.60.0"
   dependencies:
     "@nestjs/common" "^9.0.0"
@@ -775,9 +775,9 @@
     "type-cacheable" "^4.1.2"
     "uuidv4" "^6.2.13"
 
-"@baotg/graphql@^1.31.0":
+"@joktec/graphql@^1.31.0":
   "integrity" "sha512-u5ini1ZGZHaJ+NPmViORHzXx3uU/NZ9HKeWwX+m5geGO7wcD4+e2qlpSUxjfwvqi57J5usoqB/ojPBZiSF+Eng=="
-  "resolved" "https://registry.npmjs.org/@baotg/graphql/-/graphql-1.32.0.tgz"
+  "resolved" "https://registry.npmjs.org/@joktec/graphql/-/graphql-1.32.0.tgz"
   "version" "1.32.0"
   dependencies:
     "@nestjs/common" "^9.0.0"
