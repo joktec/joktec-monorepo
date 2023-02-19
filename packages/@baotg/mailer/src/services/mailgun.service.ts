@@ -1,7 +1,7 @@
 import { IMailerClient } from '../mailer.client';
 import { MailerConfig } from '../mailer.config';
 import { MailerSendRequest, MailerSendResponse } from '../models';
-import mailgun, { Mailgun } from 'mailgun-js';
+import mailgun, { Mailgun, messages } from 'mailgun-js';
 
 export class MailgunService implements IMailerClient {
   private _config: MailerConfig;
@@ -20,6 +20,13 @@ export class MailgunService implements IMailerClient {
   }
 
   async send(req: MailerSendRequest): Promise<MailerSendResponse> {
+    const data: messages.SendData | messages.SendTemplateData = { ...req };
+    if (req.template) {
+      Object.assign(data, {
+        template: req.template.templateId,
+        ...req.template.templateData,
+      });
+    }
     return this._client.messages().send({ ...req });
   }
 }

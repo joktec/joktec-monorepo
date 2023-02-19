@@ -1,14 +1,16 @@
 import { ClientConfig, IsNotEmpty, IsOptional, IsString } from '@baotg/core';
 
-export enum MailerSource {
+export enum MailerServiceType {
   MAILGUN = 'mailgun',
   SENDGRID = 'sendgrid',
+  SES = 'ses',
+  MAILCHIMP = 'mailchimp',
 }
 
 export class MailerConfig extends ClientConfig {
   @IsString()
   @IsNotEmpty()
-  source!: MailerSource;
+  service!: MailerServiceType;
 
   @IsString()
   @IsNotEmpty()
@@ -21,10 +23,6 @@ export class MailerConfig extends ClientConfig {
   @IsString()
   @IsOptional()
   sender?: string;
-
-  @IsString()
-  @IsOptional()
-  templateId?: string;
 
   @IsString()
   @IsOptional()

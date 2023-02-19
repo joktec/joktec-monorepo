@@ -1,3 +1,8 @@
+export interface MailerTemplate {
+  templateId: string;
+  templateData?: { [key: string]: any };
+}
+
 export interface MailerSendRequest {
   from?: string;
   to: string | string[];
@@ -6,5 +11,5 @@ export interface MailerSendRequest {
   subject?: string;
   text?: string;
   html?: string;
-  template?: string;
+  template?: MailerTemplate;
 }

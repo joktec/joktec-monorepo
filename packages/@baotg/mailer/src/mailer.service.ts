@@ -1,15 +1,13 @@
-import {
-  AbstractClientService,
-  DEFAULT_CON_ID,
-  InvalidClientConfigException,
-  NotImplementedException,
-  Retry,
-} from '@baotg/core';
+import { AbstractClientService, DEFAULT_CON_ID, Retry } from '@baotg/core';
 import { Mailer, MailerClient } from './mailer.client';
-import { MailerConfig, MailerSource } from './mailer.config';
+import { MailerConfig, MailerServiceType } from './mailer.config';
 import { MailerSendRequest, MailerSendResponse } from './models';
 import { SendEmailMetric } from './mailer.metric';
+import { MailerServiceNotImplementedException, MailerTemplateInvalidException } from './mailer.exception';
 import { MailgunService, SendgridService } from './services';
+import fs from 'fs';
+import handlebars from 'handlebars';
+import path from 'path';
 
 const RETRY_OPTS = 'mailer.retry';
 
@@ -20,15 +18,15 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
 
   @Retry(RETRY_OPTS)
   protected async init(config: MailerConfig): Promise<Mailer> {
-    switch (config.source) {
-      case MailerSource.MAILGUN:
+    switch (config.service) {
+      case MailerServiceType.MAILGUN:
         return MailgunService.init(config);
 
-      case MailerSource.SENDGRID:
+      case MailerServiceType.SENDGRID:
         return SendgridService.init(config);
 
       default:
-        throw new NotImplementedException('This email source is not implement', config);
+        throw new MailerServiceNotImplementedException('This email service is not implement', config);
     }
   }
 
@@ -40,14 +38,26 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
     // Do nothing
   }
 
+  async buildHtml(
+    filename: string,
+    variables?: { [key: string]: any },
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<string> {
+    const config = this.getConfig(conId);
+    const templatePath = path.posix.join(__dirname, config.templateDir, filename);
+    if (!fs.existsSync(templatePath)) {
+      throw new MailerTemplateInvalidException('Template path not found', templatePath);
+    }
+
+    const templateContent = fs.readFileSync(templatePath, 'utf8');
+    const template = handlebars.compile(templateContent);
+    return template(variables);
+  }
+
   @SendEmailMetric()
   async send(req: MailerSendRequest, conId: string = DEFAULT_CON_ID): Promise<MailerSendResponse> {
     const config = this.getConfig(conId);
-    const sender = req.from || `JobHopin Team <${config.sender}>`;
-    return this.getClient(conId).send({
-      ...req,
-      from: sender,
-      template: req.template || config.templateId || undefined,
-    });
+    const sender = req.from || `MyCompany <${config.sender}>`;
+    return this.getClient(conId).send({ ...req, from: sender });
   }
 }

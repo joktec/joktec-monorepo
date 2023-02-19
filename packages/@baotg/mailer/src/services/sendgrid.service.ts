@@ -20,11 +20,10 @@ export class SendgridService implements IMailerClient {
   }
 
   async send(req: MailerSendRequest): Promise<MailerSendResponse> {
-    const data: MailData = {
-      ...req,
-      from: req.from,
-      templateId: req.template || null,
-    };
+    const data: MailData = { ...req, from: req.from };
+    if (req.template) {
+      data.templateId = req.template.templateId;
+    }
 
     const mail = classes.Mail.create(data);
     const [res] = await this._client.request({

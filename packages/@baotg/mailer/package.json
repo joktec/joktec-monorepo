@@ -28,12 +28,15 @@
     "@baotg/core": "1.0.20",
     "@sendgrid/client": "^7.7.0",
     "@sendgrid/helpers": "^7.7.0",
+    "aws-sdk": "^2.1267.0",
+    "handlebars": "^4.7.7",
     "lodash": "^4.17.21",
     "mailgun-js": "^0.22.0",
-    "handlebars": "^4.7.7"
+    "nodemailer": "^6.9.1"
   },
   "devDependencies": {
-    "@types/mailgun-js": "^0.22.12"
+    "@types/mailgun-js": "^0.22.12",
+    "@types/nodemailer": "^6.4.7"
   },
   "lint-staged": {
     "*.ts": [

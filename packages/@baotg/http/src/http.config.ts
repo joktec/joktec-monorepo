@@ -9,7 +9,7 @@ import {
   IsTypes,
   LogService,
 } from '@baotg/core';
-import { AxiosRequestConfig, Method, AxiosBasicCredentials as Auth, AxiosError } from 'axios';
+import { AxiosRequestConfig, Method, AxiosBasicCredentials, AxiosError } from 'axios';
 import { RetryConfig } from 'retry-axios';
 import mergeDeep from 'merge-deep';
 import { HttpMethod } from './models';
@@ -20,7 +20,7 @@ const defaultRetryConfig = {
   httpMethodsToRetry: ['GET', 'POST'],
 };
 
-class AxiosBasicCredentials {
+export class BasicCredentials implements AxiosBasicCredentials {
   @IsString()
   @IsNotEmpty()
   username: string;
@@ -29,7 +29,7 @@ class AxiosBasicCredentials {
   @IsNotEmpty()
   password: string;
 
-  constructor(props: AxiosBasicCredentials) {
+  constructor(props: BasicCredentials) {
     this.username = props.username;
     this.password = props.password;
   }
@@ -57,8 +57,8 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
   timeoutErrorMessage?: string;
 
   @IsOptional()
-  @IsTypes([AxiosBasicCredentials])
-  auth: Auth;
+  @IsTypes([BasicCredentials])
+  auth: AxiosBasicCredentials;
 
   @IsOptional()
   @IsInt()

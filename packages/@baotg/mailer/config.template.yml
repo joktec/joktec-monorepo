@@ -1,10 +1,26 @@
 mailer:
   - conId: default
-    source: mailgun
-    apiKey: XXX
-    domain: mydomain.com
+    service: mailgun
+    host: smtp.mailgun.org
+    port: 587
+    secure: false
+    auth:
+      api_key: XXX
+      domain: mydomain.com
     sender: admin@mydomain.com
     templateDir: /template
-  - conId: secondary
-    source: sendgrid
-    apiKey: XXX
+  - conId: sendgrid
+    service: SendGrid
+    auth:
+      apiKey: XXX
+  - conId: ses
+    service: ses
+    auth:
+      accessKeyId: XXX
+      secretAccessKey: YYY
+      region: ZZZ
+  - conId: mailchimp
+    service: Mailchimp
+    auth:
+      user: XXX
+      pass: YYY
