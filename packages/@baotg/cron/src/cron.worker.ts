@@ -1,6 +1,6 @@
 import { ConfigService, Inject, LogService, OnModuleInit, sleep } from '@baotg/core';
 import { CronRepo } from './cron.repo';
-import { Cron, CronStatus } from './models';
+import { CronModel, CronStatus } from './models';
 import { CronQueue } from './cron.queue';
 import { flatten, isArray, isString, snakeCase, upperCase } from 'lodash';
 import moment from 'moment-timezone';
@@ -8,13 +8,13 @@ import { CronWorkerConfig } from './cron.worker.config';
 
 const FORMAT = 'YYYY-MM-DD';
 
-export abstract class CronWorker<C extends Cron> implements OnModuleInit {
+export abstract class CronWorker<C extends CronModel> implements OnModuleInit {
   @Inject() protected logService: LogService;
   @Inject() protected configService: ConfigService;
   @Inject() private cronRepo: CronRepo;
 
   private config: CronWorkerConfig;
-  private cronQueue: CronQueue<Cron>;
+  private cronQueue: CronQueue<CronModel>;
 
   protected constructor(private context: string, private configKey: string) {}
 
@@ -34,7 +34,7 @@ export abstract class CronWorker<C extends Cron> implements OnModuleInit {
   protected async createNewCrons(date: string): Promise<C[]> {
     const type = upperCase(snakeCase(this.getConfig().type));
     return [
-      new Cron({
+      new CronModel({
         id: `${type}-${date}`,
         type,
         date,
@@ -113,7 +113,7 @@ export abstract class CronWorker<C extends Cron> implements OnModuleInit {
     const dependsOn: string[] = [];
     if (isString(this.config.dependsOn)) dependsOn.push(this.config.dependsOn);
     if (isArray(this.config.dependsOn)) dependsOn.push(...this.config.dependsOn);
-    const runningCrons: Cron[] = await this.cronRepo.getDependCrons(dependsOn, cron.date);
+    const runningCrons: CronModel[] = await this.cronRepo.getDependCrons(dependsOn, cron.date);
     const canProcess: boolean = runningCrons.length === 0;
 
     if (!canProcess) {

@@ -24,7 +24,7 @@ export enum CronStatus {
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 @Table({ tableName: 'cron', timestamps: true, underscored: true, paranoid: false })
-export class Cron extends Model<Cron> {
+export class CronModel extends Model<CronModel> {
   @PrimaryKey
   id!: string;
 
@@ -55,7 +55,7 @@ export class Cron extends Model<Cron> {
 
   @BeforeUpdate
   @BeforeCreate
-  static makeUpperCase(instance: Cron) {
+  static makeUpperCase(instance: CronModel) {
     instance.type = upperCase(snakeCase(instance.type));
   }
 }

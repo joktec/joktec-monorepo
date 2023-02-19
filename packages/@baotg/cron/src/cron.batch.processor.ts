@@ -1,13 +1,13 @@
 import { CronQueue } from './cron.queue';
 import { CronProcessor } from './cron.processor';
-import { Cron } from './models';
+import { CronModel } from './models';
 
 export abstract class CronBatchProcessor<I, O> extends CronProcessor<I, O> {
   protected constructor(protected context: string, protected configKey: string) {
     super(context, configKey);
   }
 
-  async process(items: I[], cron?: Cron): Promise<O[]> {
+  async process(items: I[], cron?: CronModel): Promise<O[]> {
     if (!items.length) {
       return [];
     }
@@ -20,7 +20,7 @@ export abstract class CronBatchProcessor<I, O> extends CronProcessor<I, O> {
     );
   }
 
-  protected abstract batchProcess(data: I[], cron: Cron): Promise<O[]>;
+  protected abstract batchProcess(data: I[], cron: CronModel): Promise<O[]>;
 
   private async batchExec<I, O>(
     data: I[],

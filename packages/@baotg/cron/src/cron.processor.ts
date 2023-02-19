@@ -1,5 +1,5 @@
 import { ConfigService, Inject, LogService } from '@baotg/core';
-import { Cron } from './models';
+import { CronModel } from './models';
 import { CronProcessorConfig } from './cron.processor.config';
 
 export abstract class CronProcessor<I, O> {
@@ -15,5 +15,5 @@ export abstract class CronProcessor<I, O> {
     return (this.config = this.config ?? def);
   }
 
-  abstract process(data: I[] | I, job?: Cron): Promise<O[] | O>;
+  abstract process(data: I[] | I, job?: CronModel): Promise<O[] | O>;
 }

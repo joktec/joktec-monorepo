@@ -1,1 +1,1 @@
-export * from './cron';
+export * from './cron.model';

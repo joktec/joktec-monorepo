@@ -1,18 +1,18 @@
 import { Injectable, DEFAULT_CON_ID } from '@baotg/core';
 import { MysqlRepo, MysqlService, Op } from '@baotg/mysql';
-import { Cron, CronStatus } from './models';
+import { CronModel, CronStatus } from './models';
 import { chunk } from 'lodash';
 
 @Injectable()
-export class CronRepo extends MysqlRepo<Cron, string> {
+export class CronRepo extends MysqlRepo<CronModel, string> {
   constructor(protected mysqlService: MysqlService) {
-    super(mysqlService, Cron, DEFAULT_CON_ID);
+    super(mysqlService, CronModel, DEFAULT_CON_ID);
   }
 
-  public async batchUpsert(crons: Cron[]): Promise<Cron[]> {
+  public async batchUpsert(crons: CronModel[]): Promise<CronModel[]> {
     const transaction = await this.mysqlService.getClient(this.conId).transaction();
     try {
-      const newCrons: Cron[] = [];
+      const newCrons: CronModel[] = [];
       const chunkCrons = chunk(crons, 100);
       for (const subCrons of chunkCrons) {
         const rows = await this.model.bulkCreate(crons, { transaction, updateOnDuplicate: ['id'], returning: true });
@@ -26,14 +26,14 @@ export class CronRepo extends MysqlRepo<Cron, string> {
     }
   }
 
-  public async getCrons(type: string, ids: string[] = []): Promise<Cron[]> {
+  public async getCrons(type: string, ids: string[] = []): Promise<CronModel[]> {
     return this.model.findAll({
       where: { type, id: { [Op.in]: ids } },
       order: ['date', 'ASC'],
     });
   }
 
-  public async getDependCrons(types: string[], date: string): Promise<Cron[]> {
+  public async getDependCrons(types: string[], date: string): Promise<CronModel[]> {
     if (!types.length) return [];
     return this.model.findAll({
       where: {
