@@ -2,83 +2,149 @@ version: '3.8'
 
 services:
   mongo:
-    container_name: btg-mongo
-    image: mongo:4.2.2
+    container_name: joktec-mongo
+    image: mongo:4.4.19
+    env_file: .env
     ports:
       - '27017:27017'
     volumes:
       - .docker/mongo/data:/data/db
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=StrongP%40ssword
-      - MONGODB_USER=main
-      - MONGODB_PASS=StrongP%40ssword
-      - MONGODB_DATABASE=main
-    restart: always
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER_ROOT}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASS_ROOT}
+      MONGO_INITDB_DATABASE: ${DB_SAMPLE_DATABASE}
+      MONGODB_USER: ${DB_USER}
+      MONGODB_PASS: ${DB_PASS}
+      MONGODB_DATABASE: ${DB_SAMPLE_DATABASE}
     networks:
-      - btg-network
+      - joktec-network
+    restart: always
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongo db:27017/speech-api --quiet
       interval: 30s
       timeout: 10s
       retries: 5
 
+  postgres:
+    container_name: joktec-postgres
+    image: postgres:latest
+    env_file: .env
+    ports:
+      - '5432:5432'
+    volumes:
+      - .docker/postgres/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER_ROOT}
+      POSTGRES_PASSWORD: ${DB_PASS_ROOT}
+      POSTGRES_DB: ${DB_SAMPLE_DATABASE}
+    networks:
+      - joktec-network
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   mysql:
-    container_name: btg-mysql
-    image: mysql:8.0.30
+    container_name: joktec-mysql
+    image: mysql:8.0.32
+    env_file: .env
     ports:
       - '3306:3306'
     volumes:
       - .docker/mysql/data:/var/lib/mysql
     environment:
-      - MYSQL_DATABASE=jobhop_dev
-      - MYSQL_USER=jobhop_dev
-      - MYSQL_PASSWORD=tDYidUDJscyoTM7W
-      - MYSQL_ROOT_PASSWORD=FZyNFRNUcnuDvJD5
-    restart: always
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_SAMPLE_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASS_ROOT}
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
     networks:
-      - btg-network
+      - joktec-network
+    restart: always
+    healthcheck:
+      test: mysqladmin ping -h localhost
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
-  rabbitmq:
-    container_name: btg-rabbitmq
-    image: rabbitmq:3-management
+  mariadb:
+    container_name: joktec-mariadb
+    image: mariadb:10.3
+    env_file: .env
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - '3316:3306'
     volumes:
-      - .docker/rabbitmq/data:/var/lib/rabbitmq/mnesia
+      - .docker/mariadb/data:/var/lib/mariadb
     environment:
-      - RABBITMQ_DEFAULT_USER=myuser
-      - RABBITMQ_DEFAULT_PASS=mypassword
-    restart: always
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_SAMPLE_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASS_ROOT}
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
     networks:
-      - btg-network
+      - joktec-network
+    restart: always
+    healthcheck:
+      test: mysqladmin ping -h localhost
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   redis:
-    container_name: btg-redis
+    container_name: joktec-redis
     image: redis:6.0.5
+    env_file: .env
     ports:
       - '6379:6379'
     volumes:
-      - .docker/redis/data:/var/lib/redis/data
+      - .docker/redis/data:/data
       - .docker/redis/config/redis.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server --save 20 1 --loglevel warning --requirepass jC2qe6890UxcxPKv
-    restart: always
+    environment:
+      REDIS_PASSWORD: ${DB_PASS_ROOT}
     networks:
-      - btg-network
+      - joktec-network
+    command: redis-server --requirepass ${REDIS_PASS} --appendonly yes
+    restart: always
     healthcheck:
-      test: [ 'CMD', 'redis-cli','ping' ]
+      test: redis-cli ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  rabbitmq:
+    container_name: joktec-rabbitmq
+    image: rabbitmq:3-management
+    env_file: .env
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - .docker/rabbitmq/data/:/var/lib/rabbitmq/
+      - .docker/rabbitmq/log/:/var/log/rabbitmq/
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASS: ${RABBITMQ_PASS}
+    networks:
+      - joktec-network
+    restart: always
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
       interval: 30s
       timeout: 10s
       retries: 5
 
   setup:
-    container_name: btg-elk-setup
+    container_name: joktec-elk-setup
     build:
       context: setup/
       args:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     init: true
+    env_file: .env
     volumes:
       - ./docker/setup/entrypoint.sh:/entrypoint.sh:ro,Z
       - ./docker/setup/helpers.sh:/helpers.sh:ro,Z
@@ -94,13 +160,14 @@ services:
       MONITORING_INTERNAL_PASSWORD: ${MONITORING_INTERNAL_PASSWORD:-}
       BEATS_SYSTEM_PASSWORD: ${BEATS_SYSTEM_PASSWORD:-}
     networks:
-      - btg-network
+      - joktec-network
     depends_on:
       - elasticsearch
 
   elasticsearch:
-    container_name: btg-elasticsearch
+    container_name: joktec-elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}
+    env_file: .env
     volumes:
       - .docker/elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
       - .docker/elk/elasticsearch/data:/usr/share/elasticsearch/data:Z
@@ -112,12 +179,14 @@ services:
       ES_JAVA_OPTS: -Xms512m -Xmx512m
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
       discovery.type: single-node
+    restart: always
     networks:
-      - btg-network
+      - joktec-network
 
   logstash:
-    container_name: btg-logstash
+    container_name: joktec-logstash
     image: docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}
+    env_file: .env
     volumes:
       - .docker/elk/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
       - .docker/elk/logstash/pipeline:/usr/share/logstash/pipeline:ro,Z
@@ -129,31 +198,36 @@ services:
     environment:
       LS_JAVA_OPTS: -Xms256m -Xmx256m
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
+    restart: always
     networks:
-      - btg-network
+      - joktec-network
     depends_on:
       - elasticsearch
 
   kibana:
-    container_name: btg-kibana
+    container_name: joktec-kibana
     image: docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}
+    env_file: .env
     volumes:
       - .docker/elk/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
     ports:
       - "5601:5601"
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+    restart: always
     networks:
-      - btg-network
+      - joktec-network
     depends_on:
       - elasticsearch
 
 # Docker Networks
 networks:
-  btg-network:
-    name: btg-network
+  joktec-network:
+    name: joktec-network
     driver: bridge
 
+# Docker Volumes
 volumes:
+  .docker:
   setup:
   elasticsearch:

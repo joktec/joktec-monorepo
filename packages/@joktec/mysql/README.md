@@ -1,18 +1,14 @@
 <div align="center">
   <h1>@joktec/mysql</h1>
   <p>A NestJS library that provides a wrapper around the `sequelize` and `sequelize-typescript` libraries for MySQL databases.</p>
-  </div>
 </div>
 
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Installation](#installation)
 3. [Getting Started](#getting-started)
-  1. [Configuration](#configuration)
-  2. [Module](#module)
-  3. [Service](#service)
-  4. [Repository](#repository)
 4. [Reference](#reference)
+5. [Contributing](#contributing)
 
 ## Introduction
 This library provides an easy-to-use interface for working with MySQL databases in NestJS applications. It is built on top of the popular `sequelize` and `sequelize-typescript` libraries, and provides a set of convenient abstractions for working with these libraries.
@@ -42,13 +38,11 @@ Replace the values with your actual database connection information.
 ### Module
 Once you have provided the configuration, you can create a MysqlModule in your NestJS application:
 ```typescript
-import { Module } from '@nestjs/common';
+import { CoreModule, Module } from '@joktec/core';
 import { MysqlModule } from '@joktec/mysql';
 
 @Module({
-  imports: [
-    MysqlModule.forRoot(),
-  ],
+  imports: [CoreModule, MysqlModule],
 })
 export class AppModule {}
 ```
@@ -56,17 +50,15 @@ export class AppModule {}
 ### Service
 You can then use the MysqlService to interact with the database:
 ```typescript
-import { Injectable } from '@nestjs/common';
+import { Injectable } from '@joktec/core';
 import { MysqlService } from '@joktec/mysql';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly mysqlService: MysqlService,
-  ) {}
+  constructor(private readonly mysqlService: MysqlService) {}
 
   async getUsers() {
-    const users = await this.mysqlService.models.User.findAll();
+    const users = await this.mysqlService.getModel(User).findAll();
     return users;
   }
 }
@@ -74,9 +66,9 @@ export class UserService {
 
 ### Repository
 #### Define a Model
-You can define a model using sequelize-typescript:
+You can define a model using `@joktec/mysql` (based on interface of `sequelize-typescript`):
 ```typescript
-import { Table, Column, Model } from 'sequelize-typescript';
+import { Table, Column, Model } from '@joktec/mysql';
 
 @Table
 export class User extends Model<User> {
@@ -106,9 +98,7 @@ import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly userRepository: UserRepository,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async getUsers() {
     const users = await this.userRepository.findAll();
@@ -123,6 +113,6 @@ export class UserService {
 [sequelize-typescript](https://www.npmjs.com/package/sequelize-typescript)
 
 ## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Contributions to `@joktec/mysql` are welcome. If you would like to contribute, please fork the repository, make your changes, and submit a pull request.
 
 Please make sure to update tests as appropriate.

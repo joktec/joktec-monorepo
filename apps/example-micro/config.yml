@@ -8,7 +8,14 @@ log:
     port: 31658
     enable: false
 
-httpClient:
+mysql:
+  host: localhost
+  port: 3306
+  username: root
+  password: xxx
+  database: example
+
+http:
   timeout: 18000000
 
 es:
