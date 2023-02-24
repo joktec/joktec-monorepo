@@ -1,6 +1,6 @@
 import { Injectable } from '@joktec/core';
 import { MysqlRepo, MysqlService } from '@joktec/mysql';
-import { Product } from './product';
+import { Product } from '../../models';
 
 @Injectable()
 export class ProductRepo extends MysqlRepo<Product, string> {

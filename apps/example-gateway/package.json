@@ -35,7 +35,8 @@
   },
   "dependencies": {
     "@joktec/core": "^1.0.20",
-    "@joktec/mongo": "^0.0.0",
+    "@joktec/elastic": "^1.0.20",
+    "@joktec/graphql": "^1.0.5",
     "@joktec/mysql": "^1.0.20"
   },
   "lint-staged": {
