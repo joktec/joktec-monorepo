@@ -1,4 +1,4 @@
 import { Application } from '@joktec/core';
-import { AppModule } from '@app/app.module';
+import { AppModule } from './app.module';
 
 Application.bootstrap(AppModule);

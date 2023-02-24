@@ -2,23 +2,24 @@ gateway:
   port: 9010
 
 log:
-  level: info
+  level: debug
   logStash:
     host: 51.222.44.17
     port: 31658
     enable: false
 
 mysql:
-  host: mysql-jobhop-dev.jobhopin.com
+  host: localhost
   port: 3306
-  user: jobhop_dev
-  password: tDYidUDJscyoTM7W
-  database: jobhop_dev
+  username: joktec
+  password: joktec123
+  database: sample_db
   connectTimeout: 20000
 
-es:
-  url: http://elasticsearch-jobhop-dev.jobhopin.com:9200
-  maxRetries: 1
-  requestTimeout: 60000
-  pingTimeout: 60000
-  sniffOnStart: true
+mongo:
+  host: localhost
+  port: 27017
+  username: joktec
+  password: joktec123
+  database: sample_db
+  connectTimeout: 20000
