@@ -1,8 +1,8 @@
 {
   "name": "@joktec/example-micro",
-  "description": "JobHopin - Example Microservice",
+  "description": "JokTec - Example Microservice",
   "version": "0.1.0",
-  "author": "BaoTran",
+  "author": "Joker",
   "private": true,
   "license": "UNLICENSED",
   "files": [
@@ -36,7 +36,8 @@
   "dependencies": {
     "@joktec/core": "^1.0.20",
     "@joktec/elastic": "^1.0.20",
-    "@joktec/graphql": "^1.0.5"
+    "@joktec/graphql": "^1.0.5",
+    "@joktec/mysql": "^1.0.20"
   },
   "lint-staged": {
     "*.ts": [

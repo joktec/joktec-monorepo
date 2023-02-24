@@ -1,10 +1,10 @@
 {
   "name": "@joktec/http",
-  "description": "JobHopin - Http Client Service",
+  "description": "JokTec - Http Client Service",
   "version": "1.0.20",
   "private": false,
   "license": "UNLICENSED",
-  "author": "BaoTran",
+  "author": "Joker",
   "main": "dist/index",
   "types": "dist/index",
   "typings": "dist/index.d.ts",

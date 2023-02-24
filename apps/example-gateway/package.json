@@ -1,8 +1,8 @@
 {
   "name": "@joktec/example-gateway",
-  "description": "JobHopin - Example Gateway",
+  "description": "JokTec - Example Gateway",
   "version": "1.0.20",
-  "author": "BaoTran",
+  "author": "Joker",
   "private": false,
   "license": "UNLICENSED",
   "files": [
@@ -34,10 +34,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "1.0.20",
-    "@joktec/elastic": "1.0.20",
-    "@joktec/graphql": "1.0.5",
-    "@joktec/mysql": "1.0.20"
+    "@joktec/core": "^1.0.20",
+    "@joktec/mongo": "^0.0.0",
+    "@joktec/mysql": "^1.0.20"
   },
   "lint-staged": {
     "*.ts": [

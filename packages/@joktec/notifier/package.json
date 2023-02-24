@@ -1,10 +1,10 @@
 {
   "name": "@joktec/notifier",
-  "description": "JobHopin - Notification Service",
+  "description": "JokTec - Notification Service",
   "version": "0.0.0",
   "private": false,
   "license": "UNLICENSED",
-  "author": "BaoTran",
+  "author": "Joker",
   "main": "dist/index",
   "types": "dist/index",
   "typings": "dist/index.d.ts",
