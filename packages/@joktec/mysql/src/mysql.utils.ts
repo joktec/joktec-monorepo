@@ -1,7 +1,7 @@
 import { ICondition, IDataType, IKeyword, IOperation } from '@joktec/core';
 import { FindOptions, Op } from 'sequelize';
 
-export const preHandleQuery = (condition: ICondition | string | number, keyword?: IKeyword): FindOptions => {
+export const preHandleQuery = (condition: ICondition, keyword?: IKeyword): FindOptions => {
   const where: Record<string | symbol, any> = {};
 
   for (const [key, value] of Object.entries(condition)) {

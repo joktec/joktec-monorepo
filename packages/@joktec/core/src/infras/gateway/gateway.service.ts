@@ -23,6 +23,7 @@ export class GatewayService {
     const logger = await app.resolve(LogService);
     logger.setContext(GatewayService.name);
 
+    app.useGlobalInterceptors();
     app.useGlobalFilters(new GatewayExceptionsFilter(logger));
     app.setGlobalPrefix(gatewayConfig.contextPath);
     app.use(bodyParser.json({ limit: '50mb' }));

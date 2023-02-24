@@ -1,13 +1,16 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { NestApplicationOptions, NestModule } from '@nestjs/common';
+import { NestApplicationOptions, NestModule, NestInterceptor } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
 import { GatewayConfig, GatewayService, MicroConfig, MicroService } from '../infras';
 import { IMicroserviceConfig } from '../infras/micro/micro.config';
 
-export type ApplicationOptions = NestApplicationOptions & { microserviceConfig: IMicroserviceConfig };
 export type Module = NestModule;
+export type ApplicationOptions = NestApplicationOptions & {
+  microserviceConfig: IMicroserviceConfig;
+  interceptors: NestInterceptor[];
+};
 
 export class Application {
   static initTrackingProcessEvent(logger: Logger) {

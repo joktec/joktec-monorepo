@@ -30,9 +30,5 @@ export {
   UseGuards,
 } from '@nestjs/common';
 export * from './app';
-
-export * from './data-loaders';
-export * from './guards';
-export * from './middlewares';
+export * from './abstractions';
 export * from './models';
-export * from './repositories';

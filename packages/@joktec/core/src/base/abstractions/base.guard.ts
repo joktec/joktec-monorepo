@@ -1,23 +1,20 @@
+import { ExecutionContext, CanActivate } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
 
-@Injectable()
-export class GraphqlJwtAuthGuard implements CanActivate {
-  readonly jwtService: JwtService;
+export abstract class BaseGuard implements CanActivate {
+  protected readonly jwtService: JwtService;
 
-  constructor() {
+  protected constructor() {
     this.jwtService = new JwtService();
   }
 
-  getRequest(context: ExecutionContext) {
-    const ctx = GqlExecutionContext.create(context);
-    return ctx.getContext().req;
+  protected getRequest(context: ExecutionContext) {
+    return context.switchToHttp().getRequest();
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
-      const headers = this.getRequest(context).headers;
+      const headers = context.switchToHttp().getRequest().headers;
       if (!headers.authorization) return false;
 
       const [prefix, token] = headers.authorization.split(' ');

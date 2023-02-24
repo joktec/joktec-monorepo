@@ -2,6 +2,8 @@ import { AbstractClientService, Injectable, Retry, DEFAULT_CON_ID } from '@jokte
 import { MysqlConfig } from './mysql.config';
 import { MysqlClient } from './mysql.client';
 import { Model, ModelCtor, Sequelize } from 'sequelize-typescript';
+import { pick } from 'lodash';
+import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
 
 const RETRY_OPTS = 'mysql.retry';
 
@@ -13,20 +15,24 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
 
   @Retry(RETRY_OPTS)
   protected async init(config: MysqlConfig): Promise<Sequelize> {
-    const sequelize = new Sequelize({
-      ...config,
-      dialectOptions: { charset: config.charset, timeout: config.timeout },
+    this.logService.info('MysqlConfig: %j', config);
+    const connection = pick(config, ['host', 'port', 'username', 'password', 'database']);
+    const options: SequelizeOptions = {
+      ...connection,
+      dialectOptions: { charset: config.charset, connectTimeout: config.connectTimeout },
       dialect: 'mysql',
-      // models: [__dirname + '/**/*.entity.ts'],
-      // modelMatch: (filename, member) => {
-      //   return filename.substring(0, filename.indexOf('.entity.ts')) === member.toLowerCase();
-      // },
       logging: (sql: string, timing?: number) => {
         this.logService.debug('SQL statement: %s', sql);
-        this.logService.debug('SQL execute in %s', timing);
+        this.logService.debug('SQL execute in %j', timing);
       },
-      replication: { write: { ...config }, read: config.slaves },
-    });
+    };
+    if (config.slaves?.length) {
+      options.replication = {
+        write: { ...connection },
+        read: config.slaves,
+      };
+    }
+    const sequelize = new Sequelize(options);
     this.logService.info('MySQL Service is configured in `%s` connection', config.conId);
     return sequelize;
   }

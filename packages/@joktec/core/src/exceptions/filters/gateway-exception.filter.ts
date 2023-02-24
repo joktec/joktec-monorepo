@@ -6,20 +6,7 @@ import { ExceptionMessage, ExceptionStatus } from '../exception-status';
 import { RpcException } from '@nestjs/microservices';
 import { ENV } from '../../config';
 import { LogService } from '../../log';
-
-interface HttpExceptionResponse {
-  statusCode: number;
-  error: string;
-}
-
-interface CustomHttpExceptionResponse extends HttpExceptionResponse {
-  path: string;
-  method: string;
-  body: object;
-  params: object;
-  query: object;
-  timeStamp: Date;
-}
+import { IResponseDto } from '../../base';
 
 @Catch()
 export class GatewayExceptionsFilter implements ExceptionFilter {
@@ -45,13 +32,13 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    let status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    let httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     let errorMessage: string;
 
     if (exception instanceof HttpException) {
-      status = exception.getStatus();
+      httpStatus = exception.getStatus();
       const errorResponse = exception.getResponse();
-      errorMessage = (errorResponse as HttpExceptionResponse).error || exception.message;
+      errorMessage = (errorResponse as IResponseDto).error || exception.message;
     } else if (exception instanceof Error && exception.message) {
       errorMessage = exception.message;
     } else if (isPlainObject(exception)) {
@@ -60,17 +47,24 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
       errorMessage = ExceptionMessage.INTERNAL_SERVER_ERROR;
     }
 
-    const errorBody: CustomHttpExceptionResponse = {
-      statusCode: status,
-      error: errorMessage,
-      path: request.url,
-      method: request.method,
-      body: request.body,
-      query: request.query,
-      params: request.params,
-      timeStamp: new Date(),
+    if (httpStatus >= 500) {
+      this.logger.error(exception, 'Something when wrong');
+    }
+
+    const isProd: boolean = process.env.NODE_ENV === 'production';
+    const errorBody: IResponseDto = {
+      timestamp: new Date(),
+      status: false,
+      code: httpStatus,
+      message: errorMessage,
+      error: !isProd && exception,
+      path: !isProd && request.url,
+      method: !isProd && request.method,
+      body: !isProd && request.body,
+      query: !isProd && request.query,
+      params: !isProd && request.params,
     };
-    response.status(status).json(errorBody);
+    response.status(httpStatus).json(errorBody);
   }
 
   private handleGqlException(exception: any, host: ArgumentsHost): GraphQLError {

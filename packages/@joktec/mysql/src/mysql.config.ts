@@ -1,4 +1,4 @@
-import { ClientConfig, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toInt } from '@joktec/core';
+import { ClientConfig, IsArray, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toInt } from '@joktec/core';
 import { omit } from 'lodash';
 import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
 import { ConnectionOptions } from 'sequelize/types/sequelize';
@@ -58,11 +58,12 @@ export class MysqlConfig extends ClientConfig implements SequelizeOptions {
   @IsOptional()
   timezone?: string;
 
-  @IsString()
+  @IsInt()
   @IsOptional()
-  timeout?: number;
+  connectTimeout?: number;
 
-  @IsTypes([MysqlSlaveConfig])
+  @IsArray()
+  @IsTypes([MysqlSlaveConfig], { each: true })
   @IsOptional()
   slaves?: MysqlSlaveConfig[];
 
@@ -72,7 +73,7 @@ export class MysqlConfig extends ClientConfig implements SequelizeOptions {
       ...props,
       host: props?.host || 'localhost',
       port: toInt(props?.port, 3306),
-      timeout: toInt(props?.timeout, 20000),
+      connectTimeout: toInt(props?.connectTimeout, 20000),
       slaves: [],
     });
 

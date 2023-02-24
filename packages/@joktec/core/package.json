@@ -4,7 +4,7 @@
   "version": "1.0.20",
   "private": false,
   "license": "UNLICENSED",
-  "author": "BaoTran",
+  "author": "Joker",
   "engines": {
     "node": ">=14.0.0"
   },

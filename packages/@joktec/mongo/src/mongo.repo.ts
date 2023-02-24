@@ -1,12 +1,12 @@
 import { DEFAULT_CON_ID, ICondition } from '@joktec/core';
-import { MongoRepository } from './mongo.client';
+import { IMongoRepository } from './mongo.client';
 import { MongoService } from './mongo.service';
 import { AnyParamConstructor } from '@typegoose/typegoose/lib/types';
 import { IMongoRequest, IMongoAggregation, MongoBulkRequest, IMongoResponse, MongoId } from './models';
 import { preHandleQuery, preHandleBody } from './mongo.utils';
 import { pick } from 'lodash';
 
-export abstract class MongoRepo<T, ID = MongoId> implements MongoRepository<T, ID> {
+export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, ID> {
   protected constructor(
     protected mongoService: MongoService,
     protected schema: AnyParamConstructor<T>,

@@ -8,8 +8,8 @@ class OverrideDataLoader<ID, T> extends DataLoader<ID, T> {
   }
 }
 
-export class BaseDataLoader<ID, T> {
-  constructor(private readonly baseMicroservice: ClientProxy, private message: any) {}
+export abstract class BaseDataLoader<ID, T> {
+  protected constructor(private readonly baseMicroservice: ClientProxy, private message: any) {}
 
   getLoader(): DataLoader<ID, T> {
     return new OverrideDataLoader<ID, T>(async (ids: readonly ID[]) => {
