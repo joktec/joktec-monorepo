@@ -2,7 +2,7 @@
   "name": "@joktec/example-micro",
   "description": "JokTec - Example Microservice",
   "version": "0.1.0",
-  "author": "Joker",
+  "author": "JokTec",
   "private": true,
   "license": "UNLICENSED",
   "files": [

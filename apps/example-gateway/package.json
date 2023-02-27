@@ -2,7 +2,7 @@
   "name": "@joktec/example-gateway",
   "description": "JokTec - Example Gateway",
   "version": "1.0.20",
-  "author": "Joker",
+  "author": "JokTec",
   "private": true,
   "license": "UNLICENSED",
   "files": [

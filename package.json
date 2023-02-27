@@ -1,13 +1,13 @@
 {
   "name": "joktec",
-  "description": "BaoTG - Monorepo with lerna template",
+  "description": "JokTec - Monorepo with Lerna template",
   "version": "0.0.0",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "author": "Bao Tran",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BaoTran1203/nodejs-monorepo.git"
+    "url": "https://github.com/trangiabao1203/joktec-monorepo.git"
   },
   "engines": {
     "node": ">=14"
