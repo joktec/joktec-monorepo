@@ -3,7 +3,7 @@
   "description": "JokTec - Example Gateway",
   "version": "1.0.20",
   "author": "Joker",
-  "private": false,
+  "private": true,
   "license": "UNLICENSED",
   "files": [
     "dist",

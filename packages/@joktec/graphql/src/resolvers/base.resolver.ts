@@ -25,25 +25,17 @@ export const BaseResolver = <CREATEINPUT, UPDATEINPUT, LISTQUERYINPUT>({
   const createMutationName = `create${nameCapitalize}`;
   const updateMutationName = `update${nameCapitalize}`;
   const deleteMutationName = `delete${nameCapitalize}`;
-  class Resolver {
-    constructor(private readonly baseMicroservice: ClientProxy, private message: any) {}
+
+  abstract class Resolver {
+    protected constructor(protected readonly baseMicroservice: ClientProxy, protected message: any) {}
 
     @Query(() => listViewDto, { name: pluralName })
     async findAll(
-      @Args('query', {
-        type: () => listQueryInput,
-        nullable: true,
-        defaultValue: {},
-      })
+      @Args('query', { type: () => listQueryInput, nullable: true, defaultValue: {} })
       query: LISTQUERYINPUT,
     ) {
       const { condition, pagination } = query as any;
-      return await firstValueFrom(
-        this.baseMicroservice.send(this.message.LIST, {
-          condition,
-          pagination,
-        }),
-      );
+      return await firstValueFrom(this.baseMicroservice.send(this.message.LIST, { condition, pagination }));
     }
 
     @Query(() => viewDto, { name })
@@ -51,42 +43,23 @@ export const BaseResolver = <CREATEINPUT, UPDATEINPUT, LISTQUERYINPUT>({
       return await firstValueFrom(this.baseMicroservice.send(this.message.GET, { id }));
     }
 
-    // @Mutation(() => viewDto, { name: createMutationName })
-    // async create(
-    //   @Args("input", { type: () => createInput }) input: CREATEINPUT
-    // ) {
-    //   const response = await firstValueFrom(
-    //     this.baseMicroservice.send(this.message.CREATE, {
-    //       input,
-    //     })
-    //   );
+    @Mutation(() => viewDto, { name: createMutationName })
+    async create(@Args('input', { type: () => createInput }) input: CREATEINPUT) {
+      return await firstValueFrom(this.baseMicroservice.send(this.message.CREATE, { input }));
+    }
 
-    //   return response;
-    // }
+    @Mutation(() => viewDto, { name: updateMutationName })
+    async update(
+      @Args('id', { type: () => String }) id: string,
+      @Args('input', { type: () => updateInput }) input: UPDATEINPUT,
+    ) {
+      return await firstValueFrom(this.baseMicroservice.send(this.message.UPDATE, { id, input }));
+    }
 
-    // @Mutation(() => viewDto, { name: updateMutationName })
-    // async update(
-    //   @Args("id", { type: () => String }) id: string,
-    //   @Args("input", { type: () => updateInput }) input: UPDATEINPUT
-    // ) {
-    //   const response = await firstValueFrom(
-    //     this.baseMicroservice.send(this.message.UPDATE, {
-    //       id,
-    //       input,
-    //     })
-    //   );
-
-    //   return response;
-    // }
-
-    // @Mutation(() => viewDto, { name: deleteMutationName })
-    // async delete(@Args("id", { type: () => String }) id: string) {
-    //   const response = await firstValueFrom(
-    //     this.baseMicroservice.send(this.message.DELETE, { id })
-    //   );
-
-    //   return response;
-    // }
+    @Mutation(() => viewDto, { name: deleteMutationName })
+    async delete(@Args('id', { type: () => String }) id: string) {
+      return await firstValueFrom(this.baseMicroservice.send(this.message.DELETE, { id }));
+    }
   }
 
   return Resolver;
