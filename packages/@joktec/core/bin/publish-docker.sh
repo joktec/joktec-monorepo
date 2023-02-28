@@ -13,7 +13,7 @@ const options = program.opts();
 
 const { execSync } = require('child_process');
 
-const DOCK_REGISTRY = 'registry.jobhopin.com';
+const DOCK_REGISTRY = 'registry.joktec.com';
 
 const pkg = JSON.parse(fs.readFileSync('./package.json').toString())
 const name = pkg.name.replace('@','').replace('/', '-');

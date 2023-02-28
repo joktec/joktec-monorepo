@@ -1,5 +1,5 @@
 {
-  "name": "@joktec/big-query",
+  "name": "@joktec/bigquery",
   "description": "JokTec - Google Cloud BigQuery Service",
   "version": "0.0.0",
   "private": false,

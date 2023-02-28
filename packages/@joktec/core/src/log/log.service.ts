@@ -8,7 +8,7 @@ import { createCloudWatchStream } from './cloudwatch/cloudwatch';
 
 export const createPinoHttp = (configService: ConfigService) => {
   const config = new LogConfig(configService.get<LogConfig>('log' as any));
-  const appName = configService.get('name').replace('@jobhopin/', '');
+  const appName = configService.get('name').replace('@joktec/', '');
 
   const streams = [createConsoleStream(config.level)];
   if (config?.logStash?.enable) streams.push(createLogstashStream(appName, config.logStash));

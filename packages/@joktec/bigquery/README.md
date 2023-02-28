@@ -1,7 +1,6 @@
 <div align="center">
-  <h1>jobhopin-bigquery</h1>
+  <h1>joktec-bigquery</h1>
   <p>Core Libraries such as type definitions, api clients and utils serving for backend services and frontend services</p>
-  </div>
 </div>
 
 ## Installation
@@ -16,7 +15,7 @@ yarn add @joktec/bigquery
 For development, a package can be linked into another project. This is often useful to test out new features
 
 ```bash
-  cd jobhopin-core
+  cd joktec-core
   yarn link
 ```
 
