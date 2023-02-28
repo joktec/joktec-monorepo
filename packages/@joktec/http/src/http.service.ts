@@ -1,5 +1,5 @@
 import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable } from '@joktec/core';
-import { HttpService as NestHttpService } from '@nestjs/axios';
+import axios, { HttpService as NestHttpService } from '@nestjs/axios';
 import { cloneDeep } from 'lodash';
 import { Observable } from 'rxjs';
 import { AxiosRequestConfig } from 'axios';
@@ -11,6 +11,7 @@ import { HttpClient } from './http.client';
 import { HttpMetricDecorator } from './http.metric';
 import { HttpFormData, HttpProxy, HttpRequest, HttpResponse } from './models';
 import FormData from 'form-data';
+import qs from 'qs';
 
 @Injectable()
 export class HttpService extends AbstractClientService<HttpConfig, NestHttpService> implements HttpClient {
@@ -57,6 +58,11 @@ export class HttpService extends AbstractClientService<HttpConfig, NestHttpServi
   request<T = any>(config: HttpRequest, conId: string = DEFAULT_CON_ID): Observable<HttpResponse<T>> {
     const proxyConfig = this.buildProxy(config.url, config.proxy);
     const cf: AxiosRequestConfig = mergeDeep(cloneDeep(this.getConfig(conId)), config, proxyConfig);
+    if (config.serializer) {
+      cf.paramsSerializer = {
+        encode: params => qs.stringify(params),
+      };
+    }
     return this.httpService.request<T>(cf as any) as any;
   }
 
@@ -85,6 +91,12 @@ export class HttpService extends AbstractClientService<HttpConfig, NestHttpServi
       },
       data: formData,
     });
+
+    if (config.serializer) {
+      cf.paramsSerializer = {
+        encode: params => qs.stringify(params),
+      };
+    }
 
     return this.httpService.request<T>(cf as any) as any;
   }

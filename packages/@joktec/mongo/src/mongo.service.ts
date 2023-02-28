@@ -64,4 +64,9 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
       },
     });
   }
+
+  public useSoftDelete(schemaClass: AnyParamConstructor<any>, conId: string = DEFAULT_CON_ID): boolean {
+    const model = this.getModel(schemaClass, conId);
+    return !!model.schema.paths[''];
+  }
 }

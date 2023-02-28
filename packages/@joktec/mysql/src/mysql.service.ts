@@ -19,18 +19,15 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
     const connection = pick(config, ['host', 'port', 'username', 'password', 'database']);
     const options: SequelizeOptions = {
       ...connection,
+      dialect: config.dialect,
       dialectOptions: { charset: config.charset, connectTimeout: config.connectTimeout },
-      dialect: 'mysql',
       logging: (sql: string, timing?: number) => {
         this.logService.debug('SQL statement: %s', sql);
         this.logService.debug('SQL execute in %j', timing);
       },
     };
     if (config.slaves?.length) {
-      options.replication = {
-        write: { ...connection },
-        read: config.slaves,
-      };
+      options.replication = { write: { ...connection }, read: config.slaves };
     }
     const sequelize = new Sequelize(options);
     this.logService.info('MySQL Service is configured in `%s` connection', config.conId);

@@ -34,7 +34,7 @@ const writeEntity = async (tableName) => {
   const classMapper = upperFirst(camelCase(tableName + 'Mapper'));
 
   const lines = [
-    `import { BaseEntity, MysqlMapper, linkTransform, toBool } from '@jobhopin/core';`,
+    `import { BaseEntity, MysqlMapper, linkTransform, toBool } from '@joktec/core';`,
     `import { ClassTransformOptions, Expose, instanceToPlain, plainToInstance, Transform } from 'class-transformer';`,
     `import { IsBoolean, IsDate, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';`,
     ``,
@@ -141,7 +141,7 @@ const writeRepo = async (tableName) => {
   const classMapper = upperFirst(camelCase(tableName + 'Mapper'));
 
   const fileContent = `
-      import { Injectable, MysqlRepo, MysqlService } from '@jobhopin/core';
+      import { Injectable, MysqlRepo, MysqlService } from '@joktec/core';
       import { ${entityName}, ${classMapper} } from '../../entities';
 
       @Injectable()

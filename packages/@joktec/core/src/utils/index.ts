@@ -1,4 +1,4 @@
-import { isBoolean, isNaN, isArray, isEmpty } from 'lodash';
+import { isBoolean, isNaN, isArray, isEmpty, isString } from 'lodash';
 
 export const getEnv = (key: string): string => {
   if (isEmpty(process.env[key] as string)) {
@@ -34,8 +34,11 @@ export const toBool = (b: boolean | string | number | Buffer, def = false) => {
   return value === 'yes' || value === 'true' || value === '1';
 };
 
-export const toArray = <T>(data: T | Array<T>): T[] => {
+export const toArray = <T>(data: T | Array<T>, separator?: string): T[] => {
   if (!data) return [];
+  if (isString(data) && separator) {
+    return data.split(separator) as Array<T>;
+  }
   return isArray(data) ? data : [data];
 };
 

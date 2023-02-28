@@ -4,6 +4,7 @@ export type HttpProxy = AxiosProxyConfig | false;
 
 export interface HttpRequest extends AxiosRequestConfig {
   proxy?: HttpProxy;
+  serializer?: boolean;
 }
 
 export interface HttpFormData {

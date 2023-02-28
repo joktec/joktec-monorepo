@@ -1,8 +1,6 @@
-import { IBaseRequest, ICondition, IPageableResponse } from '../models';
+import { IBaseRequest, ICondition } from '../models';
 
 export interface BaseReadRepository<T, ID> {
-  pageable(query: IBaseRequest): Promise<IPageableResponse<T>>;
-
   find(query: IBaseRequest): Promise<T[]>;
 
   count(query: IBaseRequest): Promise<number>;
@@ -15,5 +13,5 @@ export interface BaseRepository<T, ID> extends BaseReadRepository<T, ID> {
 
   update(condition: ICondition, body: T): Promise<T>;
 
-  delete(condition: ICondition): Promise<number>;
+  delete(condition: ICondition): Promise<T>;
 }

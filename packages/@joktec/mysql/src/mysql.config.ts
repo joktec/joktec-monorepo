@@ -1,5 +1,5 @@
 import { ClientConfig, IsArray, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toInt } from '@joktec/core';
-import { omit } from 'lodash';
+import { omit, pick } from 'lodash';
 import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
 import { ConnectionOptions } from 'sequelize/types/sequelize';
 
@@ -29,7 +29,22 @@ export class MysqlSlaveConfig implements ConnectionOptions {
   }
 }
 
+export enum Dialect {
+  MYSQL = 'mysql',
+  POSTGRES = 'postgres',
+  SQLITE = 'sqlite',
+  MARIADB = 'mariadb',
+  MSSQL = 'mssql',
+  DB2 = 'db2',
+  SNOWFLAKE = 'snowflake',
+  ORACLE = 'oracle',
+}
+
 export class MysqlConfig extends ClientConfig implements SequelizeOptions {
+  @IsString()
+  @IsNotEmpty()
+  dialect: Dialect;
+
   @IsString()
   @IsNotEmpty()
   host: string;
@@ -71,6 +86,7 @@ export class MysqlConfig extends ClientConfig implements SequelizeOptions {
     super(props);
     Object.assign(this, {
       ...props,
+      dialect: props?.dialect || Dialect.MYSQL,
       host: props?.host || 'localhost',
       port: toInt(props?.port, 3306),
       connectTimeout: toInt(props?.connectTimeout, 20000),
@@ -78,8 +94,8 @@ export class MysqlConfig extends ClientConfig implements SequelizeOptions {
     });
 
     if (props?.slaves?.length) {
-      const masterConfig = omit(props, ['slaves']);
-      this.slaves = props.slaves.map(slave => new MysqlSlaveConfig(Object.assign({}, slave, masterConfig)));
+      const masterConfig = pick(props, ['host', 'port', 'username', 'password', 'database']);
+      this.slaves = props.slaves.map(slave => new MysqlSlaveConfig({ ...masterConfig, ...slave }));
     }
   }
 }

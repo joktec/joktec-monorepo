@@ -1,3 +1,3 @@
-import { IPageableResponse } from '@joktec/core';
+import { IListResponseDto } from '@joktec/core';
 
-export interface IMongoResponse<T> extends IPageableResponse<T> {}
+export interface IMongoResponse<T> extends IListResponseDto<T> {}

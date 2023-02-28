@@ -1,6 +1,6 @@
 import { Column, DataType, Length, Model, PrimaryKey, Table } from '@joktec/mysql';
 
-@Table({ tableName: 'products', timestamps: false })
+@Table({ tableName: 'products', timestamps: false, paranoid: true })
 export class Product extends Model<Product> {
   @PrimaryKey
   @Column(DataType.UUIDV4)

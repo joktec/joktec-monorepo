@@ -12,10 +12,8 @@ export const preHandleQuery = (condition: ICondition, keyword?: IKeyword): FindO
     } else if (typeof value === 'object') {
       const entries = Object.entries(value) as [IOperation, IDataType][];
       for (const [op, val] of entries) {
-        where[key] = {
-          ...where[key],
-          [Op[op]]: val,
-        };
+        const sqlOp = convertOp(op);
+        where[key] = { ...where[key], [sqlOp]: val };
       }
     } else {
       where[key] = value;
@@ -30,4 +28,33 @@ export const preHandleQuery = (condition: ICondition, keyword?: IKeyword): FindO
   }
 
   return { where };
+};
+
+export const convertOp = (op: IOperation): symbol => {
+  switch (op) {
+    case '$ne':
+      return Op.ne;
+
+    case '$gt':
+      return Op.gt;
+
+    case '$gte':
+      return Op.gte;
+
+    case '$lt':
+      return Op.lt;
+
+    case '$lte':
+      return Op.lte;
+
+    case '$in':
+      return Op.in;
+
+    case '$nin':
+      return Op.notIn;
+
+    case '$eq':
+    default:
+      return Op.eq;
+  }
 };

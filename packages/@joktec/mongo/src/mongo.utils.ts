@@ -6,11 +6,14 @@ import { ObjectIdLike } from 'bson';
 import _ from 'lodash';
 import moment from 'moment';
 
-export const preHandleQuery = (query: IMongoRequest): ICondition => {
+export const preHandleQuery = (query: IMongoRequest, softDelete: boolean = false): ICondition => {
   const { condition, keyword } = query;
   const overrideCondition: ICondition = { ...condition };
   if (keyword) {
     Object.entries(keyword).map(([k, v]) => (overrideCondition[k] = { $regex: v, $options: 'i' }));
+  }
+  if (softDelete) {
+    overrideCondition.deletedAt = { $exists: false };
   }
   return overrideCondition;
 };
@@ -20,6 +23,7 @@ export const preHandleBody = <T extends {} = any>(body: T): T => {
   delete processBody._id;
   delete processBody.createdAt;
   delete processBody.updatedAt;
+  delete processBody.deletedAt;
 
   if (processBody.lng && processBody.lat) {
     processBody.location = {

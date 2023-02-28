@@ -29,8 +29,8 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
 
   private handleHttpException(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    const response = ctx.getResponse<Response>();
 
     let httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     let errorMessage: string;

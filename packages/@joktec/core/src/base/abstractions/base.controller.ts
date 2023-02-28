@@ -1,24 +1,16 @@
 import { Body, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { BaseService } from './base.service';
-import { IBaseRequest, IPageableResponse } from '../models';
-import { ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { IBaseRequest, IListResponseDto } from '../models';
+import { ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 export abstract class BaseController<T, ID> {
   protected constructor(protected service: BaseService<T, ID>) {}
 
-  @Post('/pageable')
-  @ApiOperation({ summary: 'Pageable' })
-  @ApiOkResponse()
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async pageable(@Body() req: IBaseRequest): Promise<IPageableResponse<T>> {
-    return this.service.pageable(req);
-  }
-
   @Get('/')
   @ApiOperation({ summary: 'List' })
   @ApiOkResponse()
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
-  async findAll(@Body() req: IBaseRequest): Promise<T[]> {
+  @ApiForbiddenResponse()
+  async findAll(@Body() req: IBaseRequest): Promise<IListResponseDto<T>> {
     return this.service.findAll(req);
   }
 
@@ -52,8 +44,7 @@ export abstract class BaseController<T, ID> {
   @ApiOkResponse()
   @ApiNotFoundResponse()
   @ApiForbiddenResponse()
-  async delete(@Param('id') id: ID): Promise<any> {
-    const res = await this.service.delete(id);
-    return { total: res };
+  async delete(@Param('id') id: ID): Promise<T> {
+    return this.service.delete(id);
   }
 }

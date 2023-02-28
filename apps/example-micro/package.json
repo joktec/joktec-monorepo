@@ -1,10 +1,10 @@
 {
   "name": "@joktec/example-micro",
   "description": "JokTec - Example Microservice",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "author": "JokTec",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "files": [
     "dist",
     "bin",
@@ -14,7 +14,7 @@
     "Dockerfile"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "scripts": {
     "clean": "rimraf -rf dist node_modules",
@@ -35,8 +35,7 @@
   },
   "dependencies": {
     "@joktec/core": "^1.0.20",
-    "@joktec/elastic": "^1.0.20",
-    "@joktec/graphql": "^1.0.5",
+    "@joktec/mongo": "^0.0.0",
     "@joktec/mysql": "^1.0.20"
   },
   "lint-staged": {
