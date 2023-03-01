@@ -5,26 +5,15 @@ export abstract class BaseService<T, ID> {
   protected constructor(protected repository: BaseRepository<T, ID>) {}
 
   async findAll(req: IBaseRequest): Promise<IListResponseDto<T>> {
-    const overrideReq: IBaseRequest = {
-      condition: req?.condition || {},
-      page: req?.page ?? 1,
-      limit: req?.limit ?? 20,
-      sort: req?.sort || { id: 'asc' },
-      ...req,
-    };
-
-    const [items, totalItems] = await Promise.all([
-      this.repository.find(overrideReq),
-      this.repository.count(overrideReq),
-    ]);
+    const [items, totalItems] = await Promise.all([this.repository.find(req), this.repository.count(req)]);
 
     return {
       items,
       totalItems,
-      page: overrideReq.page,
-      pageSize: overrideReq.limit,
-      totalPage: Math.ceil(totalItems / overrideReq.limit),
-      isLastPage: items.length < overrideReq.limit,
+      page: req.page,
+      pageSize: req.limit,
+      totalPage: Math.ceil(totalItems / req.limit),
+      isLastPage: items.length < req.limit,
     };
   }
 
@@ -39,11 +28,11 @@ export abstract class BaseService<T, ID> {
 
   async update(id: ID, entity: T): Promise<T> {
     const condition: ICondition = { id };
-    return this.repository.update({ condition }, entity);
+    return this.repository.update(condition, entity);
   }
 
   async delete(id: ID): Promise<T> {
     const condition: ICondition = { id };
-    return this.repository.delete({ condition });
+    return this.repository.delete(condition);
   }
 }

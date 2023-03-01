@@ -1,9 +1,6 @@
-import { isArray, isPlainObject } from 'lodash';
-
-const UUID_BASE_ID = 'b0b6b3f9-6ea7-4a8f-a3b5';
-const UUID_PADDING = 12;
-const UUID_COMPONENTS = 4;
-const BASE_16 = 16;
+import { isArray, isBoolean, isNaN, isNil, isPlainObject, isString } from 'lodash';
+import pluralize from 'pluralize';
+import slug from 'slug';
 
 // Object
 export const flattenKeys = (obj: object, currentPath: string | null): string[] => {
@@ -20,19 +17,42 @@ export const flattenKeys = (obj: object, currentPath: string | null): string[] =
   return paths;
 };
 
-export const uuidToInt = (stringUuid: string) => {
-  const uuid = BigInt(`0x${stringUuid.split('-')[UUID_COMPONENTS]}`);
-  return Number(uuid);
+export const toInt = (n: number | string | boolean, def: number = 0): number => {
+  if (isNil(n)) return def;
+  if (typeof n === 'string' && isNaN(parseInt(n, 10))) return def;
+  if (isBoolean(n)) return n ? 1 : 0;
+  if (n === 'true') return 1;
+  if (n === 'false') return 0;
+  return n ? parseInt(String(n), 10) : def;
 };
 
-export const intToUuid = (number: number) => {
-  let nbr;
-  let randStr = '';
-  const bigInt = BigInt(number);
+export const toBool = (b: boolean | string | number | Buffer, def: boolean = false) => {
+  if (!b) return def;
+  if (b instanceof Buffer) return b.length && b[0] === 1;
+  const value = String(b).toLowerCase();
+  return value === 'yes' || value === 'true' || value === '1';
+};
 
-  do {
-    randStr += (nbr = Math.random()).toString(16).substr(3, 6);
-  } while (randStr.length < 30);
+export const toArray = <T>(data: T | Array<T>, separator?: string): T[] => {
+  if (!data) return [];
+  if (isString(data) && separator) {
+    return data.split(separator) as Array<T>;
+  }
+  return isArray(data) ? data : [data];
+};
 
-  return `${UUID_BASE_ID}-${bigInt.toString(BASE_16).padStart(UUID_PADDING, '0')}`;
+export const linkTransform = (link: string, host: string, type: 'relative' | 'absolute' = 'relative'): string => {
+  if (link && type === 'relative') return link.replace(host, '');
+  if (link && type === 'absolute' && !link.startsWith('http')) return new URL(link, host).toString();
+  return link;
+};
+
+export const toSingular = (str: string): string => pluralize.singular(str);
+
+export const toPlural = (str: string, count?: number): string =>
+  isNil(count) ? pluralize.plural(str) : pluralize(str, count, true);
+
+export const toSlugify = (...values: string[]): string => {
+  if (!values.length) return null;
+  return slug(values.join(' '), { lower: true });
 };

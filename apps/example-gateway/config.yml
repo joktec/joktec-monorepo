@@ -23,3 +23,4 @@ mongo:
   password: joktec123
   database: sample_db
   connectTimeout: 20000
+  directConnection: true

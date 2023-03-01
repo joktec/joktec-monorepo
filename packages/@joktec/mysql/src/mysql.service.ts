@@ -23,7 +23,7 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
       dialectOptions: { charset: config.charset, connectTimeout: config.connectTimeout },
       logging: (sql: string, timing?: number) => {
         this.logService.debug('SQL statement: %s', sql);
-        this.logService.debug('SQL execute in %j', timing);
+        this.logService.trace('SQL execute in %j', timing);
       },
     };
     if (config.slaves?.length) {

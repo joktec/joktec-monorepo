@@ -29,6 +29,7 @@ export {
   CacheModule,
   UseGuards,
 } from '@nestjs/common';
+export * from '@nestjs/swagger';
 export * from './app';
 export * from './abstractions';
 export * from './models';

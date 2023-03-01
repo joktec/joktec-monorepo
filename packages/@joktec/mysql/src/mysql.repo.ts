@@ -20,7 +20,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   async find(query: IMysqlRequest): Promise<T[]> {
     const options: FindOptions = preHandleQuery(query.condition, query.keyword);
-    if (query.select) options.attributes = toArray<string>(query.select);
+    if (query.select) options.attributes = toArray<string>(query.select, ',');
     if (query.sort) options.order = Object.entries(query.sort);
     if (query.limit && query.page) {
       options.limit = query.limit;
@@ -36,7 +36,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   async findOne(query: IMysqlRequest): Promise<T> {
     const options: FindOptions = preHandleQuery(query.condition, query.keyword);
-    if (query.select) options.attributes = toArray<string>(query.select);
+    if (query.select) options.attributes = toArray<string>(query.select, ',');
     return this.query().findOne(options);
   }
 

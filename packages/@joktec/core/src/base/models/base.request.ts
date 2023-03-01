@@ -16,6 +16,7 @@ export type ICondition = {
 export type ILanguage = '*' | 'vi' | 'en';
 export type IKeyword = { [key: string]: string };
 export type ISort = { [key: string]: 'asc' | 'desc' };
+export type INear = { lat: number; lng: number; distance?: number };
 
 export interface IBaseRequest {
   select?: string | string[];
@@ -25,4 +26,5 @@ export interface IBaseRequest {
   page?: number;
   limit?: number;
   sort?: ISort;
+  near?: INear;
 }

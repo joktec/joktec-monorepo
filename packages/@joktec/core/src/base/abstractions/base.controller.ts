@@ -1,8 +1,10 @@
-import { Body, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Delete, Get, Param, Post, Put, Query, UseInterceptors } from '@nestjs/common';
+import { ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { BaseService } from './base.service';
 import { IBaseRequest, IListResponseDto } from '../models';
-import { ApiForbiddenResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { QueryInterceptor, ResponseInterceptor } from './base.interceptor';
 
+@UseInterceptors(ResponseInterceptor)
 export abstract class BaseController<T, ID> {
   protected constructor(protected service: BaseService<T, ID>) {}
 
@@ -10,7 +12,8 @@ export abstract class BaseController<T, ID> {
   @ApiOperation({ summary: 'List' })
   @ApiOkResponse()
   @ApiForbiddenResponse()
-  async findAll(@Body() req: IBaseRequest): Promise<IListResponseDto<T>> {
+  @UseInterceptors(QueryInterceptor)
+  async findAll(@Query() req: IBaseRequest): Promise<IListResponseDto<T>> {
     return this.service.findAll(req);
   }
 
