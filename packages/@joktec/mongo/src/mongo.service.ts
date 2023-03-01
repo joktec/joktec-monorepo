@@ -55,6 +55,15 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   public getModel(schemaClass: AnyParamConstructor<any>, conId: string = DEFAULT_CON_ID) {
     return getModelForClass(schemaClass, {
       existingConnection: this.getClient(conId),
+      schemaOptions: {
+        versionKey: true,
+        strict: true,
+        strictQuery: true,
+        id: true,
+        minimize: true,
+        toObject: { virtuals: true },
+        toJSON: { virtuals: true },
+      },
       options: {
         allowMixed: Severity.ALLOW,
       },

@@ -53,7 +53,7 @@ export class MongoConfig extends ClientConfig {
       port: toInt(props?.port, 27017),
       retryTimeout: toInt(props?.retryTimeout, 20000),
       connectTimeout: toInt(props?.connectTimeout, 10000),
-      strictQuery: toBool(props?.strictQuery, false),
+      strictQuery: toBool(props?.strictQuery, true),
       directConnection: toBool(props?.directConnection, false),
       replica: toBool(props?.replica, false),
     });

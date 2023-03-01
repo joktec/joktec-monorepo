@@ -1,10 +1,10 @@
-import { modelOptions, ObjectId, prop } from '@joktec/mongo';
+import { IsString } from '@joktec/core';
+import { modelOptions, prop, plugin, SoftSchema } from '@joktec/mongo';
 
-@modelOptions({ schemaOptions: { collection: 'categories', timestamps: false } })
-export class Category {
-  @prop({ auto: true, immutable: true })
-  _id?: ObjectId;
-
+@modelOptions({ schemaOptions: { collection: 'categories', timestamps: true } })
+@plugin(undefined, {})
+export class Category extends SoftSchema {
   @prop({ type: String, required: true, minlength: 10, maxlength: 255 })
+  @IsString()
   name!: string;
 }

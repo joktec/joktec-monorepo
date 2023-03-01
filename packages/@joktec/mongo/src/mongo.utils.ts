@@ -13,7 +13,9 @@ export const preHandleQuery = (query: IMongoRequest, softDelete: boolean = false
     Object.entries(keyword).map(([k, v]) => (overrideCondition[k] = { $regex: v, $options: 'i' }));
   }
   if (softDelete) {
-    overrideCondition.deletedAt = { $exists: false };
+    if (!overrideCondition.$or) overrideCondition.$or = [];
+    overrideCondition.$or.push({ deletedAt: { $eq: null } });
+    overrideCondition.$or.push({ deletedAt: { $exists: false } });
   }
   return overrideCondition;
 };
