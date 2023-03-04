@@ -1,6 +1,6 @@
 {
-  "name": "@joktec/slack",
-  "description": "JokTec - Slack Service",
+  "name": "@joktec/alert",
+  "description": "JokTec - Alert Service",
   "version": "0.0.0",
   "private": false,
   "license": "MIT",
@@ -27,9 +27,9 @@
   "dependencies": {
     "@joktec/core": "1.0.20",
     "@slack/webhook": "^6.1.0",
-    "lodash": "^4.17.21"
-  },
-  "devDependencies": {
+    "lodash": "^4.17.21",
+    "node-telegram-bot-api": "^0.61.0",
+    "telegraf": "^4.11.2"
   },
   "lint-staged": {
     "*.ts": [
@@ -41,5 +41,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "devDependencies": {
+    "@types/node-telegram-bot-api": "^0.61.3"
   }
 }

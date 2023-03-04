@@ -1,14 +1,14 @@
 <div align="center">
-  <h1>joktec-slack</h1>
+  <h1>joktec-alert</h1>
   <p>Core Libraries such as type definitions, api clients and utils serving for backend services and frontend services</p>
 </div>
 
 ## Installation
 
-Use the package manager to install @joktec/slack (if you have been published to npm registry)
+Use the package manager to install @joktec/alert (if you have been published to npm registry)
 
 ```bash
-yarn add @joktec/slack
+yarn add @joktec/alert
 ```
 
 ## Local Development
@@ -19,12 +19,12 @@ For development, a package can be linked into another project. This is often use
   yarn link
 ```
 
-Use `yarn link @joktec/slack` to link another package that you’d like to test into your current project.
+Use `yarn link @joktec/alert` to link another package that you’d like to test into your current project.
 
 ## Usage
 
 ```javascript
-import { isDev } from '@joktec/slack/dist/utils';
+import { isDev } from '@joktec/alert/dist/utils';
 
 isDev();
 ```

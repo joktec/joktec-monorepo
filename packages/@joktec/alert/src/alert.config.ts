@@ -1,19 +1,19 @@
 import { ClientConfig, IsNotEmpty, IsString } from '@joktec/core';
 
-export class SlackConfig extends ClientConfig {
+export class AlertConfig extends ClientConfig {
   @IsString()
   @IsNotEmpty()
-  team: string;
+  chatId!: string;
 
   @IsString()
   @IsNotEmpty()
-  service: string;
+  service!: string;
 
   @IsString()
   @IsNotEmpty()
-  token: string;
+  token!: string;
 
-  constructor(props: SlackConfig) {
+  constructor(props: AlertConfig) {
     super(props);
     Object.assign(this, props);
   }
