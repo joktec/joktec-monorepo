@@ -1,8 +1,9 @@
+import { HttpStatus } from '@nestjs/common';
 import { RuntimeException } from '../runtime.exception';
-import { ExceptionStatus } from '../exception-status';
+import { ExceptionMessage } from '../exception-message';
 
 export class RequestTimeoutException<T = any> extends RuntimeException {
-  constructor(message: string, data: T = null) {
-    super(message, ExceptionStatus.REQUEST_TIMEOUT, data);
+  constructor(message: string = ExceptionMessage.REQUEST_TIMEOUT, data: T = null) {
+    super(message, HttpStatus.REQUEST_TIMEOUT, data);
   }
 }

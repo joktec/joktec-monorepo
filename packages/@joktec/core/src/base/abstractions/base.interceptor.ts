@@ -2,6 +2,8 @@ import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor 
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { IBaseRequest, IResponseDto } from '../models';
 import { toInt } from '../../utils';
+import { isNil } from 'lodash';
+import { NotFoundException } from '../../exceptions';
 
 @Injectable()
 export class QueryInterceptor implements NestInterceptor {
@@ -24,11 +26,12 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, IRespons
   intercept(context: ExecutionContext, next: CallHandler): Observable<IResponseDto<T>> {
     return next.handle().pipe(
       map(data => {
+        if (isNil(data)) throw new NotFoundException();
         return {
           timestamp: new Date(),
-          status: true,
-          code: HttpStatus.OK,
-          message: 'Success',
+          success: true,
+          status: HttpStatus.OK,
+          message: 'SUCCESS',
           data,
         };
       }),

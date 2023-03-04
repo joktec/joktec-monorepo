@@ -1,13 +1,14 @@
 export interface IResponseDto<T = any> {
   timestamp: Date;
-  status: boolean;
-  code?: number;
+  success: boolean;
+  status?: number;
   message?: string;
+  data?: T;
+
+  error?: any;
   path?: string;
   method?: string;
   body?: object;
   params?: object;
   query?: object;
-  data?: T;
-  error?: T | Array<T>;
 }

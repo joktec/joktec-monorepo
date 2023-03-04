@@ -1,8 +1,4 @@
 export enum ExceptionMessage {
-  INTERNAL_SERVER_ERROR = 'Critical internal server error occurred!',
-}
-
-export enum ExceptionStatus {
   BAD_REQUEST = 'BAD_REQUEST',
   UNAUTHORIZED = 'UNAUTHORIZED',
   FORBIDDEN = 'FORBIDDEN',

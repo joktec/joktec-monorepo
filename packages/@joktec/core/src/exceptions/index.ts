@@ -1,6 +1,5 @@
 export * from './exception';
-export * from './exception-status';
+export * from './exception-message';
 export * from './runtime.exception';
-export * from './base';
 export * from './common';
 export * from './filters';

@@ -1,16 +1,12 @@
-import { Exception, ExceptionStatus, InternalServerException, RuntimeException, toInt } from '@joktec/core';
-import { startCase, lowerCase } from 'lodash';
+import { Exception, HttpStatus, InternalServerException, RuntimeException } from '@joktec/core';
 import { AxiosError } from 'axios';
 
 export function httpExceptionHandler(err: AxiosError): Exception {
   // The request was made and the server responded with a status code that falls out of the range of 2xx
   if (err?.response) {
     const status: number = err.response?.status;
-    for (const message in ExceptionStatus) {
-      if (status === ExceptionStatus[message]) {
-        const msg = startCase(lowerCase(message));
-        return new RuntimeException(msg, startCase(message), err.response);
-      }
+    if (Object.values(HttpStatus).includes(status)) {
+      return new RuntimeException(err.response.statusText, status, err.response.data);
     }
   }
 

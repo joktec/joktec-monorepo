@@ -1,8 +1,9 @@
+import { HttpStatus } from '@nestjs/common';
 import { RuntimeException } from '../runtime.exception';
-import { ExceptionStatus } from '../exception-status';
+import { ExceptionMessage } from '../exception-message';
 
 export class BadRequestException<T = any> extends RuntimeException {
-  constructor(message: string, data: T = null) {
-    super(message, ExceptionStatus.BAD_REQUEST, data);
+  constructor(message: string = ExceptionMessage.BAD_REQUEST, data: T = null) {
+    super(message, HttpStatus.BAD_REQUEST, data);
   }
 }

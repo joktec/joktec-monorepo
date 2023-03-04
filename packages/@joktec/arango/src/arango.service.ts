@@ -4,7 +4,6 @@ import { ArangoConfig, CollectionImportOpts } from './arango.config';
 import { ArangoClient } from './arango.client';
 import { QueryOptions } from 'arangojs/database';
 import { ArrayCursor } from 'arangojs/cursor';
-import { ArangoQueryException, ArangoImportException } from './arango.exception';
 import { ArangoQueryRequest } from './models';
 import { Database } from 'arangojs';
 
@@ -46,27 +45,17 @@ export class ArangoService extends AbstractClientService<ArangoConfig, Database>
     opts: CollectionImportOpts = { onDuplicate: 'update' },
     conId: string = DEFAULT_CON_ID,
   ): Promise<void> {
-    try {
-      const { docs, upsertFields } = data;
-      if (upsertFields?.length) {
-        docs?.map(doc => ({ ...doc, _key: this.getUpsertKey(doc, upsertFields) }));
-      }
-      const result = await this.getCollection(col, conId).import(docs, opts);
-      this.logService.debug(result, 'import to `%s` collection success with data:\n %j', col, docs);
-    } catch (ex) {
-      this.logService.error(ex, 'import to `%s` collection failed', col);
-      throw new ArangoImportException(`collection: ${col} - ${ex.message}`, ex);
+    const { docs, upsertFields } = data;
+    if (upsertFields?.length) {
+      docs?.map(doc => ({ ...doc, _key: this.getUpsertKey(doc, upsertFields) }));
     }
+    const result = await this.getCollection(col, conId).import(docs, opts);
+    this.logService.debug(result, 'import to `%s` collection success with data:\n %j', col, docs);
   }
 
   async query(q: ArangoQueryRequest, opts?: QueryOptions, conId: string = DEFAULT_CON_ID): Promise<ArrayCursor> {
-    try {
-      const result = await this.getClient(conId).query(q, opts);
-      this.logService.debug(result, 'query success with aql:\n %j', q);
-      return result;
-    } catch (ex) {
-      this.logService.error(ex, `Query fail with aql:\n %j`, q);
-      throw new ArangoQueryException(`${ex.message}`, ex);
-    }
+    const result = await this.getClient(conId).query(q, opts);
+    this.logService.debug(result, 'query success with aql:\n %j', q);
+    return result;
   }
 }

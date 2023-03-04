@@ -1,9 +1,9 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { Observable, throwError } from 'rxjs';
 import { Exception } from '../exception';
 import { isPlainObject } from 'lodash';
-import { ExceptionStatus } from '../exception-status';
+import { ExceptionMessage } from '../exception-message';
 import { LogService } from '../../log';
 
 @Catch()
@@ -32,8 +32,8 @@ export class MicroExceptionFilter implements ExceptionFilter {
       return throwError(
         () =>
           new RpcException({
-            status: ExceptionStatus.INTERNAL_SERVER_ERROR,
-            message: exception.message,
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            message: exception.message || ExceptionMessage.INTERNAL_SERVER_ERROR,
             data: exception.stack,
           }),
       );
@@ -46,8 +46,9 @@ export class MicroExceptionFilter implements ExceptionFilter {
     return throwError(
       () =>
         new RpcException({
-          status: ExceptionStatus.INTERNAL_SERVER_ERROR,
-          message: 'Critical internal server error occurred!',
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: ExceptionMessage.INTERNAL_SERVER_ERROR,
+          data: exception.stack,
         }),
     );
   }

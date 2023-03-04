@@ -81,7 +81,7 @@
     "rxjs": "^7.2.0",
     "slug": "^8.2.2",
     "type-cacheable": "^4.1.2",
-    "uuidv4": "^6.2.13"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/csurf": "^1.11.2",

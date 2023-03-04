@@ -1,7 +1,7 @@
-import { ExceptionStatus, RuntimeException } from '../../../exceptions';
+import { ExceptionMessage, InternalServerException } from '../../../exceptions';
 
-export class MicroServiceNotFoundException extends RuntimeException {
-  constructor(msg = 'Server Error') {
-    super(msg, ExceptionStatus.MICRO_SERVICE_NOT_FOUND, null);
+export class MicroServiceNotFoundException extends InternalServerException {
+  constructor(msg: string = ExceptionMessage.MICRO_SERVICE_NOT_FOUND) {
+    super(msg, null);
   }
 }

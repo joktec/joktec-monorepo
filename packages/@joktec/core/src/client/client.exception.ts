@@ -1,13 +1,13 @@
-import { ExceptionStatus, RuntimeException } from '../exceptions';
+import { ExceptionMessage, InternalServerException } from '../exceptions';
 
-export class InvalidClientConfigException extends RuntimeException {
-  constructor(msg: string, error: any) {
-    super(msg, ExceptionStatus.INVALID_CLIENT_CONFIG, error);
+export class InvalidClientConfigException extends InternalServerException {
+  constructor(msg: string = ExceptionMessage.INVALID_CLIENT_CONFIG, error: any) {
+    super(msg, error);
   }
 }
 
-export class ClientConnectException extends RuntimeException {
-  constructor(msg: string, error: any) {
-    super(msg, ExceptionStatus.CLIENT_CONNECTION_FAILED, error);
+export class ClientConnectException extends InternalServerException {
+  constructor(msg: string = ExceptionMessage.CLIENT_CONNECTION_FAILED, error: any) {
+    super(msg, error);
   }
 }

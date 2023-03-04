@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 import { Schema, Model, Document } from 'mongoose';
 
 interface MongooseFields {
@@ -40,7 +40,7 @@ export const timestampsPlugin = (schema: Schema, _: any) => {
   schema.add({
     _id: {
       type: String,
-      default: uuid(),
+      default: uuidv4,
     },
     sqlId: String,
     createdAt: Date,
@@ -92,7 +92,7 @@ export const timestampsPlugin = (schema: Schema, _: any) => {
   Object.assign(schema.methods, {
     $create() {
       (this as any).set({
-        _id: uuid(),
+        _id: uuidv4(),
         createdAt: Date.now(),
         createDate: Date.now(),
       });

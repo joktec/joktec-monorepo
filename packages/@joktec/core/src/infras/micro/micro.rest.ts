@@ -5,6 +5,7 @@ import { MicroServiceNotFoundException } from './exceptions/micro-service-not-fo
 import { MicroMethodNotFoundException } from './exceptions/micro-method-not-found.exception';
 import { AppConfig, initConfig } from '../../config';
 import { toBool } from '../../utils';
+import { snakeCase } from 'lodash';
 
 @Controller()
 export class MicroRest {
@@ -38,11 +39,15 @@ export class MicroRest {
     try {
       serviceInstance = await this.moduleRef.get(service, { strict: false });
     } catch (ex) {
-      throw new MicroServiceNotFoundException(`${service} Micro is not found`);
+      const msg = snakeCase(`${service} Micro is not found`).toUpperCase();
+      throw new MicroServiceNotFoundException(msg);
     }
 
     const methodInstance = serviceInstance[method];
-    if (!methodInstance) throw new MicroMethodNotFoundException(`${service}:${method} Micro method is not found`);
+    if (!methodInstance) {
+      const msg: string = snakeCase(`${service}:${method} Micro method is not found`).toUpperCase();
+      throw new MicroMethodNotFoundException(msg);
+    }
     return methodInstance(req);
   }
 }

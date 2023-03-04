@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 
 export const generateOTP = (otpLength: number = 6) => {
   const baseNumber = Math.pow(10, otpLength - 1);
@@ -9,4 +9,4 @@ export const generateOTP = (otpLength: number = 6) => {
   return number;
 };
 
-export const generateUUID = (): string => uuid();
+export const generateUUID = (): string => uuidv4();

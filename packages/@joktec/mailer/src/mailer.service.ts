@@ -3,7 +3,7 @@ import { Mailer, MailerClient } from './mailer.client';
 import { MailerConfig, MailerServiceType } from './mailer.config';
 import { MailerSendRequest, MailerSendResponse } from './models';
 import { SendEmailMetric } from './mailer.metric';
-import { MailerServiceNotImplementedException, MailerTemplateInvalidException } from './mailer.exception';
+import { MailerException } from './mailer.exception';
 import { MailgunService, SendgridService } from './services';
 import fs from 'fs';
 import handlebars from 'handlebars';
@@ -26,7 +26,7 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
         return SendgridService.init(config);
 
       default:
-        throw new MailerServiceNotImplementedException('This email service is not implement', config);
+        throw new MailerException('MAILER_SERVICE_NOT_IMPLEMENTED', config);
     }
   }
 
@@ -46,7 +46,7 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
     const config = this.getConfig(conId);
     const templatePath = path.posix.join(__dirname, config.templateDir, filename);
     if (!fs.existsSync(templatePath)) {
-      throw new MailerTemplateInvalidException('Template path not found', templatePath);
+      throw new MailerException('TEMPLATE_PATH_NOT_FOUND', templatePath);
     }
 
     const templateContent = fs.readFileSync(templatePath, 'utf8');

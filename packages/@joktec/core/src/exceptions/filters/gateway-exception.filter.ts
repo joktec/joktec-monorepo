@@ -1,8 +1,8 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { isPlainObject, isString } from 'lodash';
+import { isString } from 'lodash';
 import { GraphQLError } from 'graphql/index';
-import { ExceptionMessage, ExceptionStatus } from '../exception-status';
+import { ExceptionMessage } from '../exception-message';
 import { RpcException } from '@nestjs/microservices';
 import { ENV } from '../../config';
 import { LogService } from '../../log';
@@ -32,50 +32,45 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response>();
 
-    let httpStatus: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-    let errorMessage: string;
+    let status: number = exception?.status || HttpStatus.INTERNAL_SERVER_ERROR;
+    let message: string = exception?.message || ExceptionMessage.INTERNAL_SERVER_ERROR;
+    let errorData: any = exception?.data || exception;
 
     if (exception instanceof HttpException) {
-      httpStatus = exception.getStatus();
+      status = exception.getStatus();
       const errorResponse = exception.getResponse();
-      errorMessage = (errorResponse as IResponseDto).error || exception.message;
-    } else if (exception instanceof Error && exception.message) {
-      errorMessage = exception.message;
-    } else if (isPlainObject(exception)) {
-      errorMessage = JSON.stringify(exception);
-    } else {
-      errorMessage = ExceptionMessage.INTERNAL_SERVER_ERROR;
+      message = isString(errorResponse) ? errorResponse : exception.message;
+      errorData = errorResponse;
     }
 
-    if (httpStatus >= 500) {
+    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(exception, 'Something when wrong');
     }
 
     const isProd: boolean = process.env.NODE_ENV === 'production';
-    const errorBody: IResponseDto = {
-      timestamp: new Date(),
-      status: false,
-      code: httpStatus,
-      message: errorMessage,
-      error: !isProd && exception,
-      path: !isProd && request.url,
-      method: !isProd && request.method,
-      body: !isProd && request.body,
-      query: !isProd && request.query,
-      params: !isProd && request.params,
-    };
-    response.status(httpStatus).json(errorBody);
+    const errorBody: IResponseDto = { timestamp: new Date(), success: false, status, message };
+    if (!isProd) {
+      Object.assign(errorBody, {
+        error: errorData,
+        path: request.url,
+        method: request.method,
+      });
+      if (request.body) errorBody.body = request.body;
+      if (request.query) errorBody.query = request.query;
+      if (request.params) errorBody.params = request.params;
+    }
+    response.status(status).json(errorBody);
   }
 
   private handleGqlException(exception: any, host: ArgumentsHost): GraphQLError {
     let message: string = exception?.message || ExceptionMessage.INTERNAL_SERVER_ERROR;
-    let status: string | number = exception?.status || ExceptionStatus.INTERNAL_SERVER_ERROR;
+    let status: string | number = exception?.status || ExceptionMessage.INTERNAL_SERVER_ERROR;
     let data: any = exception?.data;
 
     if (exception instanceof RpcException) {
       const error = exception.getError();
       message = isString(error) ? error : (error as any).message;
-      status = isString(error) ? ExceptionStatus.INTERNAL_SERVER_ERROR : (error as any).status;
+      status = isString(error) ? ExceptionMessage.INTERNAL_SERVER_ERROR : (error as any).status;
     }
 
     if (exception instanceof HttpException) {
