@@ -2,8 +2,8 @@ import { AbstractClientService, Injectable, DEFAULT_CON_ID, Retry } from '@jokte
 import mongoose, { Connection as Mongoose } from 'mongoose';
 import { MongoConfig } from './mongo.config';
 import { MongoClient } from './mongo.client';
-import { AnyParamConstructor } from '@typegoose/typegoose/lib/types';
-import { getModelForClass, Severity } from '@typegoose/typegoose';
+import { AnyParamConstructor, ModelType } from '@typegoose/typegoose/lib/types';
+import { getModelForClass, setGlobalOptions, Severity } from '@typegoose/typegoose';
 
 const RETRY_OPTS = 'mongo.retry';
 
@@ -11,6 +11,21 @@ const RETRY_OPTS = 'mongo.retry';
 export class MongoService extends AbstractClientService<MongoConfig, Mongoose> implements MongoClient {
   constructor() {
     super('mongo', MongoConfig);
+  }
+
+  async onModuleInit(): Promise<void> {
+    setGlobalOptions({
+      options: { allowMixed: Severity.ALLOW },
+      schemaOptions: {
+        strict: true,
+        strictQuery: true,
+        id: true,
+        minimize: true,
+        toObject: { virtuals: true },
+        toJSON: { virtuals: true },
+      },
+    });
+    await super.onModuleInit();
   }
 
   @Retry(RETRY_OPTS)
@@ -41,7 +56,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   private buildUri(config: MongoConfig): string {
     if (config.url) return config.url;
     const protocol = config.replica ? 'mongodb+srv' : 'mongodb';
-    return `${protocol}://${config.host}:${config.port}/?authSource=${config.database || 'admin'}`;
+    return `${protocol}://${config.host}:${config.port}/${config.database}?authSource=${config.database}`;
   }
 
   async start(client: Mongoose, conId: string = DEFAULT_CON_ID): Promise<void> {
@@ -52,21 +67,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     await client.close(true);
   }
 
-  public getModel(schemaClass: AnyParamConstructor<any>, conId: string = DEFAULT_CON_ID) {
-    return getModelForClass(schemaClass, {
-      existingConnection: this.getClient(conId),
-      schemaOptions: {
-        versionKey: true,
-        strict: true,
-        strictQuery: true,
-        id: true,
-        minimize: true,
-        toObject: { virtuals: true },
-        toJSON: { virtuals: true },
-      },
-      options: {
-        allowMixed: Severity.ALLOW,
-      },
-    });
+  public getModel<T>(schemaClass: AnyParamConstructor<any>, conId: string = DEFAULT_CON_ID): ModelType<T> {
+    return getModelForClass(schemaClass, { existingConnection: this.getClient(conId) });
   }
 }

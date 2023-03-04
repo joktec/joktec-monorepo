@@ -49,6 +49,7 @@ export class MongoConfig extends ClientConfig {
     super(props);
     Object.assign(this, {
       ...props,
+      database: props?.database || 'admin',
       host: props?.host || 'localhost',
       port: toInt(props?.port, 27017),
       retryTimeout: toInt(props?.retryTimeout, 20000),

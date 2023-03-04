@@ -12,4 +12,8 @@ export class Product extends Model<Product> {
   @AllowNull(false)
   @Column(DataType.STRING)
   name!: string;
+
+  @Length({ min: 50, max: 255, msg: 'NAME_LENGTH_INVALID' })
+  @Column(DataType.STRING)
+  description!: string;
 }

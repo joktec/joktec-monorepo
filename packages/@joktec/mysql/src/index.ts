@@ -4,6 +4,7 @@ export * from './mysql.service';
 export * from './mysql.config';
 export * from './mysql.utils';
 export * from './mysql.repo';
+export * from './mysql.exception';
 export * from './models';
 export * from 'sequelize-typescript';
 export { Op } from 'sequelize';

@@ -1,13 +1,14 @@
-import { DEFAULT_CON_ID, ICondition, toArray, toBool } from '@joktec/core';
+import { DEFAULT_CON_ID, ICondition, OnModuleInit, toArray, toBool } from '@joktec/core';
 import { IMongoRepository } from './mongo.client';
 import { MongoService } from './mongo.service';
-import { AnyParamConstructor } from '@typegoose/typegoose/lib/types';
+import { AnyParamConstructor, ModelType } from '@typegoose/typegoose/lib/types';
 import { IMongoRequest, IMongoAggregation, MongoBulkRequest, MongoId } from './models';
 import { preHandleQuery, preHandleBody } from './mongo.utils';
 import { pick } from 'lodash';
+import { MongoCatch } from './mongo.exception';
 
-export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, ID> {
-  private softDelete: boolean = false;
+export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, ID>, OnModuleInit {
+  private model: ModelType<T>;
 
   protected constructor(
     protected mongoService: MongoService,
@@ -15,15 +16,14 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
     protected conId: string = DEFAULT_CON_ID,
   ) {}
 
-  protected query() {
-    const model = this.mongoService.getModel(this.schema, this.conId);
-    this.softDelete = model.schema.paths.hasOwnProperty('deletedAt');
-    return model;
+  async onModuleInit() {
+    this.model = this.mongoService.getModel(this.schema, this.conId);
   }
 
+  @MongoCatch
   async find(query: IMongoRequest): Promise<T[]> {
-    const condition: ICondition = preHandleQuery(query, this.softDelete);
-    const qb = this.query().find(condition);
+    const condition: ICondition = preHandleQuery(query);
+    const qb = this.model.find(condition);
     if (query.select) qb.select(toArray<string>(query.select).join(','));
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
     if (query.sort) qb.sort(query.sort);
@@ -32,61 +32,65 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
     return qb.exec();
   }
 
+  @MongoCatch
   async count(query: IMongoRequest): Promise<number> {
-    const condition: ICondition = preHandleQuery(query, this.softDelete);
+    const condition: ICondition = preHandleQuery(query);
     if (condition.hasOwnProperty('location')) {
-      return this.query().estimatedDocumentCount(condition);
+      return this.model.estimatedDocumentCount(condition);
     }
-    return this.query().countDocuments(condition);
+    return this.model.countDocuments(condition);
   }
 
+  @MongoCatch
   async findOne(query: IMongoRequest): Promise<T | null> {
-    const condition: ICondition = preHandleQuery(query, this.softDelete);
-    const qb = this.query().findOne(condition);
+    const condition: ICondition = preHandleQuery(query);
+    const qb = this.model.findOne(condition);
     if (query.select) qb.select(toArray<string>(query.select).join(','));
     if (query.populate?.length) query.populate.map(qb.populate);
     if (query.lean) qb.lean();
     return qb.exec();
   }
 
+  @MongoCatch
   async aggregate(aggregations: IMongoAggregation[]): Promise<T[]> {
-    const qb = this.query().aggregate(aggregations);
+    const qb = this.model.aggregate(aggregations);
     return qb.exec();
   }
 
+  @MongoCatch
   async create(body: T): Promise<T> {
     const processBody: T = preHandleBody(body);
-    return this.query().create(processBody);
+    return this.model.create(processBody);
   }
 
+  @MongoCatch
   async update(condition: ICondition, body: T): Promise<T> {
-    const overrideCondition: ICondition = preHandleQuery({ condition }, this.softDelete);
+    const overrideCondition: ICondition = preHandleQuery({ condition });
     const processBody: T = preHandleBody(body);
-    const qb = this.query().findOneAndUpdate(overrideCondition, processBody, { runValidators: true, new: true });
+    const qb = this.model.findOneAndUpdate(overrideCondition, processBody, { runValidators: true, new: true });
     return qb.exec();
   }
 
+  @MongoCatch
   async delete(condition: ICondition, opts?: { force?: boolean }): Promise<T> {
     const force: boolean = toBool(opts?.force, false);
-    if (force || !this.softDelete) {
-      const forceCondition: ICondition = preHandleQuery({ condition });
-      return this.query().findOneAndRemove(forceCondition, { rawResult: false }).exec();
-    }
-
-    const softCondition: ICondition = preHandleQuery({ condition }, this.softDelete);
-    const bodyToDelete: any = { deletedAt: new Date() };
-    return this.query().findOneAndUpdate(softCondition, bodyToDelete, { runValidators: true, new: true }).exec();
+    const overrideCondition: ICondition = preHandleQuery({ condition });
+    const modelType = await this.model.findOne(overrideCondition).exec();
+    force ? await modelType.remove() : await modelType.delete();
+    return modelType;
   }
 
+  @MongoCatch
   async upsert(condition: ICondition, body: T): Promise<T> {
-    const overrideCondition: ICondition = preHandleQuery({ condition }, this.softDelete);
-    const res = await this.query().updateOne(overrideCondition, body, { upsert: true });
-    return this.query().findById(res.upsertedId).exec();
+    const overrideCondition: ICondition = preHandleQuery({ condition });
+    const res = await this.model.updateOne(overrideCondition, body, { upsert: true });
+    return this.model.findById(res.upsertedId).exec();
   }
 
+  @MongoCatch
   async bulkUpsert(docs: T[], upsert?: MongoBulkRequest): Promise<any> {
     const { selectedFields, conditions, operator = 'set' } = upsert ?? {};
-    const bulkDocs = docs?.map(doc => {
+    const bulkDocs: any = docs?.map(doc => {
       return {
         updateOne: {
           filter: pick(doc, conditions ?? ['_id']),
@@ -95,6 +99,6 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
         },
       };
     });
-    return this.query().bulkWrite(bulkDocs);
+    return this.model.bulkWrite(bulkDocs);
   }
 }

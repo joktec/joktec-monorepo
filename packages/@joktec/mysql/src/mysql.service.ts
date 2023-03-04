@@ -40,8 +40,7 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
       await client.authenticate();
       this.logService.info('MySQL Service have been start on host %s', config.host);
     } catch (err) {
-      console.error('Unable to connect to the database:', err);
-      this.logService.error('MySQL Service failed to start on host %s', config.host);
+      this.logService.error(err, 'MySQL Service failed to start on host %s', config.host);
     }
   }
 
@@ -51,14 +50,24 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
       await client.close();
       this.logService.warn('MySQL Service have been stop on host %s', config.host);
     } catch (err) {
-      console.error('Unable to connect to the database:', err);
-      this.logService.error('MySQL Service failed to stop on host %s', config.host);
+      this.logService.error(err, 'MySQL Service failed to stop on host %s', config.host);
     }
   }
 
   public getModel<T extends Model<T>>(model: ModelCtor<T>, conId: string = DEFAULT_CON_ID): ModelCtor<T> {
     if (!this.getClient(conId).isDefined(model.name)) {
       this.getClient(conId).addModels([model]);
+    }
+    return model;
+  }
+
+  public async getModelSync<T extends Model<T>>(
+    model: ModelCtor<T>,
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<ModelCtor<T>> {
+    if (!this.getClient(conId).isDefined(model.name)) {
+      this.getClient(conId).addModels([model]);
+      await model.sync({ alter: { drop: false } });
     }
     return model;
   }

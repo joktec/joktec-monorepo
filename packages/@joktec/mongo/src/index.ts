@@ -4,6 +4,6 @@ export * from './mongo.client';
 export * from './mongo.config';
 export * from './mongo.utils';
 export * from './mongo.repo';
+export * from './mongo.exception';
 export * from './models';
-export * from './exceptions';
 export * from '@typegoose/typegoose';

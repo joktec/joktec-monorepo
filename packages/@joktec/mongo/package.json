@@ -29,10 +29,13 @@
     "@nestjs/mongoose": "^9.2.1",
     "@typegoose/typegoose": "^10.0.0",
     "lodash": "^4.17.21",
+    "moment": "^2.29.4",
     "mongoose": "^6.8.0",
-    "moment": "^2.29.4"
+    "mongoose-beautiful-unique-validation": "^7.1.1",
+    "mongoose-delete": "^0.5.4"
   },
   "devDependencies": {
+    "@types/mongoose": "^5.11.97"
   },
   "lint-staged": {
     "*.ts": [
