@@ -10,14 +10,14 @@ export function IsYYYYMMDD(maxDate?: string, validationOptions?: ValidationOptio
       constraints: [],
       options: {
         message: `${propertyName} provide with YYYY-MM-DD format and less than ${
-          maxDate ?? moment().add('days', 2).utc().format('YYYY-MM-DD')
+          maxDate ?? moment().add(2, 'days').utc().format('YYYY-MM-DD')
         }`,
         ...validationOptions,
       },
       validator: {
         validate(value: any) {
           const regex = /^[1-9]\d*-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-          const max = maxDate ?? moment().add('days', 1).utc().format('YYYY-MM-DD');
+          const max = maxDate ?? moment().add(1, 'days').utc().format('YYYY-MM-DD');
 
           return (
             typeof value === 'string' && regex.test(value) && moment(value, 'YYYY-MM-DD').isValid() && value <= max

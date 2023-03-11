@@ -13,6 +13,7 @@ import csurf from 'csurf';
 import { ValidationPipeOptions } from '@nestjs/common/pipes/validation.pipe';
 import { GatewayExceptionsFilter } from '../../exceptions';
 import { LogService } from '../../log';
+import { toBool, toInt } from '../../utils';
 
 export class GatewayService {
   static async bootstrap(app: NestExpressApplication) {
@@ -36,7 +37,7 @@ export class GatewayService {
     GatewayService.setupSecurity(app);
 
     const gatewayName = config.get('description') || 'Gateway';
-    const port = gatewayConfig.port ?? DEFAULT_GATEWAY_PORT;
+    const port = toInt(gatewayConfig.port, DEFAULT_GATEWAY_PORT);
     await app.listen(port, () => logger.info(`%s is listening on port %s`, gatewayName, port));
   }
 
@@ -47,17 +48,32 @@ export class GatewayService {
       return;
     }
 
-    const { description } = config.get('swagger') ?? {};
-    const _description = description ?? config.get('description');
-    const options = new DocumentBuilder()
-      .addBearerAuth()
-      .setTitle(`${config.get('description')} API`)
-      .setDescription(_description)
-      .setVersion(`${config.get('version')}`)
-      .build();
+    const port = toInt(gatewayConfig.port, DEFAULT_GATEWAY_PORT);
+    const swagger = {
+      description: gatewayConfig.swagger?.description || config.get('description'),
+      version: gatewayConfig.swagger?.version || config.get('version'),
+      baseHost: gatewayConfig.swagger?.baseHost || `localhost:${port}`,
+      useSSL: toBool(gatewayConfig.swagger?.useSSL, false),
+    };
 
-    const document = SwaggerModule.createDocument(app, options);
-    SwaggerModule.setup('swagger', app, document, { swaggerUrl: 'swagger' });
+    const options = new DocumentBuilder()
+      .setTitle(`${swagger.description} API`)
+      .setDescription(swagger.description)
+      .setVersion(`${swagger.version}`)
+      .addServer(`http://${swagger.baseHost}`)
+      .addBearerAuth();
+
+    if (swagger.useSSL) options.addServer(`https://${swagger.baseHost}`);
+
+    const document = SwaggerModule.createDocument(app, options.build());
+    SwaggerModule.setup('swagger', app, document, {
+      swaggerUrl: 'swagger',
+      swaggerOptions: {
+        docExpansion: 'list',
+        filter: true,
+        showRequestDuration: true,
+      },
+    });
   }
 
   private static setupValidationPipe(app: NestExpressApplication) {

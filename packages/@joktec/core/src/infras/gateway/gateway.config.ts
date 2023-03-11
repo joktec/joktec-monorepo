@@ -6,7 +6,14 @@ export const DEFAULT_GATEWAY_PORT = 9010;
 export interface GatewayConfig {
   port: number;
   contextPath?: string;
-  swagger?: 'off';
+  swagger?:
+    | 'off'
+    | {
+        description?: string;
+        version?: string;
+        baseHost?: string;
+        useSSL?: boolean;
+      };
   pipes?: 'off' | ValidationPipeOptions;
   csrf?: boolean;
   cors?: CorsOptions;

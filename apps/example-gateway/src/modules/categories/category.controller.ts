@@ -1,10 +1,12 @@
-import { ApiTags, BaseController, Controller } from '@joktec/core';
+import { BaseController, Controller } from '@joktec/core';
 import { CategoryService } from './category.service';
-import { Category } from '../../models';
+import { Category, CategoryListResponse } from '../../models';
 
-@ApiTags('categories')
 @Controller('categories')
-export class CategoryController extends BaseController<Category, string> {
+export class CategoryController extends BaseController<Category, string>({
+  dto: Category,
+  dtoList: CategoryListResponse,
+}) {
   constructor(protected categoryService: CategoryService) {
     super(categoryService);
   }

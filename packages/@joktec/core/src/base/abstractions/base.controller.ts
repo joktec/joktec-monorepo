@@ -15,24 +15,26 @@ import { toPlural, toSingular } from '../../utils';
 import { startCase } from 'lodash';
 
 export interface IBaseControllerProps<T> {
-  dtoName: string;
   dto: new (...args: any) => T;
+  dtoList: new (...args: any) => any;
+  dtoName?: string;
   apiTag?: string;
 }
 
 export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
-  const nameSingular = startCase(toSingular(props.dtoName));
+  const dtoName = props.dtoName || props.dto.name;
+  const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
   const apiTag = props.apiTag || nameSingular;
 
   @ApiTags(apiTag)
   @UseInterceptors(ResponseInterceptor)
-  abstract class ApiController {
+  abstract class Controller {
     protected constructor(protected service: BaseService<T, ID>) {}
 
     @Get('/')
     @ApiOperation({ summary: `List ${namePlural}` })
-    @ApiOkResponse()
+    @ApiOkResponse({ type: props.dtoList })
     @ApiForbiddenResponse()
     @UseInterceptors(QueryInterceptor)
     async findAll(@Query() req: IBaseRequest): Promise<IListResponseDto<T>> {
@@ -79,5 +81,5 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     }
   }
 
-  return ApiController;
+  return Controller;
 };

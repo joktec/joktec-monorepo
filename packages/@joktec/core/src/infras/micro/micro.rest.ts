@@ -1,35 +1,13 @@
-import { Controller, Post, Body, Param, Get } from '@nestjs/common';
+import { Controller, Post, Body, Param } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { MicroServiceNotFoundException } from './exceptions/micro-service-not-found.exception';
 import { MicroMethodNotFoundException } from './exceptions/micro-method-not-found.exception';
-import { AppConfig, initConfig } from '../../config';
-import { toBool } from '../../utils';
 import { snakeCase } from 'lodash';
 
 @Controller()
 export class MicroRest {
   constructor(private moduleRef: ModuleRef) {}
-
-  @Get('/')
-  @ApiResponse({ type: Object })
-  async getHello() {
-    const appConfig: AppConfig = initConfig();
-    return {
-      name: appConfig.name.replace('@', '').replace('/', '-'),
-      description: appConfig.description,
-      version: appConfig.version,
-      isProd: toBool(appConfig.isProd, false),
-    };
-  }
-
-  @Get('/health')
-  @ApiResponse({ type: Object })
-  health() {
-    return {
-      status: 'ok',
-    };
-  }
 
   @Post('/micro/:service/:method')
   @ApiBody({ type: Object })
