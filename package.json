@@ -30,7 +30,6 @@
     "purge": "rimraf -rf ./node_modules && lerna run purge",
     "dep:upgrade": "lerna run --stream dep:upgrade",
     "graph": "nx affected:graph",
-    "preversion": "lerna-changelog -p -l -t ${NEXT_VERSION}",
     "release": "lerna version",
     "publish:dev": "lerna publish patch --exact --no-private --yes",
     "publish:stag": "lerna publish minor --exact --no-private --yes",
@@ -46,6 +45,7 @@
     "@commitlint/config-conventional": "^17.1.0",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
+    "cz-conventional-changelog": "3.0.2",
     "eslint": "^8.25.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
@@ -54,7 +54,6 @@
     "husky": "^8.0.1",
     "jest": "^29.1.2",
     "lerna": "^5.6.2",
-    "lerna-changelog": "^2.2.0",
     "lint-staged": "^13.0.3",
     "npm-check-updates": "^16.3.11",
     "nx": "^14.8.3",
@@ -68,20 +67,9 @@
     "tslint-sonarts": "^1.9.0",
     "typescript": "^4.3.5"
   },
-  "changelog": {
-    "labels": {
-      "feat": "New Feature",
-      "fix": "Bug Fix",
-      "build": "Build",
-      "chore": "Publish",
-      "ci": "Release",
-      "docs": "Document",
-      "perf": "Improve Perfomance",
-      "refactor": "Refactor",
-      "revert": "Revert Commit",
-      "style": "Format Code",
-      "test": "Test",
-      "impl": "Implement"
+  "config": {
+    "commitizen": {
+      "path": "**/node_modules/cz-conventional-changelog"
     }
   }
 }
