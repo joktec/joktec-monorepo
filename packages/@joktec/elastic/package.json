@@ -1,7 +1,7 @@
 {
   "name": "@joktec/elastic",
   "description": "JokTec - ElasticSearch",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.5.0",
-    "@joktec/core": "0.0.1",
+    "@joktec/core": "0.0.0",
     "@nestjs/axios": "^1.0.1",
     "@nestjs/elasticsearch": "^9.0.0",
     "axios": "^1.2.1",

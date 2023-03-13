@@ -1,7 +1,7 @@
 {
   "name": "@joktec/arango",
   "description": "JokTec - ArangoDB Service",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -25,7 +25,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.1",
+    "@joktec/core": "0.0.0",
     "arangojs": "^8.1.0"
   },
   "lint-staged": {

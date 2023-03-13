@@ -7,7 +7,7 @@
   "author": "Bao Tran",
   "repository": {
     "type": "git",
-    "url": "https://github.com/trangiabao1203/joktec-monorepo.git"
+    "url": "https://github.com/joktec/joktec-monorepo.git"
   },
   "engines": {
     "node": ">=14"
@@ -30,6 +30,7 @@
     "purge": "rimraf -rf ./node_modules && lerna run purge",
     "dep:upgrade": "lerna run --stream dep:upgrade",
     "graph": "nx affected:graph",
+    "preversion": "lerna-changelog -p -l -t ${NEXT_VERSION}",
     "release": "lerna version",
     "publish:dev": "lerna publish patch --exact --no-private --yes",
     "publish:stag": "lerna publish minor --exact --no-private --yes",
@@ -45,7 +46,6 @@
     "@commitlint/config-conventional": "^17.1.0",
     "@typescript-eslint/eslint-plugin": "^5.39.0",
     "@typescript-eslint/parser": "^5.39.0",
-    "cz-conventional-changelog": "3.0.2",
     "eslint": "^8.25.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
@@ -67,11 +67,6 @@
     "tslint-immutable": "^5.5.2",
     "tslint-sonarts": "^1.9.0",
     "typescript": "^4.3.5"
-  },
-  "config": {
-    "commitizen": {
-      "path": "**/node_modules/cz-conventional-changelog"
-    }
   },
   "changelog": {
     "labels": {
