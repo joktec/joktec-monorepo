@@ -5,6 +5,14 @@
   "private": false,
   "license": "MIT",
   "author": "JokTec",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joktec/joktec-monorepo.git",
+    "directory": "packages/@joktec/mysql"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "main": "dist/index",
   "types": "dist/index",
   "typings": "dist/index.d.ts",
