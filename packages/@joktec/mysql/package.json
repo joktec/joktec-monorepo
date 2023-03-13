@@ -5,6 +5,7 @@
   "private": false,
   "license": "MIT",
   "author": "JokTec",
+  "homepage": "https://github.com/joktec/joktec-monorepo/tree/main/packages/%40joktec/mysql",
   "repository": {
     "type": "git",
     "url": "https://github.com/joktec/joktec-monorepo.git",
@@ -23,6 +24,12 @@
   "publishConfig": {
     "access": "public"
   },
+  "keywords": [
+    "mysql",
+    "mysql2",
+    "sequelize",
+    "sequelize-typescript"
+  ],
   "scripts": {
     "clean": "rm -rf dist",
     "purge": "rm -rf node_modules",

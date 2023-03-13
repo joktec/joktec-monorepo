@@ -5,6 +5,7 @@
   "private": false,
   "license": "MIT",
   "author": "JokTec",
+  "homepage": "https://github.com/joktec/joktec-monorepo/tree/main/packages/%40joktec/cron",
   "repository": {
     "type": "git",
     "url": "https://github.com/joktec/joktec-monorepo.git",
@@ -22,6 +23,13 @@
   "publishConfig": {
     "access": "public"
   },
+  "keywords": [
+    "schedule",
+    "cron",
+    "mysql",
+    "async",
+    "cargoQueue"
+  ],
   "scripts": {
     "clean": "rm -rf dist",
     "purge": "rm -rf node_modules",
