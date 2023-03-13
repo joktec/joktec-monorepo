@@ -25,7 +25,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "1.0.20",
+    "@joktec/core": "0.0.0",
     "@nestjs/mongoose": "^9.2.1",
     "@typegoose/typegoose": "^10.0.0",
     "lodash": "^4.17.21",

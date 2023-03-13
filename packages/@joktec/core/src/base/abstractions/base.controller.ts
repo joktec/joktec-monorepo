@@ -25,7 +25,7 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
-  const apiTag = props.apiTag || nameSingular;
+  const apiTag = props.apiTag || toPlural(dtoName);
 
   @ApiTags(apiTag)
   @UseInterceptors(ResponseInterceptor)

@@ -1,15 +1,15 @@
 import { ApiProperty, BaseListResponse } from '@joktec/core';
-import { BaseSchema, modelOptions, prop } from '@joktec/mongo';
+import { modelOptions, MongoSchema, prop } from '@joktec/mongo';
 
 @modelOptions({ schemaOptions: { collection: 'categories' } })
-export class Category extends BaseSchema {
+export class Category extends MongoSchema {
   @prop({
     type: String,
     required: [true, 'NAME_REQUIRED'],
     minlength: [10, 'NAME_LENGTH_INVALID'],
     maxlength: [255, 'NAME_LENGTH_INVALID'],
   })
-  @ApiProperty({ type: String, required: true, example: 'Kitty', description: 'The name of the category' })
+  @ApiProperty({ type: String, required: true, example: 'Book' })
   name!: string;
 
   @prop({
@@ -17,7 +17,7 @@ export class Category extends BaseSchema {
     minlength: [10, 'NAME_LENGTH_INVALID'],
     maxlength: [255, 'NAME_LENGTH_INVALID'],
   })
-  @ApiProperty({ type: String, example: 'Lorem Ipsum', description: 'The description of the category' })
+  @ApiProperty({ type: String, example: 'Lorem Ipsum' })
   description!: string;
 }
 
