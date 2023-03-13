@@ -1,7 +1,7 @@
 {
   "name": "@joktec/file",
   "description": "JokTec - Local File Service",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -25,14 +25,12 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.0",
+    "@joktec/core": "0.0.1",
     "@nestjs/axios": "^1.0.1",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "nodejs-fs-utils": "^1.2.6",
     "rxjs": "^7.2.0"
-  },
-  "devDependencies": {
   },
   "lint-staged": {
     "*.ts": [

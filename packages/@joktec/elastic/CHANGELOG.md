@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.0.1 (2023-03-13)
+
+**Note:** Version bump only for package @joktec/elastic
+
+
+
+
+
 ## [1.0.20](https://github.com/BaoTran1203/nodejs-monorepo/compare/@joktec/elastic@1.0.19...@joktec/elastic@1.0.20) (2022-11-23)
 
 **Note:** Version bump only for package @joktec/elastic

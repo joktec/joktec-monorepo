@@ -1,7 +1,7 @@
 {
   "name": "@joktec/elastic",
   "description": "JokTec - ElasticSearch",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -25,8 +25,8 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.0",
     "@elastic/elasticsearch": "^8.5.0",
+    "@joktec/core": "0.0.1",
     "@nestjs/axios": "^1.0.1",
     "@nestjs/elasticsearch": "^9.0.0",
     "axios": "^1.2.1",
