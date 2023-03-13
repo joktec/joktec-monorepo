@@ -1,10 +1,12 @@
-import { BaseResponseInterceptor, BaseController, Controller, UseInterceptors } from '@joktec/core';
+import { BaseController, Controller } from '@joktec/core';
 import { CategoryService } from './category.service';
-import { Category } from '../../models';
+import { Category, CategoryListResponse } from '../../models';
 
 @Controller('categories')
-@UseInterceptors(BaseResponseInterceptor)
-export class CategoryController extends BaseController<Category, string> {
+export class CategoryController extends BaseController<Category, string>({
+  dto: Category,
+  dtoList: CategoryListResponse,
+}) {
   constructor(protected categoryService: CategoryService) {
     super(categoryService);
   }
