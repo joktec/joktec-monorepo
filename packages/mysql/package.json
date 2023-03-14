@@ -1,7 +1,7 @@
 {
   "name": "@joktec/mysql",
   "description": "JokTec - MySql Service",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -42,7 +42,7 @@
     "gen:entity": "./bin/generate-entity.sh && yarn format && yarn lint"
   },
   "dependencies": {
-    "@joktec/core": "0.0.1",
+    "@joktec/core": "0.0.2",
     "lodash": "^4.17.21",
     "mysql": "2.18.1",
     "mysql2": "^3.1.2",
