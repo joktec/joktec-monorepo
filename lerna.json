@@ -1,6 +1,6 @@
 {
   "packages": [
-    "packages/@joktec/*",
+    "packages/*",
     "apps/*"
   ],
   "command": {

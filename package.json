@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
-  "author": "Bao Tran",
+  "author": "JokTec",
+  "homepage": "https://github.com/joktec/joktec-monorepo.git",
   "repository": {
     "type": "git",
     "url": "https://github.com/joktec/joktec-monorepo.git"
@@ -13,8 +14,14 @@
     "node": ">=14"
   },
   "workspaces": [
-    "packages/@joktec/*",
+    "packages/*",
     "apps/*"
+  ],
+  "keywords": [
+    "microservices",
+    "monorepo",
+    "lerna",
+    "nx"
   ],
   "scripts": {
     "postinstall": "chmod u+x ./bin/* && husky install",

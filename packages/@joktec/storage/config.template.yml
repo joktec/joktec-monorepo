@@ -1,8 +1,0 @@
-storage:
-  region: ap-southeast-1
-  credentials:
-    accessKey: XXX
-    secretKey: YYY
-  bucket: my-bucket
-  endpoint: ap-southeast-1.aws.storage.com
-  useSSL: true

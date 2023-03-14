@@ -1814,6 +1814,32 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
+"@joktec/mongo@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@joktec/mongo/-/mongo-0.0.1.tgz#25cf011b783fa41150b88b44216d281c7a042c92"
+  integrity sha512-hTNY+twRaoDYiFPUw0azqyvdJASQkQlbLvHdGzAoQz0aCF4S4+tOw7A6E6JPhrCIWCCwqeYo3Nd7Cp9s8sgGWQ==
+  dependencies:
+    "@joktec/core" "0.0.1"
+    "@nestjs/mongoose" "^9.2.1"
+    "@typegoose/typegoose" "^10.0.0"
+    lodash "^4.17.21"
+    moment "^2.29.4"
+    mongoose "^6.8.0"
+    mongoose-beautiful-unique-validation "^7.1.1"
+    mongoose-delete "^0.5.4"
+
+"@joktec/mysql@0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@joktec/mysql/-/mysql-0.0.1.tgz#5a239d753b65d6b9e37ac4131492966895149f85"
+  integrity sha512-XBNjb7j0fzZRQo9F6XAgUKMp9kOuJgZb/pJ4zGaV+9gr4GBA/QBNekyOIrQh92Ft7HeWpmmZruoVzMoA+u3fYQ==
+  dependencies:
+    "@joktec/core" "0.0.1"
+    lodash "^4.17.21"
+    mysql "2.18.1"
+    mysql2 "^3.1.2"
+    sequelize "^6.28.0"
+    sequelize-typescript "^2.1.5"
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -2628,11 +2654,6 @@
   integrity sha512-DsqkAaIHy9+Ot4FJybmlDQk0HBDTGztz0F3LcMnatFDQv1X56W0Y2+R/7jjwHsmHzQfbffT2FGyCOx2/9apFCg==
   dependencies:
     uuid "8.3.2"
-
-"@nestjs/elasticsearch@^9.0.0":
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/@nestjs/elasticsearch/-/elasticsearch-9.0.0.tgz#09fefffce7160997bb8d54b79c0a68f3d5d820dc"
-  integrity sha512-+NhXg0od/luNuObrCoouO8IGJ5d8esd2LbqOyX4wqM3PtzoVgQC5uDoxHu0ZyWkp/Coj7OiT0osYN9rgctEPbg==
 
 "@nestjs/graphql@^10.1.1":
   version "10.1.6"

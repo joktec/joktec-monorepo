@@ -1,0 +1,51 @@
+{
+  "name": "@joktec/arango",
+  "description": "JokTec - ArangoDB Service",
+  "version": "0.0.1",
+  "private": false,
+  "license": "MIT",
+  "author": "JokTec",
+  "homepage": "https://github.com/joktec/joktec-monorepo.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joktec/joktec-monorepo.git",
+    "directory": "packages/arango"
+  },
+  "main": "dist/index",
+  "types": "dist/index",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "arangojs"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "purge": "rm -rf node_modules",
+    "dev": "rollup -cw",
+    "prebuild": "yarn clean",
+    "build": "nest build -p tsconfig.json",
+    "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
+    "lint": "eslint --fix \"./src/**/*.ts\"",
+    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
+  },
+  "dependencies": {
+    "@joktec/core": "0.0.1",
+    "arangojs": "^8.1.0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write --ignore-path ./.prettierignore",
+      "eslint --fix"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
