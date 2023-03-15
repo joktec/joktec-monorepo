@@ -26,7 +26,7 @@ export abstract class BaseService<T, ID> {
     return this.repository.create(entity);
   }
 
-  async update(id: ID, entity: T): Promise<T> {
+  async update(id: ID, entity: Partial<T>): Promise<T> {
     const condition: ICondition = { id };
     return this.repository.update(condition, entity);
   }

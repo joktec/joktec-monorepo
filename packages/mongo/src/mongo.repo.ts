@@ -59,14 +59,14 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
 
   @MongoCatch
   async create(body: T): Promise<T> {
-    const processBody: T = preHandleBody(body);
+    const processBody: Partial<T> = preHandleBody(body);
     return this.model.create(processBody);
   }
 
   @MongoCatch
-  async update(condition: ICondition, body: T): Promise<T> {
+  async update(condition: ICondition, body: Partial<T>): Promise<T> {
     const overrideCondition: ICondition = preHandleQuery({ condition });
-    const processBody: T = preHandleBody(body);
+    const processBody: Partial<T> = preHandleBody(body);
     const qb = this.model.findOneAndUpdate(overrideCondition, processBody, { runValidators: true, new: true });
     return qb.exec();
   }

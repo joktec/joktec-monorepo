@@ -50,7 +50,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async update(condition: ICondition, body: T): Promise<T> {
+  async update(condition: ICondition, body: Partial<T>): Promise<T> {
     const options: FindOptions = preHandleQuery(condition);
     const model: T = await this.model.findOne(options);
     if (!model) return null;
@@ -70,7 +70,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async upsert(condition: ICondition, body: T): Promise<T> {
+  async upsert(condition: ICondition, body: Partial<T>): Promise<T> {
     const fields: any[] = Object.keys(body);
     const pk: any = this.model.primaryKeyAttribute;
     const [row, result] = await this.model.upsert(body as any, { returning: true, fields, conflictFields: [pk] });

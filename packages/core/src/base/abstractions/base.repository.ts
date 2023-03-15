@@ -11,7 +11,7 @@ export interface BaseReadRepository<T, ID> {
 export interface BaseRepository<T, ID> extends BaseReadRepository<T, ID> {
   create(body: T): Promise<T>;
 
-  update(condition: ICondition, body: T): Promise<T>;
+  update(condition: ICondition, body: Partial<T>): Promise<T>;
 
   delete(condition: ICondition): Promise<T>;
 }

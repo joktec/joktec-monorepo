@@ -5,9 +5,9 @@ import { ApiProperty, Field } from '@joktec/core';
 const softDelete = require('mongoose-delete');
 const beautifyUnique = require('mongoose-beautiful-unique-validation');
 
-export interface BaseSchema extends Base {}
+export interface MongoSchema extends Base {}
 
-@plugin(beautifyUnique)
+@plugin(beautifyUnique, { defaultMessage: '{PATH}_MUST_BE_UNIQUE' })
 @plugin(softDelete, { deletedAt: true, deletedBy: true, overrideMethods: true, indexFields: true })
 export abstract class MongoSchema extends TimeStamps {
   @prop({ type: Date, default: new Date() })

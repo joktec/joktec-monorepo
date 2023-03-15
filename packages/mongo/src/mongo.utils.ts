@@ -25,7 +25,7 @@ export const preHandleQuery = (query: IMongoRequest): ICondition => {
   return overrideCondition;
 };
 
-export const preHandleBody = <T extends {} = any>(body: T): T => {
+export const preHandleBody = <T extends {} = any>(body: Partial<T>): Partial<T> => {
   const processBody: any = { ...body };
   delete processBody._id;
   delete processBody.createdAt;
