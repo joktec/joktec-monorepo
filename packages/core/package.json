@@ -40,6 +40,7 @@
     "purge": "rm -rf node_modules",
     "prebuild": "rm -rf dist",
     "build": "nest build -p tsconfig.json",
+    "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
