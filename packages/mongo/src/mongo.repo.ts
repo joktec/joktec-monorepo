@@ -8,7 +8,7 @@ import { pick } from 'lodash';
 import { MongoCatch } from './mongo.exception';
 
 export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, ID>, OnModuleInit {
-  private model: ModelType<T>;
+  // private model: ModelType<T>;
 
   protected constructor(
     protected mongoService: MongoService,
@@ -17,7 +17,11 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
   ) {}
 
   async onModuleInit() {
-    this.model = this.mongoService.getModel(this.schema, this.conId);
+    // this.model = this.mongoService.getModel(this.schema, this.conId);
+  }
+
+  protected get model(): ModelType<T> {
+    return this.mongoService.getModel(this.schema, this.conId);
   }
 
   @MongoCatch
