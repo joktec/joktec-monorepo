@@ -1814,87 +1814,6 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
-"@joktec/core@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@joktec/core/-/core-0.0.1.tgz#71aafc922426ec4dd38e80bb8ea8feb69bc0ccd3"
-  integrity sha512-8bCTiJ5OkcbUX80mBDkxFxWBS7lYtc9wWb276TswGD5/BnZgV4Q/2EAFTonTXdZZURjxdz9wp8J3sxBku84PTg==
-  dependencies:
-    "@bull-board/api" "^4.6.1"
-    "@bull-board/express" "^4.6.1"
-    "@grpc/proto-loader" "^0.7.3"
-    "@nestjs/common" "^9.0.0"
-    "@nestjs/config" "^2.2.0"
-    "@nestjs/core" "^9.0.0"
-    "@nestjs/cqrs" "^9.0.1"
-    "@nestjs/graphql" "^10.1.1"
-    "@nestjs/jwt" "^9.0.0"
-    "@nestjs/mapped-types" "*"
-    "@nestjs/microservices" "^9.0.11"
-    "@nestjs/passport" "^9.0.0"
-    "@nestjs/platform-express" "^9.0.0"
-    "@nestjs/swagger" "^6.1.2"
-    "@nestjs/terminus" "^9.1.1"
-    "@nestjs/throttler" "^3.1.0"
-    "@willsoto/nestjs-prometheus" "^3.0.0"
-    async "^3.2.0"
-    async-retry "^1.3.3"
-    backoff "^2.5.0"
-    bull "^4.10.1"
-    class-transformer "^0.5.1"
-    class-validator "^0.13.2"
-    csurf "^1.11.0"
-    dataloader "^2.1.0"
-    express "^4.18.2"
-    graphql "^16.6.0"
-    js-yaml "3.14.0"
-    jwt-simple "^0.5.6"
-    lodash "^4.17.21"
-    merge-deep "^3.0.3"
-    moment "^2.29.4"
-    nestjs-pino "^1.3.0"
-    opossum "^6.2.1"
-    passport "^0.6.0"
-    passport-jwt "^4.0.0"
-    pino-cloudwatch "^0.7.0"
-    pino-fluentd "^0.2.2"
-    pino-multi-stream "^5.1.1"
-    pino-pretty "^5.1.3"
-    pino-std-serializers "^6.0.0"
-    pluralize "^8.0.0"
-    prom-client "^13.0.0"
-    qs "^6.7.0"
-    retry "^0.13.1"
-    rxjs "^7.2.0"
-    slug "^8.2.2"
-    type-cacheable "^4.1.2"
-    uuid "^9.0.0"
-
-"@joktec/mongo@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@joktec/mongo/-/mongo-0.0.1.tgz#25cf011b783fa41150b88b44216d281c7a042c92"
-  integrity sha512-hTNY+twRaoDYiFPUw0azqyvdJASQkQlbLvHdGzAoQz0aCF4S4+tOw7A6E6JPhrCIWCCwqeYo3Nd7Cp9s8sgGWQ==
-  dependencies:
-    "@joktec/core" "0.0.1"
-    "@nestjs/mongoose" "^9.2.1"
-    "@typegoose/typegoose" "^10.0.0"
-    lodash "^4.17.21"
-    moment "^2.29.4"
-    mongoose "^6.8.0"
-    mongoose-beautiful-unique-validation "^7.1.1"
-    mongoose-delete "^0.5.4"
-
-"@joktec/mysql@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@joktec/mysql/-/mysql-0.0.1.tgz#5a239d753b65d6b9e37ac4131492966895149f85"
-  integrity sha512-XBNjb7j0fzZRQo9F6XAgUKMp9kOuJgZb/pJ4zGaV+9gr4GBA/QBNekyOIrQh92Ft7HeWpmmZruoVzMoA+u3fYQ==
-  dependencies:
-    "@joktec/core" "0.0.1"
-    lodash "^4.17.21"
-    mysql "2.18.1"
-    mysql2 "^3.1.2"
-    sequelize "^6.28.0"
-    sequelize-typescript "^2.1.5"
-
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -2751,11 +2670,6 @@
     iterare "1.2.1"
     tslib "2.4.1"
 
-"@nestjs/mongoose@^9.2.1":
-  version "9.2.1"
-  resolved "https://registry.yarnpkg.com/@nestjs/mongoose/-/mongoose-9.2.1.tgz#b880feb7ce52a081e81374ddf3c3ed0eff1224f4"
-  integrity sha512-tMK5kKFjQnNVhqJDw1wa352z+VsODOFznTn74xSzrziof03qS+O6rLU4q1kMx0B4AmFbADf03GOdpvBc9bMWqw==
-
 "@nestjs/passport@^9.0.0":
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/@nestjs/passport/-/passport-9.0.0.tgz#0571bb08f8043456bc6df44cd4f59ca5f10c9b9f"
@@ -3341,16 +3255,16 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.3.tgz#472eaab5f15c1ffdd7f8628bd4c4f753995ec79e"
   integrity sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==
 
-"@typegoose/typegoose@^10.0.0":
-  version "10.0.0"
-  resolved "https://registry.yarnpkg.com/@typegoose/typegoose/-/typegoose-10.0.0.tgz#644118b4ce6789a7fcf7a3b3a40a119e5180bfb6"
-  integrity sha512-40Y2yZYbyeTYFJBWucBovJlopgtKyEvyNYK2zNgw/NXOUkvijkyHeWsyPGKOXEaXqhrku/cjrVIWMbdKx2YiuA==
+"@typegoose/typegoose@^10.3.2":
+  version "10.3.2"
+  resolved "https://registry.yarnpkg.com/@typegoose/typegoose/-/typegoose-10.3.2.tgz#aed0fb8987c99c08237b86b31bb4252535c5cbf6"
+  integrity sha512-9GMmUF9ljr/oJChbRmDPCkRyP7I1OImiL3dmW/waopVghIXZ0xc6T7i8RjWvhj40sa0ExDCykR8BBLhyDJN/nw==
   dependencies:
     lodash "^4.17.20"
     loglevel "^1.8.1"
     reflect-metadata "^0.1.13"
     semver "^7.3.8"
-    tslib "^2.4.1"
+    tslib "^2.5.0"
 
 "@types/amqplib@^0.5.16":
   version "0.5.17"
@@ -9889,10 +9803,10 @@ mongodb-connection-string-url@^2.6.0:
     "@types/whatwg-url" "^8.2.1"
     whatwg-url "^11.0.0"
 
-mongodb@4.13.0:
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-4.13.0.tgz#2aa832b827e2891eb2e52e8235c201cbb4701ed2"
-  integrity sha512-+taZ/bV8d1pYuHL4U+gSwkhmDrwkWbH1l4aah4YpmpscMwgFBkufIKxgP/G7m87/NUuQzc2Z75ZTI7ZOyqZLbw==
+mongodb@4.14.0:
+  version "4.14.0"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-4.14.0.tgz#3a21ca602069b2494b7066a7709056c8cece6bf6"
+  integrity sha512-coGKkWXIBczZPr284tYKFLg+KbGPPLlSbdgfKAb6QqCFt5bo5VFZ50O3FFzsw4rnkqjwT6D8Qcoo9nshYKM7Mg==
   dependencies:
     bson "^4.7.0"
     mongodb-connection-string-url "^2.5.4"
@@ -9935,14 +9849,14 @@ mongoose@*:
     ms "2.1.3"
     sift "16.0.1"
 
-mongoose@^6.8.0:
-  version "6.9.0"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.9.0.tgz#cfc5acb2e4aa8188eb248e98a920a829ffcc273d"
-  integrity sha512-5tu6+trwjk5TIH6b6iYgAwmzZ0RNOxFoqXQb9h21Oi45DeM1rWM/niHxJ4ROqBISDfQMwRvLSABHTsyn3AzoFQ==
+mongoose@^6.10.0:
+  version "6.10.3"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-6.10.3.tgz#e9430f487ac9acbc279b0d22fc29bbeb337788da"
+  integrity sha512-fZ3pIlQn7lM632r1l4qiU58lKrJ+FufKVG8TNeRXSChAeu9alCl5KoQ9bLw4jnQNYevSq9o+sqZmFDHP+EVW3g==
   dependencies:
     bson "^4.7.0"
     kareem "2.5.1"
-    mongodb "4.13.0"
+    mongodb "4.14.0"
     mpath "0.9.0"
     mquery "4.0.3"
     ms "2.1.3"
@@ -13136,7 +13050,7 @@ tslib@1.9.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.0.tgz#e37a86fda8cbbaf23a057f473c9f4dc64e5fc2e8"
   integrity sha512-f/qGG2tUkrISBlQZEjEqoZ3B2+npJjIf04H1wuAv9iA8i04Icp+61KRXxFdha22670NJopsZCIjhC3SnjPRKrQ==
 
-tslib@2.4.1, tslib@^2.1.0, tslib@^2.3.0, tslib@^2.3.1, tslib@^2.4.0, tslib@^2.4.1:
+tslib@2.4.1, tslib@^2.1.0, tslib@^2.3.0, tslib@^2.3.1, tslib@^2.4.0:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.1.tgz#0d0bfbaac2880b91e22df0768e55be9753a5b17e"
   integrity sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==
@@ -13146,7 +13060,7 @@ tslib@^1.11.1, tslib@^1.7.1, tslib@^1.8.0, tslib@^1.8.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.1:
+tslib@^2.0.1, tslib@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.5.0.tgz#42bfed86f5787aeb41d031866c8f402429e0fddf"
   integrity sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==

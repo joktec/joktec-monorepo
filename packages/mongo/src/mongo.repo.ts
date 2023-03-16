@@ -42,7 +42,7 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
   }
 
   @MongoCatch
-  async findOne(query: IMongoRequest): Promise<T | null> {
+  async findOne(query: IMongoRequest): Promise<T> {
     const condition: ICondition = preHandleQuery(query);
     const qb = this.model.findOne(condition);
     if (query.select) qb.select(toArray<string>(query.select).join(','));

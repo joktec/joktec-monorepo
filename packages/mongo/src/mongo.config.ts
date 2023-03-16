@@ -41,6 +41,10 @@ export class MongoConfig extends ClientConfig {
   @IsOptional()
   strictQuery?: boolean;
 
+  @IsInt()
+  @IsOptional()
+  maxTimeMS?: number;
+
   @IsBoolean()
   @IsOptional()
   directConnection?: boolean;
@@ -54,6 +58,7 @@ export class MongoConfig extends ClientConfig {
       port: toInt(props?.port, 27017),
       retryTimeout: toInt(props?.retryTimeout, 20000),
       connectTimeout: toInt(props?.connectTimeout, 10000),
+      maxTimeMS: toInt(props?.maxTimeMS, 10000),
       strictQuery: toBool(props?.strictQuery, true),
       directConnection: toBool(props?.directConnection, false),
       replica: toBool(props?.replica, false),

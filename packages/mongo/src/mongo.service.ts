@@ -41,6 +41,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     this.logService.info('Start connecting to mongo database %s', uri);
     const connection: Mongoose = mongoose.createConnection(uri, connectOptions);
     connection.set('strictQuery', config.strictQuery);
+    connection.set('maxTimeMS', conffig.maxTimeMS);
     connection.on('connected', () => this.logService.info('Connected to mongo database successfully'));
     connection.on('error', async err => {
       this.logService.error(err, 'Error when connecting to MongoDB. Reconnecting...');
