@@ -1,9 +1,9 @@
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { IBaseRequest, IResponseDto } from '../models';
-import { toInt } from '../../utils';
+import { toInt } from '../utils';
 import { isNil } from 'lodash';
-import { NotFoundException } from '../../exceptions';
+import { NotFoundException } from '../exceptions';
 
 @Injectable()
 export class QueryInterceptor implements NestInterceptor {

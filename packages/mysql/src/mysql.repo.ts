@@ -59,7 +59,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async delete(condition: ICondition, opts?: { force?: boolean }): Promise<T> {
+  async delete(condition: ICondition, opts?: { force?: boolean; userId?: ID }): Promise<T> {
     const existModel = await this.findOne({ condition });
     if (!existModel) return null;
 

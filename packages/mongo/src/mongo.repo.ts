@@ -1,4 +1,4 @@
-import { DEFAULT_CON_ID, ICondition, OnModuleInit, toArray, toBool } from '@joktec/core';
+import { DEFAULT_CON_ID, ICondition, toArray, toBool } from '@joktec/core';
 import { IMongoRepository } from './mongo.client';
 import { MongoService } from './mongo.service';
 import { AnyParamConstructor, ModelType } from '@typegoose/typegoose/lib/types';
@@ -7,18 +7,12 @@ import { preHandleQuery, preHandleBody } from './mongo.utils';
 import { pick } from 'lodash';
 import { MongoCatch } from './mongo.exception';
 
-export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, ID>, OnModuleInit {
-  // private model: ModelType<T>;
-
+export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, ID> {
   protected constructor(
     protected mongoService: MongoService,
     protected schema: AnyParamConstructor<T>,
     protected conId: string = DEFAULT_CON_ID,
   ) {}
-
-  async onModuleInit() {
-    // this.model = this.mongoService.getModel(this.schema, this.conId);
-  }
 
   protected get model(): ModelType<T> {
     return this.mongoService.getModel(this.schema, this.conId);
@@ -76,11 +70,11 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
   }
 
   @MongoCatch
-  async delete(condition: ICondition, opts?: { force?: boolean }): Promise<T> {
+  async delete(condition: ICondition, opts?: { force?: boolean; userId?: ID }): Promise<T> {
     const force: boolean = toBool(opts?.force, false);
     const overrideCondition: ICondition = preHandleQuery({ condition });
     const modelType = await this.model.findOne(overrideCondition).exec();
-    force ? await modelType.remove() : await modelType.delete();
+    force ? await modelType.remove() : await modelType.delete(opts?.userId);
     return modelType;
   }
 

@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestException } from '../../exceptions';
+import { BadRequestException } from '../exceptions';
 
 @Injectable()
 export class ParseQueryMiddleware implements NestMiddleware {
@@ -8,7 +8,7 @@ export class ParseQueryMiddleware implements NestMiddleware {
     try {
       next();
     } catch (err) {
-      next(new BadRequestException('Bad request', err));
+      next(new BadRequestException('BAD_REQUEST', err));
     }
   }
 }

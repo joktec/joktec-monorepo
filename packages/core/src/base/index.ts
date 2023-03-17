@@ -32,5 +32,3 @@ export {
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
 export * from '@nestjs/swagger';
 export * from './app';
-export * from './abstractions';
-export * from './models';

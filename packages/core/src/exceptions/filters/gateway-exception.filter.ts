@@ -6,7 +6,7 @@ import { ExceptionMessage } from '../exception-message';
 import { RpcException } from '@nestjs/microservices';
 import { ENV } from '../../config';
 import { LogService } from '../../log';
-import { IResponseDto } from '../../base';
+import { IResponseDto } from '../../models';
 
 @Catch()
 export class GatewayExceptionsFilter implements ExceptionFilter {

@@ -1,6 +1,6 @@
 import { Args, Mutation, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
-import { toPlural, toSingular } from '../../utils';
+import { toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';
 import { IBaseRequest, IListResponseDto } from '../models';
 
