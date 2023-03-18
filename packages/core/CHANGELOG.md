@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.11](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.10...@joktec/core@0.0.11) (2023-03-18)
+
+
+### Bug Fixes
+
+* gateway ([4f34dc1](https://github.com/joktec/joktec-monorepo/commit/4f34dc17c6862faa027fee7c22bedefeb955ad25))
+
+
+
+
+
 ## [0.0.10](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.9...@joktec/core@0.0.10) (2023-03-18)
 
 **Note:** Version bump only for package @joktec/core
