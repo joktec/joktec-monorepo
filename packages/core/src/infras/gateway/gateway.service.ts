@@ -1,6 +1,5 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ExpressAdapter } from '@bull-board/express';
 import { createBullBoard } from '@bull-board/api';
@@ -10,10 +9,10 @@ import * as bodyParser from 'body-parser';
 import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
 import { join } from 'path';
 import csurf from 'csurf';
-import { ValidationPipeOptions } from '@nestjs/common/pipes/validation.pipe';
 import { GatewayExceptionsFilter } from '../../exceptions';
 import { LogService } from '../../log';
 import { toBool, toInt } from '../../utils';
+import { BaseValidationPipe } from '../../validation';
 
 export class GatewayService {
   static async bootstrap(app: NestExpressApplication) {
@@ -24,14 +23,13 @@ export class GatewayService {
     const logger = await app.resolve(LogService);
     logger.setContext(GatewayService.name);
 
-    app.useGlobalInterceptors();
     app.useGlobalFilters(new GatewayExceptionsFilter(logger));
+    app.useGlobalPipes(new BaseValidationPipe(gatewayConfig.pipes));
     app.setGlobalPrefix(gatewayConfig.contextPath);
     app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
     GatewayService.setupSwagger(app);
-    GatewayService.setupValidationPipe(app);
     GatewayService.setUpBullBoard(app);
     GatewayService.setUpViewEngine(app);
     GatewayService.setupSecurity(app);
@@ -44,9 +42,7 @@ export class GatewayService {
   private static setupSwagger(app: NestExpressApplication) {
     const config = app.get(ConfigService);
     const gatewayConfig = config.get<GatewayConfig>('gateway');
-    if (gatewayConfig.swagger === 'off') {
-      return;
-    }
+    if (gatewayConfig.swagger === 'off') return;
 
     const port = toInt(gatewayConfig.port, DEFAULT_GATEWAY_PORT);
     const swagger = {
@@ -72,17 +68,10 @@ export class GatewayService {
         docExpansion: 'list',
         filter: true,
         showRequestDuration: true,
+        tagsSorter: 'alpha',
+        operationsSorter: 'alpha',
       },
     });
-  }
-
-  private static setupValidationPipe(app: NestExpressApplication) {
-    const config = app.get(ConfigService);
-    const gatewayConfig = config.get<GatewayConfig>('gateway');
-    if (gatewayConfig?.pipes && gatewayConfig?.pipes !== 'off') {
-      const defaultPipe: ValidationPipeOptions = { transform: true, whitelist: true, forbidNonWhitelisted: true };
-      app.useGlobalPipes(new ValidationPipe({ ...defaultPipe, ...gatewayConfig.pipes }));
-    }
   }
 
   private static setUpBullBoard(app: NestExpressApplication) {

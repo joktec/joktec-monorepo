@@ -21,7 +21,7 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
   const namePlural = toPlural(nameSingular);
   const apiTag = props.apiTag || toPlural(dtoName);
 
-  @ApiTags(apiTag)
+  @ApiTags(apiTag.toLowerCase())
   @UseInterceptors(ResponseInterceptor)
   abstract class Controller {
     protected constructor(protected service: BaseService<T, ID>) {}

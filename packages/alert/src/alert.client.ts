@@ -5,6 +5,7 @@ import { IncomingWebhook } from '@slack/webhook';
 import { Telegraf } from 'telegraf';
 
 export type AlertClient = Telegraf;
+
 export interface Alert extends Client<AlertConfig, IncomingWebhook> {
   send(msg: AlertRequest, conId?: string): Promise<AlertResponse>;
 }

@@ -1,51 +1,54 @@
-import { Injectable, PipeTransform, ArgumentMetadata, HttpException, HttpStatus } from '@nestjs/common';
-import { isEmpty, keys, pick } from 'lodash';
+import { ArgumentMetadata, Injectable, PipeTransform, Type, ValidationPipe } from '@nestjs/common';
+import { isEmpty } from 'lodash';
 import { validate, ValidationError } from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
+import { BadRequestException, ExceptionMessage } from '../exceptions';
+import { ValidationPipeOptions } from '@nestjs/common/pipes/validation.pipe';
 
 @Injectable()
-export class CustomValidationPipe implements PipeTransform {
-  static formatErrors(errors: ValidationError[]) {
-    return errors.map(error => {
-      return {
-        field: error.property,
-        value: error.value,
-        errors: error.constraints,
-      };
-    });
-  }
-
-  /**
-   * Description: just get specified field in DTO
-   * @param dto
-   * @param object
-   * @private
-   */
-  private static removeRedundantFields(dto: any, object: object) {
-    const properties = keys(new dto());
-
-    return pick(object, properties);
-  }
-
-  async transform(value: any, { metatype }: ArgumentMetadata) {
-    if (isEmpty(value)) {
-      throw new HttpException(`Validation failed: No payload has been provided`, HttpStatus.BAD_REQUEST);
-    }
-
-    let object = CustomValidationPipe.removeRedundantFields(metatype, value);
-    object = plainToClass(metatype, object);
-    const errors = await validate(object);
-
-    if (errors.length > 0) {
-      throw new HttpException(
+export class BaseValidationPipe extends ValidationPipe implements PipeTransform {
+  constructor(options?: ValidationPipeOptions) {
+    super(
+      Object.assign(
         {
-          error: 'Validation failed',
-          details: CustomValidationPipe.formatErrors(errors),
+          transform: true,
+          whitelist: true,
+          forbidNonWhitelisted: false,
         },
-        HttpStatus.BAD_REQUEST,
-      );
+        options,
+      ),
+    );
+  }
+
+  async transform(value: any, metadata: ArgumentMetadata) {
+    if (isEmpty(value)) {
+      throw new BadRequestException(ExceptionMessage.EMPTY_INPUT);
     }
 
-    return object;
+    const { metatype } = metadata;
+    if (!metatype || !this.toValidate(metadata)) {
+      return value;
+    }
+
+    const object = plainToInstance(metatype, value);
+    const validationErrors = await validate(object);
+    if (validationErrors.length > 0) {
+      const formatError = this.buildError(validationErrors);
+      const message: string = formatError[Object.keys(formatError)[0]][0];
+      throw new BadRequestException(message, formatError);
+    }
+    return value;
+  }
+
+  protected toValidate(metadata: ArgumentMetadata): boolean {
+    const { metatype } = metadata;
+    const types = [String, Boolean, Number, Array, Object];
+    return !types.find(type => metatype === type || metatype === new type());
+  }
+
+  private buildError(errors: ValidationError[]): { [key: string]: string[] } {
+    const result: any = {};
+    errors.forEach(error => (result[error.property] = Object.values(error.constraints)));
+    return result;
   }
 }

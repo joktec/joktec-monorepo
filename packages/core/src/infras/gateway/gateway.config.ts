@@ -14,7 +14,7 @@ export interface GatewayConfig {
         baseHost?: string;
         useSSL?: boolean;
       };
-  pipes?: 'off' | ValidationPipeOptions;
+  pipes?: ValidationPipeOptions;
   csrf?: boolean;
   cors?: CorsOptions;
 }

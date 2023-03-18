@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '../../config';
 import { DEFAULT_MICRO_PORT, IMicroserviceConfig, MicroConfig } from './micro.config';
@@ -6,6 +6,7 @@ import { MicroExceptionFilter } from '../../exceptions';
 import { LogService } from '../../log';
 import { toArray, toBool } from '../../utils';
 import mergeDeep from 'merge-deep';
+import { BaseValidationPipe } from '../../validation';
 
 export class MicroService {
   static async bootstrap(app: INestApplication, builtInConfig?: IMicroserviceConfig) {
@@ -32,7 +33,7 @@ export class MicroService {
     });
 
     app.useGlobalFilters(new MicroExceptionFilter(logger));
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(new BaseValidationPipe());
     await app.connectMicroservice(microOptions, hybridOptions);
     await app.startAllMicroservices();
     await app.listen(port, () => logger.info('%s - %s is listening on port %s', description, microConfig.name, port));

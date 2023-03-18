@@ -1,5 +1,5 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { NestApplicationOptions, NestModule, NestInterceptor } from '@nestjs/common';
+import { NestApplicationOptions, NestModule, NestInterceptor, PipeTransform } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
@@ -9,7 +9,8 @@ import { IMicroserviceConfig } from '../infras/micro/micro.config';
 export type Module = NestModule;
 export type ApplicationOptions = NestApplicationOptions & {
   microserviceConfig: IMicroserviceConfig;
-  interceptors: NestInterceptor[];
+  interceptors?: NestInterceptor[];
+  pipes?: PipeTransform[];
 };
 
 export class Application {

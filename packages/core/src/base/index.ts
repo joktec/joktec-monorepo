@@ -1,4 +1,4 @@
-export { NestFactory } from '@nestjs/core';
+export { APP_PIPE, APP_FILTER, APP_GUARD, APP_INTERCEPTOR, NestFactory } from '@nestjs/core';
 export { ClientsModule, MessagePattern, RpcException } from '@nestjs/microservices';
 export {
   ArgumentsHost,
