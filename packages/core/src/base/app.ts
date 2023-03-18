@@ -5,13 +5,11 @@ import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
 import { GatewayConfig, GatewayService, MicroConfig, MicroService } from '../infras';
 import { IMicroserviceConfig } from '../infras/micro/micro.config';
+import { ExceptionFilter } from '@nestjs/common/interfaces';
 
+export type GlobalOptions = { filters?: ExceptionFilter[]; interceptors?: NestInterceptor[]; pipes?: PipeTransform[] };
 export type Module = NestModule;
-export type ApplicationOptions = NestApplicationOptions & {
-  microserviceConfig: IMicroserviceConfig;
-  interceptors?: NestInterceptor[];
-  pipes?: PipeTransform[];
-};
+export type ApplicationOptions = NestApplicationOptions & GlobalOptions & { microserviceConfig: IMicroserviceConfig };
 
 export class Application {
   static initTrackingProcessEvent(logger: Logger) {
@@ -47,7 +45,7 @@ export class Application {
     const config = app.get(ConfigService);
 
     const gatewayConfig = config.get<GatewayConfig>('gateway');
-    if (gatewayConfig) await GatewayService.bootstrap(app);
+    if (gatewayConfig) await GatewayService.bootstrap(app, opts);
 
     const microConfig = config.get<MicroConfig>('micro');
     if (microConfig) await MicroService.bootstrap(app, opts?.microserviceConfig);

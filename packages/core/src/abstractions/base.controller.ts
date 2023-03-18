@@ -2,7 +2,7 @@ import { Body, Delete, Get, Param, Post, Put, Query, UseGuards, UseInterceptors 
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { BaseService } from './base.service';
 import { IBaseRequest, IListResponseDto } from '../models';
-import { QueryInterceptor, ResponseInterceptor } from './base.interceptor';
+import { QueryInterceptor } from '../interceptors';
 import { toBool, toPlural, toSingular } from '../utils';
 import { startCase } from 'lodash';
 import { JwtGuard, JwtUser, LoggedUser } from '../guards';
@@ -22,7 +22,6 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
   const apiTag = props.apiTag || toPlural(dtoName);
 
   @ApiTags(apiTag.toLowerCase())
-  @UseInterceptors(ResponseInterceptor)
   abstract class Controller {
     protected constructor(protected service: BaseService<T, ID>) {}
 

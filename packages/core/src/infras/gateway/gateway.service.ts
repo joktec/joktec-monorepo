@@ -13,9 +13,11 @@ import { GatewayExceptionsFilter } from '../../exceptions';
 import { LogService } from '../../log';
 import { toBool, toInt } from '../../utils';
 import { BaseValidationPipe } from '../../validation';
+import { ResponseInterceptor } from '../../interceptors';
+import { GlobalOptions } from '../../base';
 
 export class GatewayService {
-  static async bootstrap(app: NestExpressApplication) {
+  static async bootstrap(app: NestExpressApplication, opts?: GlobalOptions) {
     const config = app.get(ConfigService);
     const gatewayConfig = config.get<GatewayConfig>('gateway');
     if (!gatewayConfig) return;
@@ -23,8 +25,10 @@ export class GatewayService {
     const logger = await app.resolve(LogService);
     logger.setContext(GatewayService.name);
 
-    app.useGlobalFilters(new GatewayExceptionsFilter(logger));
-    app.useGlobalPipes(new BaseValidationPipe(gatewayConfig.pipes));
+    app.useGlobalInterceptors(new ResponseInterceptor(), ...opts?.interceptors);
+    app.useGlobalFilters(new GatewayExceptionsFilter(logger), ...opts?.filters);
+    app.useGlobalPipes(new BaseValidationPipe(gatewayConfig.pipes), ...opts?.pipes);
+
     app.setGlobalPrefix(gatewayConfig.contextPath);
     app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
