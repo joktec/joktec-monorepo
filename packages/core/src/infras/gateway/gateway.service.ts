@@ -11,7 +11,7 @@ import { join } from 'path';
 import csurf from 'csurf';
 import { GatewayExceptionsFilter } from '../../exceptions';
 import { LogService } from '../../log';
-import { toBool, toInt } from '../../utils';
+import { toArray, toBool, toInt } from '../../utils';
 import { BaseValidationPipe } from '../../validation';
 import { ResponseInterceptor } from '../../interceptors';
 import { GlobalOptions } from '../../base';
@@ -25,9 +25,9 @@ export class GatewayService {
     const logger = await app.resolve(LogService);
     logger.setContext(GatewayService.name);
 
-    app.useGlobalInterceptors(new ResponseInterceptor(), ...opts?.interceptors);
-    app.useGlobalFilters(new GatewayExceptionsFilter(logger), ...opts?.filters);
-    app.useGlobalPipes(new BaseValidationPipe(gatewayConfig.pipes), ...opts?.pipes);
+    app.useGlobalInterceptors(new ResponseInterceptor(), ...toArray(opts?.interceptors));
+    app.useGlobalFilters(new GatewayExceptionsFilter(logger), ...toArray(opts?.filters));
+    app.useGlobalPipes(new BaseValidationPipe(gatewayConfig.pipes), ...toArray(opts?.pipes));
 
     app.setGlobalPrefix(gatewayConfig.contextPath);
     app.use(bodyParser.json({ limit: '50mb' }));

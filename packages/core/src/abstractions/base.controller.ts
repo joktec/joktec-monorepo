@@ -54,7 +54,7 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
     @ApiBody({ type: props.dto })
-    async update(@Param('id') id: ID, @Body() entity: T, @LoggedUser() loggedUser?: JwtUser): Promise<T> {
+    async update(@Param('id') id: ID, @Body() entity: Partial<T>, @LoggedUser() loggedUser?: JwtUser): Promise<T> {
       return this.service.update(id, entity, loggedUser);
     }
 
