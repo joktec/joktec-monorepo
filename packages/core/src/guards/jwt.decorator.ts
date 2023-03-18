@@ -15,9 +15,9 @@ export const Payload = <T extends JwtPayload>(context: JwtContext = JwtContext.H
 
   return createParamDecorator((data: unknown, context: ExecutionContext): T => {
     const ctx = GqlExecutionContext.create(context);
-    const payload = ctx.getContext().req.payload as T;
+    const payload = ctx.getContext().req.payload;
     if (!payload) throw new UnauthorizedException(ExceptionMessage.INVALID_PAYLOAD);
-    return payload;
+    return payload as T;
   });
 };
 
@@ -25,15 +25,15 @@ export const LoggedUser = <T extends JwtUser>(context: JwtContext = JwtContext.H
   if (context === JwtContext.HTTP) {
     return createParamDecorator((data: unknown, ctx: ExecutionContext): T => {
       const req = ctx.switchToHttp().getRequest();
-      if (!req.loggedUser) throw new UnauthorizedException(ExceptionMessage.INVALID_ACCOUNT);
+      // if (!req.loggedUser) throw new UnauthorizedException(ExceptionMessage.INVALID_ACCOUNT);
       return req.loggedUser as T;
     });
   }
 
   return createParamDecorator((data: unknown, context: ExecutionContext): T => {
     const ctx = GqlExecutionContext.create(context);
-    const loggedUser = ctx.getContext().req.loggedUser as T;
-    if (!loggedUser) throw new UnauthorizedException(ExceptionMessage.INVALID_ACCOUNT);
-    return loggedUser;
+    const loggedUser = ctx.getContext().req.loggedUser;
+    // if (!loggedUser) throw new UnauthorizedException(ExceptionMessage.INVALID_ACCOUNT);
+    return loggedUser as T;
   });
 };

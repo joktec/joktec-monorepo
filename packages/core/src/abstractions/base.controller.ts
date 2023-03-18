@@ -1,17 +1,18 @@
-import { Body, Delete, Get, Param, Post, Put, Query, UseInterceptors } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Delete, Get, Param, Post, Put, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { BaseService } from './base.service';
 import { IBaseRequest, IListResponseDto } from '../models';
 import { QueryInterceptor, ResponseInterceptor } from './base.interceptor';
-import { toPlural, toSingular } from '../utils';
+import { toBool, toPlural, toSingular } from '../utils';
 import { startCase } from 'lodash';
-import { JwtUser, LoggedUser } from '../guards';
+import { JwtGuard, JwtUser, LoggedUser } from '../guards';
 
 export interface IBaseControllerProps<T> {
   dto: new (...args: any) => T;
   dtoList: new (...args: any) => any;
   dtoName?: string;
   apiTag?: string;
+  useGuard?: boolean;
 }
 
 export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
@@ -65,6 +66,12 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     async delete(@Param('id') id: ID, @LoggedUser() loggedUser?: JwtUser): Promise<T> {
       return this.service.delete(id, loggedUser);
     }
+  }
+
+  const useGuard = toBool(props.useGuard, true);
+  if (useGuard) {
+    UseGuards(JwtGuard)(Controller);
+    ApiBearerAuth()(Controller);
   }
 
   return Controller;
