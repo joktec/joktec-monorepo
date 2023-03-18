@@ -1,4 +1,4 @@
-import { ICondition } from '@joktec/core';
+import { cloneInstance, ICondition } from '@joktec/core';
 import { IMongoRequest } from './models';
 
 export const preHandleCondition = (condition: any): ICondition => {
@@ -26,7 +26,7 @@ export const preHandleQuery = (query: IMongoRequest): ICondition => {
 };
 
 export const preHandleBody = <T extends {} = any>(body: Partial<T>): Partial<T> => {
-  const processBody: any = { ...body };
+  const processBody: any = cloneInstance(body);
   delete processBody._id;
   delete processBody.createdAt;
   delete processBody.updatedAt;
