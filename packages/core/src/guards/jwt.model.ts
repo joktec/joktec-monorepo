@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
 
-export interface JwtPayload extends jwt.JwtPayload {}
+export interface JwtPayload extends jwt.JwtPayload {
+  userId: string;
+  email?: string;
+}
 
 export interface JwtToken {
   token: string;
@@ -8,9 +11,8 @@ export interface JwtToken {
 }
 
 export interface JwtUser {
-  [key: string]: any;
-
-  token: string;
-  userId: string;
+  id: string;
   email: string;
+
+  [key: string]: any;
 }

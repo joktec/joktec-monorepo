@@ -28,6 +28,9 @@ export {
   HttpStatus,
   CacheModule,
   UseGuards,
+  NestMiddleware,
+  NestModule,
+  MiddlewareConsumer,
 } from '@nestjs/common';
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
 export * from '@nestjs/swagger';
