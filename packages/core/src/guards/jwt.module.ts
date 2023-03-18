@@ -5,5 +5,6 @@ import { JwtGuard } from './jwt.guard';
 @Global()
 @Module({
   providers: [JwtService, JwtGuard],
+  exports: [JwtService, JwtGuard],
 })
 export class JwtModule {}
