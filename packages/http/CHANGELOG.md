@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.15](https://github.com/joktec/joktec-monorepo/compare/@joktec/http@0.0.14...@joktec/http@0.0.15) (2023-03-20)
+
+
+### Bug Fixes
+
+* remove code ([ce8252e](https://github.com/joktec/joktec-monorepo/commit/ce8252e3357e507895f3b683472c28e82fd60228))
+
+
+
+
+
 ## [0.0.14](https://github.com/joktec/joktec-monorepo/compare/@joktec/http@0.0.13...@joktec/http@0.0.14) (2023-03-20)
 
 **Note:** Version bump only for package @joktec/http
