@@ -34,9 +34,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.3",
-    "@joktec/mongo": "0.0.8",
-    "@joktec/mysql": "0.0.6"
+    "@joktec/core": "0.0.13",
+    "@joktec/mongo": "0.0.19",
+    "@joktec/mysql": "0.0.16"
   },
   "lint-staged": {
     "*.ts": [
