@@ -1,7 +1,7 @@
 {
   "name": "@joktec/rabbit",
   "description": "JokTec - RabbitMQ Service",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -37,7 +37,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.13",
+    "@joktec/core": "0.0.14",
     "amqplib": "^0.10.3",
     "lodash": "^4.17.21",
     "object-hash": "^3.0.0"
