@@ -7,3 +7,4 @@ export * from './request-timeout.exception';
 export * from './service-unavaiable.exception';
 export * from './too-many-requests.exception';
 export * from './unauthorized.exception';
+export * from './unprocessable-entity.exception';
