@@ -39,3 +39,4 @@ export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
 export * from '@nestjs/swagger';
 export * from './app';
 export { Express } from 'express';
+export { FileInterceptor, FilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
