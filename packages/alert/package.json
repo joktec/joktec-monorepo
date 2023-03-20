@@ -58,5 +58,6 @@
   },
   "devDependencies": {
     "@types/node-telegram-bot-api": "^0.61.3"
-  }
+  },
+  "gitHead": "a21795e8cc3edaded28239aa1b9c2be3078bee5f"
 }
