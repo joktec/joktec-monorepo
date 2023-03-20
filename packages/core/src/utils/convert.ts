@@ -27,14 +27,17 @@ export const toInt = (n: number | string | boolean, def: number = 0): number => 
 };
 
 export const toBool = (b: boolean | string | number | Buffer, def: boolean = false) => {
-  if (!b) return def;
-  if (b instanceof Buffer) return b.length && b[0] === 1;
+  if (isNil(b) || b === 0 || b === '') return def;
+  if (b instanceof Buffer) {
+    if (!b.length) return def;
+    return b.length && b[0] === 1;
+  }
   const value = String(b).toLowerCase();
   return value === 'yes' || value === 'true' || value === '1';
 };
 
 export const toArray = <T>(data: T | Array<T>, separator?: string): T[] => {
-  if (!data) return [];
+  if (!data || (isArray(data) && !data.length)) return [];
   if (isString(data) && separator) {
     return data.split(separator) as Array<T>;
   }

@@ -1,3 +1,6 @@
+import { Express } from 'express';
+import { Multer } from 'multer';
+
 export { APP_PIPE, APP_FILTER, APP_GUARD, APP_INTERCEPTOR, NestFactory } from '@nestjs/core';
 export { ClientsModule, MessagePattern, RpcException } from '@nestjs/microservices';
 export {
@@ -34,9 +37,10 @@ export {
   UploadedFile,
   UploadedFiles,
   FileValidator,
+  RequestMethod,
 } from '@nestjs/common';
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
 export * from '@nestjs/swagger';
 export * from './app';
-export { Express } from 'express';
-export { FileInterceptor, FilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
+export { FileInterceptor, FilesInterceptor, FileFieldsInterceptor, MulterModule } from '@nestjs/platform-express';
+export type MulterFile = Express.Multer.File;

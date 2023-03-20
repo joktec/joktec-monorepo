@@ -1,28 +1,22 @@
-import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toBool } from '@joktec/core';
+import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool } from '@joktec/core';
 import { StorageACL } from './models';
 
-class StorageCredentials {
+export class StorageConfig extends ClientConfig {
   @IsString()
-  @IsNotEmpty()
-  accessKeyId!: string;
+  @IsOptional()
+  region?: string;
 
   @IsString()
   @IsNotEmpty()
-  secretAccessKey: string;
+  accessKey!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  secretKey: string;
 
   @IsString()
   @IsOptional()
   sessionToken?: string;
-}
-
-export class StorageConfig extends ClientConfig {
-  @IsString()
-  @IsNotEmpty()
-  region!: string;
-
-  @IsTypes([StorageCredentials])
-  @IsNotEmpty()
-  credentials!: StorageCredentials;
 
   @IsString()
   @IsNotEmpty()
@@ -71,9 +65,7 @@ export class StorageConfig extends ClientConfig {
     super(props);
     Object.assign(this, {
       ...props,
-      region: props.region || 'ap-southeast-1',
       acl: props.acl || StorageACL.PUBLIC_READ,
-      credentials: { ...props.credentials },
       sslEnabled: toBool(props.sslEnabled, false),
       s3ForcePathStyle: toBool(props.s3ForcePathStyle, false),
       useDualstack: toBool(props.useDualstack, false),

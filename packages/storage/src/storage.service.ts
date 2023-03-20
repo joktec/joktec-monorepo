@@ -26,7 +26,11 @@ export class StorageService extends AbstractClientService<StorageConfig, AWS.S3>
 
   @Retry(RETRY_OPTS)
   protected async init(config: StorageConfig): Promise<AWS.S3> {
-    return new AWS.S3({ ...config, credentials: { ...config.credentials } });
+    return new AWS.S3({
+      ...config,
+      accessKeyId: config.accessKey,
+      secretAccessKey: config.secretKey,
+    });
   }
 
   async start(client: AWS.S3, conId: string = DEFAULT_CON_ID): Promise<void> {

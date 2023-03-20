@@ -1,5 +1,6 @@
 import { FileValidator, HttpStatus, ParseFilePipe, ParseFilePipeBuilder } from '@nestjs/common';
 import { ExceptionMessage, UnprocessableEntityException } from '../exceptions';
+import { Express, Request } from 'express';
 
 export const FilePipe = (options?: {
   fileType?: string;
@@ -26,8 +27,8 @@ export const isAllowedMimeType = (mimeType: string, allowedMimeTypes: string[] =
   return false;
 };
 
-export const FileFilter = (options?: { fileTypes?: string[]; maxSize?: number }): Function => {
-  return (req, file, callback) => {
+export const FileFilter = (options?: { fileTypes?: string[]; maxSize?: number }) => {
+  return (req: Request, file: Express.Multer.File, callback: (error: Error | null, acceptFile: boolean) => void) => {
     const { fileTypes, maxSize } = options || {};
     if (fileTypes && !isAllowedMimeType(file.mimetype, fileTypes)) {
       return callback(new UnprocessableEntityException(ExceptionMessage.INVALID_FILE_TYPE), false);

@@ -1,8 +1,8 @@
-import { ArgumentMetadata, Injectable, PipeTransform, Type, ValidationPipe } from '@nestjs/common';
+import { ArgumentMetadata, Injectable, PipeTransform, ValidationPipe } from '@nestjs/common';
 import { isEmpty } from 'lodash';
 import { validate, ValidationError } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { BadRequestException, ExceptionMessage } from '../exceptions';
+import { BadRequestException } from '../exceptions';
 import { ValidationPipeOptions } from '@nestjs/common/pipes/validation.pipe';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class BaseValidationPipe extends ValidationPipe implements PipeTransform 
 
   async transform(value: any, metadata: ArgumentMetadata) {
     if (isEmpty(value)) {
-      throw new BadRequestException(ExceptionMessage.EMPTY_INPUT);
+      return value;
     }
 
     const { metatype } = metadata;
