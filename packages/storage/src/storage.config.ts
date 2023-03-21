@@ -15,6 +15,10 @@ export class StorageConfig extends ClientConfig {
   secretKey: string;
 
   @IsString()
+  @IsNotEmpty()
+  endpoint!: string;
+
+  @IsString()
   @IsOptional()
   sessionToken?: string;
 
@@ -24,7 +28,11 @@ export class StorageConfig extends ClientConfig {
 
   @IsString()
   @IsOptional()
-  endpoint?: string;
+  linkFormat?: string;
+
+  @IsString()
+  @IsOptional()
+  namespace?: string;
 
   @IsString()
   @IsOptional()
@@ -69,6 +77,15 @@ export class StorageConfig extends ClientConfig {
       sslEnabled: toBool(props.sslEnabled, false),
       s3ForcePathStyle: toBool(props.s3ForcePathStyle, false),
       useDualstack: toBool(props.useDualstack, false),
+      linkFormat: props.linkFormat || '',
     });
+  }
+
+  public buildLink(bucket: string, key: string): string {
+    return this.linkFormat
+      .replace('<bucket>', bucket || this.bucket)
+      .replace('<key>', key)
+      .replace('<region>', this.region || '')
+      .replace('<namespace>', this.namespace || '');
   }
 }

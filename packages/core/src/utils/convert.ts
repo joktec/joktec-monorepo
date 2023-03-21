@@ -1,6 +1,7 @@
 import { isArray, isBoolean, isNaN, isNil, isPlainObject, isString } from 'lodash';
 import pluralize from 'pluralize';
 import slug from 'slug';
+import urlParse from 'url-parse';
 
 // Object
 export const flattenKeys = (obj: object, currentPath: string | null): string[] => {
@@ -58,4 +59,10 @@ export const toPlural = (str: string, count?: number): string =>
 export const toSlugify = (...values: string[]): string => {
   if (!values.length) return null;
   return slug(values.join(' '), { lower: true });
+};
+
+export const joinUrl = (baseUrl: string, ...parts: string[]): string => {
+  const parsedUrl = urlParse(baseUrl);
+  parts.map(path => parsedUrl.set('pathname', path));
+  return parsedUrl.toString();
 };

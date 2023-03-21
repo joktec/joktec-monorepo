@@ -13,23 +13,24 @@ export type ApplicationOptions = NestApplicationOptions & GlobalOptions & { micr
 
 export class Application {
   static initTrackingProcessEvent(logger: Logger) {
+    logger.log(`🚀 Init app tracking process event`);
     const signalsNames: NodeJS.Signals[] = ['SIGTERM', 'SIGINT', 'SIGHUP'];
     signalsNames.forEach(signalName =>
       process.on(signalName, signal => {
-        logger.log(`Retrieved signal: ${signal}, application terminated`);
+        logger.log(`🚨 Retrieved signal: ${signal}, application terminated`);
         process.exit(0);
       }),
     );
 
     process.on('uncaughtException', (error: Error) => {
-      logger.error({ err: error });
+      logger.error({ err: error }, `🚨 Uncaught Promise Exception with error`);
       process.exit(1);
     });
 
     process.on('unhandledRejection', (reason, promise) => {
-      logger.error(`Unhandled Promise Rejection, reason: ${reason}`);
+      logger.error(`🚨 Unhandled Promise Rejection, reason: ${reason}`);
       promise.catch((err: Error) => {
-        logger.error({ err });
+        logger.error({ err }, `🚨 Unhandled Promise Rejection with error`);
         process.exit(1);
       });
     });

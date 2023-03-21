@@ -6,6 +6,8 @@ export const DEFAULT_GATEWAY_PORT = 9010;
 export interface GatewayConfig {
   port: number;
   contextPath?: string;
+  staticPath?: string;
+  viewPath?: string;
   swagger?:
     | 'off'
     | {

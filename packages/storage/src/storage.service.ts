@@ -15,6 +15,7 @@ import {
 import { StorageMetric, StorageMetricType } from './storage.metric';
 import AWS from 'aws-sdk';
 import path from 'path';
+import { parseKey } from './storage.utils';
 
 const RETRY_OPTS = 'storage.retry';
 
@@ -63,35 +64,36 @@ export class StorageService extends AbstractClientService<StorageConfig, AWS.S3>
     }
   }
 
-  @StorageMetric(StorageMetricType.DOWNLOAD)
-  async download(req: StorageDownloadRequest, conId: string = DEFAULT_CON_ID): Promise<StorageDownloadResponse> {
-    const config = this.getConfig(conId);
-    const key = req.key.replace(config.endpoint, '');
-    const params: GetObjectRequest = { Bucket: req.bucket || config.bucket, Key: key };
-    const data = await this.getClient(conId).getObject(params).promise();
-    return {
-      key,
-      file: data.Body as Buffer,
-      contentType: data.ContentType,
-      eTag: data.ETag,
-    };
-  }
-
   @StorageMetric(StorageMetricType.UPLOAD)
   async upload(req: StorageUploadRequest, conId: string = DEFAULT_CON_ID): Promise<StorageUploadResponse> {
     const config = this.getConfig(conId);
-    const key = path.posix.join(req.prefix || '', req.filename);
     const params: PutObjectRequest = {
       Body: req.file,
       ACL: req.acl || config.acl,
       Bucket: req.bucket || config.bucket,
-      Key: key,
+      Key: path.posix.join(req.prefix || '', req.filename),
       ContentType: req.contentType,
     };
     const data = await this.getClient(conId).putObject(params).promise();
     return {
-      key,
-      link: config.endpoint + '/' + key,
+      key: params.Key,
+      link: config.buildLink(params.Bucket, params.Key),
+      eTag: data.ETag,
+    };
+  }
+
+  @StorageMetric(StorageMetricType.DOWNLOAD)
+  async download(req: StorageDownloadRequest, conId: string = DEFAULT_CON_ID): Promise<StorageDownloadResponse> {
+    const config = this.getConfig(conId);
+    const params: GetObjectRequest = {
+      Bucket: req.bucket || config.bucket,
+      Key: parseKey(req.key, req.bucket || config.bucket),
+    };
+    const data = await this.getClient(conId).getObject(params).promise();
+    return {
+      key: params.Key,
+      file: data.Body as Buffer,
+      contentType: data.ContentType,
       eTag: data.ETag,
     };
   }

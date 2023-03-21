@@ -36,6 +36,9 @@ export class MicroService {
     app.useGlobalPipes(new BaseValidationPipe());
     await app.connectMicroservice(microOptions, hybridOptions);
     await app.startAllMicroservices();
-    await app.listen(port, () => logger.info('%s - %s is listening on port %s', description, microConfig.name, port));
+    await app.listen(port, () => {
+      const baseUrl = `http://localhost:${port}`;
+      logger.info(`🚀 Service %s (%s) is running on %s`, description, microConfig.name, baseUrl);
+    });
   }
 }

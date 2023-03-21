@@ -1,3 +1,4 @@
+export * from './storage.utils';
 export * from './storage.config';
 export * from './storage.client';
 export * from './storage.metric';

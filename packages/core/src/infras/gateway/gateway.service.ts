@@ -7,11 +7,11 @@ import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import Queue from 'bull';
 import * as bodyParser from 'body-parser';
 import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
-import { join } from 'path';
+import path from 'path';
 import csurf from 'csurf';
 import { GatewayExceptionsFilter } from '../../exceptions';
 import { LogService } from '../../log';
-import { toArray, toBool, toInt } from '../../utils';
+import { joinUrl, toArray, toBool, toInt } from '../../utils';
 import { BaseValidationPipe } from '../../validation';
 import { ResponseInterceptor } from '../../interceptors';
 import { GlobalOptions } from '../../base';
@@ -29,7 +29,8 @@ export class GatewayService {
     app.useGlobalFilters(new GatewayExceptionsFilter(logger), ...toArray(opts?.filters));
     app.useGlobalPipes(new BaseValidationPipe(gatewayConfig.pipes), ...toArray(opts?.pipes));
 
-    app.setGlobalPrefix(gatewayConfig.contextPath);
+    const contextPath = gatewayConfig.contextPath || '';
+    app.setGlobalPrefix(contextPath);
     app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
@@ -40,13 +41,19 @@ export class GatewayService {
 
     const gatewayName = config.get('description') || 'Gateway';
     const port = toInt(gatewayConfig.port, DEFAULT_GATEWAY_PORT);
-    await app.listen(port, () => logger.info(`%s is listening on port %s`, gatewayName, port));
+    await app.listen(port, () => {
+      const baseUrl = `http://localhost:${port}`;
+      logger.info(`🚀 Application %s is running on %s`, gatewayName, joinUrl(baseUrl, contextPath));
+      if (gatewayConfig.swagger !== 'off') {
+        logger.info(`🗒️ Access API Document at %s`, joinUrl(baseUrl, contextPath, 'swagger'));
+      }
+    });
   }
 
-  private static setupSwagger(app: NestExpressApplication) {
+  private static setupSwagger(app: NestExpressApplication): boolean {
     const config = app.get(ConfigService);
     const gatewayConfig = config.get<GatewayConfig>('gateway');
-    if (gatewayConfig.swagger === 'off') return;
+    if (gatewayConfig.swagger === 'off') return false;
 
     const port = toInt(gatewayConfig.port, DEFAULT_GATEWAY_PORT);
     const swagger = {
@@ -76,6 +83,7 @@ export class GatewayService {
         operationsSorter: 'alpha',
       },
     });
+    return true;
   }
 
   private static setUpBullBoard(app: NestExpressApplication) {
@@ -95,8 +103,10 @@ export class GatewayService {
   }
 
   private static setUpViewEngine(app: NestExpressApplication) {
-    app.useStaticAssets(join(__dirname, '..', 'public'));
-    app.setBaseViewsDir(join(__dirname, '..', 'views'));
+    const config = app.get(ConfigService);
+    const gatewayConfig = config.get<GatewayConfig>('gateway');
+    app.useStaticAssets(path.resolve(gatewayConfig.staticPath || './public'), { prefix: 'public' });
+    app.setBaseViewsDir(path.resolve(gatewayConfig.viewPath || './views'));
     app.setViewEngine('hbs');
   }
 
