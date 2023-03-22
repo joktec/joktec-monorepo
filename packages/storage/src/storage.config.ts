@@ -81,7 +81,7 @@ export class StorageConfig extends ClientConfig {
     });
   }
 
-  public buildLink(bucket: string, key: string): string {
+  public buildLink(key: string, bucket: string = ''): string {
     return this.linkFormat
       .replace('<bucket>', bucket || this.bucket)
       .replace('<key>', key)

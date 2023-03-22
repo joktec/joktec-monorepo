@@ -77,7 +77,7 @@ export class StorageService extends AbstractClientService<StorageConfig, AWS.S3>
     const data = await this.getClient(conId).putObject(params).promise();
     return {
       key: params.Key,
-      link: config.buildLink(params.Bucket, params.Key),
+      link: config.buildLink(params.Key, params.Bucket),
       eTag: data.ETag,
     };
   }
