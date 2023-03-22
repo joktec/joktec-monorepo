@@ -17,10 +17,11 @@
     "access": "restricted"
   },
   "scripts": {
-    "clean": "rimraf -rf dist node_modules",
+    "clean": "rimraf -rf dist",
+    "purge": "rimraf -rf node_modules",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "prebuild": "rimraf dist",
+    "prebuild": "yarn clean",
     "prepublishOnly": "yarn build",
     "dev": "nest start --watch -p tsconfig.json",
     "build": "nest build -p tsconfig.json",
@@ -34,9 +35,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.15",
-    "@joktec/mongo": "0.0.21",
-    "@joktec/mysql": "0.0.18"
+    "@joktec/core": "0.0.16",
+    "@joktec/mongo": "0.0.22",
+    "@joktec/mysql": "0.0.19"
   },
   "lint-staged": {
     "*.ts": [

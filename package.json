@@ -24,7 +24,7 @@
     "nx"
   ],
   "scripts": {
-    "postinstall": "chmod u+x ./bin/* && husky install",
+    "postinstall": "husky install",
     "ls": "lerna ls -la && nx print-affected",
     "dev": "lerna run dev",
     "build": "lerna run build",
@@ -35,7 +35,7 @@
     "lint": "lerna run lint",
     "clean": "lerna run clean",
     "purge": "rimraf -rf ./node_modules && lerna run purge",
-    "dep:upgrade": "lerna run --stream dep:upgrade",
+    "dep:upgrade": "lerna run dep:upgrade",
     "graph": "nx affected:graph",
     "release": "lerna version",
     "publish:dev": "lerna publish patch --exact --no-private --yes",

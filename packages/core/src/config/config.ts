@@ -29,11 +29,7 @@ export const initConfig = (): AppConfig => {
   const env: ENV = (process.env['NODE_ENV'] ?? ENV.DEV) as ENV;
   const appCfg = safeLoad(readFileSync(YAML_CONFIG_FILENAME, 'utf8')) as object;
   const paths: string[] = flattenKeys(appCfg, null);
-
-  let dopplerSecret: object = {};
-  if (execSync(DOPPLER_CONFIG_FILENAME)) {
-    dopplerSecret = JSON.parse(execSync('doppler secrets download --no-file --format json'));
-  }
+  const dopplerSecret: object = initFromDoppler();
 
   for (const path of paths) {
     const envKey: string = snakeCase(path).toUpperCase();
@@ -46,4 +42,14 @@ export const initConfig = (): AppConfig => {
   const pkgCfg = pick(pkg, ['name', 'description', 'version']);
 
   return { env, isProd: env === ENV.PROD, ...appCfg, ...pkgCfg };
+};
+
+export const initFromDoppler = (def: object = {}): object => {
+  try {
+    if (!existsSync(DOPPLER_CONFIG_FILENAME)) return def;
+    return JSON.parse(execSync('doppler secrets download --no-file --format json'));
+  } catch (err) {
+    console.error('Error to load doppler', err);
+  }
+  return def;
 };

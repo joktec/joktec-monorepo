@@ -36,9 +36,9 @@
     "core"
   ],
   "scripts": {
-    "clean": "rm -rf dist",
-    "purge": "rm -rf node_modules",
-    "prebuild": "rm -rf dist",
+    "clean": "rimraf -rf dist",
+    "purge": "rimraf -rf node_modules",
+    "prebuild": "yarn clean",
     "build": "nest build -p tsconfig.json",
     "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
