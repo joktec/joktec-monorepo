@@ -1,7 +1,7 @@
 {
   "name": "@joktec/alert",
   "description": "JokTec - Alert Service",
-  "version": "0.0.17",
+  "version": "0.0.16",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -28,8 +28,8 @@
     "telegram"
   ],
   "scripts": {
-    "clean": "rimraf -rf dist",
-    "purge": "rimraf -rf node_modules",
+    "clean": "rm -rf dist",
+    "purge": "rm -rf node_modules",
     "dev": "rollup -cw",
     "prebuild": "yarn clean",
     "build": "nest build -p tsconfig.json",

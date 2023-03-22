@@ -24,7 +24,7 @@
     "nx"
   ],
   "scripts": {
-    "postinstall": "husky install",
+    "postinstall": "chmod u+x ./bin/* && husky install",
     "ls": "lerna ls -la && nx print-affected",
     "dev": "lerna run dev",
     "build": "lerna run build",
