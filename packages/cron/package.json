@@ -1,7 +1,7 @@
 {
   "name": "@joktec/cron",
   "description": "JokTec - Cron Service",
-  "version": "0.0.20",
+  "version": "0.0.19",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -31,8 +31,8 @@
     "cargoQueue"
   ],
   "scripts": {
-    "clean": "rimraf -rf dist",
-    "purge": "rimraf -rf node_modules",
+    "clean": "rm -rf dist",
+    "purge": "rm -rf node_modules",
     "dev": "rollup -cw",
     "prebuild": "yarn clean",
     "build": "nest build -p tsconfig.json",

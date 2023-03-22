@@ -1,7 +1,7 @@
 {
   "name": "@joktec/core",
   "description": "JokTec - Core library",
-  "version": "0.0.17",
+  "version": "0.0.16",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -36,9 +36,9 @@
     "core"
   ],
   "scripts": {
-    "clean": "rimraf -rf dist",
-    "purge": "rimraf -rf node_modules",
-    "prebuild": "yarn clean",
+    "clean": "rm -rf dist",
+    "purge": "rm -rf node_modules",
+    "prebuild": "rm -rf dist",
     "build": "nest build -p tsconfig.json",
     "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
