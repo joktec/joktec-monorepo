@@ -35,7 +35,7 @@
     "lint": "lerna run lint",
     "clean": "lerna run clean",
     "purge": "rimraf -rf ./node_modules && lerna run purge",
-    "dep:upgrade": "lerna run dep:upgrade",
+    "dep:upgrade": "lerna run dep:upgrade && yarn",
     "graph": "nx affected:graph",
     "release": "lerna version",
     "publish:dev": "lerna publish patch --exact --no-private --yes",

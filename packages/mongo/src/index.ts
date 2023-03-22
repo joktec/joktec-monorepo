@@ -16,5 +16,6 @@ export {
   PropOptionsForNumber,
   PropOptionsForString,
   VirtualOptions,
+  RefType,
 } from '@typegoose/typegoose/lib/types';
 export { PropType, Severity, DecoratorKeys } from '@typegoose/typegoose/lib/internal/constants';
