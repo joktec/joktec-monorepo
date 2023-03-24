@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.19](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.18...@joktec/core@0.0.19) (2023-03-24)
+
+
+### Bug Fixes
+
+* core config doppler ([814fa15](https://github.com/joktec/joktec-monorepo/commit/814fa152386fcd097b168ff02a6399ab564f537d))
+
+
+
+
+
 ## [0.0.18](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.17...@joktec/core@0.0.18) (2023-03-24)
 
 
