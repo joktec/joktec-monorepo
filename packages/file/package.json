@@ -1,7 +1,7 @@
 {
   "name": "@joktec/file",
   "description": "JokTec - Local File Service",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "private": false,
   "license": "MIT",
   "author": "JokTec",

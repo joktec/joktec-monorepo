@@ -1,7 +1,7 @@
 {
   "name": "@joktec/redis",
   "description": "JokTec - Redis Service",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
