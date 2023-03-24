@@ -1,4 +1,4 @@
-import { range } from 'lodash';
+import { range, snakeCase } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import bcrypt from 'bcryptjs';
 
@@ -10,9 +10,12 @@ export const generateOTP = (otpLength: number = 6) => {
     .join('');
 };
 
-export const generateUUID = (options?: { prefix?: string }): string => {
+export const generateUUID = (opts?: { prefix?: string }): string => {
   let result: string = uuidv4();
-  if (options?.prefix) result = `${options.prefix}_${result}`;
+  if (opts?.prefix) {
+    const prefix = snakeCase(opts.prefix).toUpperCase();
+    result = `${prefix}-${result}`;
+  }
   return result;
 };
 
