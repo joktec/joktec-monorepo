@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.21](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.20...@joktec/cron@0.0.21) (2023-03-24)
+
+
+### Bug Fixes
+
+* conflict version ([abdcafb](https://github.com/joktec/joktec-monorepo/commit/abdcafba0ef961859317255e92b716d6178d95ea))
+
+
+
+
+
 ## [0.0.19](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.18...@joktec/cron@0.0.19) (2023-03-21)
 
 **Note:** Version bump only for package @joktec/cron
