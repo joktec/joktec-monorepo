@@ -31,7 +31,7 @@ export const initConfig = (): AppConfig => {
   const paths: string[] = flattenKeys(appCfg, null);
 
   let dopplerSecret: object = {};
-  if (execSync(DOPPLER_CONFIG_FILENAME)) {
+  if (existsSync(DOPPLER_CONFIG_FILENAME)) {
     dopplerSecret = JSON.parse(execSync('doppler secrets download --no-file --format json'));
   }
 
