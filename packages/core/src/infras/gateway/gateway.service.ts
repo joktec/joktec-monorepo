@@ -61,7 +61,7 @@ export class GatewayService {
       .setDescription(gatewayConfig.swagger?.description || config.get('description'))
       .setVersion(gatewayConfig.swagger?.version || config.get('version'))
       .setLicense('MIT', 'https://opensource.org/licenses/MIT')
-      .setContact('JokTec', 'https://github.com/joktec/joktec-monorepo.git', 'trangiabao1203@gmail.com')
+      // .setContact('JokTec', 'https://github.com/joktec/joktec-monorepo.git', 'trangiabao1203@gmail.com')
       .addServer(gatewayConfig.swagger?.server || `http://localhost:${port}`)
       .addBearerAuth();
 
