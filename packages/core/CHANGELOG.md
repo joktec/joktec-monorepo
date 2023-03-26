@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.23](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.20...@joktec/core@0.0.23) (2023-03-26)
+
+
+
+## 0.0.22 (2023-03-26)
+
+
+### Bug Fixes
+
+* jwt model ([05b80d8](https://github.com/joktec/joktec-monorepo/commit/05b80d8be41fdce01391418d3fea11ff31ff6f1f))
+* jwt model ([133581a](https://github.com/joktec/joktec-monorepo/commit/133581a5c76b1d52764e6f982206276fa9325e9d))
+
+
+
+
+
 ## [0.0.20](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.19...@joktec/core@0.0.20) (2023-03-26)
 
 **Note:** Version bump only for package @joktec/core
