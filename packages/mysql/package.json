@@ -43,7 +43,7 @@
     "gen:entity": "./bin/generate-entity.sh && yarn format && yarn lint"
   },
   "dependencies": {
-    "@joktec/core": "0.0.20",
+    "@joktec/core": "0.0.22",
     "lodash": "^4.17.21",
     "mysql": "2.18.1",
     "mysql2": "^3.1.2",

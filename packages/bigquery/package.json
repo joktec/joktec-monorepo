@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@google-cloud/bigquery": "^5.9.1",
-    "@joktec/core": "0.0.20",
+    "@joktec/core": "0.0.22",
     "lodash": "^4.17.21",
     "moment": "^2.29.1"
   },

@@ -40,7 +40,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.20",
+    "@joktec/core": "0.0.22",
     "@typegoose/typegoose": "^10.3.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",

@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.5.0",
-    "@joktec/core": "0.0.20",
+    "@joktec/core": "0.0.22",
     "@nestjs/axios": "^1.0.1",
     "axios": "^1.2.1",
     "lodash": "^4.17.21",

@@ -42,7 +42,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.20",
+    "@joktec/core": "0.0.22",
     "@joktec/mysql": "0.0.23",
     "@nestjs/schedule": "^2.2.0",
     "async": "^3.2.0",
