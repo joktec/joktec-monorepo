@@ -13,7 +13,7 @@ import { GatewayExceptionsFilter } from '../../exceptions';
 import { LogService } from '../../log';
 import { joinUrl, toArray, toBool, toInt } from '../../utils';
 import { BaseValidationPipe } from '../../validation';
-import { ResponseInterceptor } from '../../interceptors';
+import { ResponseInterceptor, TrackInterceptor } from '../../interceptors';
 import { GlobalOptions } from '../../base';
 
 export class GatewayService {
@@ -25,7 +25,7 @@ export class GatewayService {
     const logger = await app.resolve(LogService);
     logger.setContext(GatewayService.name);
 
-    app.useGlobalInterceptors(new ResponseInterceptor(), ...toArray(opts?.interceptors));
+    app.useGlobalInterceptors(new TrackInterceptor(), new ResponseInterceptor(), ...toArray(opts?.interceptors));
     app.useGlobalFilters(new GatewayExceptionsFilter(logger), ...toArray(opts?.filters));
     app.useGlobalPipes(new BaseValidationPipe(gatewayConfig.pipes), ...toArray(opts?.pipes));
 
