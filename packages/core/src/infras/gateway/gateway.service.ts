@@ -1,5 +1,4 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ExpressAdapter } from '@bull-board/express';
 import { createBullBoard } from '@bull-board/api';
@@ -9,9 +8,10 @@ import * as bodyParser from 'body-parser';
 import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
 import path from 'path';
 import csurf from 'csurf';
+import { ConfigService } from '../../config';
 import { GatewayExceptionsFilter } from '../../exceptions';
 import { LogService } from '../../log';
-import { joinUrl, toArray, toBool, toInt } from '../../utils';
+import { joinUrl, toArray, toInt } from '../../utils';
 import { BaseValidationPipe } from '../../validation';
 import { ResponseInterceptor, TrackInterceptor } from '../../interceptors';
 import { GlobalOptions } from '../../base';
@@ -56,21 +56,14 @@ export class GatewayService {
     if (gatewayConfig.swagger === 'off') return false;
 
     const port = toInt(gatewayConfig.port, DEFAULT_GATEWAY_PORT);
-    const swagger = {
-      description: gatewayConfig.swagger?.description || config.get('description'),
-      version: gatewayConfig.swagger?.version || config.get('version'),
-      baseHost: gatewayConfig.swagger?.baseHost || `localhost:${port}`,
-      useSSL: toBool(gatewayConfig.swagger?.useSSL, false),
-    };
-
     const options = new DocumentBuilder()
-      .setTitle(`${swagger.description} API`)
-      .setDescription(swagger.description)
-      .setVersion(`${swagger.version}`)
-      .addServer(`http://${swagger.baseHost}`)
+      .setTitle(gatewayConfig.swagger?.title || config.get('name'))
+      .setDescription(gatewayConfig.swagger?.description || config.get('description'))
+      .setVersion(gatewayConfig.swagger?.version || config.get('version'))
+      .setLicense('MIT', 'https://opensource.org/licenses/MIT')
+      .setContact('JokTec', 'https://github.com/joktec/joktec-monorepo.git', 'trangiabao1203@gmail.com')
+      .addServer(gatewayConfig.swagger?.server || `http://localhost:${port}`)
       .addBearerAuth();
-
-    if (swagger.useSSL) options.addServer(`https://${swagger.baseHost}`);
 
     const document = SwaggerModule.createDocument(app, options.build());
     SwaggerModule.setup('swagger', app, document, {

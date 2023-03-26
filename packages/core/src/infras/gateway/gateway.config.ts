@@ -11,10 +11,10 @@ export interface GatewayConfig {
   swagger?:
     | 'off'
     | {
+        title?: string;
         description?: string;
         version?: string;
-        baseHost?: string;
-        useSSL?: boolean;
+        server?: string;
       };
   pipes?: ValidationPipeOptions;
   csrf?: boolean;
