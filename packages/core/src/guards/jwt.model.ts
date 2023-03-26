@@ -10,7 +10,10 @@ export interface JwtPayload extends jwt.JwtPayload {
   jti?: string | undefined;
 
   userId: string;
+  phone?: string;
   email?: string;
+
+  [key: string]: any;
 }
 
 export interface JwtToken {
