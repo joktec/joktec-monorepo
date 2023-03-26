@@ -42,8 +42,7 @@ export {
   Req,
 } from '@nestjs/common';
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
-export { Express, Request, Response } from 'express';
-export * from '@nestjs/swagger';
+export { Express, Request, Response, NextFunction } from 'express';
 export * from './app';
 export { FileInterceptor, FilesInterceptor, FileFieldsInterceptor, MulterModule } from '@nestjs/platform-express';
 export type MulterFile = Express.Multer.File;

@@ -11,6 +11,7 @@ export * from './log';
 export * from './metric';
 export * from './models';
 export * from './retry';
+export * from './swagger';
 export * from './utils';
 export * from './validation';
 export * from './core.module';

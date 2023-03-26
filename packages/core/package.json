@@ -93,6 +93,7 @@
     "retry": "^0.13.1",
     "rxjs": "^7.2.0",
     "slug": "^8.2.2",
+    "swagger-ui-express": "^4.6.2",
     "type-cacheable": "^4.1.2",
     "url-parse": "^1.5.10",
     "uuid": "^9.0.0"
@@ -112,6 +113,7 @@
     "@types/pluralize": "^0.0.29",
     "@types/qs": "^6.5.3",
     "@types/slug": "^5.0.3",
+    "@types/swagger-ui-express": "^4.1.3",
     "@types/url-parse": "^1.4.8",
     "rimraf": "^3.0.2"
   },
