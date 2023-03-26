@@ -1,7 +1,7 @@
 {
   "name": "@joktec/notifier",
   "description": "JokTec - Notification Service",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -38,7 +38,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.19",
+    "@joktec/core": "0.0.20",
     "firebase-admin": "^11.5.0",
     "lodash": "^4.17.21",
     "merge-deep": "^3.0.3",
