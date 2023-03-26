@@ -7,12 +7,12 @@ export interface MongoSchema extends Base {}
 @plugin(require('mongoose-beautiful-unique-validation'), { defaultMessage: '{PATH}_MUST_BE_UNIQUE' })
 @plugin(require('mongoose-delete'), { deletedAt: true, deletedBy: true, overrideMethods: true, indexFields: true })
 export abstract class MongoSchema extends TimeStamps {
-  @prop({ type: Date, default: new Date() })
+  @prop({ type: Date, default: new Date(), immutable: true })
   @ApiProperty({ type: Date })
   @Field(() => Date, { nullable: true })
   createdAt?: Date;
 
-  @prop({ type: mongoose.Types.ObjectId, default: null })
+  @prop({ type: mongoose.Types.ObjectId, default: null, immutable: true })
   @ApiProperty({ type: String, example: '507f1f77bcf86cd799439011' })
   @Field(() => String, { nullable: true })
   createdBy?: mongoose.Types.ObjectId;
