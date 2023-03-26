@@ -6,13 +6,7 @@ export interface JwtPayload extends jwt.JwtPayload {
 }
 
 export interface JwtToken {
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   expiredAt: Date;
-}
-
-export interface JwtUser {
-  id: string;
-  email: string;
-
-  [key: string]: any;
 }

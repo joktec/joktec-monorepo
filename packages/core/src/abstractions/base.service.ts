@@ -1,12 +1,12 @@
 import { BaseRepository } from './base.repository';
 import { IBaseRequest, ICondition, IListResponseDto } from '../models';
-import { JwtUser } from '../guards';
+import { JwtPayload } from '../guards';
 import { cloneInstance } from '../utils';
 
 export abstract class BaseService<T, ID> {
   protected constructor(protected repository: BaseRepository<T, ID>) {}
 
-  async findAll(req: IBaseRequest, loggedUser?: JwtUser): Promise<IListResponseDto<T>> {
+  async findAll(req: IBaseRequest, payload?: JwtPayload): Promise<IListResponseDto<T>> {
     const [items, totalItems] = await Promise.all([this.repository.find(req), this.repository.count(req)]);
 
     return {
@@ -19,33 +19,33 @@ export abstract class BaseService<T, ID> {
     };
   }
 
-  async findOne(id: ID, loggedUser?: JwtUser): Promise<T> {
+  async findOne(id: ID, payload?: JwtPayload): Promise<T> {
     const condition: ICondition = { id };
     return this.repository.findOne({ condition });
   }
 
-  async create(entity: Partial<T>, loggedUser?: JwtUser): Promise<T> {
+  async create(entity: Partial<T>, payload?: JwtPayload): Promise<T> {
     const processEntity: Partial<T> = cloneInstance(entity);
-    if (loggedUser) {
+    if (payload) {
       Object.assign(processEntity, {
-        createdBy: loggedUser.userId,
-        updatedBy: loggedUser.userId,
+        createdBy: payload.userId,
+        updatedBy: payload.userId,
       });
     }
     return this.repository.create(processEntity);
   }
 
-  async update(id: ID, entity: Partial<T>, loggedUser?: JwtUser): Promise<T> {
+  async update(id: ID, entity: Partial<T>, payload?: JwtPayload): Promise<T> {
     const condition: ICondition = { id };
     const processEntity: Partial<T> = cloneInstance(entity);
-    if (loggedUser) {
-      Object.assign(processEntity, { updatedBy: loggedUser.userId });
+    if (payload) {
+      Object.assign(processEntity, { updatedBy: payload.userId });
     }
     return this.repository.update(condition, processEntity);
   }
 
-  async delete(id: ID, loggedUser?: JwtUser): Promise<T> {
+  async delete(id: ID, payload?: JwtPayload): Promise<T> {
     const condition: ICondition = { id };
-    return this.repository.delete(condition, { userId: loggedUser?.userId });
+    return this.repository.delete(condition, { userId: payload?.userId });
   }
 }

@@ -1,7 +1,7 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { JwtContext } from './jwt.config';
-import { JwtPayload, JwtUser } from './jwt.model';
+import { JwtPayload } from './jwt.model';
 import { ExceptionMessage, UnauthorizedException } from '../exceptions';
 
 export const Payload = <T extends JwtPayload>(context: JwtContext = JwtContext.HTTP): ParameterDecorator => {
@@ -21,11 +21,10 @@ export const Payload = <T extends JwtPayload>(context: JwtContext = JwtContext.H
   });
 };
 
-export const LoggedUser = <T extends JwtUser>(context: JwtContext = JwtContext.HTTP): ParameterDecorator => {
+export const LoggedUser = <T>(context: JwtContext = JwtContext.HTTP): ParameterDecorator => {
   if (context === JwtContext.HTTP) {
     return createParamDecorator((data: unknown, ctx: ExecutionContext): T => {
       const req = ctx.switchToHttp().getRequest();
-      // if (!req.loggedUser) throw new UnauthorizedException(ExceptionMessage.INVALID_ACCOUNT);
       return req.loggedUser as T;
     });
   }
@@ -33,7 +32,6 @@ export const LoggedUser = <T extends JwtUser>(context: JwtContext = JwtContext.H
   return createParamDecorator((data: unknown, context: ExecutionContext): T => {
     const ctx = GqlExecutionContext.create(context);
     const loggedUser = ctx.getContext().req.loggedUser;
-    // if (!loggedUser) throw new UnauthorizedException(ExceptionMessage.INVALID_ACCOUNT);
     return loggedUser as T;
   });
 };

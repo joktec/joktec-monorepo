@@ -1,37 +1,68 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtConfig } from './jwt.config';
 import { ConfigService } from '../config';
-import { UnauthorizedException } from '../exceptions';
+import { ExceptionMessage, UnauthorizedException } from '../exceptions';
 import { JwtPayload, JwtToken } from './jwt.model';
 import jwt from 'jsonwebtoken';
 import ms from 'ms';
 import moment from 'moment';
+import { Request } from 'express';
 
 @Injectable()
-export class JwtService implements OnModuleInit {
-  private config: JwtConfig;
+export class JwtService {
+  private readonly config: JwtConfig;
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) {
+    this.config = new JwtConfig(this.configService.get('guard'));
+  }
 
-  onModuleInit() {
-    if (this.config) return;
-    this.config = this.configService.get<JwtConfig>('guard');
+  async extractToken(req: Request): Promise<string> {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) throw new UnauthorizedException(ExceptionMessage.AUTHORIZATION_HEADER_NOT_FOUND);
+
+    const [prefix, token] = authHeader.split(' ');
+    if (prefix !== 'Bearer' || !token) throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN_FORMAT);
+    return token;
   }
 
   async sign(payload: JwtPayload): Promise<JwtToken> {
-    const expiresIn = ms(this.config.expired) / 1000;
+    const expiresIn: number = ms(this.config.expired) / 1000;
     return {
-      token: jwt.sign(payload, this.config.secretKey, { expiresIn }),
+      accessToken: jwt.sign(payload, this.config.secretKey, { expiresIn }),
+      refreshToken: jwt.sign(payload, this.config.refreshKey, { expiresIn: expiresIn * 2 }),
       expiredAt: moment().add(expiresIn, 'seconds').toDate(),
     };
   }
 
   async verify(token: string): Promise<JwtPayload> {
     try {
-      const result = jwt.verify(token, this.config.secretKey, { complete: true });
-      return result.payload as JwtPayload;
-    } catch (error) {
-      throw new UnauthorizedException('INVALID_TOKEN');
+      const res = jwt.verify(token, this.config.secretKey, { complete: true });
+      const payload = res.payload as JwtPayload;
+      return { ...payload, userId: payload.userId || payload.sub } as JwtPayload;
+    } catch (err) {
+      if (err.name === 'TokenExpiredError') throw new UnauthorizedException(ExceptionMessage.TOKEN_EXPIRED);
+      if (err.name === 'NotBeforeError') throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN_FORMAT);
+      throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
+    }
+  }
+
+  async verifyRefreshToken(token: string): Promise<JwtPayload> {
+    try {
+      const res = jwt.verify(token, this.config.refreshKey, { ignoreExpiration: true, complete: true });
+      const payload = res.payload as JwtPayload;
+      return { ...payload, userId: payload.userId || payload.sub } as JwtPayload;
+    } catch (err) {
+      throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
+    }
+  }
+
+  async decode(token: string): Promise<JwtPayload> {
+    try {
+      const res = jwt.decode(token, { complete: true });
+      const payload = res.payload as JwtPayload;
+      return { ...payload, userId: payload.userId || payload.sub } as JwtPayload;
+    } catch (err) {
+      throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
     }
   }
 }

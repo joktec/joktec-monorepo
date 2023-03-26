@@ -1,11 +1,12 @@
-import { Body, Delete, Get, Param, Post, Put, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Delete, Get, Param, Post, Put, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 import { BaseService } from './base.service';
 import { IBaseRequest, IListResponseDto } from '../models';
 import { QueryInterceptor } from '../interceptors';
 import { toBool, toPlural, toSingular } from '../utils';
 import { startCase } from 'lodash';
-import { JwtGuard, JwtUser, LoggedUser } from '../guards';
+import { JwtGuard, JwtPayload } from '../guards';
 
 export interface IBaseControllerProps<T> {
   dto: new (...args: any) => T;
@@ -29,24 +30,24 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: props.dtoList })
     @UseInterceptors(QueryInterceptor)
-    async findAll(@Query() req: IBaseRequest, @LoggedUser() loggedUser?: JwtUser): Promise<IListResponseDto<T>> {
-      return this.service.findAll(req, loggedUser);
+    async findAll(@Query() req: IBaseRequest, @Req() res: Request): Promise<IListResponseDto<T>> {
+      return this.service.findAll(req, res['payload'] as JwtPayload);
     }
 
     @Get('/:id')
     @ApiOperation({ summary: `Get ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
-    async findOne(@Param('id') id: ID, @LoggedUser() loggedUser?: JwtUser): Promise<T> {
-      return this.service.findOne(id, loggedUser);
+    async findOne(@Param('id') id: ID, @Req() res: Request): Promise<T> {
+      return this.service.findOne(id, res['payload'] as JwtPayload);
     }
 
     @Post('/')
     @ApiOperation({ summary: `Create ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiBody({ type: props.dto })
-    async create(@Body() entity: T, @LoggedUser() loggedUser?: JwtUser): Promise<T> {
-      return this.service.create(entity, loggedUser);
+    async create(@Body() entity: T, @Req() res: Request): Promise<T> {
+      return this.service.create(entity, res['payload'] as JwtPayload);
     }
 
     @Put('/:id')
@@ -54,16 +55,16 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
     @ApiBody({ type: props.dto })
-    async update(@Param('id') id: ID, @Body() entity: Partial<T>, @LoggedUser() loggedUser?: JwtUser): Promise<T> {
-      return this.service.update(id, entity, loggedUser);
+    async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Req() res: Request): Promise<T> {
+      return this.service.update(id, entity, res['payload'] as JwtPayload);
     }
 
     @Delete('/:id')
     @ApiOperation({ summary: `Delete ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
-    async delete(@Param('id') id: ID, @LoggedUser() loggedUser?: JwtUser): Promise<T> {
-      return this.service.delete(id, loggedUser);
+    async delete(@Param('id') id: ID, @Req() res: Request): Promise<T> {
+      return this.service.delete(id, res['payload'] as JwtPayload);
     }
   }
 
