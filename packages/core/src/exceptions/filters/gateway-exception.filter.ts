@@ -7,7 +7,6 @@ import { RpcException } from '@nestjs/microservices';
 import { ENV } from '../../config';
 import { LogService } from '../../log';
 import { IResponseDto } from '../../models';
-import { UnprocessableEntityException } from '../common';
 
 @Catch()
 export class GatewayExceptionsFilter implements ExceptionFilter {
@@ -60,12 +59,7 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
       if (request.query) errorBody.query = request.query;
       if (request.params) errorBody.params = request.params;
     }
-
-    let httpStatus: number = status;
-    if (exception instanceof UnprocessableEntityException || status === HttpStatus.UNPROCESSABLE_ENTITY) {
-      httpStatus = HttpStatus.OK;
-    }
-    response.status(httpStatus).json(errorBody);
+    response.status(status).json(errorBody);
   }
 
   private handleGqlException(exception: any, host: ArgumentsHost): GraphQLError {
