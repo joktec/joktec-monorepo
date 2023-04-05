@@ -1,15 +1,27 @@
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { NestApplicationOptions, NestModule, NestInterceptor, PipeTransform } from '@nestjs/common';
+import {
+  NestApplicationOptions,
+  NestModule,
+  NestInterceptor,
+  PipeTransform,
+  CanActivate,
+  ExceptionFilter,
+} from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
 import { GatewayConfig, GatewayService, MicroConfig, MicroService } from '../infras';
 import { IMicroserviceConfig } from '../infras/micro/micro.config';
-import { ExceptionFilter } from '@nestjs/common/interfaces';
 
-export type GlobalOptions = { filters?: ExceptionFilter[]; interceptors?: NestInterceptor[]; pipes?: PipeTransform[] };
+export type GlobalOptions = {
+  guards?: CanActivate[];
+  pipes?: PipeTransform[];
+  interceptors?: NestInterceptor[];
+  filters?: ExceptionFilter[];
+  microserviceConfig?: IMicroserviceConfig;
+};
 export type Module = NestModule;
-export type ApplicationOptions = NestApplicationOptions & GlobalOptions & { microserviceConfig: IMicroserviceConfig };
+export type ApplicationOptions = NestApplicationOptions & GlobalOptions;
 
 export class Application {
   static initTrackingProcessEvent(logger: Logger) {
@@ -49,6 +61,6 @@ export class Application {
     if (gatewayConfig) await GatewayService.bootstrap(app, opts);
 
     const microConfig = config.get<MicroConfig>('micro');
-    if (microConfig) await MicroService.bootstrap(app, opts?.microserviceConfig);
+    if (microConfig) await MicroService.bootstrap(app, opts);
   }
 }

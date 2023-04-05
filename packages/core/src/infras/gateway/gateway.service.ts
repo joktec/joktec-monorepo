@@ -9,11 +9,8 @@ import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
 import path from 'path';
 import csurf from 'csurf';
 import { ConfigService } from '../../config';
-import { GatewayExceptionsFilter } from '../../exceptions';
 import { LogService } from '../../log';
 import { joinUrl, toArray, toInt } from '../../utils';
-import { BaseValidationPipe } from '../../validation';
-import { ResponseInterceptor, TrackInterceptor } from '../../interceptors';
 import { GlobalOptions } from '../../base';
 
 export class GatewayService {
@@ -25,14 +22,15 @@ export class GatewayService {
     const logger = await app.resolve(LogService);
     logger.setContext(GatewayService.name);
 
-    app.useGlobalInterceptors(new TrackInterceptor(), new ResponseInterceptor(), ...toArray(opts?.interceptors));
-    app.useGlobalFilters(new GatewayExceptionsFilter(logger), ...toArray(opts?.filters));
-    app.useGlobalPipes(new BaseValidationPipe(gatewayConfig.pipes), ...toArray(opts?.pipes));
-
     const contextPath = gatewayConfig.contextPath || '';
     app.setGlobalPrefix(contextPath);
     app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+    app.useGlobalGuards(...toArray(opts?.guards));
+    app.useGlobalPipes(...toArray(opts?.pipes));
+    app.useGlobalInterceptors(...toArray(opts?.interceptors));
+    app.useGlobalFilters(...toArray(opts?.filters));
 
     GatewayService.setupSwagger(app);
     GatewayService.setUpBullBoard(app);
@@ -50,10 +48,10 @@ export class GatewayService {
     });
   }
 
-  private static setupSwagger(app: NestExpressApplication): boolean {
+  private static setupSwagger(app: NestExpressApplication) {
     const config = app.get(ConfigService);
     const gatewayConfig = config.get<GatewayConfig>('gateway');
-    if (gatewayConfig.swagger === 'off') return false;
+    if (gatewayConfig.swagger === 'off') return;
 
     const port = toInt(gatewayConfig.port, DEFAULT_GATEWAY_PORT);
     const options = new DocumentBuilder()
@@ -61,7 +59,6 @@ export class GatewayService {
       .setDescription(gatewayConfig.swagger?.description || config.get('description'))
       .setVersion(gatewayConfig.swagger?.version || config.get('version'))
       .setLicense('MIT', 'https://opensource.org/licenses/MIT')
-      // .setContact('JokTec', 'https://github.com/joktec/joktec-monorepo.git', 'trangiabao1203@gmail.com')
       .addServer(gatewayConfig.swagger?.server || `http://localhost:${port}`)
       .addBearerAuth();
 
@@ -76,7 +73,6 @@ export class GatewayService {
         operationsSorter: 'alpha',
       },
     });
-    return true;
   }
 
   private static setUpBullBoard(app: NestExpressApplication) {

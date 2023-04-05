@@ -16,7 +16,6 @@ export interface GatewayConfig {
         version?: string;
         server?: string;
       };
-  pipes?: ValidationPipeOptions;
   csrf?: boolean;
   cors?: CorsOptions;
 }

@@ -22,7 +22,6 @@ export {
   OnModuleInit,
   OnModuleDestroy,
   Query as QueryParam,
-  HttpException,
   UseInterceptors,
   UsePipes,
   Scope,

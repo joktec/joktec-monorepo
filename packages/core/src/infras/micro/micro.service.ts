@@ -1,15 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '../../config';
-import { DEFAULT_MICRO_PORT, IMicroserviceConfig, MicroConfig } from './micro.config';
-import { MicroExceptionFilter } from '../../exceptions';
+import { DEFAULT_MICRO_PORT, MicroConfig } from './micro.config';
 import { LogService } from '../../log';
 import { toArray, toBool } from '../../utils';
 import mergeDeep from 'merge-deep';
-import { BaseValidationPipe } from '../../validation';
+import { GlobalOptions } from '../../base';
 
 export class MicroService {
-  static async bootstrap(app: INestApplication, builtInConfig?: IMicroserviceConfig) {
+  static async bootstrap(app: INestApplication, opts?: GlobalOptions) {
     const config = app.get(ConfigService);
     const microConfig: MicroConfig = config.get<MicroConfig>('micro' as any);
     if (!microConfig) return;
@@ -20,8 +19,9 @@ export class MicroService {
     const description = config.get('description');
     const port = microConfig.port ?? DEFAULT_MICRO_PORT;
 
+    const microserviceOptions = opts?.microserviceConfig?.microserviceOptions || {};
     const hybridOptions = { inheritAppConfig: toBool(microConfig.inheritAppConfig, true) };
-    const microOptions: MicroserviceOptions = mergeDeep(builtInConfig?.microserviceOptions || {}, {
+    const microOptions: MicroserviceOptions = mergeDeep(microserviceOptions, {
       transport: Transport.RMQ,
       options: {
         urls: toArray<string>(microConfig.rabbitUrls),
@@ -32,8 +32,11 @@ export class MicroService {
       },
     });
 
-    app.useGlobalFilters(new MicroExceptionFilter(logger));
-    app.useGlobalPipes(new BaseValidationPipe());
+    app.useGlobalGuards(...toArray(opts?.guards));
+    app.useGlobalPipes(...toArray(opts?.pipes));
+    app.useGlobalInterceptors(...toArray(opts?.interceptors));
+    app.useGlobalFilters(...toArray(opts?.filters));
+
     await app.connectMicroservice(microOptions, hybridOptions);
     await app.startAllMicroservices();
     await app.listen(port, () => {

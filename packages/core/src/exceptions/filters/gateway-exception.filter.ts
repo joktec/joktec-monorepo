@@ -1,17 +1,14 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { isString } from 'lodash';
 import { GraphQLError } from 'graphql/index';
 import { ExceptionMessage } from '../exception-message';
 import { RpcException } from '@nestjs/microservices';
 import { ENV } from '../../config';
-import { LogService } from '../../log';
 import { IResponseDto } from '../../models';
 
 @Catch()
 export class GatewayExceptionsFilter implements ExceptionFilter {
-  constructor(private logger: LogService) {}
-
   catch(exception: any, host: ArgumentsHost): any {
     const type: string = host.getType();
 
@@ -21,10 +18,10 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
     }
 
     if (type === 'graphql') {
-      throw this.handleGqlException(exception, host);
+      throw this.handleGqlException(exception);
     }
 
-    this.logger.error(exception, 'Something when wrong');
+    Logger.error('Something when wrong', exception.stack, GatewayExceptionsFilter.name);
   }
 
   private handleHttpException(exception: any, host: ArgumentsHost) {
@@ -44,11 +41,11 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
     }
 
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(exception, 'Something when wrong');
+      Logger.error('Something when wrong', exception.stack, GatewayExceptionsFilter.name);
     }
 
     const isProd: boolean = process.env.NODE_ENV === 'production';
-    const errorBody: IResponseDto = { timestamp: new Date(), success: false, status, message };
+    const errorBody: IResponseDto = { timestamp: new Date(), success: false, message };
     if (!isProd) {
       Object.assign(errorBody, {
         error: errorData,
@@ -59,10 +56,10 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
       if (request.query) errorBody.query = request.query;
       if (request.params) errorBody.params = request.params;
     }
-    response.status(status).json(errorBody);
+    response.status(status).json({ ...errorBody });
   }
 
-  private handleGqlException(exception: any, host: ArgumentsHost): GraphQLError {
+  private handleGqlException(exception: any): GraphQLError {
     let message: string = exception?.message || ExceptionMessage.INTERNAL_SERVER_ERROR;
     let status: string | number = exception?.status || ExceptionMessage.INTERNAL_SERVER_ERROR;
     let data: any = exception?.data;
@@ -82,7 +79,7 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
 
     // If exception status is gte 500, it will be print in log console
     if (500 <= status && status <= 999) {
-      this.logger.error(exception, exception.message);
+      Logger.error(exception.message, exception.stack, GatewayExceptionsFilter.name);
     }
 
     // Hidden message in Production

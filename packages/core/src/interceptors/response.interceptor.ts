@@ -10,6 +10,8 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, IRespons
     return next.handle().pipe(
       map(data => {
         if (isNil(data)) throw new NotFoundException();
+        const response = context.switchToHttp().getResponse();
+        response.status(HttpStatus.OK);
         return {
           timestamp: new Date(),
           success: true,

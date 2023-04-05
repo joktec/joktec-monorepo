@@ -4,15 +4,10 @@ import { Observable, throwError } from 'rxjs';
 import { Exception } from '../exception';
 import { isPlainObject } from 'lodash';
 import { ExceptionMessage } from '../exception-message';
-import { LogService } from '../../log';
 
 @Catch()
 export class MicroExceptionFilter implements ExceptionFilter {
-  constructor(private logger: LogService) {}
-
   catch(exception: any, host: ArgumentsHost): Observable<RpcException> {
-    this.logger.error(exception, exception.message);
-
     if (exception instanceof Exception || exception instanceof RpcException) {
       return throwError(() => exception.getError());
     }
