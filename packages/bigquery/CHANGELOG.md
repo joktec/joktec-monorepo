@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.24](https://github.com/joktec/joktec-monorepo/compare/@joktec/bigquery@0.0.23...@joktec/bigquery@0.0.24) (2023-04-05)
+
+**Note:** Version bump only for package @joktec/bigquery
+
+
+
+
+
 ## [0.0.23](https://github.com/joktec/joktec-monorepo/compare/@joktec/bigquery@0.0.22...@joktec/bigquery@0.0.23) (2023-03-26)
 
 **Note:** Version bump only for package @joktec/bigquery
