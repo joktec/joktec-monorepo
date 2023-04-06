@@ -16,6 +16,7 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, IRespons
           timestamp: new Date(),
           success: true,
           status: HttpStatus.OK,
+          errorCode: 0,
           message: 'SUCCESS',
           data,
         };

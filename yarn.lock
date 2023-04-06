@@ -1814,147 +1814,6 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
-"@joktec/core@0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@joktec/core/-/core-0.0.20.tgz#a12305176a931c1eea4dab516aebad2f1654bc30"
-  integrity sha512-A2IfVwo3Ah/f4aajxqfCUVKWX1e97zgVe0BkOYyPSTz0wvUL4NrPfFftfz5vqEzyVFHkJ3734XNhg40NWTaXyw==
-  dependencies:
-    "@bull-board/api" "^4.6.1"
-    "@bull-board/express" "^4.6.1"
-    "@grpc/proto-loader" "^0.7.3"
-    "@nestjs/common" "^9.0.0"
-    "@nestjs/config" "^2.2.0"
-    "@nestjs/core" "^9.0.0"
-    "@nestjs/cqrs" "^9.0.1"
-    "@nestjs/graphql" "^10.1.1"
-    "@nestjs/mapped-types" "^1.2.2"
-    "@nestjs/microservices" "^9.0.11"
-    "@nestjs/platform-express" "^9.0.0"
-    "@nestjs/serve-static" "^3.0.1"
-    "@nestjs/swagger" "^6.2.1"
-    "@nestjs/terminus" "^9.2.1"
-    "@nestjs/throttler" "^3.1.0"
-    "@willsoto/nestjs-prometheus" "^3.0.0"
-    async "^3.2.0"
-    async-retry "^1.3.3"
-    backoff "^2.5.0"
-    bcryptjs "^2.4.3"
-    bull "^4.10.1"
-    class-transformer "^0.5.1"
-    class-validator "^0.13.2"
-    csurf "^1.11.0"
-    dataloader "^2.1.0"
-    express "^4.18.2"
-    express-useragent "^1.0.15"
-    graphql "^16.6.0"
-    js-yaml "3.14.0"
-    jsonwebtoken "^9.0.0"
-    lodash "^4.17.21"
-    merge-deep "^3.0.3"
-    moment "^2.29.4"
-    ms "^2.1.3"
-    multer "^1.4.5-lts.1"
-    nestjs-pino "^1.3.0"
-    opossum "^6.2.1"
-    pino-cloudwatch "^0.7.0"
-    pino-fluentd "^0.2.2"
-    pino-multi-stream "^5.1.1"
-    pino-pretty "^5.1.3"
-    pino-std-serializers "^6.0.0"
-    pluralize "^8.0.0"
-    prom-client "^13.0.0"
-    qs "^6.7.0"
-    retry "^0.13.1"
-    rxjs "^7.2.0"
-    slug "^8.2.2"
-    swagger-ui-express "^4.6.2"
-    type-cacheable "^4.1.2"
-    url-parse "^1.5.10"
-    uuid "^9.0.0"
-
-"@joktec/core@0.0.22":
-  version "0.0.22"
-  resolved "https://registry.yarnpkg.com/@joktec/core/-/core-0.0.22.tgz#99d5070ce550925bcce7e5701e582580e67dd3c3"
-  integrity sha512-1ti3tTOXpYoVYU2w2H07aPjm2Sv0Hz+GcHOSnuWv/iE+QLmeZ1W2/tIxkUHWlW/7sl6oLhKyqsVt1SLfEAKpnw==
-  dependencies:
-    "@bull-board/api" "^4.6.1"
-    "@bull-board/express" "^4.6.1"
-    "@grpc/proto-loader" "^0.7.3"
-    "@nestjs/common" "^9.0.0"
-    "@nestjs/config" "^2.2.0"
-    "@nestjs/core" "^9.0.0"
-    "@nestjs/cqrs" "^9.0.1"
-    "@nestjs/graphql" "^10.1.1"
-    "@nestjs/mapped-types" "^1.2.2"
-    "@nestjs/microservices" "^9.0.11"
-    "@nestjs/platform-express" "^9.0.0"
-    "@nestjs/serve-static" "^3.0.1"
-    "@nestjs/swagger" "^6.2.1"
-    "@nestjs/terminus" "^9.2.1"
-    "@nestjs/throttler" "^3.1.0"
-    "@willsoto/nestjs-prometheus" "^3.0.0"
-    async "^3.2.0"
-    async-retry "^1.3.3"
-    backoff "^2.5.0"
-    bcryptjs "^2.4.3"
-    bull "^4.10.1"
-    class-transformer "^0.5.1"
-    class-validator "^0.13.2"
-    csurf "^1.11.0"
-    dataloader "^2.1.0"
-    express "^4.18.2"
-    express-useragent "^1.0.15"
-    graphql "^16.6.0"
-    js-yaml "3.14.0"
-    jsonwebtoken "^9.0.0"
-    lodash "^4.17.21"
-    merge-deep "^3.0.3"
-    moment "^2.29.4"
-    ms "^2.1.3"
-    multer "^1.4.5-lts.1"
-    nestjs-pino "^1.3.0"
-    opossum "^6.2.1"
-    pino-cloudwatch "^0.7.0"
-    pino-fluentd "^0.2.2"
-    pino-multi-stream "^5.1.1"
-    pino-pretty "^5.1.3"
-    pino-std-serializers "^6.0.0"
-    pluralize "^8.0.0"
-    prom-client "^13.0.0"
-    qs "^6.7.0"
-    retry "^0.13.1"
-    rxjs "^7.2.0"
-    slug "^8.2.2"
-    swagger-ui-express "^4.6.2"
-    type-cacheable "^4.1.2"
-    url-parse "^1.5.10"
-    uuid "^9.0.0"
-
-"@joktec/mongo@0.0.26":
-  version "0.0.26"
-  resolved "https://registry.yarnpkg.com/@joktec/mongo/-/mongo-0.0.26.tgz#0c9afb1183a51e60bc4524c032773d0d91bab6a1"
-  integrity sha512-cGPv4u6y8CQ1AUKYLLqQ+tAzISf7LaHsmSaf8vV6H8RwEci51K0RIAhknuIgLoK7aqiTa9F/o963lDikaGvAbQ==
-  dependencies:
-    "@joktec/core" "0.0.20"
-    "@typegoose/typegoose" "^10.3.2"
-    lodash "^4.17.21"
-    moment "^2.29.4"
-    mongoose "^6.10.0"
-    mongoose-beautiful-unique-validation "^7.1.1"
-    mongoose-delete "^0.5.4"
-
-"@joktec/mysql@0.0.23":
-  version "0.0.23"
-  resolved "https://registry.yarnpkg.com/@joktec/mysql/-/mysql-0.0.23.tgz#e5c4493b9972aff2f77d41a6530324a1ab3a6ce5"
-  integrity sha512-loCx3PkCGIe+Deo8sR0VmzSJqYlhuv5IIS5A4wUBQnV9vMIJUz1NTqm/8GiZ49gEtzqR/509dKntw+nl6NZucA==
-  dependencies:
-    "@joktec/core" "0.0.20"
-    lodash "^4.17.21"
-    mysql "2.18.1"
-    mysql2 "^3.1.2"
-    sequelize "^6.28.0"
-    sequelize-typescript "^2.1.5"
-
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -3875,6 +3734,11 @@
   resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.7.12.tgz#a285379b432cc8d103b69d223cbb159a253cf2f7"
   integrity sha512-YVtyAPqpefU+Mm/qqnOANW6IkqKpCSrarcyV269C8MA8Ux0dbkEuQwM/4CjL47kVEM2LgBef/ETfkH+c6+moFA==
 
+"@types/validator@^13.7.10":
+  version "13.7.14"
+  resolved "https://registry.yarnpkg.com/@types/validator/-/validator-13.7.14.tgz#5512aef43ba353ea2fe2d0d8c7ce71c75c2ad9e6"
+  integrity sha512-J6OAed6rhN6zyqL9Of6ZMamhlsOEU/poBVvbHr/dKOYKTeuYYMlDkMv+b6UUV0o2i0tw73cgyv/97WTWaUl0/g==
+
 "@types/webidl-conversions@*":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@types/webidl-conversions/-/webidl-conversions-7.0.0.tgz#2b8e60e33906459219aa587e9d1a612ae994cfe7"
@@ -5067,12 +4931,13 @@ class-transformer@^0.5.1:
   resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.5.1.tgz#24147d5dffd2a6cea930a3250a677addf96ab336"
   integrity sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw==
 
-class-validator@^0.13.2:
-  version "0.13.2"
-  resolved "https://registry.yarnpkg.com/class-validator/-/class-validator-0.13.2.tgz#64b031e9f3f81a1e1dcd04a5d604734608b24143"
-  integrity sha512-yBUcQy07FPlGzUjoLuUfIOXzgynnQPPruyK1Ge2B74k9ROwnle1E+NxLWnUv5OLU8hA/qL5leAE9XnXq3byaBw==
+class-validator@^0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/class-validator/-/class-validator-0.14.0.tgz#40ed0ecf3c83b2a8a6a320f4edb607be0f0df159"
+  integrity sha512-ct3ltplN8I9fOwUd8GrP8UQixwff129BkEtuWDKL5W45cQuLd19xqmTLu5ge78YDm/fdje6FMt0hGOhl0lii3A==
   dependencies:
-    libphonenumber-js "^1.9.43"
+    "@types/validator" "^13.7.10"
+    libphonenumber-js "^1.10.14"
     validator "^13.7.0"
 
 clean-stack@^2.0.0:
@@ -9183,10 +9048,10 @@ libnpmpublish@^6.0.4:
     semver "^7.3.7"
     ssri "^9.0.0"
 
-libphonenumber-js@^1.9.43:
-  version "1.10.14"
-  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.14.tgz#e29da7f539751f724ac54017a098e3c7ca23de94"
-  integrity sha512-McGS7GV/WjJ2KjfOGhJU1oJn29RYeo7Q+RpANRbUNMQ9gj5XArpbjurSuyYPTejFwbaUojstQ4XyWCrAzGOUXw==
+libphonenumber-js@^1.10.14:
+  version "1.10.26"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.26.tgz#3e6604357b3434b0005f85778b44153f4fadeecd"
+  integrity sha512-oB3l4J5gEhMV+ymmlIjWedsbCpsNRqbEZ/E/MpN2QVyinKNra6DcuXywxSk/72M3DZDoH/6kzurOq1erznBMwQ==
 
 lilconfig@2.0.5:
   version "2.0.5"
