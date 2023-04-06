@@ -1,6 +1,6 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { isString } from 'lodash';
+import { isEmpty, isString } from 'lodash';
 import { GraphQLError } from 'graphql/index';
 import { ExceptionMessage } from '../exception-message';
 import { RpcException } from '@nestjs/microservices';
@@ -44,17 +44,18 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
       Logger.error('Something when wrong', exception.stack, GatewayExceptionsFilter.name);
     }
 
+    const errorBody: IResponseDto = {
+      timestamp: new Date(),
+      success: false,
+      message,
+      error: errorData,
+    };
     const isProd: boolean = process.env.NODE_ENV === 'production';
-    const errorBody: IResponseDto = { timestamp: new Date(), success: false, message };
     if (!isProd) {
-      Object.assign(errorBody, {
-        error: errorData,
-        path: request.url,
-        method: request.method,
-      });
-      if (request.body) errorBody.body = request.body;
-      if (request.query) errorBody.query = request.query;
-      if (request.params) errorBody.params = request.params;
+      Object.assign(errorBody, { path: request.url, method: request.method });
+      if (!isEmpty(request.body)) errorBody.body = request.body;
+      if (!isEmpty(request.query)) errorBody.query = request.query;
+      if (!isEmpty(request.params)) errorBody.params = request.params;
     }
     response.status(status).json({ ...errorBody });
   }

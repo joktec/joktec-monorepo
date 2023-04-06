@@ -15,11 +15,10 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, IRespons
         return {
           timestamp: new Date(),
           success: true,
-          status: HttpStatus.OK,
           errorCode: 0,
           message: 'SUCCESS',
           data,
-        };
+        } as IResponseDto<T>;
       }),
       catchError(err => throwError(() => err)),
     );
