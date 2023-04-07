@@ -94,8 +94,9 @@ export class GatewayService {
   private static setUpViewEngine(app: NestExpressApplication) {
     const config = app.get(ConfigService);
     const gatewayConfig = config.get<GatewayConfig>('gateway');
-    app.useStaticAssets(path.resolve(gatewayConfig.staticPath || './public'), { prefix: 'public' });
-    app.setBaseViewsDir(path.resolve(gatewayConfig.viewPath || './views'));
+    const { staticPath, viewPath } = gatewayConfig.static || {};
+    app.useStaticAssets(path.resolve(staticPath || './public'), { prefix: 'public' });
+    app.setBaseViewsDir(path.resolve(viewPath || './views'));
     app.setViewEngine('hbs');
   }
 

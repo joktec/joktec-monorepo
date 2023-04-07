@@ -20,7 +20,13 @@ import path from 'path';
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => {
         const gatewayConfig = cfg.get<GatewayConfig>('gateway');
-        return [{ rootPath: path.resolve(gatewayConfig.staticPath || './public') }];
+        const { staticPath, excludePath } = gatewayConfig.static || {};
+        return [
+          {
+            rootPath: path.resolve(staticPath || './public'),
+            exclude: [...excludePath],
+          },
+        ];
       },
     }),
     MetricModule,

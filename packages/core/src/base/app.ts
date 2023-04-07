@@ -48,7 +48,7 @@ export class Application {
     });
   }
 
-  static async bootstrap(module: any, opts?: ApplicationOptions) {
+  static async bootstrap(module: any, opts?: ApplicationOptions): Promise<NestExpressApplication> {
     const app = await NestFactory.create<NestExpressApplication>(module, { logger: console, ...opts });
 
     const logger = app.get(Logger);
@@ -58,9 +58,15 @@ export class Application {
     const config = app.get(ConfigService);
 
     const gatewayConfig = config.get<GatewayConfig>('gateway');
-    if (gatewayConfig) await GatewayService.bootstrap(app, opts);
+    if (gatewayConfig) {
+      await GatewayService.bootstrap(app, opts);
+      return app;
+    }
 
     const microConfig = config.get<MicroConfig>('micro');
-    if (microConfig) await MicroService.bootstrap(app, opts);
+    if (microConfig) {
+      await MicroService.bootstrap(app, opts);
+      return app;
+    }
   }
 }
