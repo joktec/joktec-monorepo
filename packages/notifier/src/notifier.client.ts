@@ -1,14 +1,10 @@
 import { Client } from '@joktec/core';
 import { NotifierConfig } from './notifier.config';
-import { NotifierRequest, NotifierResult, NotifierTopicResponse } from './models';
-import { ApnService, FcmService, SnsService } from './services';
+import { NotifierRegIds, NotifierRequest, NotifierResponse } from './models';
+import PushNotifications from 'node-pushnotifications';
 
-export type NotifierInstance = FcmService | SnsService | ApnService;
+export type NotifierInstance = PushNotifications;
 
-export interface INotifierClient {
-  sendToTopic(topic: string, req: NotifierRequest, conId?: string): Promise<NotifierTopicResponse>;
-
-  sendToDevice(token: string | string[], req: NotifierRequest, conId?: string): Promise<NotifierResult>;
+export interface NotifierClient extends Client<NotifierConfig, NotifierInstance> {
+  send(regIds: NotifierRegIds, req: NotifierRequest, conId?: string): Promise<NotifierResponse>;
 }
-
-export interface NotifierClient extends Client<NotifierConfig, NotifierInstance>, INotifierClient {}

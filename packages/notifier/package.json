@@ -29,7 +29,6 @@
   "scripts": {
     "clean": "rimraf -rf dist",
     "purge": "rimraf -rf node_modules",
-    "dev": "rollup -cw",
     "prebuild": "yarn clean",
     "build": "nest build -p tsconfig.json",
     "prepublishOnly": "yarn build",
@@ -39,13 +38,15 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.28",
-    "firebase-admin": "^11.5.0",
     "lodash": "^4.17.21",
     "merge-deep": "^3.0.3",
-    "node-apn": "^3.0.0"
+    "node-pushnotifications": "^2.0.3",
+    "web-push": "^3.5.0"
   },
   "devDependencies": {
-    "@types/merge-deep": "^3.0.0"
+    "@types/merge-deep": "^3.0.0",
+    "@types/node-pushnotifications": "^1.0.4",
+    "@types/web-push": "^3.3.2"
   },
   "lint-staged": {
     "*.ts": [
