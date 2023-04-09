@@ -1,7 +1,7 @@
 {
   "name": "@joktec/http",
   "description": "JokTec - Http Client Service",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -36,7 +36,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.28",
+    "@joktec/core": "0.0.29",
     "@nestjs/axios": "^1.0.1",
     "axios": "^1.2.1",
     "form-data": "^4.0.0",
