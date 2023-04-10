@@ -8,12 +8,9 @@ export abstract class BaseService<T, ID> {
 
   async findAll(req: IBaseRequest, payload?: JwtPayload): Promise<IListResponseDto<T>> {
     const [items, totalItems] = await Promise.all([this.repository.find(req), this.repository.count(req)]);
-
     return {
       items,
       totalItems,
-      page: req.page,
-      pageSize: req.limit,
       totalPage: Math.ceil(totalItems / req.limit),
       isLastPage: items.length < req.limit,
     };
@@ -27,10 +24,7 @@ export abstract class BaseService<T, ID> {
   async create(entity: Partial<T>, payload?: JwtPayload): Promise<T> {
     const processEntity: Partial<T> = cloneInstance(entity);
     if (payload) {
-      Object.assign(processEntity, {
-        createdBy: payload.userId,
-        updatedBy: payload.userId,
-      });
+      Object.assign(processEntity, { createdBy: payload.userId, updatedBy: payload.userId });
     }
     return this.repository.create(processEntity);
   }
