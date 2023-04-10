@@ -1,4 +1,3 @@
-import { ValidationPipeOptions } from '@nestjs/common';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 export const DEFAULT_GATEWAY_PORT = 9010;

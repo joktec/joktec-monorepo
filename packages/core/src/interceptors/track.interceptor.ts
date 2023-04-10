@@ -17,11 +17,9 @@ export class TrackInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
 
-    const ipAddress = request.connection.remoteAddress;
+    let ipAddress = request.connection.remoteAddress;
     const xForwardedFor = request.headers['x-forwarded-for'];
-    if (xForwardedFor) {
-      request.ipAddress = xForwardedFor.split(',')[0];
-    }
+    if (xForwardedFor) ipAddress = xForwardedFor.split(',')[0];
 
     const userAgent = request.headers['user-agent'];
     const ua = useragent.parse(userAgent);
