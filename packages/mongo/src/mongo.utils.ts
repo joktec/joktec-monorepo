@@ -1,5 +1,22 @@
 import { cloneInstance, ICondition } from '@joktec/core';
 import { IMongoRequest } from './models';
+import { QueryOptions } from 'mongoose';
+
+export const UPDATE_OPTIONS: QueryOptions = {
+  runValidators: true,
+  new: true,
+};
+
+export const DELETE_OPTIONS: QueryOptions = {
+  rawResult: false,
+};
+
+export const UPSERT_OPTIONS: QueryOptions = {
+  upsert: true,
+  new: true,
+  runValidators: true,
+  // setDefaultsOnInsert: true,
+};
 
 export const preHandleCondition = (condition: any): ICondition => {
   if (condition && typeof condition === 'object') {
@@ -16,11 +33,14 @@ export const preHandleCondition = (condition: any): ICondition => {
   return condition;
 };
 
-export const preHandleQuery = (query: IMongoRequest): ICondition => {
+export const preHandleQuery = (query: IMongoRequest, isSoftDelete: boolean = true): ICondition => {
   const { condition, keyword } = query;
   const overrideCondition: ICondition = preHandleCondition(condition);
   if (keyword) {
     Object.entries(keyword).map(([k, v]) => (overrideCondition[k] = { $regex: v, $options: 'i' }));
+  }
+  if (isSoftDelete) {
+    Object.assign<ICondition, ICondition>(overrideCondition, { deletedAt: { $eq: null } });
   }
   return overrideCondition;
 };

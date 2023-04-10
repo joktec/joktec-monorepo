@@ -3,7 +3,7 @@ import { IMongoRepository } from './mongo.client';
 import { MongoService } from './mongo.service';
 import { AnyParamConstructor, ModelType } from '@typegoose/typegoose/lib/types';
 import { IMongoRequest, IMongoAggregation, MongoBulkRequest, MongoId } from './models';
-import { preHandleQuery, preHandleBody } from './mongo.utils';
+import { preHandleQuery, preHandleBody, UPDATE_OPTIONS, DELETE_OPTIONS, UPSERT_OPTIONS } from './mongo.utils';
 import { pick } from 'lodash';
 import { MongoCatch } from './mongo.exception';
 
@@ -18,9 +18,13 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
     return this.mongoService.getModel(this.schema, this.conId);
   }
 
+  protected get isSoftDelete(): boolean {
+    return this.model.schema.paths.hasOwnProperty('deletedAt');
+  }
+
   @MongoCatch
   async find(query: IMongoRequest): Promise<T[]> {
-    const condition: ICondition = preHandleQuery(query);
+    const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
     const qb = this.model.find(condition);
     if (query.select) qb.select(toArray<string>(query.select).join(','));
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
@@ -32,7 +36,7 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
 
   @MongoCatch
   async count(query: IMongoRequest): Promise<number> {
-    const condition: ICondition = preHandleQuery(query);
+    const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
     if (condition.hasOwnProperty('location')) {
       return this.model.estimatedDocumentCount(condition);
     }
@@ -41,7 +45,7 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
 
   @MongoCatch
   async findOne(query: IMongoRequest): Promise<T> {
-    const condition: ICondition = preHandleQuery(query);
+    const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
     const qb = this.model.findOne(condition);
     if (query.select) qb.select(toArray<string>(query.select).join(','));
     if (query.populate?.length) query.populate.map(qb.populate);
@@ -63,25 +67,27 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
 
   @MongoCatch
   async update(condition: ICondition, body: Partial<T>): Promise<T> {
-    const overrideCondition: ICondition = preHandleQuery({ condition });
+    const overrideCondition: ICondition = preHandleQuery({ condition }, this.isSoftDelete);
     const processBody: Partial<T> = preHandleBody(body);
-    const qb = this.model.findOneAndUpdate(overrideCondition, processBody, { runValidators: true, new: true });
+    const qb = this.model.findOneAndUpdate(overrideCondition, processBody, UPDATE_OPTIONS);
     return qb.exec();
   }
 
   @MongoCatch
   async delete(condition: ICondition, opts?: { force?: boolean; userId?: ID }): Promise<T> {
-    const force: boolean = toBool(opts?.force, false);
-    const overrideCondition: ICondition = preHandleQuery({ condition });
-    const modelType = await this.model.findOne(overrideCondition).exec();
-    force ? await modelType.remove() : await modelType.delete(opts?.userId);
-    return modelType;
+    const force: boolean = toBool(opts?.force, true);
+    const overrideCondition: ICondition = preHandleQuery({ condition }, this.isSoftDelete);
+    if (force) {
+      return this.model.findOneAndRemove(overrideCondition, DELETE_OPTIONS).exec();
+    }
+    const bodyDeleted = { deletedAt: new Date(), deletedBy: opts?.userId ?? null };
+    return this.model.findOneAndUpdate(overrideCondition, bodyDeleted, UPDATE_OPTIONS);
   }
 
   @MongoCatch
   async upsert(condition: ICondition, body: T): Promise<T> {
-    const overrideCondition: ICondition = preHandleQuery({ condition });
-    const res = await this.model.updateOne(overrideCondition, body, { upsert: true });
+    const overrideCondition: ICondition = preHandleQuery({ condition }, this.isSoftDelete);
+    const res = await this.model.updateOne(overrideCondition, body, UPSERT_OPTIONS);
     return this.model.findById(res.upsertedId).exec();
   }
 

@@ -5,7 +5,7 @@ import { ApiProperty, Field } from '@joktec/core';
 export interface MongoSchema extends Base {}
 
 @plugin(require('mongoose-beautiful-unique-validation'), { defaultMessage: '{PATH}_MUST_BE_UNIQUE' })
-@plugin(require('mongoose-delete'), { deletedAt: true, deletedBy: true, overrideMethods: true, indexFields: true })
+// @plugin(require('mongoose-delete'), { deletedAt: true, deletedBy: true, overrideMethods: true, indexFields: true })
 export abstract class MongoSchema extends TimeStamps {
   @prop({ type: Date, default: new Date(), immutable: true })
   @ApiProperty({ type: Date })
