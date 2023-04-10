@@ -75,13 +75,13 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
 
   @MongoCatch
   async delete(condition: ICondition, opts?: { force?: boolean; userId?: ID }): Promise<T> {
-    const force: boolean = toBool(opts?.force, true);
+    const force: boolean = toBool(opts?.force, false);
     const overrideCondition: ICondition = preHandleQuery({ condition }, this.isSoftDelete);
-    if (force) {
-      return this.model.findOneAndRemove(overrideCondition, DELETE_OPTIONS).exec();
+    if (!force && this.isSoftDelete) {
+      const bodyDeleted = { deletedAt: new Date(), deletedBy: opts?.userId ?? null };
+      return this.model.findOneAndUpdate(overrideCondition, bodyDeleted, UPDATE_OPTIONS);
     }
-    const bodyDeleted = { deletedAt: new Date(), deletedBy: opts?.userId ?? null };
-    return this.model.findOneAndUpdate(overrideCondition, bodyDeleted, UPDATE_OPTIONS);
+    return this.model.findOneAndRemove(overrideCondition, DELETE_OPTIONS).exec();
   }
 
   @MongoCatch
