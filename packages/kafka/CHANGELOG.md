@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.29](https://github.com/joktec/joktec-monorepo/compare/@joktec/kafka@0.0.28...@joktec/kafka@0.0.29) (2023-04-10)
+
+**Note:** Version bump only for package @joktec/kafka
+
+
+
+
+
+
 ## [0.0.28](https://github.com/joktec/joktec-monorepo/compare/@joktec/kafka@0.0.27...@joktec/kafka@0.0.28) (2023-04-09)
 
 **Note:** Version bump only for package @joktec/kafka

@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.31](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.30...@joktec/core@0.0.31) (2023-04-10)
+
+
+### Bug Fixes
+
+* track interceptor ([08a3355](https://github.com/joktec/joktec-monorepo/commit/08a335533e16659cae10c513cba21ba167e88040))
+
+
+
+
+
+
 ## [0.0.30](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.29...@joktec/core@0.0.30) (2023-04-09)
 
 **Note:** Version bump only for package @joktec/core
