@@ -1,11 +1,11 @@
 import {
-  BadRequestException,
   BaseMethodDecorator,
   CallbackDecoratorOptions,
   InternalServerException,
+  IValidateError,
+  ValidateException,
 } from '@joktec/core';
 import { Error } from 'mongoose';
-import { pick, snakeCase } from 'lodash';
 
 export class MongoException extends InternalServerException {
   constructor(msg: string = 'MONGO_EXCEPTION', error: any) {
@@ -19,16 +19,16 @@ export const MongoCatch = BaseMethodDecorator(async (options: CallbackDecoratorO
     return await method(...args);
   } catch (err) {
     if (err instanceof Error.ValidationError) {
-      const errItems = Object.values(err.errors).map(errItem => {
-        if (errItem instanceof Error.CastError) {
-          return {
-            message: snakeCase(`${errItem.path} must be ObjectID`).toUpperCase(),
-            ...pick(errItem, ['path', 'value', 'kind', 'reason', 'stringValue']),
-          };
+      const formatError: IValidateError = {};
+      Object.values(err.errors).map(errItem => {
+        if (!formatError.hasOwnProperty(errItem.path)) {
+          formatError[errItem.path] = [];
         }
-        return pick(errItem, ['path', 'message', 'value', 'kind', 'reason']);
+        const message: string =
+          errItem instanceof Error.CastError ? `${errItem.path}_INVALID`.toUpperCase() : errItem.message;
+        formatError[errItem.path].push(message);
       });
-      throw new BadRequestException(errItems[0].message, errItems);
+      throw new ValidateException(formatError);
     }
 
     if (err?.code === 11000 || err?.code === 11001) {

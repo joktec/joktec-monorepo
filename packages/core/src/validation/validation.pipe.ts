@@ -2,7 +2,7 @@ import { ArgumentMetadata, Injectable, PipeTransform, ValidationPipe } from '@ne
 import { isEmpty } from 'lodash';
 import { validate, ValidationError } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
-import { BadRequestException } from '../exceptions';
+import { IValidateError, ValidateException } from './validate.exception';
 import { ValidationPipeOptions } from '@nestjs/common/pipes/validation.pipe';
 
 @Injectable()
@@ -34,8 +34,7 @@ export class BaseValidationPipe extends ValidationPipe implements PipeTransform 
     const validationErrors = await validate(object);
     if (validationErrors.length > 0) {
       const formatError = this.buildError(validationErrors);
-      const message: string = formatError[Object.keys(formatError)[0]][0];
-      throw new BadRequestException(message, formatError);
+      throw new ValidateException(formatError);
     }
     return value;
   }
@@ -46,8 +45,8 @@ export class BaseValidationPipe extends ValidationPipe implements PipeTransform 
     return !types.find(type => metatype === type || metatype === new type());
   }
 
-  private buildError(errors: ValidationError[]): { [key: string]: string[] } {
-    const result: any = {};
+  private buildError(errors: ValidationError[]): IValidateError {
+    const result: IValidateError = {};
     errors.forEach(error => (result[error.property] = Object.values(error.constraints)));
     return result;
   }

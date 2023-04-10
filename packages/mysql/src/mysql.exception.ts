@@ -1,10 +1,11 @@
 import {
-  BadRequestException,
   BaseMethodDecorator,
   CallbackDecoratorOptions,
   InternalServerException,
+  IValidateError,
+  ValidateException,
 } from '@joktec/core';
-import { pick, snakeCase } from 'lodash';
+import { snakeCase } from 'lodash';
 
 export class MysqlException extends InternalServerException {
   constructor(msg: string = 'MYSQL_EXCEPTION', error: any) {
@@ -18,14 +19,20 @@ export const MysqlCatch = BaseMethodDecorator(async (options: CallbackDecoratorO
     return await method(...args);
   } catch (err) {
     if (err.errors && Array.isArray(err.errors)) {
-      const items = err.errors.map(errItem => pick(errItem, ['message', 'path', 'value', 'validatorArgs']));
-      throw new BadRequestException(items[0].message, items);
+      const formatError: IValidateError = {};
+      err.errors.map(errItem => {
+        if (!formatError.hasOwnProperty(errItem.path)) {
+          formatError[errItem.path] = [];
+        }
+        formatError[errItem.path].push(errItem.message);
+      });
+      throw new ValidateException(formatError);
     }
 
     if (err.parent || err.original) {
       const parent = err.parent || err.original;
       const msg = snakeCase(err.message).toUpperCase();
-      throw new BadRequestException(msg, parent);
+      throw new MysqlException(msg, parent);
     }
 
     throw new MysqlException(err.message, err);

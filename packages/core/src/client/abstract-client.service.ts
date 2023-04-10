@@ -7,6 +7,7 @@ import { ClientConfig, DEFAULT_CON_ID } from './client.config';
 import { Client } from './client';
 import { InvalidClientConfigException } from './client.exception';
 import mergeDeep from 'merge-deep';
+import { ExceptionMessage } from '../exceptions';
 
 export abstract class AbstractClientService<IConfig extends ClientConfig, IClient = any>
   implements Client<IConfig, IClient>, OnModuleInit, OnModuleDestroy
@@ -52,7 +53,7 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
     const error = cfg.validate();
     if (error?.length) {
       this.logService.error(error, `${this.service} invalid config`);
-      throw new InvalidClientConfigException('Invalid Config', error);
+      throw new InvalidClientConfigException(ExceptionMessage.INVALID_CLIENT_CONFIG, error);
     }
     return cfg;
   }

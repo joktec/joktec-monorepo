@@ -3,7 +3,7 @@ import { ModuleRef } from '@nestjs/core';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { MicroServiceNotFoundException } from './exceptions/micro-service-not-found.exception';
 import { MicroMethodNotFoundException } from './exceptions/micro-method-not-found.exception';
-import { snakeCase } from 'lodash';
+import { ExceptionMessage } from '../../exceptions';
 
 @Controller()
 export class MicroRest {
@@ -17,14 +17,12 @@ export class MicroRest {
     try {
       serviceInstance = await this.moduleRef.get(service, { strict: false });
     } catch (ex) {
-      const msg = snakeCase(`${service} Micro is not found`).toUpperCase();
-      throw new MicroServiceNotFoundException(msg);
+      throw new MicroServiceNotFoundException(ExceptionMessage.MICRO_SERVICE_NOT_FOUND, { service });
     }
 
     const methodInstance = serviceInstance[method];
     if (!methodInstance) {
-      const msg: string = snakeCase(`${service}:${method} Micro method is not found`).toUpperCase();
-      throw new MicroMethodNotFoundException(msg);
+      throw new MicroMethodNotFoundException(ExceptionMessage.MICRO_METHOD_NOT_FOUND, { service, method });
     }
     return methodInstance(req);
   }
