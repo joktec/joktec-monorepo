@@ -23,6 +23,13 @@ export class ValidateBuilder {
     return this;
   }
 
+  remove(property: string): ValidateBuilder {
+    if (this.validateError.hasOwnProperty(property)) {
+      delete this.validateError[property];
+    }
+    return this;
+  }
+
   build(): IValidateError {
     return this.validateError;
   }
