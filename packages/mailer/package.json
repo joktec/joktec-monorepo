@@ -1,7 +1,7 @@
 {
   "name": "@joktec/mailer",
   "description": "JokTec - Mailer Service",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -39,7 +39,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.34",
+    "@joktec/core": "0.0.35",
     "@sendgrid/client": "^7.7.0",
     "@sendgrid/helpers": "^7.7.0",
     "aws-sdk": "^2.1267.0",
