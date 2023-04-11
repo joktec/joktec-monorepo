@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { JwtConfig } from './jwt.config';
 import { ConfigService } from '../config';
-import { ExceptionMessage, UnauthorizedException } from '../exceptions';
+import { ExceptionMessage } from '../exceptions';
 import { JwtPayload, JwtToken } from './jwt.model';
 import jwt from 'jsonwebtoken';
 import ms from 'ms';
 import moment from 'moment';
 import { Request } from 'express';
+import { JwtException } from './jwt.exception';
 
 @Injectable()
 export class JwtService {
@@ -18,10 +19,10 @@ export class JwtService {
 
   async extractToken(req: Request): Promise<string> {
     const authHeader = req.headers.authorization;
-    if (!authHeader) throw new UnauthorizedException(ExceptionMessage.AUTHORIZATION_HEADER_NOT_FOUND);
+    if (!authHeader) throw new JwtException(ExceptionMessage.AUTHORIZATION_HEADER_NOT_FOUND);
 
     const [prefix, token] = authHeader.split(' ');
-    if (prefix !== 'Bearer' || !token) throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN_FORMAT);
+    if (prefix !== 'Bearer' || !token) throw new JwtException(ExceptionMessage.INVALID_TOKEN_FORMAT);
     return token;
   }
 
@@ -40,9 +41,9 @@ export class JwtService {
       const payload = res.payload as JwtPayload;
       return { ...payload, userId: payload.userId || payload.sub } as JwtPayload;
     } catch (err) {
-      if (err.name === 'TokenExpiredError') throw new UnauthorizedException(ExceptionMessage.TOKEN_EXPIRED);
-      if (err.name === 'NotBeforeError') throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN_FORMAT);
-      throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
+      if (err.name === 'TokenExpiredError') throw new JwtException(ExceptionMessage.TOKEN_EXPIRED);
+      if (err.name === 'NotBeforeError') throw new JwtException(ExceptionMessage.INVALID_TOKEN_FORMAT);
+      throw new JwtException(ExceptionMessage.INVALID_TOKEN, err);
     }
   }
 
@@ -52,7 +53,7 @@ export class JwtService {
       const payload = res.payload as JwtPayload;
       return { ...payload, userId: payload.userId || payload.sub } as JwtPayload;
     } catch (err) {
-      throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
+      throw new JwtException(ExceptionMessage.INVALID_TOKEN, err);
     }
   }
 
@@ -62,7 +63,7 @@ export class JwtService {
       const payload = res.payload as JwtPayload;
       return { ...payload, userId: payload.userId || payload.sub } as JwtPayload;
     } catch (err) {
-      throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
+      throw new JwtException(ExceptionMessage.INVALID_TOKEN, err);
     }
   }
 }
