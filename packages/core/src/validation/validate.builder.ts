@@ -1,4 +1,4 @@
-import { IValidateError, ValidateException } from './validate.exception';
+import { IValidateError } from './validate.exception';
 import { uniq } from 'lodash';
 
 export class ValidateBuilder {
@@ -6,10 +6,6 @@ export class ValidateBuilder {
 
   private constructor() {
     this.validateError = {};
-  }
-
-  static create(property: string, ...messages: string[]): ValidateException {
-    return new ValidateException({ [property]: messages });
   }
 
   static init(): ValidateBuilder {
