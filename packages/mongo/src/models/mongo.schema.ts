@@ -7,7 +7,6 @@ export interface MongoSchema extends Base<MongoId> {}
 
 @plugin(require('mongoose-beautiful-unique-validation'), { defaultMessage: '{PATH}_MUST_BE_UNIQUE' })
 export abstract class MongoSchema extends TimeStamps {
-  @prop({ type: String, immutable: true })
   @ApiProperty({ type: String })
   @Field(() => String, { nullable: true })
   _id!: MongoId;
