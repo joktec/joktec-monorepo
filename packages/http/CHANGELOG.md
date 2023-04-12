@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.36](https://github.com/joktec/joktec-monorepo/compare/@joktec/http@0.0.35...@joktec/http@0.0.36) (2023-04-12)
+
+
+### Bug Fixes
+
+* http import rax ([13e7177](https://github.com/joktec/joktec-monorepo/commit/13e717772745141a95cdf9146cd0d96ce63aef32))
+
+
+
+
+
 ## [0.0.35](https://github.com/joktec/joktec-monorepo/compare/@joktec/http@0.0.34...@joktec/http@0.0.35) (2023-04-12)
 
 **Note:** Version bump only for package @joktec/http
