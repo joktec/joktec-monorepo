@@ -83,7 +83,7 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
   }
 
   onRetryAttempt(log: LogService) {
-    this.raxConfig.onRetryAttempt = (err: AxiosError) => {
+    this.raxConfig.onRetryAttempt = (err: AxiosError<any, any>) => {
       const { method, url, raxConfig } = err.config;
       log.error('%s %s error, currentRetryAttempt: %s', method, url, raxConfig.currentRetryAttempt);
     };
