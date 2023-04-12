@@ -7,3 +7,14 @@ export * from './validate.builder';
 export * from './validator';
 export * from './is-type';
 export * from './file.pipe';
+export {
+  DefaultValuePipe,
+  ParseIntPipe,
+  ParseFloatPipe,
+  ParseBoolPipe,
+  ParseArrayPipe,
+  ParseUUIDPipe,
+  ParseEnumPipe,
+  ParseFilePipe,
+  ValidationPipe,
+} from '@nestjs/common';

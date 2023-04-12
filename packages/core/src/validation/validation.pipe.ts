@@ -8,16 +8,7 @@ import { ValidationPipeOptions } from '@nestjs/common/pipes/validation.pipe';
 @Injectable()
 export class BaseValidationPipe extends ValidationPipe implements PipeTransform {
   constructor(options?: ValidationPipeOptions) {
-    super(
-      Object.assign(
-        {
-          transform: true,
-          whitelist: true,
-          forbidNonWhitelisted: false,
-        },
-        options,
-      ),
-    );
+    super(Object.assign({ transform: true, whitelist: true, forbidNonWhitelisted: false }, options));
   }
 
   async transform(value: any, metadata: ArgumentMetadata) {

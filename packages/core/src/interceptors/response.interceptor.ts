@@ -1,7 +1,8 @@
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
-import { IResponseDto } from '../models';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { isNil } from 'lodash';
+import { instanceToPlain } from 'class-transformer';
+import { IResponseDto } from '../models';
 import { NotFoundException } from '../exceptions';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, IRespons
           success: true,
           errorCode: 0,
           message: 'SUCCESS',
-          data,
+          data: instanceToPlain<T>(data),
         } as IResponseDto<T>;
       }),
       catchError(err => throwError(() => err)),

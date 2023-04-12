@@ -19,6 +19,7 @@ export {
   ApiDefaultResponse,
   ApiExtraModels,
   ApiExcludeEndpoint,
+  ApiExcludeController,
   ApiSecurity,
   IntersectionType,
   PickType,
