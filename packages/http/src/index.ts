@@ -1,4 +1,4 @@
-import * as rax from 'retry-axios';
+import rax from 'retry-axios';
 
 rax.attach();
 
