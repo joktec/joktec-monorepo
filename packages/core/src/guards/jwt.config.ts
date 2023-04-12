@@ -12,7 +12,7 @@ export class JwtConfig {
   refreshKey: string;
   expired: string;
 
-  constructor(props: Partial<JwtConfig>) {
+  constructor(props: Partial<JwtConfig> = {}) {
     Object.assign(this, {
       pending: toInt(props.pending, 30),
       limit: toInt(props.limit, 4),
