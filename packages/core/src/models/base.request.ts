@@ -18,8 +18,15 @@ export type IKeyword = { [key: string]: string };
 export type ISort = { [key: string]: 'asc' | 'desc' };
 export type INear = { lat: number; lng: number; distance?: number };
 
+export interface IPopulate {
+  path: string;
+  select?: string;
+  model?: string;
+  populate?: IPopulate[];
+}
+
 export interface IBaseRequest {
-  select?: string | string[];
+  select?: string;
   keyword?: IKeyword;
   condition: ICondition;
   language?: ILanguage;
@@ -27,4 +34,6 @@ export interface IBaseRequest {
   limit?: number;
   sort?: ISort;
   near?: INear;
+  lean?: boolean;
+  populate?: IPopulate[];
 }

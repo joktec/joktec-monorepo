@@ -37,11 +37,8 @@ export const toBool = (b: boolean | string | number | Buffer, def: boolean = fal
   return value === 'yes' || value === 'true' || value === '1';
 };
 
-export const toArray = <T>(data: T | Array<T>, separator?: string): T[] => {
+export const toArray = <T>(data: T | Array<T>): T[] => {
   if (!data || (isArray(data) && !data.length)) return [];
-  if (isString(data) && separator) {
-    return data.split(separator) as Array<T>;
-  }
   return isArray(data) ? data : [data];
 };
 

@@ -1,12 +1,32 @@
 import { Body, Delete, Get, Param, Post, Put, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiExcludeController,
+  ApiExcludeEndpoint,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { BaseService } from './base.service';
 import { IBaseRequest, IListResponseDto } from '../models';
 import { QueryInterceptor } from '../interceptors';
-import { toBool, toPlural, toSingular } from '../utils';
+import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
 import { startCase } from 'lodash';
 import { JwtGuard, JwtPayload } from '../guards';
+
+export enum ControllerExclude {
+  ALL,
+  LIST,
+  GET,
+  CREATE,
+  UPDATE,
+  DELETE,
+  READ,
+  WRITE,
+}
 
 export interface IBaseControllerProps<T> {
   dto: new (...args: any) => T;
@@ -14,6 +34,7 @@ export interface IBaseControllerProps<T> {
   dtoName?: string;
   apiTag?: string;
   useGuard?: boolean;
+  excludes?: ControllerExclude[];
 }
 
 export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
@@ -21,14 +42,17 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
   const apiTag = props.apiTag || toPlural(dtoName);
+  const excludes = toArray<ControllerExclude>(props.excludes);
 
   @ApiTags(apiTag.toLowerCase())
+  @ApiExcludeController(includes(excludes, ControllerExclude.ALL))
   abstract class Controller {
     protected constructor(protected service: BaseService<T, ID>) {}
 
     @Get('/')
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: props.dtoList })
+    @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
     @UseInterceptors(QueryInterceptor)
     async findAll(@Query() req: IBaseRequest, @Req() res: Request): Promise<IListResponseDto<T>> {
       return this.service.findAll(req, res['payload'] as JwtPayload);
@@ -37,6 +61,7 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @Get('/:id')
     @ApiOperation({ summary: `Get ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
+    @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
     async findOne(@Param('id') id: ID, @Req() res: Request): Promise<T> {
       return this.service.findOne(id, res['payload'] as JwtPayload);
@@ -46,6 +71,7 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @ApiOperation({ summary: `Create ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiBody({ type: props.dto })
+    @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
     async create(@Body() entity: T, @Req() res: Request): Promise<T> {
       return this.service.create(entity, res['payload'] as JwtPayload);
     }
@@ -55,6 +81,7 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
     @ApiBody({ type: props.dto })
+    @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
     async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Req() res: Request): Promise<T> {
       return this.service.update(id, entity, res['payload'] as JwtPayload);
     }
@@ -63,6 +90,7 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @ApiOperation({ summary: `Delete ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
+    @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.DELETE))
     async delete(@Param('id') id: ID, @Req() res: Request): Promise<T> {
       return this.service.delete(id, res['payload'] as JwtPayload);
     }

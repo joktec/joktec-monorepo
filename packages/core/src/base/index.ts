@@ -12,6 +12,8 @@ export {
 } from '@nestjs/core';
 export { ClientsModule, MessagePattern, RpcException } from '@nestjs/microservices';
 export {
+  applyDecorators,
+  createParamDecorator,
   ArgumentsHost,
   Injectable,
   Inject,
