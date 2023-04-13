@@ -1,8 +1,7 @@
-import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable } from '@joktec/core';
-import axios, { HttpService as NestHttpService } from '@nestjs/axios';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
 import { cloneDeep } from 'lodash';
-import { Observable } from 'rxjs';
-import { AxiosRequestConfig } from 'axios';
+import * as rax from 'retry-axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import mergeDeep from 'merge-deep';
@@ -14,23 +13,24 @@ import FormData from 'form-data';
 import qs from 'qs';
 
 @Injectable()
-export class HttpService extends AbstractClientService<HttpConfig, NestHttpService> implements HttpClient {
-  @Inject() private httpService: NestHttpService;
-
+export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance> implements HttpClient {
   constructor() {
     super('http', HttpConfig);
   }
 
-  async init(config: HttpConfig): Promise<NestHttpService> {
+  async init(config: HttpConfig): Promise<AxiosInstance> {
+    const myAxiosInstance: AxiosInstance = axios.create();
     config.onRetryAttempt(this.logService);
-    return this.httpService;
+    myAxiosInstance.defaults.raxConfig = { instance: myAxiosInstance, ...config.raxConfig };
+    rax.attach(myAxiosInstance);
+    return myAxiosInstance;
   }
 
-  async start(client: NestHttpService, conId: string = DEFAULT_CON_ID): Promise<void> {
+  async start(client: AxiosInstance, conId: string = DEFAULT_CON_ID): Promise<void> {
     // Implement
   }
 
-  async stop(client: NestHttpService, conId: string = DEFAULT_CON_ID): Promise<void> {
+  async stop(client: AxiosInstance, conId: string = DEFAULT_CON_ID): Promise<void> {
     // Implement
   }
 
@@ -55,7 +55,7 @@ export class HttpService extends AbstractClientService<HttpConfig, NestHttpServi
   }
 
   @HttpMetricDecorator()
-  request<T = any>(config: HttpRequest, conId: string = DEFAULT_CON_ID): Observable<HttpResponse<T>> {
+  async request<T = any>(config: HttpRequest, conId: string = DEFAULT_CON_ID): Promise<HttpResponse<T>> {
     const proxyConfig = this.buildProxy(config.url, config.proxy);
     const cf: AxiosRequestConfig = mergeDeep(cloneDeep(this.getConfig(conId)), config, proxyConfig);
     if (config.serializer) {
@@ -63,15 +63,15 @@ export class HttpService extends AbstractClientService<HttpConfig, NestHttpServi
         encode: params => qs.stringify(params),
       };
     }
-    return this.httpService.request<T>(cf as any) as any;
+    return this.getClient(conId).request<T>(cf);
   }
 
   @HttpMetricDecorator()
-  upload<T = any>(
+  async upload<T = any>(
     config: HttpRequest,
     data: HttpFormData,
     conId: string = DEFAULT_CON_ID,
-  ): Observable<HttpResponse<T>> {
+  ): Promise<HttpResponse<T>> {
     const formData = new FormData();
     Object.keys(data).map(key => {
       const value = data[key];
@@ -98,6 +98,6 @@ export class HttpService extends AbstractClientService<HttpConfig, NestHttpServi
       };
     }
 
-    return this.httpService.request<T>(cf as any) as any;
+    return this.getClient(conId).request<T>(cf);
   }
 }

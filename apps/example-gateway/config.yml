@@ -24,3 +24,9 @@ mongo:
   database: sample_db
   connectTimeout: 20000
   directConnection: true
+
+guard:
+  secret: XXX
+
+http:
+  timeout: 30000

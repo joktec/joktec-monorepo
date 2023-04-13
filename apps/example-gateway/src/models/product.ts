@@ -5,7 +5,7 @@ import { AllowNull, Column, DataType, Default, Length, MysqlModel, PrimaryKey, T
 export class Product extends MysqlModel<Product> {
   @PrimaryKey
   @Default(generateUUID)
-  @Column(DataType.UUIDV4)
+  @Column(DataType.UUID)
   @ApiProperty({ type: String, example: '0000-0000-0000-0000' })
   id?: string;
 

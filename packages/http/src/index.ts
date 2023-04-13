@@ -1,7 +1,3 @@
-import rax from 'retry-axios';
-
-rax.attach();
-
 export * from './models';
 export * from './http.config';
 export * from './http.client';

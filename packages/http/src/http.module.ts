@@ -1,11 +1,10 @@
 import { CounterProviders, HistogramProviders, Global, Module } from '@joktec/core';
-import { HttpModule as NestHttpModule } from '@nestjs/axios';
 import { HttpService } from './http.service';
 import { HTTP_DURATION_SECONDS_METRIC, HTTP_TOTAL_METRIC, HttpMetricService } from './http.metric';
 
 @Global()
 @Module({
-  imports: [NestHttpModule],
+  imports: [],
   providers: [
     HttpService,
     HttpMetricService,

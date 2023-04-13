@@ -1,3 +1,3 @@
 import { AxiosResponse } from 'axios';
 
-export type HttpResponse<T> = AxiosResponse<T>;
+export interface HttpResponse<T> extends AxiosResponse<T, any> {}
