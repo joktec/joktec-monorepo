@@ -21,8 +21,8 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
         strictQuery: true,
         id: true,
         minimize: true,
-        toObject: { virtuals: true, getters: true },
-        toJSON: { virtuals: true, getters: true },
+        toObject: { virtuals: true },
+        toJSON: { virtuals: true },
       },
     });
     await super.onModuleInit();

@@ -1,6 +1,6 @@
-import { cloneInstance, ICondition } from '@joktec/core';
+import { cloneInstance, ICondition, IPopulate } from '@joktec/core';
 import { IMongoRequest } from './models';
-import { QueryOptions } from 'mongoose';
+import { PopulateOptions, QueryOptions } from 'mongoose';
 
 export const UPDATE_OPTIONS: QueryOptions = {
   runValidators: true,
@@ -15,7 +15,6 @@ export const UPSERT_OPTIONS: QueryOptions = {
   upsert: true,
   new: true,
   runValidators: true,
-  // setDefaultsOnInsert: true,
 };
 
 export const preHandleCondition = (condition: any): ICondition => {
@@ -62,4 +61,22 @@ export const preHandleBody = <T extends {} = any>(body: Partial<T>): Partial<T> 
   }
 
   return processBody;
+};
+
+export const projection = (select?: string): { [key: string]: number } => {
+  if (!select) return null;
+  return select.split(',').reduce((projection, field) => {
+    projection[field.trim()] = 1;
+    return projection;
+  }, {});
+};
+
+export const convertPopulate = (populate: IPopulate[] = []): PopulateOptions[] => {
+  return populate.map<PopulateOptions>(p => {
+    const options: PopulateOptions = { path: p.path };
+    if (p.select) options.select = p.select;
+    if (p.model) options.model = p.model;
+    if (p.populate) options.populate = convertPopulate(p.populate);
+    return options;
+  });
 };

@@ -1,4 +1,4 @@
-import { DEFAULT_CON_ID, ICondition, OnModuleInit, toArray, toBool } from '@joktec/core';
+import { DEFAULT_CON_ID, ICondition, OnModuleInit, toBool } from '@joktec/core';
 import { IMysqlRepository } from './mysql.client';
 import { MysqlService } from './mysql.service';
 import { Model, ModelCtor } from 'sequelize-typescript';
@@ -22,7 +22,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   @MysqlCatch
   async find(query: IMysqlRequest): Promise<T[]> {
     const options: FindOptions = preHandleQuery(query.condition, query.keyword);
-    if (query.select) options.attributes = toArray<string>(query.select, ',');
+    if (query.select) options.attributes = query.select.split(',');
     if (query.sort) options.order = Object.entries(query.sort);
     if (query.limit && query.page) {
       options.limit = query.limit;
@@ -40,7 +40,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   @MysqlCatch
   async findOne(query: IMysqlRequest): Promise<T> {
     const options: FindOptions = preHandleQuery(query.condition, query.keyword);
-    if (query.select) options.attributes = toArray<string>(query.select, ',');
+    if (query.select) options.attributes = query.select.split(',');
     return this.model.findOne(options);
   }
 

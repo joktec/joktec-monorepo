@@ -1,13 +1,21 @@
-import { DEFAULT_CON_ID, ICondition, toArray, toBool } from '@joktec/core';
+import { DEFAULT_CON_ID, ICondition, toBool } from '@joktec/core';
 import { IMongoRepository } from './mongo.client';
 import { MongoService } from './mongo.service';
 import { AnyParamConstructor, ModelType } from '@typegoose/typegoose/lib/types';
-import { IMongoRequest, IMongoAggregation, MongoBulkRequest, MongoId } from './models';
-import { preHandleQuery, preHandleBody, UPDATE_OPTIONS, DELETE_OPTIONS, UPSERT_OPTIONS } from './mongo.utils';
+import { IMongoRequest, IMongoAggregation, MongoBulkRequest } from './models';
+import {
+  preHandleQuery,
+  preHandleBody,
+  UPDATE_OPTIONS,
+  DELETE_OPTIONS,
+  UPSERT_OPTIONS,
+  projection,
+  convertPopulate,
+} from './mongo.utils';
 import { pick } from 'lodash';
 import { MongoCatch } from './mongo.exception';
 
-export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, ID> {
+export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, ID> {
   protected constructor(
     protected mongoService: MongoService,
     protected schema: AnyParamConstructor<T>,
@@ -25,12 +33,11 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
   @MongoCatch
   async find(query: IMongoRequest): Promise<T[]> {
     const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
-    const qb = this.model.find(condition);
-    if (query.select) qb.select(toArray<string>(query.select).join(','));
+    const lean = toBool(query.lean, true);
+    const qb = this.model.find(condition, projection(query.select), { lean });
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
     if (query.sort) qb.sort(query.sort);
-    if (query.populate?.length) query.populate.map(qb.populate);
-    if (query.lean) qb.lean();
+    if (query.populate?.length) qb.populate(convertPopulate(query.populate));
     return qb.exec();
   }
 
@@ -46,10 +53,9 @@ export abstract class MongoRepo<T, ID = MongoId> implements IMongoRepository<T, 
   @MongoCatch
   async findOne(query: IMongoRequest): Promise<T> {
     const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
-    const qb = this.model.findOne(condition);
-    if (query.select) qb.select(toArray<string>(query.select).join(','));
-    if (query.populate?.length) query.populate.map(qb.populate);
-    if (query.lean) qb.lean();
+    const lean = toBool(query.lean, true);
+    const qb = this.model.findOne(condition, projection(query.select), { lean });
+    if (query.populate?.length) qb.populate(convertPopulate(query.populate));
     return qb.exec();
   }
 
