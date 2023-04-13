@@ -19,14 +19,9 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
   }
 
   async init(config: HttpConfig): Promise<AxiosInstance> {
-    const myAxiosInstance = axios.create();
-
+    const myAxiosInstance: AxiosInstance = axios.create();
     config.onRetryAttempt(this.logService);
-    myAxiosInstance.defaults.raxConfig = {
-      instance: myAxiosInstance,
-      ...config.raxConfig,
-    };
-
+    myAxiosInstance.defaults.raxConfig = { instance: myAxiosInstance, ...config.raxConfig };
     rax.attach(myAxiosInstance);
     return myAxiosInstance;
   }
