@@ -1,4 +1,5 @@
-import { CoreModule, Module } from '@joktec/core';
+import { CoreModule, JwtModule, Module } from '@joktec/core';
+import { HttpModule } from '@joktec/http';
 import { MongoModule } from '@joktec/mongo';
 import { MysqlModule } from '@joktec/mysql';
 import { CategoryModule, ProductModule } from './modules';
@@ -9,6 +10,8 @@ import { CategoryModule, ProductModule } from './modules';
     CoreModule,
     MysqlModule,
     MongoModule,
+    HttpModule,
+    JwtModule,
     // Modules
     ProductModule,
     CategoryModule,

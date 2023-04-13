@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.38",
+    "@joktec/http": "^0.0.37",
     "@joktec/mongo": "0.0.47",
     "@joktec/mysql": "0.0.39"
   },
