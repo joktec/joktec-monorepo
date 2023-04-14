@@ -29,7 +29,7 @@ export class TrackInterceptor implements NestInterceptor {
       browser: ua.browser,
       version: ua.version,
       os: ua.os,
-      platform: ua.platform,
+      platform: ua.platform || ua.os,
       geoIp: ua.geoIp,
     } as ClientInfo;
 
