@@ -1,7 +1,7 @@
 {
   "name": "@joktec/mongo",
   "description": "JokTec - Mongo Service",
-  "version": "0.0.47",
+  "version": "0.0.48",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -39,7 +39,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.38",
+    "@joktec/core": "0.0.39",
     "@typegoose/typegoose": "^10.3.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",

@@ -1,7 +1,7 @@
 {
   "name": "@joktec/http",
   "description": "JokTec - Http Client Service",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -36,7 +36,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.38",
+    "@joktec/core": "0.0.39",
     "axios": "^1.3.5",
     "form-data": "^4.0.0",
     "http-proxy-agent": "^5.0.0",

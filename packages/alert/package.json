@@ -1,7 +1,7 @@
 {
   "name": "@joktec/alert",
   "description": "JokTec - Alert Service",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -38,7 +38,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.38",
+    "@joktec/core": "0.0.39",
     "@slack/webhook": "^6.1.0",
     "lodash": "^4.17.21",
     "node-telegram-bot-api": "^0.61.0",
