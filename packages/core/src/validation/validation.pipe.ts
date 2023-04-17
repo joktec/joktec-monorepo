@@ -27,7 +27,7 @@ export class BaseValidationPipe extends ValidationPipe implements PipeTransform 
       const formatError = this.buildError(validationErrors);
       throw new ValidateException(formatError);
     }
-    return value;
+    return object;
   }
 
   protected toValidate(metadata: ArgumentMetadata): boolean {

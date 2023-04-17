@@ -1,6 +1,8 @@
-import { cloneInstance, ICondition, IPopulate } from '@joktec/core';
+import { cloneInstance, ICondition, IPopulate, Transform } from '@joktec/core';
 import { IMongoRequest } from './models';
 import { PopulateOptions, QueryOptions } from 'mongoose';
+import { TransformFnParams, TransformOptions } from 'class-transformer/types/interfaces';
+import { mongoose } from '@typegoose/typegoose';
 
 export const UPDATE_OPTIONS: QueryOptions = {
   runValidators: true,
@@ -79,4 +81,18 @@ export const convertPopulate = (populate: IPopulate[] = []): PopulateOptions[] =
     if (p.populate) options.populate = convertPopulate(p.populate);
     return options;
   });
+};
+
+export const TransformObjectId = (options?: TransformOptions): PropertyDecorator => {
+  return Transform(
+    (params: TransformFnParams): string => {
+      const { value } = params;
+      if (!value) return null;
+      if (value instanceof mongoose.Types.ObjectId || typeof value === 'object') {
+        return value.toString();
+      }
+      return value;
+    },
+    { ...options },
+  );
 };
