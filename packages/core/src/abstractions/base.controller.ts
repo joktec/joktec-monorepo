@@ -1,4 +1,4 @@
-import { Body, Delete, Get, Param, Post, Put, Query, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Delete, Get, Param, Post, Put, Query, Req, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -16,6 +16,7 @@ import { QueryInterceptor } from '../interceptors';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
 import { startCase } from 'lodash';
 import { JwtGuard, JwtPayload } from '../guards';
+import { BaseValidationPipe } from '../validation';
 
 export enum ControllerExclude {
   ALL,
@@ -72,6 +73,7 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @ApiOkResponse({ type: props.dto })
     @ApiBody({ type: props.dto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
+    @UsePipes(new BaseValidationPipe())
     async create(@Body() entity: T, @Req() res: Request): Promise<T> {
       return this.service.create(entity, res['payload'] as JwtPayload);
     }
@@ -82,6 +84,7 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @ApiParam({ name: 'id' })
     @ApiBody({ type: props.dto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
+    @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }))
     async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Req() res: Request): Promise<T> {
       return this.service.update(id, entity, res['payload'] as JwtPayload);
     }

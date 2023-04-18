@@ -1,8 +1,6 @@
-import { cloneInstance, ICondition, IPopulate, Transform } from '@joktec/core';
+import { cloneInstance, ICondition, IPopulate } from '@joktec/core';
 import { IMongoRequest } from './models';
 import { PopulateOptions, QueryOptions } from 'mongoose';
-import { TransformFnParams, TransformOptions } from 'class-transformer/types/interfaces';
-import { mongoose } from '@typegoose/typegoose';
 
 export const UPDATE_OPTIONS: QueryOptions = {
   runValidators: true,
@@ -65,6 +63,28 @@ export const preHandleBody = <T extends {} = any>(body: Partial<T>): Partial<T> 
   return processBody;
 };
 
+export const preHandleUpdateBody = <T extends {} = any>(body: Partial<T>): Partial<T> => {
+  const plain = preHandleBody(body);
+  const outputObj = {};
+  for (const [key, value] of Object.entries(plain)) {
+    if (key.includes('$')) {
+      outputObj[key] = value;
+      continue;
+    }
+
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      const nestedObj = preHandleUpdateBody(value);
+      for (const [nestedKey, nestedValue] of Object.entries(nestedObj)) {
+        outputObj[`${key}.${nestedKey}`] = nestedValue;
+      }
+      continue;
+    }
+
+    outputObj[key] = value;
+  }
+  return outputObj;
+};
+
 export const projection = (select?: string): { [key: string]: number } => {
   if (!select) return null;
   return select.split(',').reduce((projection, field) => {
@@ -81,18 +101,4 @@ export const convertPopulate = (populate: IPopulate[] = []): PopulateOptions[] =
     if (p.populate) options.populate = convertPopulate(p.populate);
     return options;
   });
-};
-
-export const TransformObjectId = (options?: TransformOptions): PropertyDecorator => {
-  return Transform(
-    (params: TransformFnParams): string => {
-      const { value } = params;
-      if (!value) return null;
-      if (value instanceof mongoose.Types.ObjectId || typeof value === 'object') {
-        return value.toString();
-      }
-      return value;
-    },
-    { ...options },
-  );
 };

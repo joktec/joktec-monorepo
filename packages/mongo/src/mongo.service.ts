@@ -68,7 +68,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     await client.close(true);
   }
 
-  public getModel<T>(schemaClass: AnyParamConstructor<any>, conId: string = DEFAULT_CON_ID): ModelType<T> {
+  public getModel<T>(schemaClass: AnyParamConstructor<T>, conId: string = DEFAULT_CON_ID): ModelType<T> {
     return getModelForClass(schemaClass, { existingConnection: this.getClient(conId) });
   }
 }

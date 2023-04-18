@@ -3,6 +3,7 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 import { isNil } from 'lodash';
 import { IResponseDto } from '../models';
 import { NotFoundException } from '../exceptions';
+import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class ResponseInterceptor<T = any> implements NestInterceptor<T, IResponseDto<T>> {
@@ -17,7 +18,7 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, IRespons
           success: true,
           errorCode: 0,
           message: 'SUCCESS',
-          data,
+          data: instanceToPlain<T>(data),
         } as IResponseDto<T>;
       }),
       catchError(err => throwError(() => err)),

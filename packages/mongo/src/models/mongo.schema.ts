@@ -1,15 +1,14 @@
+import { ApiHideProperty, ApiProperty, Exclude, Field, Type } from '@joktec/core';
 import { mongoose, plugin, prop } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
-import { ApiHideProperty, ApiProperty, Field } from '@joktec/core';
-import { TransformObjectId } from '../mongo.utils';
 
 export interface MongoSchema extends Base<string> {}
 
 @plugin(require('mongoose-beautiful-unique-validation'), { defaultMessage: '{PATH}_MUST_BE_UNIQUE' })
 export abstract class MongoSchema extends TimeStamps {
-  @TransformObjectId()
   @ApiProperty()
   @Field(() => String, { nullable: true })
+  @Type(() => String)
   _id!: string;
 
   @prop({ type: Date, default: new Date(), immutable: true })
@@ -18,9 +17,9 @@ export abstract class MongoSchema extends TimeStamps {
   createdAt?: Date;
 
   @prop({ type: mongoose.Types.ObjectId, default: null, immutable: true })
-  @TransformObjectId()
   @ApiProperty({ type: String, example: '507f1f77bcf86cd799439011' })
   @Field(() => String, { nullable: true })
+  @Type(() => String)
   createdBy?: string;
 
   @prop({ type: Date, default: new Date() })
@@ -29,19 +28,21 @@ export abstract class MongoSchema extends TimeStamps {
   updatedAt?: Date;
 
   @prop({ type: mongoose.Types.ObjectId, default: null })
-  @TransformObjectId()
   @ApiProperty({ type: String, example: '507f1f77bcf86cd799439011' })
   @Field(() => String, { nullable: true })
+  @Type(() => String)
   updatedBy?: string;
 
   @prop({ type: Date, default: null })
+  @Exclude({ toPlainOnly: true })
   @ApiHideProperty()
   @Field(() => Date, { nullable: true })
   deletedAt?: Date;
 
   @prop({ type: mongoose.Types.ObjectId, default: null })
-  @TransformObjectId()
+  @Exclude({ toPlainOnly: true })
   @ApiHideProperty()
   @Field(() => String, { nullable: true })
+  @Type(() => String)
   deletedBy?: string;
 }
