@@ -9,6 +9,7 @@ export {
   NestFactory,
   HttpAdapterHost,
   AbstractHttpAdapter,
+  REQUEST,
 } from '@nestjs/core';
 export { ClientsModule, MessagePattern, RpcException } from '@nestjs/microservices';
 export {
