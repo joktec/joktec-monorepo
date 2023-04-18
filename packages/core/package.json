@@ -99,7 +99,6 @@
     "slug": "^8.2.2",
     "swagger-ui-express": "^4.6.2",
     "type-cacheable": "^4.1.2",
-    "url-parse": "^1.5.10",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

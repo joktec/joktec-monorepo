@@ -41,9 +41,9 @@ export class GatewayService {
     const port = toInt(gatewayConfig.port, DEFAULT_GATEWAY_PORT);
     await app.listen(port, () => {
       const baseUrl = `http://localhost:${port}`;
-      logger.info(`🚀 Application %s is running on %s`, gatewayName, joinUrl(baseUrl, contextPath));
+      logger.info(`🚀 Application %s is running on %s`, gatewayName, joinUrl(baseUrl, { paths: [contextPath] }));
       if (gatewayConfig.swagger !== 'off') {
-        logger.info(`🗒️ Access API Document at %s`, joinUrl(baseUrl, contextPath, 'swagger'));
+        logger.info(`🗒️ Access API Document at %s`, joinUrl(baseUrl, { paths: [contextPath, 'swagger'] }));
       }
     });
   }

@@ -1,7 +1,6 @@
 import { isArray, isBoolean, isNaN, isNil, isPlainObject, isString } from 'lodash';
 import pluralize from 'pluralize';
 import slug from 'slug';
-import urlParse from 'url-parse';
 
 // Object
 export const flattenKeys = (obj: object, currentPath: string | null): string[] => {
@@ -44,7 +43,7 @@ export const toArray = <T>(data: T | Array<T>): T[] => {
 
 export const linkTransform = (link: string, host: string, type: 'relative' | 'absolute' = 'relative'): string => {
   if (link && type === 'relative') return link.replace(host, '');
-  if (link && type === 'absolute' && !link.startsWith('http')) return new URL(link, host).toString();
+  if (link && type === 'absolute' && !link.startsWith('http')) return joinUrl(host, { paths: [link] });
   return link;
 };
 
@@ -58,8 +57,24 @@ export const toSlugify = (...values: string[]): string => {
   return slug(values.join(' '), { lower: true });
 };
 
-export const joinUrl = (baseUrl: string, ...parts: string[]): string => {
-  const parsedUrl = urlParse(baseUrl);
-  parts.map(path => parsedUrl.set('pathname', path));
-  return parsedUrl.toString();
+export const joinUrl = (host: string, parts?: { paths?: string[]; params?: object }): string => {
+  const { paths, params } = parts;
+  return [host, ...paths, objectToQueryString(params)]
+    .join('/')
+    .replace(/[\/]+/g, '/')
+    .replace(/^(.+):\//, '$1://')
+    .replace(/^file:/, 'file:/')
+    .replace(/\/(\?|&|#[^!])/g, '$1')
+    .replace(/\?/g, '&')
+    .replace('&', '?');
+};
+
+export const objectToQueryString = (queryParameters: { [key: string]: any }) => {
+  return queryParameters
+    ? Object.entries(queryParameters).reduce((queryString, [key, val], index) => {
+        const symbol = queryString.length === 0 ? '?' : '&';
+        queryString += val ? `${symbol}${key}=${val}` : '';
+        return queryString;
+      }, '')
+    : '';
 };
