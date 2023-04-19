@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common';
 import { ConfigService } from '../config';
 import { LogService } from '../log';
 import { camelCase, union, fromPairs, map } from 'lodash';
+import { Constructor } from '../models';
 
 export type ServicesInject = {
   configService: ConfigService;
@@ -20,7 +21,7 @@ export type CallbackDecoratorOptions = {
 };
 
 type InjectType = (target: object, key: string | symbol, index?: number) => void;
-type InjectClass = new (...args: any[]) => any;
+type InjectClass = Constructor<any>;
 
 export const BaseMethodDecorator = (
   callback: (options: CallbackDecoratorOptions) => Promise<any> | any,

@@ -8,14 +8,6 @@ log:
     port: 31658
     enable: false
 
-mysql:
-  host: localhost
-  port: 3306
-  username: joktec
-  password: joktec123
-  database: sample_db
-  connectTimeout: 20000
-
 mongo:
   host: localhost
   port: 27017

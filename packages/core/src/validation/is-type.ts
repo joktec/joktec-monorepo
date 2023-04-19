@@ -8,6 +8,7 @@ import {
   isInt,
   isBoolean,
 } from 'class-validator';
+import { Constructor } from '../models';
 
 const primitiveTypeValidator = {
   string(value: any, args: ValidationArguments) {
@@ -24,7 +25,7 @@ const primitiveTypeValidator = {
   },
 };
 
-type Clazz = new (...args: readonly any[]) => any;
+type Clazz = Constructor<any>;
 
 export function IsTypes(
   types: ReadonlyArray<'int' | 'string' | 'boolean' | 'string[]' | Clazz>,

@@ -1,12 +1,11 @@
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Mutation, ObjectType, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
 import { toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';
-import { IBaseRequest, IListResponseDto } from '../models';
+import { BaseListResponse, Constructor, IBaseRequest, IListResponseDto } from '../models';
 
 export interface IBaseResolverProps<T> {
-  dto: new (...args: any) => T;
-  dtoList: new (...args: any) => IListResponseDto<T>;
+  dto: Constructor<T>;
   dtoName?: string;
 }
 
@@ -15,14 +14,17 @@ export const BaseResolver = <T, ID>(props: IBaseResolverProps<T>): any => {
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
 
+  @ObjectType(`${nameSingular}Pagination`)
+  class PaginationDto extends BaseListResponse<T>(props.dto) {}
+
   abstract class Resolver {
     protected constructor(protected service: BaseService<T, ID>) {}
 
-    @Query(() => props.dtoList, { name: `list${namePlural}` })
+    @Query(() => PaginationDto, { name: `list${namePlural}` })
     async findAll(
-      @Args('query', { type: () => props.dtoList, nullable: true, defaultValue: {} })
+      @Args('query', { type: () => PaginationDto, nullable: true, defaultValue: {} })
       req: IBaseRequest,
-    ): Promise<IListResponseDto<T>> {
+    ): Promise<PaginationDto> {
       return this.service.findAll(req);
     }
 
@@ -49,4 +51,6 @@ export const BaseResolver = <T, ID>(props: IBaseResolverProps<T>): any => {
       return this.service.delete(id);
     }
   }
+
+  return Resolver;
 };

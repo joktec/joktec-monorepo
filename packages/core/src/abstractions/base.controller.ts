@@ -11,12 +11,13 @@ import {
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { BaseService } from './base.service';
-import { IBaseRequest, IListResponseDto } from '../models';
+import { BaseListResponse, Constructor, IBaseRequest } from '../models';
 import { QueryInterceptor } from '../interceptors';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
 import { startCase } from 'lodash';
 import { JwtGuard, JwtPayload } from '../guards';
 import { BaseValidationPipe } from '../validation';
+import { ApiSchema } from '../swagger';
 
 export enum ControllerExclude {
   ALL,
@@ -30,8 +31,7 @@ export enum ControllerExclude {
 }
 
 export interface IBaseControllerProps<T> {
-  dto: new (...args: any) => T;
-  dtoList: new (...args: any) => any;
+  dto: Constructor<T>;
   dtoName?: string;
   apiTag?: string;
   useGuard?: boolean;
@@ -45,6 +45,9 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
   const apiTag = props.apiTag || toPlural(dtoName);
   const excludes = toArray<ControllerExclude>(props.excludes);
 
+  @ApiSchema({ name: `${nameSingular}Pagination` })
+  class PaginationDto extends BaseListResponse<T>(props.dto) {}
+
   @ApiTags(apiTag.toLowerCase())
   @ApiExcludeController(includes(excludes, ControllerExclude.ALL))
   abstract class Controller {
@@ -52,10 +55,10 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
 
     @Get('/')
     @ApiOperation({ summary: `List ${namePlural}` })
-    @ApiOkResponse({ type: props.dtoList })
+    @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
     @UseInterceptors(QueryInterceptor)
-    async findAll(@Query() req: IBaseRequest, @Req() res: Request): Promise<IListResponseDto<T>> {
+    async findAll(@Query() req: IBaseRequest, @Req() res: Request): Promise<PaginationDto> {
       return this.service.findAll(req, res['payload'] as JwtPayload);
     }
 

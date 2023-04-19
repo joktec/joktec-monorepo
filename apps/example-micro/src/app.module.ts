@@ -1,17 +1,8 @@
 import { CoreModule, Module } from '@joktec/core';
-import { MongoModule } from '@joktec/mongo';
 import { MysqlModule } from '@joktec/mysql';
-import { CategoryModule, ProductModule } from './modules';
+import { ProductModule } from './modules';
 
 @Module({
-  imports: [
-    // Libs
-    CoreModule,
-    MysqlModule,
-    MongoModule,
-    // Modules
-    ProductModule,
-    CategoryModule,
-  ],
+  imports: [CoreModule, MysqlModule, ProductModule],
 })
 export class AppModule {}

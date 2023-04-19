@@ -1,5 +1,5 @@
 {
-  "name": "@joktec/example-micro",
+  "name": "@joktec/micro",
   "description": "JokTec - Example Microservice",
   "version": "0.0.0",
   "author": "JokTec",
@@ -34,9 +34,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.40",
-    "@joktec/mongo": "0.0.49",
-    "@joktec/mysql": "0.0.41"
+    "@joktec/core": "0.0.41",
+    "@joktec/mysql": "0.0.42"
   },
   "lint-staged": {
     "*.ts": [

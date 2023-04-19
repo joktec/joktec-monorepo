@@ -1,3 +1,6 @@
+export type Constructor<T> = new (...args: any[]) => T;
+export type Wrapper<T = object> = { new (): T & any; prototype: T };
+
 export interface IResponseDto<T = any> {
   timestamp: Date;
   success: boolean;

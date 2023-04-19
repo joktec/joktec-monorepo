@@ -1,5 +1,6 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field } from '@nestjs/graphql';
 import { ApiProperty } from '@nestjs/swagger';
+import { Constructor } from './base.dto';
 
 export interface IListResponseDto<T> {
   items: T[];
@@ -8,7 +9,7 @@ export interface IListResponseDto<T> {
   isLastPage?: boolean;
 }
 
-export const BaseListResponse = <T>(dto: new (...args: any) => T): any => {
+export const BaseListResponse = <T>(dto: Constructor<T>): any => {
   class BaseListResponse implements IListResponseDto<T> {
     @Field(() => [dto], { defaultValue: [] })
     @ApiProperty({ type: [dto], required: true, default: [] })

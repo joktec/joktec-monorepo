@@ -1,4 +1,4 @@
-import { ApiProperty, BaseListResponse } from '@joktec/core';
+import { ApiProperty } from '@joktec/core';
 import { modelOptions, MongoSchema, prop } from '@joktec/mongo';
 
 @modelOptions({ schemaOptions: { collection: 'categories' } })
@@ -20,5 +20,3 @@ export class Category extends MongoSchema {
   @ApiProperty({ type: String, example: 'Lorem Ipsum' })
   description!: string;
 }
-
-export class CategoryListResponse extends BaseListResponse(Category) {}

@@ -1,4 +1,4 @@
-import { ApiProperty, BaseListResponse, generateUUID } from '@joktec/core';
+import { ApiProperty, generateUUID } from '@joktec/core';
 import { AllowNull, Column, DataType, Default, Length, MysqlModel, PrimaryKey, Table } from '@joktec/mysql';
 
 @Table({ tableName: 'products', timestamps: true, underscored: true, paranoid: true })
@@ -20,5 +20,3 @@ export class Product extends MysqlModel<Product> {
   @ApiProperty({ type: String, example: 'Lorem Ipsum' })
   description!: string;
 }
-
-export class ProductListResponse extends BaseListResponse(Product) {}

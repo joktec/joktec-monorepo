@@ -8,6 +8,7 @@ import { Client } from './client';
 import { InvalidClientConfigException } from './client.exception';
 import mergeDeep from 'merge-deep';
 import { ExceptionMessage } from '../exceptions';
+import { Constructor } from '../models';
 
 export abstract class AbstractClientService<IConfig extends ClientConfig, IClient = any>
   implements Client<IConfig, IClient>, OnModuleInit, OnModuleDestroy
@@ -18,7 +19,7 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
 
-  protected constructor(protected service: string, protected configClass: new (props: IConfig) => IConfig) {}
+  protected constructor(protected service: string, protected configClass: Constructor<IConfig>) {}
 
   async onModuleInit(): Promise<void> {
     this.logService.setContext(this.constructor.name);

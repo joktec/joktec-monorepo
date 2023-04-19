@@ -1,12 +1,9 @@
 import { BaseController, Controller } from '@joktec/core';
 import { ProductService } from './product.service';
-import { Product, ProductListResponse } from '../../models';
+import { Product } from '../../models';
 
 @Controller('products')
-export class ProductController extends BaseController<Product, string>({
-  dto: Product,
-  dtoList: ProductListResponse,
-}) {
+export class ProductController extends BaseController<Product, string>({ dto: Product }) {
   constructor(protected productService: ProductService) {
     super(productService);
   }
