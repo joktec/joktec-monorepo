@@ -1,4 +1,4 @@
-import { cloneInstance, ICondition, IPopulate } from '@joktec/core';
+import { cloneInstance, ICondition, IPopulate, IPopulateOption } from '@joktec/core';
 import { IMongoRequest } from './models';
 import { PopulateOptions, QueryOptions } from 'mongoose';
 
@@ -93,12 +93,15 @@ export const projection = (select?: string): { [key: string]: number } => {
   }, {});
 };
 
-export const convertPopulate = (populate: IPopulate[] = []): PopulateOptions[] => {
-  return populate.map<PopulateOptions>(p => {
-    const options: PopulateOptions = { path: p.path };
-    if (p.select) options.select = p.select;
-    if (p.model) options.model = p.model;
-    if (p.populate) options.populate = convertPopulate(p.populate);
-    return options;
+export const convertPopulate = (populate: IPopulate = {}): PopulateOptions[] => {
+  return Object.keys(populate).map<PopulateOptions>(path => {
+    const populateOptions: PopulateOptions = { path };
+    const options: '*' | IPopulateOption = populate[path];
+    if (options !== '*') {
+      if (options.select) populateOptions.select = options.select;
+      if (options.model) populateOptions.model = options.model;
+      if (options.populate) populateOptions.populate = convertPopulate(options.populate);
+    }
+    return populateOptions;
   });
 };

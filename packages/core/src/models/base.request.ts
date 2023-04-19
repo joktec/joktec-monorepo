@@ -19,10 +19,13 @@ export type ISort = { [key: string]: 'asc' | 'desc' };
 export type INear = { lat: number; lng: number; distance?: number };
 
 export interface IPopulate {
-  path: string;
+  [path: string]: '*' | IPopulateOption;
+}
+
+export interface IPopulateOption {
   select?: string;
   model?: string;
-  populate?: IPopulate[];
+  populate?: IPopulate;
 }
 
 export interface IBaseRequest {
@@ -35,5 +38,5 @@ export interface IBaseRequest {
   sort?: ISort;
   near?: INear;
   lean?: boolean;
-  populate?: IPopulate[];
+  populate?: IPopulate;
 }
