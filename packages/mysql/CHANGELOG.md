@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.42](https://github.com/joktec/joktec-monorepo/compare/@joktec/mysql@0.0.41...@joktec/mysql@0.0.42) (2023-04-19)
+
+**Note:** Version bump only for package @joktec/mysql
+
+
+
+
+
+
 ## [0.0.41](https://github.com/joktec/joktec-monorepo/compare/@joktec/mysql@0.0.40...@joktec/mysql@0.0.41) (2023-04-18)
 
 **Note:** Version bump only for package @joktec/mysql
