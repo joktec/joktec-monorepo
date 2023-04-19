@@ -1727,109 +1727,6 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
-"@joktec/core@0.0.39":
-  version "0.0.39"
-  resolved "https://registry.yarnpkg.com/@joktec/core/-/core-0.0.39.tgz#a62ed189c70b3bdcce19babb259e36ede1a85776"
-  integrity sha512-7KZ/k9Yc6+HT+WUK9ebGoYVJhaADO+8aC/3WGBadsa/C927dC11cHEFyz0zOJ34eZKTMAU+Dtkw7zaW+usxu7g==
-  dependencies:
-    "@bull-board/api" "^4.6.1"
-    "@bull-board/express" "^4.6.1"
-    "@grpc/proto-loader" "^0.7.3"
-    "@nestjs/common" "^9.0.0"
-    "@nestjs/config" "^2.2.0"
-    "@nestjs/core" "^9.0.0"
-    "@nestjs/cqrs" "^9.0.1"
-    "@nestjs/graphql" "^10.1.1"
-    "@nestjs/mapped-types" "^1.2.2"
-    "@nestjs/microservices" "^9.0.11"
-    "@nestjs/platform-express" "^9.0.0"
-    "@nestjs/serve-static" "^3.0.1"
-    "@nestjs/swagger" "^6.2.1"
-    "@nestjs/terminus" "^9.2.1"
-    "@nestjs/throttler" "^3.1.0"
-    "@willsoto/nestjs-prometheus" "^3.0.0"
-    async "^3.2.0"
-    async-retry "^1.3.3"
-    backoff "^2.5.0"
-    bcryptjs "^2.4.3"
-    bull "^4.10.1"
-    class-transformer "^0.5.1"
-    class-validator "^0.14.0"
-    csurf "^1.11.0"
-    dataloader "^2.1.0"
-    dot-object "^2.1.4"
-    express "^4.18.2"
-    express-useragent "^1.0.15"
-    graphql "^16.6.0"
-    i18n "^0.15.1"
-    js-yaml "3.14.0"
-    jsonwebtoken "^9.0.0"
-    lodash "^4.17.21"
-    merge-deep "^3.0.3"
-    moment "^2.29.4"
-    ms "^2.1.3"
-    multer "^1.4.5-lts.1"
-    nestjs-pino "^1.3.0"
-    opossum "^6.2.1"
-    pino-cloudwatch "^0.7.0"
-    pino-fluentd "^0.2.2"
-    pino-multi-stream "^5.1.1"
-    pino-pretty "^5.1.3"
-    pino-stackdriver "^3.0.0"
-    pino-std-serializers "^6.0.0"
-    pluralize "^8.0.0"
-    prom-client "^13.0.0"
-    qs "^6.7.0"
-    retry "^0.13.1"
-    rxjs "^7.2.0"
-    slug "^8.2.2"
-    swagger-ui-express "^4.6.2"
-    type-cacheable "^4.1.2"
-    url-parse "^1.5.10"
-    uuid "^9.0.0"
-
-"@joktec/http@^0.0.38":
-  version "0.0.38"
-  resolved "https://registry.yarnpkg.com/@joktec/http/-/http-0.0.38.tgz#8f18fc8026e6959e0d8af7984034a6c1b2e8fd35"
-  integrity sha512-1MCdJ1jwn6Ri7UqYSbevNSTzJuzxiJSxY0xOyeozQa5mWNljdR+Mng8lHykrRnqRa61yZqFvvDr2fA0JNgW+Ig==
-  dependencies:
-    "@joktec/core" "0.0.39"
-    axios "^1.3.5"
-    form-data "^4.0.0"
-    http-proxy-agent "^5.0.0"
-    http-status-codes "^2.2.0"
-    https-proxy-agent "^5.0.1"
-    lodash "^4.17.21"
-    merge-deep "^3.0.3"
-    qs "^6.11.0"
-    retry-axios "^2.3.0"
-    rxjs "^7.2.0"
-    valid-url "^1.0.9"
-
-"@joktec/mongo@0.0.48":
-  version "0.0.48"
-  resolved "https://registry.yarnpkg.com/@joktec/mongo/-/mongo-0.0.48.tgz#e9016d00adfc82dee03928bfd33c86517400d35e"
-  integrity sha512-39jdSiSkjyhk1+qXz6EoBY2Nt/BYIL905dvled0F07Ezp81ranISYrI9iaBst4ho8kszqaInGUM6f2JjmJ3TcA==
-  dependencies:
-    "@joktec/core" "0.0.39"
-    "@typegoose/typegoose" "^10.3.2"
-    lodash "^4.17.21"
-    moment "^2.29.4"
-    mongoose "^6.10.0"
-    mongoose-beautiful-unique-validation "^7.1.1"
-
-"@joktec/mysql@0.0.40":
-  version "0.0.40"
-  resolved "https://registry.yarnpkg.com/@joktec/mysql/-/mysql-0.0.40.tgz#c22d841dafa890cb61a1c5d256411cba3bc2ad6d"
-  integrity sha512-l3l7P/eeRmC8Qjs2mTEVkBmA/HQ1UfodV8/CqSOHVop//gYzdYp98TvSVYPDldjR9CUO/mv4EaStSH40kbn+kg==
-  dependencies:
-    "@joktec/core" "0.0.39"
-    lodash "^4.17.21"
-    mysql "2.18.1"
-    mysql2 "^3.1.2"
-    sequelize "^6.28.0"
-    sequelize-typescript "^2.1.5"
-
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -13312,7 +13209,7 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
-url-parse@^1.5.10, url-parse@~1.5.10:
+url-parse@~1.5.10:
   version "1.5.10"
   resolved "https://registry.yarnpkg.com/url-parse/-/url-parse-1.5.10.tgz#9d3c2f736c1d75dd3bd2be507dcc111f1e2ea9c1"
   integrity sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==
