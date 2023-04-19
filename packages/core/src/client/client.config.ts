@@ -1,4 +1,5 @@
-import { IsString, IsOptional, validateSync, ValidationError } from '../validation';
+import { IsBoolean, IsString, IsOptional, validateSync, ValidationError } from '../validation';
+import { toBool } from '../utils';
 
 export const DEFAULT_CON_ID = 'default';
 
@@ -9,11 +10,18 @@ export class ClientConfig {
 
   @IsString()
   @IsOptional()
-  context: string;
+  context?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  inherit?: boolean;
 
   constructor(props: ClientConfig) {
-    this.conId = props?.conId ?? DEFAULT_CON_ID;
-    this.context = props?.context;
+    Object.assign(this, {
+      conId: props?.conId ?? DEFAULT_CON_ID,
+      context: props?.context,
+      inherit: toBool(props.inherit, true),
+    });
   }
 
   validate(): string[] {

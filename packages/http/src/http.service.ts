@@ -1,4 +1,4 @@
-import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray } from '@joktec/core';
 import { cloneDeep } from 'lodash';
 import * as rax from 'retry-axios';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
@@ -44,13 +44,8 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
       port: proxy.port,
       auth: `${proxy.auth.username}:${proxy.auth.password}`,
     };
-
-    if (protocol === 'https') {
-      result.httpsAgent = new HttpsProxyAgent(proxyBody);
-      return result;
-    }
-
-    result.httpAgent = new HttpProxyAgent(proxyBody);
+    if (protocol === 'https') result.httpsAgent = new HttpsProxyAgent(proxyBody);
+    if (protocol === 'http') result.httpAgent = new HttpProxyAgent(proxyBody);
     return result;
   }
 
@@ -59,9 +54,7 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     const proxyConfig = this.buildProxy(config.url, config.proxy);
     const cf: AxiosRequestConfig = mergeDeep(cloneDeep(this.getConfig(conId)), config, proxyConfig);
     if (config.serializer) {
-      cf.paramsSerializer = {
-        encode: params => qs.stringify(params),
-      };
+      cf.paramsSerializer = { encode: params => qs.stringify(params) };
     }
     return this.getClient(conId).request<T>(cf);
   }
@@ -73,29 +66,17 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     conId: string = DEFAULT_CON_ID,
   ): Promise<HttpResponse<T>> {
     const formData = new FormData();
-    Object.keys(data).map(key => {
-      const value = data[key];
-      if (Array.isArray(value)) {
-        value.map(v => formData.append(key, v, 'file'));
-      } else {
-        formData.append(key, value);
-      }
-    });
+    Object.keys(data).map(key => toArray(data[key]).map(v => formData.append(key, v, 'file')));
 
     const proxyConfig = this.buildProxy(config.url, config.proxy);
     const cf: AxiosRequestConfig = mergeDeep(cloneDeep(this.getConfig(conId)), config, proxyConfig, {
       method: 'POST',
-      headers: {
-        ...config.headers,
-        'Content-Type': 'multipart/form-data',
-      },
+      headers: { ...config.headers, 'Content-Type': 'multipart/form-data' },
       data: formData,
     });
 
     if (config.serializer) {
-      cf.paramsSerializer = {
-        encode: params => qs.stringify(params),
-      };
+      cf.paramsSerializer = { encode: params => qs.stringify(params) };
     }
 
     return this.getClient(conId).request<T>(cf);

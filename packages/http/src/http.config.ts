@@ -8,6 +8,7 @@ import {
   IsNotEmpty,
   IsTypes,
   LogService,
+  IsArray,
 } from '@joktec/core';
 import { AxiosRequestConfig, Method, AxiosBasicCredentials, AxiosError } from 'axios';
 import { RetryConfig } from 'retry-axios';
@@ -20,6 +21,29 @@ const defaultRetryConfig = {
   httpMethodsToRetry: ['GET', 'POST'],
 };
 
+export enum ApiKeyType {
+  HEADER = 'header',
+  PARAM = 'param',
+}
+
+export class ApiKeyCredentials {
+  @IsEnum(ApiKeyType)
+  @IsNotEmpty()
+  type: ApiKeyType = ApiKeyType.HEADER;
+
+  @IsString()
+  @IsNotEmpty()
+  key!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  value!: string;
+
+  constructor(props: ApiKeyCredentials) {
+    Object.assign(this, props);
+  }
+}
+
 export class BasicCredentials implements AxiosBasicCredentials {
   @IsString()
   @IsNotEmpty()
@@ -30,8 +54,7 @@ export class BasicCredentials implements AxiosBasicCredentials {
   password: string;
 
   constructor(props: BasicCredentials) {
-    this.username = props.username;
-    this.password = props.password;
+    Object.assign(this, props);
   }
 }
 
@@ -42,7 +65,7 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
 
   @IsOptional()
   @IsEnum(HttpMethod)
-  method?: Method;
+  method?: HttpMethod;
 
   @IsOptional()
   @IsString()
@@ -58,7 +81,12 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
 
   @IsOptional()
   @IsTypes([BasicCredentials])
-  auth: AxiosBasicCredentials;
+  auth?: AxiosBasicCredentials;
+
+  @IsOptional()
+  @IsArray()
+  @IsTypes([ApiKeyCredentials], { each: true })
+  apiKeys?: ApiKeyCredentials[];
 
   @IsOptional()
   @IsInt()
@@ -76,10 +104,21 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
 
   constructor(props: HttpConfig) {
     super(props);
-    mergeDeep(this, props);
-    if (!props.raxConfig) this.raxConfig = defaultRetryConfig;
-    if (!props.headers) this.headers = { accept: 'application/json' };
-    if (!props.params) this.params = {};
+    mergeDeep(this, {
+      ...props,
+      method: props?.method || HttpMethod.GET,
+      raxConfig: props?.raxConfig || defaultRetryConfig,
+      headers: props?.headers || { accept: 'application/json' },
+      params: props?.params || {},
+    });
+
+    if (props?.apiKeys?.length) {
+      props.apiKeys.map(item => {
+        const apiKey = { [item.key]: item.value };
+        if (!item.type || item.type === ApiKeyType.HEADER) Object.assign(this.headers, apiKey);
+        if (item.type === ApiKeyType.PARAM) Object.assign(this.params, apiKey);
+      });
+    }
   }
 
   onRetryAttempt(log: LogService) {
