@@ -1,7 +1,7 @@
 {
   "name": "@joktec/kafka",
   "description": "JokTec - Kafka Service",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -36,7 +36,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.42",
+    "@joktec/core": "0.0.43",
     "kafkajs": "^1.14.0",
     "lodash": "^4.17.21"
   },
