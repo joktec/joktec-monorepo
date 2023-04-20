@@ -7,7 +7,6 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -58,7 +57,6 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
-    @ApiQuery({ name: 'filters', type: Object, explode: true, required: false, style: 'deepObject' })
     @UseInterceptors(QueryInterceptor)
     async findAll(@Query() req: IBaseRequest, @Req() res: Request): Promise<PaginationDto> {
       return this.service.findAll(req, res['payload'] as JwtPayload);

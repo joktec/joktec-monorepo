@@ -1,7 +1,7 @@
-import { ICondition, IDataType, IKeyword, IOperation } from '@joktec/core';
-import { FindOptions, Op } from 'sequelize';
+import { ICondition, IDataType, IOperation } from '@joktec/core';
+import { FindOptions, literal, Op } from 'sequelize';
 
-export const preHandleQuery = (condition: ICondition, keyword?: IKeyword): FindOptions => {
+export const preHandleQuery = (condition: ICondition, keyword?: string): FindOptions => {
   const where: Record<string | symbol, any> = {};
 
   for (const [key, value] of Object.entries(condition)) {
@@ -22,9 +22,8 @@ export const preHandleQuery = (condition: ICondition, keyword?: IKeyword): FindO
 
   // Add keyword search
   if (keyword) {
-    Object.entries(keyword).map(([key, value]) => {
-      where[key] = { [Op.substring]: value };
-    });
+    if (!where[Op.and]) where[Op.and] = [];
+    where[Op.and].push(literal(`MATCH(name) AGAINST('${keyword}' IN BOOLEAN MODE)`));
   }
 
   return { where };

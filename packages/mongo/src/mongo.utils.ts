@@ -35,12 +35,8 @@ export const preHandleCondition = (condition: any): ICondition => {
 export const preHandleQuery = (query: IMongoRequest, isSoftDelete: boolean = true): ICondition => {
   const { condition, keyword } = query;
   const overrideCondition: ICondition = preHandleCondition(condition);
-  if (keyword) {
-    Object.entries(keyword).map(([k, v]) => (overrideCondition[k] = { $regex: v, $options: 'i' }));
-  }
-  if (isSoftDelete) {
-    Object.assign<ICondition, ICondition>(overrideCondition, { deletedAt: { $eq: null } });
-  }
+  if (keyword) overrideCondition['$text'] = { $search: keyword };
+  if (isSoftDelete) overrideCondition['deletedAt'] = { $eq: null };
   return overrideCondition;
 };
 
@@ -88,7 +84,8 @@ export const preHandleUpdateBody = <T extends {} = any>(body: Partial<T>): Parti
 export const projection = (select?: string): { [key: string]: number } => {
   if (!select) return null;
   return select.split(',').reduce((projection, field) => {
-    projection[field.trim()] = 1;
+    if (field.trim().startsWith('-')) projection[field.trim()] = 0;
+    else projection[field.trim()] = 1;
     return projection;
   }, {});
 };
@@ -98,7 +95,7 @@ export const convertPopulate = (populate: IPopulate = {}): PopulateOptions[] => 
     const populateOptions: PopulateOptions = { path };
     const options: '*' | IPopulateOption = populate[path];
     if (options !== '*') {
-      if (options.select) populateOptions.select = options.select.split(',').join(' ');
+      if (options.select) populateOptions.select = projection(options.select);
       if (options.model) populateOptions.model = options.model;
       if (options.populate) populateOptions.populate = convertPopulate(options.populate);
     }

@@ -1,5 +1,5 @@
 import { Field } from '@nestjs/graphql';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Constructor } from './base.dto';
 
 export interface IListResponseDto<T> {
@@ -12,19 +12,19 @@ export interface IListResponseDto<T> {
 export const BaseListResponse = <T>(dto: Constructor<T>): any => {
   class BaseListResponse implements IListResponseDto<T> {
     @Field(() => [dto], { defaultValue: [] })
-    @ApiProperty({ type: [dto], required: true, default: [] })
+    @ApiProperty({ type: [dto], default: [] })
     items: T[];
 
-    @Field(() => Number, { defaultValue: 0 })
-    @ApiProperty({ type: Number, required: true, default: 0 })
+    @Field({ defaultValue: 0 })
+    @ApiProperty({ default: 0 })
     totalItems: number;
 
-    @Field(() => Number, { nullable: true, defaultValue: 0 })
-    @ApiProperty({ type: Number, required: false, nullable: true, default: 0 })
+    @Field({ nullable: true, defaultValue: 0 })
+    @ApiPropertyOptional()
     totalPage?: number;
 
-    @Field(() => Boolean, { nullable: true, defaultValue: false })
-    @ApiProperty({ type: Boolean, required: false, nullable: true, default: false })
+    @Field({ nullable: true, defaultValue: false })
+    @ApiPropertyOptional()
     isLastPage?: boolean;
   }
 

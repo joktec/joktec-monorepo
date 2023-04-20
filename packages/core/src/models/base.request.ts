@@ -14,7 +14,6 @@ export type ICondition = {
 };
 
 export type ILanguage = '*' | 'vi' | 'en';
-export type IKeyword = { [key: string]: string };
 export type ISort = { [key: string]: 'asc' | 'desc' };
 export type INear = { lat: number; lng: number; distance?: number };
 
@@ -30,13 +29,12 @@ export interface IPopulateOption {
 
 export interface IBaseRequest {
   select?: string;
-  keyword?: IKeyword;
+  keyword?: string;
   condition: ICondition;
   language?: ILanguage;
   page?: number;
   limit?: number;
   sort?: ISort;
   near?: INear;
-  lean?: boolean;
   populate?: IPopulate;
 }

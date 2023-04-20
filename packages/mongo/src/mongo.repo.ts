@@ -51,8 +51,8 @@ export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, I
   @MongoCatch
   async find(query: IMongoRequest): Promise<T[]> {
     const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
-    const lean = toBool(query.lean, true);
-    const qb = this.model.find(condition, projection(query.select), { lean });
+    const qb = this.model.find(condition);
+    if (query.select) qb.select(projection(query.select));
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
     if (query.sort) qb.sort(query.sort);
     if (query.populate) qb.populate(convertPopulate(query.populate));
@@ -73,8 +73,8 @@ export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, I
   @MongoCatch
   async findOne(query: IMongoRequest): Promise<T> {
     const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
-    const lean = toBool(query.lean, true);
-    const qb = this.model.findOne(condition, projection(query.select), { lean });
+    const qb = this.model.findOne(condition);
+    if (query.select) qb.select(projection(query.select));
     if (query.populate?.length) qb.populate(convertPopulate(query.populate));
     const doc = await qb.lean().exec();
     return this.transform(doc) as T;
