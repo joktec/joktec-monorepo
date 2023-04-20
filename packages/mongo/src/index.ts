@@ -7,6 +7,7 @@ export * from './mongo.repo';
 export * from './mongo.exception';
 export * from './decorators';
 export * from './models';
+export * from './plugins';
 export * from '@typegoose/typegoose';
 
 export {

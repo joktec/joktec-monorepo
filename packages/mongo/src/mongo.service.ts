@@ -1,8 +1,8 @@
-import { AbstractClientService, Injectable, DEFAULT_CON_ID, Retry } from '@joktec/core';
+import { AbstractClientService, Constructor, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import mongoose, { Connection as Mongoose } from 'mongoose';
 import { MongoConfig } from './mongo.config';
 import { MongoClient } from './mongo.client';
-import { AnyParamConstructor, ModelType } from '@typegoose/typegoose/lib/types';
+import { ModelType } from '@typegoose/typegoose/lib/types';
 import { getModelForClass, setGlobalOptions, Severity } from '@typegoose/typegoose';
 
 const RETRY_OPTS = 'mongo.retry';
@@ -68,7 +68,9 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     await client.close(true);
   }
 
-  public getModel<T>(schemaClass: AnyParamConstructor<T>, conId: string = DEFAULT_CON_ID): ModelType<T> {
-    return getModelForClass(schemaClass, { existingConnection: this.getClient(conId) });
+  public getModel<T>(schemaClass: Constructor<T>, conId: string = DEFAULT_CON_ID): ModelType<T> {
+    const model = getModelForClass(schemaClass, { existingConnection: this.getClient(conId) });
+    this.logService.trace('Schema `%s` registered', schemaClass.name);
+    return model;
   }
 }

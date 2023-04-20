@@ -1,10 +1,9 @@
 import { ApiHideProperty, ApiProperty, Exclude, Field, Type } from '@joktec/core';
-import { mongoose, plugin, prop } from '@typegoose/typegoose';
+import { mongoose, prop } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 
 export interface MongoSchema extends Base<string> {}
 
-@plugin(require('mongoose-beautiful-unique-validation'), { defaultMessage: '{PATH}_MUST_BE_UNIQUE' })
 export abstract class MongoSchema extends TimeStamps {
   @ApiProperty()
   @Field(() => String, { nullable: true })

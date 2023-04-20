@@ -1,7 +1,7 @@
-import { DEFAULT_CON_ID, ICondition, plainToInstance, toBool } from '@joktec/core';
+import { Constructor, DEFAULT_CON_ID, ICondition, OnModuleInit, plainToInstance, toBool } from '@joktec/core';
 import { IMongoRepository } from './mongo.client';
 import { MongoService } from './mongo.service';
-import { AnyParamConstructor, ModelType } from '@typegoose/typegoose/lib/types';
+import { ModelType } from '@typegoose/typegoose/lib/types';
 import { IMongoAggregation, IMongoRequest, MongoBulkRequest } from './models';
 import {
   convertPopulate,
@@ -16,15 +16,27 @@ import {
 import { isNil, pick } from 'lodash';
 import { MongoCatch } from './mongo.exception';
 
-export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, ID> {
+export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, ID>, OnModuleInit {
+  protected model: ModelType<T>;
+
   protected constructor(
     protected mongoService: MongoService,
-    protected schema: AnyParamConstructor<T>,
+    protected schema: Constructor<T>,
     protected conId: string = DEFAULT_CON_ID,
   ) {}
 
-  protected get model(): ModelType<T> {
-    return this.mongoService.getModel(this.schema, this.conId);
+  onModuleInit() {
+    setTimeout(() => this.register(), 500);
+  }
+
+  protected async register() {
+    const client = this.mongoService.getClient(this.conId);
+    if (!client) setTimeout(() => this.register.bind(this), 200);
+
+    const modelNames: string[] = client.modelNames() || [];
+    if (this.model && modelNames.includes(this.schema.name)) return;
+
+    this.model = this.mongoService.getModel(this.schema, this.conId);
   }
 
   protected get isSoftDelete(): boolean {
@@ -43,7 +55,7 @@ export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, I
     const qb = this.model.find(condition, projection(query.select), { lean });
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
     if (query.sort) qb.sort(query.sort);
-    if (query.populate?.length) qb.populate(convertPopulate(query.populate));
+    if (query.populate) qb.populate(convertPopulate(query.populate));
 
     const docs: any[] = await qb.lean().exec();
     return this.transform(docs) as T[];
