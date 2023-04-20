@@ -31,7 +31,11 @@
   "targetDefaults": {
     "build": {
       "dependsOn": [
-        "^build"
+        "^build",
+        "prebuild"
+      ],
+      "outputs": [
+        "{projectRoot}/dist"
       ]
     },
     "format": {
@@ -41,7 +45,8 @@
     },
     "lint": {
       "dependsOn": [
-        "^lint"
+        "^lint",
+        "format"
       ]
     }
   }
