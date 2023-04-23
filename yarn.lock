@@ -1727,6 +1727,18 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
+"@joktec/mongo@0.0.53":
+  version "0.0.53"
+  resolved "https://registry.yarnpkg.com/@joktec/mongo/-/mongo-0.0.53.tgz#f3ed737b29c0c4169b397a9d70458c25197ce8e1"
+  integrity sha512-NEWB9tYjrR3kLHgNNczxkp6e75H/r7dlCD+dnHXK8TtlbLvx4ghnDB9sYDGYRmrj3f5NQSVMnhNNCRI4KsxWRA==
+  dependencies:
+    "@joktec/core" "0.0.44"
+    "@typegoose/typegoose" "^10.3.2"
+    lodash "^4.17.21"
+    moment "^2.29.4"
+    mongoose "^6.10.0"
+    mongoose-beautiful-unique-validation "^7.1.1"
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
