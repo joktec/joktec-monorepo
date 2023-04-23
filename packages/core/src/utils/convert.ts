@@ -59,7 +59,7 @@ export const toSlugify = (...values: string[]): string => {
 
 export const joinUrl = (host: string, parts?: { paths?: string[]; params?: object }): string => {
   const { paths, params } = parts;
-  return [host, ...paths, objectToQueryString(params)]
+  let result = [host, ...paths, objectToQueryString(params)]
     .join('/')
     .replace(/[\/]+/g, '/')
     .replace(/^(.+):\//, '$1://')
@@ -67,6 +67,10 @@ export const joinUrl = (host: string, parts?: { paths?: string[]; params?: objec
     .replace(/\/(\?|&|#[^!])/g, '$1')
     .replace(/\?/g, '&')
     .replace('&', '?');
+  if (result.slice(-1) === '/') {
+    result = result.slice(0, -1);
+  }
+  return result;
 };
 
 export const objectToQueryString = (queryParameters: { [key: string]: any }) => {
