@@ -84,6 +84,7 @@ export class StorageService extends AbstractClientService<StorageConfig, AWS.S3>
       key: params.Key,
       link: config.buildLink(params.Key, params.Bucket),
       eTag: data.ETag,
+      contentType: params.ContentType,
     };
   }
 
@@ -98,8 +99,8 @@ export class StorageService extends AbstractClientService<StorageConfig, AWS.S3>
     return {
       key: params.Key,
       file: data.Body as Buffer,
-      contentType: data.ContentType,
       eTag: data.ETag,
+      contentType: data.ContentType,
     };
   }
 
@@ -113,6 +114,10 @@ export class StorageService extends AbstractClientService<StorageConfig, AWS.S3>
       ACL: req.acl || config.acl,
       ContentType: req.contentType,
     };
+
+    if (!req.contentType || req.contentType.endsWith('*')) {
+      params.ContentType = mime.lookup(req.key) || DEFAULT_CONTENT_TYPE;
+    }
 
     const operation: StorageOperation = req.operation || StorageOperation.GET_OBJECT;
     const url: string = this.getClient(conId).getSignedUrl(operation, params);

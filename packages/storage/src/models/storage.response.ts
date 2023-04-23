@@ -4,6 +4,7 @@ export interface StorageUploadResponse {
   key: string;
   link: string;
   eTag?: string;
+  contentType?: string;
 }
 
 export interface StorageDownloadResponse {
