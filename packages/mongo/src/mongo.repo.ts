@@ -26,16 +26,6 @@ export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, I
   ) {}
 
   onModuleInit() {
-    setTimeout(() => this.register(), 500);
-  }
-
-  protected async register() {
-    const client = this.mongoService.getClient(this.conId);
-    if (!client) setTimeout(() => this.register.bind(this), 200);
-
-    const modelNames: string[] = client.modelNames() || [];
-    if (this.model && modelNames.includes(this.schema.name)) return;
-
     this.model = this.mongoService.getModel(this.schema, this.conId);
   }
 

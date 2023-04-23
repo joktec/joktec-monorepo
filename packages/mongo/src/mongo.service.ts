@@ -36,22 +36,23 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
       pass: config.password,
       directConnection: config.directConnection,
       connectTimeoutMS: config.connectTimeout,
+      autoCreate: config.autoCreate,
     };
 
     this.logService.info('Start connecting to mongo database %s', uri);
-    const connection: Mongoose = mongoose.createConnection(uri, connectOptions);
-    connection.set('strictQuery', config.strictQuery);
-    connection.set('maxTimeMS', config.maxTimeMS);
-    connection.on('connected', () => this.logService.info('Connected to mongo database successfully'));
-    connection.on('error', async err => {
+    const client = await mongoose.connect(uri, connectOptions);
+    mongoose.set('strictQuery', config.strictQuery);
+    mongoose.set('maxTimeMS', config.maxTimeMS);
+    this.logService.info('Connected to mongo database successfully');
+    client.connection.on('error', async err => {
       this.logService.error(err, 'Error when connecting to MongoDB. Reconnecting...');
       await this.clientInit(config, false);
     });
-    connection.on('disconnected', async () => {
+    client.connection.on('disconnected', async () => {
       this.logService.error('MongoDB connection disconnected. Reconnecting...');
       await this.clientInit(config, false);
     });
-    return connection;
+    return client.connection;
   }
 
   private buildUri(config: MongoConfig): string {
