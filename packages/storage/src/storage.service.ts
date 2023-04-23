@@ -1,5 +1,5 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
-import { StorageConfig } from './storage.config';
+import { DEFAULT_CONTENT_TYPE, StorageConfig } from './storage.config';
 import { StorageClient } from './storage.client';
 import {
   GetObjectRequest,
@@ -16,6 +16,7 @@ import { StorageMetric, StorageMetricType } from './storage.metric';
 import AWS from 'aws-sdk';
 import path from 'path';
 import { parseKey } from './storage.utils';
+import mime from 'mime-types';
 
 const RETRY_OPTS = 'storage.retry';
 
@@ -72,8 +73,12 @@ export class StorageService extends AbstractClientService<StorageConfig, AWS.S3>
       ACL: req.acl || config.acl,
       Bucket: req.bucket || config.bucket,
       Key: path.posix.join(req.prefix || '', req.filename),
-      ContentType: req.contentType,
     };
+
+    if (!req.contentType || req.contentType.endsWith('*')) {
+      params.ContentType = mime.lookup(req.filename) || DEFAULT_CONTENT_TYPE;
+    }
+
     const data = await this.getClient(conId).putObject(params).promise();
     return {
       key: params.Key,
