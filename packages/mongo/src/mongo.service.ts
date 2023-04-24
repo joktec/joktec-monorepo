@@ -39,10 +39,15 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
       autoCreate: config.autoCreate,
     };
 
+    mongoose.set('strictQuery', config.strictQuery);
+    mongoose.set('debug', (collectionName: string, methodName: string, ...methodArgs: any[]) => {
+      const args = methodArgs.map(arg => JSON.stringify(arg)).join(', ');
+      this.logService.debug(`Mongoose: %s.%s(%s)`, collectionName, methodName, args);
+    });
+
     this.logService.info('Start connecting to mongo database %s', uri);
     const client = await mongoose.connect(uri, connectOptions);
-    mongoose.set('strictQuery', config.strictQuery);
-    mongoose.set('maxTimeMS', config.maxTimeMS);
+
     this.logService.info('Connected to mongo database successfully');
     client.connection.on('error', async err => {
       this.logService.error(err, 'Error when connecting to MongoDB. Reconnecting...');

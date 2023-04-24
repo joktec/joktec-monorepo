@@ -1,4 +1,4 @@
-import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@joktec/core';
+import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/core';
 
 export class MongoConfig extends ClientConfig {
   @IsString()
@@ -7,11 +7,11 @@ export class MongoConfig extends ClientConfig {
 
   @IsString()
   @IsNotEmpty()
-  host?: string;
+  host?: string = 'localhost';
 
   @IsInt()
   @IsNotEmpty()
-  port?: string;
+  port?: number = 27017;
 
   @IsString()
   @IsNotEmpty()
@@ -23,50 +23,34 @@ export class MongoConfig extends ClientConfig {
 
   @IsOptional()
   @IsString()
-  database?: string;
+  database?: string = 'admin';
 
   @IsOptional()
   @IsBoolean()
-  replica?: boolean;
+  replica?: boolean = false;
 
   @IsInt()
   @IsOptional()
-  retryTimeout: number;
+  retryTimeout: number = 20000;
 
   @IsInt()
   @IsOptional()
-  connectTimeout: number;
+  connectTimeout: number = 10000;
 
   @IsBoolean()
   @IsOptional()
-  strictQuery?: boolean;
-
-  @IsInt()
-  @IsOptional()
-  maxTimeMS?: number;
+  strictQuery?: boolean = true;
 
   @IsBoolean()
   @IsOptional()
-  directConnection?: boolean;
+  directConnection?: boolean = false;
 
   @IsBoolean()
   @IsOptional()
-  autoCreate?: boolean;
+  autoCreate?: boolean = true;
 
   constructor(props: MongoConfig) {
     super(props);
-    Object.assign(this, {
-      ...props,
-      database: props?.database || 'admin',
-      host: props?.host || 'localhost',
-      port: toInt(props?.port, 27017),
-      retryTimeout: toInt(props?.retryTimeout, 20000),
-      connectTimeout: toInt(props?.connectTimeout, 10000),
-      maxTimeMS: toInt(props?.maxTimeMS, 10000),
-      strictQuery: toBool(props?.strictQuery, true),
-      directConnection: toBool(props?.directConnection, false),
-      replica: toBool(props?.replica, false),
-      autoCreate: toBool(props?.autoCreate, true),
-    });
+    Object.assign(this, props);
   }
 }

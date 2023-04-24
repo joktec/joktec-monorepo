@@ -54,6 +54,8 @@ export {
   ExecutionContext,
   NestInterceptor,
   ModuleMetadata,
+  INestApplication,
+  INestMicroservice,
 } from '@nestjs/common';
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
 export { Express, Request, Response, NextFunction } from 'express';

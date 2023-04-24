@@ -1,4 +1,4 @@
-import { UseInterceptors, Controller } from '@nestjs/common';
+import { Controller, UseInterceptors } from '@nestjs/common';
 import { GrpcMethod as CMicroMethod } from '@nestjs/microservices';
 import { MicroPromInterceptor } from './micro-prom.interceptor';
 

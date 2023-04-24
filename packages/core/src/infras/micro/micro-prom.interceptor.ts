@@ -1,8 +1,8 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Counter, Gauge } from 'prom-client';
-import { InjectMetric, makeGaugeProvider, makeCounterProvider } from '@willsoto/nestjs-prometheus';
+import { InjectMetric, makeCounterProvider, makeGaugeProvider } from '@willsoto/nestjs-prometheus';
 
 export const MICRO_LATENCY_METRIC = 'micro_call_latency';
 const microLatency = makeGaugeProvider({

@@ -1,8 +1,8 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Counter, Histogram } from 'prom-client';
-import { InjectMetric, makeHistogramProvider, makeCounterProvider } from '@willsoto/nestjs-prometheus';
+import { InjectMetric, makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
 
 const GATEWAY_DURATION_SECONDS_METRIC = 'gateway_duration_seconds';
 const GATEWAY_TOTAL_METRIC = 'gateway_total';

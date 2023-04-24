@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param } from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { MicroServiceNotFoundException } from './exceptions/micro-service-not-found.exception';

@@ -1,4 +1,4 @@
-import { isArray, isBoolean, isNaN, isNil, isPlainObject, isString } from 'lodash';
+import { isArray, isBoolean, isNaN, isNil, isPlainObject } from 'lodash';
 import pluralize from 'pluralize';
 import slug from 'slug';
 

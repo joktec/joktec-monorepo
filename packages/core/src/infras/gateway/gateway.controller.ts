@@ -1,4 +1,4 @@
-import { UseInterceptors, Controller } from '@nestjs/common';
+import { Controller, UseInterceptors } from '@nestjs/common';
 import { GatewayPromInterceptor } from './gateway-prom.interceptor';
 
 export const GatewayController = (prefix: string, opts?: { metric: boolean }) => {

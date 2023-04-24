@@ -1,12 +1,12 @@
 import {
+  isArray,
+  isBoolean,
+  isInt,
+  isString,
   registerDecorator,
+  validateSync,
   ValidationArguments,
   ValidationOptions,
-  validateSync,
-  isString,
-  isArray,
-  isInt,
-  isBoolean,
 } from 'class-validator';
 import { Constructor } from '../models';
 

@@ -2,7 +2,7 @@ import { Args, Mutation, ObjectType, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
 import { toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';
-import { BaseListResponse, Constructor, IBaseRequest, IListResponseDto } from '../models';
+import { BaseListResponse, Constructor, IBaseRequest } from '../models';
 
 export interface IBaseResolverProps<T> {
   dto: Constructor<T>;

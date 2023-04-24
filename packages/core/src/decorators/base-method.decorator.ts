@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { ConfigService } from '../config';
 import { LogService } from '../log';
-import { camelCase, union, fromPairs, map } from 'lodash';
+import { camelCase, fromPairs, map, union } from 'lodash';
 import { Constructor } from '../models';
 
 export type ServicesInject = {

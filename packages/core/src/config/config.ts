@@ -1,5 +1,5 @@
-import { pick, snakeCase, set, get } from 'lodash';
-import { readFileSync, existsSync } from 'fs';
+import { get, pick, set, snakeCase } from 'lodash';
+import { existsSync, readFileSync } from 'fs';
 import { safeLoad } from 'js-yaml';
 import { flattenKeys } from '../utils';
 

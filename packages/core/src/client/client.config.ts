@@ -1,4 +1,4 @@
-import { IsBoolean, IsString, IsOptional, validateSync, ValidationError } from '../validation';
+import { IsBoolean, IsOptional, IsString, validateSync, ValidationError } from '../validation';
 import { toBool } from '../utils';
 
 export const DEFAULT_CON_ID = 'default';
