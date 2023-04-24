@@ -65,7 +65,7 @@ export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, I
     const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
     const qb = this.model.findOne(condition);
     if (query.select) qb.select(projection(query.select));
-    if (query.populate?.length) qb.populate(convertPopulate(query.populate));
+    if (query.populate) qb.populate(convertPopulate(query.populate));
     const doc = await qb.lean().exec();
     return this.transform(doc) as T;
   }

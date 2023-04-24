@@ -4,6 +4,7 @@
     "experimentalDecorators": true,
     "outDir": "./dist"
   },
+  "types": ["node", "jest"],
   "include": [
     "src/**/*"
   ],
