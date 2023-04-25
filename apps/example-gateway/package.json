@@ -44,21 +44,5 @@
       "eslint --fix"
     ]
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "testEnvironment": "node"
-  },
   "gitHead": "b74397663527dd2bd67714cddaefe03c1b9112d2"
 }

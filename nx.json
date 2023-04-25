@@ -22,7 +22,8 @@
         "cacheableOperations": [
           "build",
           "format",
-          "lint"
+          "lint",
+          "test"
         ],
         "accessToken": "OTAwNDhiZjYtYTBmMi00ZWEzLTgzY2ItYmE0YWExOWJiZWRhfHJlYWQtd3JpdGU="
       }
@@ -36,6 +37,12 @@
       ],
       "outputs": [
         "{projectRoot}/dist"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "^test",
+        "build"
       ]
     },
     "format": {
