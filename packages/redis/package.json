@@ -1,7 +1,7 @@
 {
   "name": "@joktec/redis",
   "description": "JokTec - Redis Service",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -37,7 +37,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.44",
+    "@joktec/core": "0.0.45",
     "dot-object": "^2.1.4",
     "ioredis": "^5.2.3",
     "lodash": "^4.17.21",

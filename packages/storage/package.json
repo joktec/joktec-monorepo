@@ -1,7 +1,7 @@
 {
   "name": "@joktec/storage",
   "description": "JokTec - Storage Service",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -37,7 +37,7 @@
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u"
   },
   "dependencies": {
-    "@joktec/core": "0.0.44",
+    "@joktec/core": "0.0.45",
     "aws-sdk": "^2.1267.0",
     "image-downloader": "^4.3.0",
     "lodash": "^4.17.21",
