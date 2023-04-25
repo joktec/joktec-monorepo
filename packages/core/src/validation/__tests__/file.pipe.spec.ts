@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { isAllowedMimeType } from '../file.pipe';
+import { isAllowedMimeType, FileFilter } from '../file.pipe';
 
 describe('isAllowedMimeType function', () => {
   it('should return true for empty allowedMimeTypes array', () => {
