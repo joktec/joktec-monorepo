@@ -38,7 +38,7 @@ export interface IBaseControllerProps<T> {
   excludes?: ControllerExclude[];
 }
 
-export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
+export const BaseController = <T extends object, ID>(props: IBaseControllerProps<T>): any => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
@@ -58,7 +58,7 @@ export const BaseController = <T, ID>(props: IBaseControllerProps<T>): any => {
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
     @UseInterceptors(QueryInterceptor)
-    async findAll(@Query() req: IBaseRequest, @Req() res: Request): Promise<PaginationDto> {
+    async findAll(@Query() req: IBaseRequest<T>, @Req() res: Request): Promise<PaginationDto> {
       return this.service.findAll(req, res['payload'] as JwtPayload);
     }
 

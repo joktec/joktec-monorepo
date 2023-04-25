@@ -9,7 +9,7 @@ export interface IBaseResolverProps<T> {
   dtoName?: string;
 }
 
-export const BaseResolver = <T, ID>(props: IBaseResolverProps<T>): any => {
+export const BaseResolver = <T extends object, ID>(props: IBaseResolverProps<T>): any => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
@@ -23,7 +23,7 @@ export const BaseResolver = <T, ID>(props: IBaseResolverProps<T>): any => {
     @Query(() => PaginationDto, { name: `list${namePlural}` })
     async findAll(
       @Args('query', { type: () => PaginationDto, nullable: true, defaultValue: {} })
-      req: IBaseRequest,
+      req: IBaseRequest<T>,
     ): Promise<PaginationDto> {
       return this.service.findAll(req);
     }

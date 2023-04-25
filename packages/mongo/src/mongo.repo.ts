@@ -2,7 +2,7 @@ import { Constructor, DEFAULT_CON_ID, ICondition, OnModuleInit, plainToInstance,
 import { IMongoRepository } from './mongo.client';
 import { MongoService } from './mongo.service';
 import { ModelType } from '@typegoose/typegoose/lib/types';
-import { IMongoAggregation, IMongoRequest, MongoBulkRequest } from './models';
+import { IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema } from './models';
 import {
   convertPopulate,
   DELETE_OPTIONS,
@@ -16,7 +16,7 @@ import {
 import { isNil, pick } from 'lodash';
 import { MongoCatch } from './mongo.exception';
 
-export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, ID>, OnModuleInit {
+export abstract class MongoRepo<T extends MongoSchema, ID = string> implements IMongoRepository<T, ID>, OnModuleInit {
   protected model: ModelType<T>;
 
   protected constructor(
@@ -39,8 +39,8 @@ export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, I
   }
 
   @MongoCatch
-  async find(query: IMongoRequest): Promise<T[]> {
-    const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
+  async find(query: IMongoRequest<T>): Promise<T[]> {
+    const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
     const qb = this.model.find(condition);
     if (query.select) qb.select(projection(query.select));
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
@@ -52,8 +52,8 @@ export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, I
   }
 
   @MongoCatch
-  async count(query: IMongoRequest): Promise<number> {
-    const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
+  async count(query: IMongoRequest<T>): Promise<number> {
+    const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
     if (condition.hasOwnProperty('location')) {
       return this.model.estimatedDocumentCount(condition);
     }
@@ -61,8 +61,8 @@ export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, I
   }
 
   @MongoCatch
-  async findOne(query: IMongoRequest): Promise<T> {
-    const condition: ICondition = preHandleQuery(query, this.isSoftDelete);
+  async findOne(query: IMongoRequest<T>): Promise<T> {
+    const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
     const qb = this.model.findOne(condition);
     if (query.select) qb.select(projection(query.select));
     if (query.populate) qb.populate(convertPopulate(query.populate));
@@ -79,25 +79,25 @@ export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, I
   @MongoCatch
   async create(body: Partial<T>): Promise<T> {
     const transformBody: T = this.transform(body) as T;
-    const processBody: Partial<T> = preHandleBody(transformBody);
+    const processBody: Partial<T> = preHandleBody<T>(transformBody);
     const doc = await this.model.create(processBody);
     return this.findOne({ condition: { _id: doc._id } });
   }
 
   @MongoCatch
-  async update(condition: ICondition, body: Partial<T>): Promise<T> {
+  async update(condition: ICondition<T>, body: Partial<T>): Promise<T> {
     const transformBody: T = this.transform(body) as T;
-    const processBody: Partial<T> = preHandleUpdateBody(transformBody);
-    const overrideCondition: ICondition = preHandleQuery({ condition }, this.isSoftDelete);
+    const processBody: Partial<T> = preHandleUpdateBody<T>(transformBody);
+    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
     const qb = this.model.findOneAndUpdate(overrideCondition, processBody, UPDATE_OPTIONS);
     const doc = await qb.lean().exec();
     return this.transform(doc) as T;
   }
 
   @MongoCatch
-  async delete(condition: ICondition, opts?: { force?: boolean; userId?: ID }): Promise<T> {
+  async delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T> {
     const force: boolean = toBool(opts?.force, false);
-    const overrideCondition: ICondition = preHandleQuery({ condition }, this.isSoftDelete);
+    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
     if (!force && this.isSoftDelete) {
       const bodyDeleted = { deletedAt: new Date(), deletedBy: opts?.userId ?? null };
       const doc = await this.model.findOneAndUpdate(overrideCondition, bodyDeleted, UPDATE_OPTIONS).lean().exec();
@@ -108,8 +108,8 @@ export abstract class MongoRepo<T, ID = string> implements IMongoRepository<T, I
   }
 
   @MongoCatch
-  async upsert(condition: ICondition, body: T): Promise<T> {
-    const overrideCondition: ICondition = preHandleQuery({ condition }, this.isSoftDelete);
+  async upsert(condition: ICondition<T>, body: T): Promise<T> {
+    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
     const res = await this.model.updateOne(overrideCondition, body, UPSERT_OPTIONS);
     const doc = await this.model.findById(res.upsertedId).lean().exec();
     return this.transform(doc) as T;

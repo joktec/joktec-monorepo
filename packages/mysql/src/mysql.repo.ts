@@ -20,8 +20,8 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async find(query: IMysqlRequest): Promise<T[]> {
-    const options: FindOptions = preHandleQuery(query.condition, query.keyword);
+  async find(query: IMysqlRequest<T>): Promise<T[]> {
+    const options: FindOptions<T> = preHandleQuery<T>(query.condition, query.keyword);
     if (query.select) options.attributes = query.select.split(',');
     if (query.sort) options.order = Object.entries(query.sort);
     if (query.limit && query.page) {
@@ -32,14 +32,14 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async count(query: IMysqlRequest): Promise<number> {
-    const options: FindOptions = preHandleQuery(query.condition, query.keyword);
+  async count(query: IMysqlRequest<T>): Promise<number> {
+    const options: FindOptions = preHandleQuery<T>(query.condition, query.keyword);
     return this.model.count(options);
   }
 
   @MysqlCatch
-  async findOne(query: IMysqlRequest): Promise<T> {
-    const options: FindOptions = preHandleQuery(query.condition, query.keyword);
+  async findOne(query: IMysqlRequest<T>): Promise<T> {
+    const options: FindOptions = preHandleQuery<T>(query.condition, query.keyword);
     if (query.select) options.attributes = query.select.split(',');
     return this.model.findOne(options);
   }
@@ -50,8 +50,8 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async update(condition: ICondition, body: Partial<T>): Promise<T> {
-    const options: FindOptions = preHandleQuery(condition);
+  async update(condition: ICondition<T>, body: Partial<T>): Promise<T> {
+    const options: FindOptions = preHandleQuery<T>(condition);
     const model: T = await this.model.findOne(options);
     if (!model) return null;
     const fields: any[] = Object.keys(body);
@@ -59,18 +59,18 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async delete(condition: ICondition, opts?: { force?: boolean; userId?: ID }): Promise<T> {
+  async delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T> {
     const existModel = await this.findOne({ condition });
     if (!existModel) return null;
 
-    const options: DestroyOptions = preHandleQuery(condition);
+    const options: DestroyOptions<T> = preHandleQuery<T>(condition);
     options.force = toBool(opts?.force, false);
     await this.model.destroy(options);
     return existModel;
   }
 
   @MysqlCatch
-  async upsert(condition: ICondition, body: Partial<T>): Promise<T> {
+  async upsert(condition: ICondition<T>, body: Partial<T>): Promise<T> {
     const fields: any[] = Object.keys(body);
     const pk: any = this.model.primaryKeyAttribute;
     const [row, result] = await this.model.upsert(body as any, { returning: true, fields, conflictFields: [pk] });

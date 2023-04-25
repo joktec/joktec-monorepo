@@ -1,17 +1,17 @@
 import { IBaseRequest, ICondition } from '../models';
 
-export interface BaseReadRepository<T, ID> {
-  find(query: IBaseRequest): Promise<T[]>;
+export interface BaseReadRepository<T extends object, ID> {
+  find(query: IBaseRequest<T>): Promise<T[]>;
 
-  count(query: IBaseRequest): Promise<number>;
+  count(query: IBaseRequest<T>): Promise<number>;
 
-  findOne(query: IBaseRequest): Promise<T>;
+  findOne(query: IBaseRequest<T>): Promise<T>;
 }
 
-export interface BaseRepository<T, ID> extends BaseReadRepository<T, ID> {
+export interface BaseRepository<T extends object, ID> extends BaseReadRepository<T, ID> {
   create(body: Partial<T>): Promise<T>;
 
-  update(condition: ICondition, body: Partial<T>): Promise<T>;
+  update(condition: ICondition<T>, body: Partial<T>): Promise<T>;
 
-  delete(condition: ICondition, opts?: { force?: boolean; userId?: any }): Promise<T>;
+  delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: any }): Promise<T>;
 }

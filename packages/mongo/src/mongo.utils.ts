@@ -1,5 +1,5 @@
-import { cloneInstance, ICondition, IPopulate, IPopulateOption } from '@joktec/core';
-import { IMongoRequest } from './models';
+import { ICondition, IPopulate, IPopulateOption } from '@joktec/core';
+import { IMongoRequest, MongoSchema } from './models';
 import { PopulateOptions, QueryOptions } from 'mongoose';
 
 export const UPDATE_OPTIONS: QueryOptions = {
@@ -17,7 +17,7 @@ export const UPSERT_OPTIONS: QueryOptions = {
   runValidators: true,
 };
 
-export const preHandleCondition = (condition: any): ICondition => {
+export const preHandleCondition = <T extends MongoSchema>(condition: any): ICondition<T> => {
   if (condition && typeof condition === 'object') {
     const keys = Object.keys(condition);
     for (const key of keys) {
@@ -32,34 +32,37 @@ export const preHandleCondition = (condition: any): ICondition => {
   return condition;
 };
 
-export const preHandleQuery = (query: IMongoRequest, isSoftDelete: boolean = true): ICondition => {
+export const preHandleQuery = <T extends MongoSchema>(
+  query: IMongoRequest<T>,
+  isSoftDelete: boolean = true,
+): ICondition<T> => {
   const { condition, keyword } = query;
-  const overrideCondition: ICondition = preHandleCondition(condition);
+  const overrideCondition: ICondition<T> = preHandleCondition(condition);
   if (keyword) overrideCondition['$text'] = { $search: keyword };
   if (isSoftDelete) overrideCondition['deletedAt'] = { $eq: null };
   return overrideCondition;
 };
 
-export const preHandleBody = <T extends {} = any>(body: Partial<T>): Partial<T> => {
-  const processBody: any = cloneInstance(body);
+export const preHandleBody = <T extends MongoSchema>(body: Partial<T>): Partial<T> => {
+  const processBody = { ...body };
   delete processBody._id;
   delete processBody.createdAt;
   delete processBody.updatedAt;
   delete processBody.deletedAt;
 
-  if (processBody.lng && processBody.lat) {
-    processBody.location = {
+  if (processBody['lng'] && processBody['lat']) {
+    processBody['location'] = {
       type: 'Point',
-      coordinates: [parseFloat(processBody.lng ?? 0), parseFloat(processBody.lat ?? 0)],
+      coordinates: [parseFloat(processBody['lng'] ?? 0), parseFloat(processBody['lat'] ?? 0)],
     };
-    delete processBody.lng;
-    delete processBody.lat;
+    delete processBody['lng'];
+    delete processBody['lat'];
   }
 
   return processBody;
 };
 
-export const preHandleUpdateBody = <T extends {} = any>(body: Partial<T>): Partial<T> => {
+export const preHandleUpdateBody = <T extends MongoSchema>(body: Partial<T>): Partial<T> => {
   const plain = preHandleBody(body);
   const outputObj = {};
   for (const [key, value] of Object.entries(plain)) {
@@ -81,8 +84,7 @@ export const preHandleUpdateBody = <T extends {} = any>(body: Partial<T>): Parti
   return outputObj;
 };
 
-export const projection = (select?: string): { [key: string]: number } => {
-  if (!select) return null;
+export const projection = (select: string): { [key: string]: number } => {
   return select.split(',').reduce((projection, field) => {
     if (field.trim().startsWith('-')) projection[field.trim()] = 0;
     else projection[field.trim()] = 1;
@@ -90,7 +92,7 @@ export const projection = (select?: string): { [key: string]: number } => {
   }, {});
 };
 
-export const convertPopulate = (populate: IPopulate = {}): PopulateOptions[] => {
+export const convertPopulate = <T extends MongoSchema>(populate: IPopulate<T> = {}): PopulateOptions[] => {
   return Object.keys(populate).map<PopulateOptions>(path => {
     const populateOptions: PopulateOptions = { path };
     const options: '*' | IPopulateOption = populate[path];

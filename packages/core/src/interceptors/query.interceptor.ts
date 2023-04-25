@@ -14,7 +14,7 @@ export class QueryInterceptor implements NestInterceptor {
       sort: req.query?.sort || { createdAt: 'desc' },
       language: req.headers['content-language'] || req.query?.language || '*',
       ...req.query,
-    } as IBaseRequest;
+    } as IBaseRequest<any>;
     return next.handle();
   }
 }

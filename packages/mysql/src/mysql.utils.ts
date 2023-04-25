@@ -1,14 +1,15 @@
 import { ICondition, IDataType, IOperation } from '@joktec/core';
 import { FindOptions, literal, Op } from 'sequelize';
+import { Model } from 'sequelize-typescript';
 
-export const preHandleQuery = (condition: ICondition, keyword?: string): FindOptions => {
+export const preHandleQuery = <T extends Model<T>>(condition: ICondition<T>, keyword?: string): FindOptions => {
   const where: Record<string | symbol, any> = {};
 
   for (const [key, value] of Object.entries(condition)) {
     if (key === '$and') {
-      where[Op.and] = (value as ICondition[]).map(c => preHandleQuery(c));
+      where[Op.and] = (value as ICondition<T>[]).map(c => preHandleQuery(c));
     } else if (key === '$or') {
-      where[Op.or] = (value as ICondition[]).map(c => preHandleQuery(c));
+      where[Op.or] = (value as ICondition<T>[]).map(c => preHandleQuery(c));
     } else if (typeof value === 'object') {
       const entries = Object.entries(value) as [IOperation, IDataType][];
       for (const [op, val] of entries) {
@@ -30,30 +31,15 @@ export const preHandleQuery = (condition: ICondition, keyword?: string): FindOpt
 };
 
 export const convertOp = (op: IOperation): symbol => {
-  switch (op) {
-    case '$ne':
-      return Op.ne;
-
-    case '$gt':
-      return Op.gt;
-
-    case '$gte':
-      return Op.gte;
-
-    case '$lt':
-      return Op.lt;
-
-    case '$lte':
-      return Op.lte;
-
-    case '$in':
-      return Op.in;
-
-    case '$nin':
-      return Op.notIn;
-
-    case '$eq':
-    default:
-      return Op.eq;
-  }
+  const mapping: Record<IOperation, symbol> = {
+    $ne: Op.ne,
+    $gt: Op.gt,
+    $gte: Op.gte,
+    $lt: Op.lt,
+    $lte: Op.lte,
+    $in: Op.in,
+    $nin: Op.notIn,
+    $eq: Op.eq,
+  };
+  return mapping[op] || Op.eq;
 };

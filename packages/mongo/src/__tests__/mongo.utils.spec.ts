@@ -36,22 +36,22 @@ describe('preHandleCondition function', () => {
 
 describe('preHandleQuery function', () => {
   it('preHandleQuery returns an empty object when given an empty IMongoRequest', () => {
-    const emptyRequest: IMongoRequest = { condition: {}, keyword: '' };
+    const emptyRequest: IMongoRequest<any> = { condition: {}, keyword: '' };
     expect(preHandleQuery(emptyRequest)).toEqual({ deletedAt: { $eq: null } });
   });
 
   it('preHandleQuery returns the correct condition object without a keyword', () => {
-    const query: IMongoRequest = { condition: { id: 123 }, keyword: '' };
+    const query: IMongoRequest<any> = { condition: { id: 123 }, keyword: '' };
     expect(preHandleQuery(query)).toEqual({ _id: 123, deletedAt: { $eq: null } });
   });
 
   it('preHandleQuery returns the correct condition object with a keyword', () => {
-    const query: IMongoRequest = { condition: { id: 123 }, keyword: 'test' };
+    const query: IMongoRequest<any> = { condition: { id: 123 }, keyword: 'test' };
     expect(preHandleQuery(query)).toEqual({ _id: 123, $text: { $search: 'test' }, deletedAt: { $eq: null } });
   });
 
   it('preHandleQuery correctly handles conditions with $or', () => {
-    const query: IMongoRequest = {
+    const query: IMongoRequest<any> = {
       condition: { $or: [{ name: 'test' }, { email: 'test@test.com' }] },
       keyword: '',
     };
@@ -62,7 +62,7 @@ describe('preHandleQuery function', () => {
   });
 
   it('preHandleQuery correctly handles conditions with $and', () => {
-    const query: IMongoRequest = {
+    const query: IMongoRequest<any> = {
       condition: {
         $and: [{ name: 'test' }, { email: 'test@test.com' }],
       },
