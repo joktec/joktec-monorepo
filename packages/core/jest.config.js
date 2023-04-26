@@ -1,11 +1,16 @@
+/** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
   displayName: '@joktec/core',
   preset: 'ts-jest',
   testEnvironment: 'node',
-  rootDir: 'src',
-  testMatch: ['**/__tests__/**/*.spec.(ts|js)'],
+  testMatch: ['<rootDir>/src/**/__tests__/**/*.spec.ts', '!/**/*.d.ts'],
+  testPathIgnorePatterns: ['./node_modules/', './dist/'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
-  collectCoverageFrom: ['src/**/*.{ts,js}', '!**/node_modules/**'],
-  coverageReporters: ['json', 'html', 'text-summary'],
+  transform: {
+    '^.+\\.ts$': 'ts-jest',
+  },
   coverageDirectory: '<rootDir>/coverage/',
+  collectCoverageFrom: ['<rootDir>/src/**/*.{ts,js}', '!**/index.ts', '!**/*.{d,enum}.ts'],
+  coverageReporters: ['json', 'html', 'text-summary', 'clover', 'lcov'],
+  passWithNoTests: true,
 };
