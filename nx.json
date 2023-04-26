@@ -23,7 +23,8 @@
           "build",
           "format",
           "lint",
-          "test"
+          "test",
+          "test:cov"
         ],
         "accessToken": "OTAwNDhiZjYtYTBmMi00ZWEzLTgzY2ItYmE0YWExOWJiZWRhfHJlYWQtd3JpdGU="
       }
@@ -42,6 +43,14 @@
     "test": {
       "dependsOn": [
         "^test"
+      ]
+    },
+    "test:cov": {
+      "dependsOn": [
+        "^test:cov"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage"
       ]
     },
     "format": {
