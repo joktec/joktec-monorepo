@@ -84,14 +84,12 @@ export const preHandleUpdateBody = <T extends MongoSchema>(body: Partial<T>): Pa
   return outputObj;
 };
 
-export const projection = (select: string): { [key: string]: number } => {
-  return select.split(',').reduce((projection, field) => {
-    if (field.trim().startsWith('-')) projection[field.trim()] = 0;
-    else projection[field.trim()] = 1;
-    return projection;
-  }, {});
-};
+export const projection = (select: string): string => select.split(',').join(' ');
 
+/**
+ * Convert populate object to mongoose populate options
+ * @param populate
+ */
 export const convertPopulate = <T extends MongoSchema>(populate: IPopulate<T> = {}): PopulateOptions[] => {
   return Object.keys(populate).map<PopulateOptions>(path => {
     const populateOptions: PopulateOptions = { path };

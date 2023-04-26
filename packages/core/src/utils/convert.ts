@@ -5,7 +5,6 @@ import slug from 'slug';
 /**
  * Recursively flattens the keys of an object and returns an array of strings
  * that represent the flattened paths of each key.
- *
  * @param {object} obj - The input object to flatten.
  * @param {string} currentPath - The current path of the input object being flattened.
  * @returns {string[]} An array of strings representing the flattened paths of each key.
@@ -27,7 +26,6 @@ export const flattenKeys = (obj: object, currentPath: string = null): string[] =
 /**
  * Converts a value to an integer. Returns the default value if the input value
  * is null, undefined, or cannot be converted to an integer.
- *
  * @param {number|string|boolean} n - The value to convert to an integer.
  * @param {number} [def=0] - The default value to return if the input value is null or undefined.
  * @returns {number} The input value as an integer, or the default value if the input value cannot be converted to an integer.
@@ -43,7 +41,6 @@ export const toInt = (n: number | string | boolean, def: number = 0): number => 
 
 /**
  * Converts a value to a boolean.
- *
  * @param {boolean|string|number|Buffer} b - The value to convert.
  * @param {boolean} [def=false] - The default value to use if the input value is null, undefined, empty, or cannot be converted to a boolean.
  * @returns {boolean} The boolean value of the input.
@@ -60,7 +57,6 @@ export const toBool = (b: boolean | string | number | Buffer, def: boolean = fal
 
 /**
  * Converts a value to an array.
- *
  * @param {T | Array<T>} data - The value to convert.
  * @returns {Array<T>} An array containing the input value, or an empty array if the input is null, undefined, or an empty array.
  * @template T
@@ -72,7 +68,6 @@ export const toArray = <T>(data: T | Array<T>): T[] => {
 
 /**
  * Transforms a link based on a specified host and type.
- *
  * @param {string} link - The link to transform.
  * @param {string} host - The host to use for the transformation.
  * @param {'relative' | 'absolute'} type - The type of transformation to perform ('relative' or 'absolute').
@@ -92,7 +87,6 @@ export const toPlural = (str: string, count?: number): string =>
 
 /**
  * Converts one or more strings into a slugified string.
- *
  * @param {...string} values - The strings to be slugified.
  * @returns {string} The slugified string.
  */
@@ -103,7 +97,6 @@ export const toSlugify = (...values: any[]): string => {
 
 /**
  * Converts an object to a query string.
- *
  * @param {Object} queryParameters - The object to be converted to a query string.
  * @returns {string} - The generated query string.
  */
@@ -119,7 +112,6 @@ export const objectToQueryString = (queryParameters: { [key: string]: any }) => 
 
 /**
  * Combines a host with paths and parameters to create a valid URL string
- *
  * @param {string} host - The base URL to use
  * @param {object} parts - An object containing paths and/or parameters to add to the URL
  * @param {string[]} parts.paths - An array of path segments to add to the URL
