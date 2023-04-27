@@ -1,6 +1,6 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  displayName: '@joktec/micro',
+  displayName: '@joktec/notifier',
   passWithNoTests: true,
   preset: 'ts-jest',
   rootDir: 'src',

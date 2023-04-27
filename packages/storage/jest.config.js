@@ -1,6 +1,6 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  displayName: '@joktec/micro',
+  displayName: '@joktec/storage',
   passWithNoTests: true,
   preset: 'ts-jest',
   rootDir: 'src',
