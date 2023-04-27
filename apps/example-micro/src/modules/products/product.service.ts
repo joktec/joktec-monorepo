@@ -1,5 +1,5 @@
 import { BaseService, Injectable } from '@joktec/core';
-import { Product } from '../../models';
+import { Product } from './models';
 import { ProductRepo } from './product.repo';
 
 @Injectable()

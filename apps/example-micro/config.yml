@@ -1,5 +1,8 @@
 micro:
   port: 8010
+  tcp:
+    retryAttempts: 5
+    retryDelay: 1500
 
 log:
   level: info
@@ -11,17 +14,12 @@ log:
 mysql:
   host: localhost
   port: 3306
-  username: root
-  password: xxx
-  database: example
+  username: joktec
+  password: joktec123
+  database: sample_db
+
+guard:
+  secret: XXXX
 
 http:
   timeout: 18000000
-
-es:
-  nodes: elasticsearch-jobhop-dev.jobhopin.com:9200
-  maxRetries: 1
-  requestTimeout: 60000
-  pingTimeout: 60000
-  sniffOnStart: true
-  auth: null

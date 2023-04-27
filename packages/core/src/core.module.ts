@@ -20,7 +20,7 @@ import path from 'path';
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => {
         const gatewayConfig = cfg.get<GatewayConfig>('gateway');
-        const { staticPath = './public', excludePath = [] } = gatewayConfig.static || {};
+        const { staticPath = './public', excludePath = [] } = gatewayConfig?.static || {};
         return [{ rootPath: path.resolve(staticPath), exclude: [...excludePath] }];
       },
     }),

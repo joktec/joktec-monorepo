@@ -11,14 +11,12 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
 import { GatewayConfig, GatewayService, MicroConfig, MicroService } from '../infras';
-import { IMicroserviceConfig } from '../infras/micro/micro.config';
 
 export type GlobalOptions = {
   guards?: CanActivate[];
   pipes?: PipeTransform[];
   interceptors?: NestInterceptor[];
   filters?: ExceptionFilter[];
-  microserviceConfig?: IMicroserviceConfig;
 };
 export type Module = NestModule;
 export type ApplicationOptions = NestApplicationOptions & GlobalOptions;
