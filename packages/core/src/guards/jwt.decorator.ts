@@ -4,7 +4,7 @@ import { JwtContext } from './jwt.config';
 import { JwtPayload } from './jwt.model';
 import { ExceptionMessage, UnauthorizedException } from '../exceptions';
 
-export const Payload = <T extends JwtPayload>(context: JwtContext = JwtContext.HTTP): ParameterDecorator => {
+export const JwtPayloadData = <T extends JwtPayload>(context: JwtContext = JwtContext.HTTP): ParameterDecorator => {
   if (context === JwtContext.HTTP) {
     return createParamDecorator((data: unknown, ctx: ExecutionContext): T => {
       const req = ctx.switchToHttp().getRequest();

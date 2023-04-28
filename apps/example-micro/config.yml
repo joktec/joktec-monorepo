@@ -1,8 +1,9 @@
 micro:
   port: 8010
-  tcp:
-    retryAttempts: 5
-    retryDelay: 1500
+  microservices:
+    tcp:
+      retryAttempts: 5
+      retryDelay: 1500
 
 log:
   level: info

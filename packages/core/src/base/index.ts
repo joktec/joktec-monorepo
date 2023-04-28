@@ -11,7 +11,18 @@ export {
   AbstractHttpAdapter,
   REQUEST,
 } from '@nestjs/core';
-export { ClientsModule, MessagePattern, RpcException, Transport } from '@nestjs/microservices';
+export {
+  ClientsModule,
+  MessagePattern,
+  RpcException,
+  Transport,
+  Payload,
+  GrpcMethod,
+  ClientGrpc,
+  ClientProxy,
+  EventPattern,
+  ClientProxyFactory,
+} from '@nestjs/microservices';
 export {
   applyDecorators,
   createParamDecorator,
@@ -39,7 +50,6 @@ export {
   PipeTransform,
   ArgumentMetadata,
   HttpStatus,
-  CacheModule,
   UseGuards,
   NestMiddleware,
   NestModule,

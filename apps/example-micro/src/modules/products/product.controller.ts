@@ -1,9 +1,9 @@
-import { BaseController, Controller } from '@joktec/core';
+import { MicroserviceController, Controller } from '@joktec/core';
 import { ProductService } from './product.service';
 import { Product } from './models';
 
-@Controller('products')
-export class ProductController extends BaseController<Product, string>({ dto: Product }) {
+@Controller()
+export class ProductController extends MicroserviceController<Product, string>({ dto: Product }) {
   constructor(protected productService: ProductService) {
     super(productService);
   }
