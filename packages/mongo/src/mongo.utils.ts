@@ -36,7 +36,7 @@ export const preHandleQuery = <T extends MongoSchema>(
   query: IMongoRequest<T>,
   isSoftDelete: boolean = true,
 ): ICondition<T> => {
-  const { condition, keyword } = query;
+  const { condition = {}, keyword } = query;
   const overrideCondition: ICondition<T> = preHandleCondition(condition);
   if (keyword) overrideCondition['$text'] = { $search: keyword };
   if (isSoftDelete) overrideCondition['deletedAt'] = { $eq: null };

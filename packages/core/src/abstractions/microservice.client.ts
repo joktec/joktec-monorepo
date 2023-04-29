@@ -27,8 +27,7 @@ export const MicroserviceClient = <T extends Record<string, any>, ID>(props?: IM
       return await firstValueFrom(result);
     }
 
-    async findOne(id: ID, req: IBaseRequest<T>, jwtPayload?: JwtPayload): Promise<T> {
-      req.condition = { id };
+    async findOne(id: ID, req: IBaseRequest<T> = {}, jwtPayload?: JwtPayload): Promise<T> {
       const result = this.client.send<T>({ cmd: `${nameSingular}.findOne` }, { id, req, jwtPayload });
       return await firstValueFrom(result);
     }

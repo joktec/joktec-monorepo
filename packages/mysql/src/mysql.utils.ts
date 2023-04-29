@@ -1,8 +1,10 @@
 import { ICondition, IDataType, IOperation } from '@joktec/core';
 import { FindOptions, literal, Op } from 'sequelize';
 import { Model } from 'sequelize-typescript';
+import { IMysqlRequest } from './models';
 
-export const preHandleQuery = <T extends Model<T>>(condition: ICondition<T>, keyword?: string): FindOptions => {
+export const preHandleQuery = <T extends Model<T>>(query: IMysqlRequest<T>): FindOptions => {
+  const { condition = {}, keyword } = query;
   const where: Record<string | symbol, any> = {};
 
   for (const [key, value] of Object.entries(condition)) {

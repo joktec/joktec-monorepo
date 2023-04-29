@@ -21,7 +21,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   @MysqlCatch
   async find(query: IMysqlRequest<T>): Promise<T[]> {
-    const options: FindOptions<T> = preHandleQuery<T>(query.condition, query.keyword);
+    const options: FindOptions<T> = preHandleQuery<T>(query);
     if (query.select) options.attributes = query.select.split(',');
     if (query.sort) options.order = Object.entries(query.sort);
     if (query.limit && query.page) {
@@ -33,13 +33,13 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   @MysqlCatch
   async count(query: IMysqlRequest<T>): Promise<number> {
-    const options: FindOptions = preHandleQuery<T>(query.condition, query.keyword);
+    const options: FindOptions = preHandleQuery<T>(query);
     return this.model.count(options);
   }
 
   @MysqlCatch
   async findOne(query: IMysqlRequest<T>): Promise<T> {
-    const options: FindOptions = preHandleQuery<T>(query.condition, query.keyword);
+    const options: FindOptions = preHandleQuery<T>(query);
     if (query.select) options.attributes = query.select.split(',');
     return this.model.findOne(options);
   }
@@ -51,7 +51,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   @MysqlCatch
   async update(condition: ICondition<T>, body: Partial<T>): Promise<T> {
-    const options: FindOptions = preHandleQuery<T>(condition);
+    const options: FindOptions = preHandleQuery<T>({ condition });
     const model: T = await this.model.findOne(options);
     if (!model) return null;
     const fields: any[] = Object.keys(body);
@@ -63,7 +63,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
     const existModel = await this.findOne({ condition });
     if (!existModel) return null;
 
-    const options: DestroyOptions<T> = preHandleQuery<T>(condition);
+    const options: DestroyOptions<T> = preHandleQuery<T>({ condition });
     options.force = toBool(opts?.force, false);
     await this.model.destroy(options);
     return existModel;

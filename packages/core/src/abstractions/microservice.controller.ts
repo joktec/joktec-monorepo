@@ -33,7 +33,7 @@ export const MicroserviceController = <T extends object, ID>(props: IMicroservic
     @MessagePattern({ cmd: `${nameSingular}.findOne` }, transport)
     async findOne(
       @Payload('id') id: ID,
-      @Payload() req: IBaseRequest<T>,
+      @Payload('req') req: IBaseRequest<T>,
       @Payload('jwt') jwtPayload: JwtPayload,
       @Ctx() context: any,
     ): Promise<T> {

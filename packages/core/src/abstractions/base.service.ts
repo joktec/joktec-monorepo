@@ -20,7 +20,7 @@ export abstract class BaseService<T extends Record<string, any>, ID> {
     return this.repository.find(req);
   }
 
-  async findOne(id: ID, req: IBaseRequest<T>, payload?: JwtPayload): Promise<T> {
+  async findOne(id: ID, req: IBaseRequest<T> = {}, payload?: JwtPayload): Promise<T> {
     req.condition = { id };
     return this.repository.findOne(req);
   }

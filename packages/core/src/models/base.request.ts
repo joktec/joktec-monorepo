@@ -28,7 +28,7 @@ export type IPopulateOption = {
 export interface IBaseRequest<T extends object = {}> {
   select?: string;
   keyword?: string;
-  condition: ICondition<T>;
+  condition?: ICondition<T>;
   language?: ILanguage;
   page?: number;
   limit?: number;
