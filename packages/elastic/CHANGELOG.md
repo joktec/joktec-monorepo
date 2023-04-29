@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.47](https://github.com/joktec/joktec-monorepo/compare/@joktec/elastic@0.0.46...@joktec/elastic@0.0.47) (2023-04-29)
+
+
+### Bug Fixes
+
+* base request and find one ([db8a604](https://github.com/joktec/joktec-monorepo/commit/db8a604c8847c751bd819d6cd708623076095d9d))
+
+
+
+
+
 ## [0.0.46](https://github.com/joktec/joktec-monorepo/compare/@joktec/elastic@0.0.45...@joktec/elastic@0.0.46) (2023-04-29)
 
 **Note:** Version bump only for package @joktec/elastic
