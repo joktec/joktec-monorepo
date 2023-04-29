@@ -31,8 +31,13 @@ export const MicroserviceController = <T extends object, ID>(props: IMicroservic
     }
 
     @MessagePattern({ cmd: `${nameSingular}.findOne` }, transport)
-    async findOne(@Payload('id') id: ID, @Payload('jwt') jwtPayload: JwtPayload, @Ctx() context: any): Promise<T> {
-      return this.service.findOne(id, jwtPayload);
+    async findOne(
+      @Payload('id') id: ID,
+      @Payload() req: IBaseRequest<T>,
+      @Payload('jwt') jwtPayload: JwtPayload,
+      @Ctx() context: any,
+    ): Promise<T> {
+      return this.service.findOne(id, req, jwtPayload);
     }
 
     @MessagePattern({ cmd: `${nameSingular}.create` }, transport)

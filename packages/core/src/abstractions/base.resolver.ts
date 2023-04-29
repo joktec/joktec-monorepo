@@ -22,15 +22,17 @@ export const BaseResolver = <T extends object, ID>(props: IBaseResolverProps<T>)
 
     @Query(() => PaginationDto, { name: `list${namePlural}` })
     async findAll(
-      @Args('query', { type: () => PaginationDto, nullable: true, defaultValue: {} })
-      req: IBaseRequest<T>,
+      @Args('query', { type: () => PaginationDto, nullable: true, defaultValue: {} }) req: IBaseRequest<T>,
     ): Promise<PaginationDto> {
       return this.service.findAll(req);
     }
 
     @Query(() => props.dto, { name: `get${nameSingular}` })
-    async findOne(@Args('id', { type: () => String }) id: ID): Promise<T> {
-      return this.service.findOne(id);
+    async findOne(
+      @Args('id', { type: () => String }) id: ID,
+      @Args('query', { type: () => PaginationDto, nullable: true, defaultValue: {} }) req: IBaseRequest<T>,
+    ): Promise<T> {
+      return this.service.findOne(id, req);
     }
 
     @Mutation(() => props.dto, { name: `create${nameSingular}` })

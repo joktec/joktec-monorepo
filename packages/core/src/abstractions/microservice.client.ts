@@ -17,47 +17,47 @@ export const MicroserviceClient = <T extends Record<string, any>, ID>(props?: IM
   abstract class Service {
     protected constructor(protected client: ClientProxy) {}
 
-    async findAll(req: IBaseRequest<T>, payload?: JwtPayload): Promise<IListResponseDto<T>> {
-      const result = this.client.send<IListResponseDto<T>>(
-        { cmd: `${nameSingular}.findAll` },
-        { req, jwtPayload: payload },
-      );
+    async findAll(req: IBaseRequest<T>, jwtPayload?: JwtPayload): Promise<IListResponseDto<T>> {
+      const result = this.client.send<IListResponseDto<T>>({ cmd: `${nameSingular}.findAll` }, { req, jwtPayload });
       return await firstValueFrom(result);
     }
 
-    async find(req: IBaseRequest<T>, payload?: JwtPayload): Promise<T[]> {
-      const result = this.client.send<T[]>({ cmd: `${nameSingular}.find` }, { req, jwtPayload: payload });
+    async find(req: IBaseRequest<T>, jwtPayload?: JwtPayload): Promise<T[]> {
+      const result = this.client.send<T[]>({ cmd: `${nameSingular}.find` }, { req, jwtPayload });
       return await firstValueFrom(result);
     }
 
-    async create(entity: Partial<T>, payload?: JwtPayload): Promise<T> {
+    async findOne(id: ID, req: IBaseRequest<T>, jwtPayload?: JwtPayload): Promise<T> {
+      req.condition = { id };
+      const result = this.client.send<T>({ cmd: `${nameSingular}.findOne` }, { id, req, jwtPayload });
+      return await firstValueFrom(result);
+    }
+
+    async create(entity: Partial<T>, jwtPayload?: JwtPayload): Promise<T> {
       const processEntity: Partial<T> = cloneInstance(entity);
-      if (payload) {
-        Object.assign(processEntity, { createdBy: payload.userId, updatedBy: payload.userId });
+      if (jwtPayload) {
+        Object.assign(processEntity, { createdBy: jwtPayload.userId, updatedBy: jwtPayload.userId });
       }
-      const result = this.client.send<T>(
-        { cmd: `${nameSingular}.create` },
-        { entity: processEntity, jwtPayload: payload },
-      );
+      const result = this.client.send<T>({ cmd: `${nameSingular}.create` }, { entity: processEntity, jwtPayload });
       return await firstValueFrom(result);
     }
 
-    async update(id: ID, entity: Partial<T>, payload?: JwtPayload): Promise<T> {
+    async update(id: ID, entity: Partial<T>, jwtPayload?: JwtPayload): Promise<T> {
       const condition: ICondition<T> = { id };
       const processEntity: Partial<T> = cloneInstance(entity);
-      if (payload) {
-        Object.assign(processEntity, { updatedBy: payload.userId });
+      if (jwtPayload) {
+        Object.assign(processEntity, { updatedBy: jwtPayload.userId });
       }
       const result = this.client.send<T>(
         { cmd: `${nameSingular}.update` },
-        { condition, entity: processEntity, jwtPayload: payload },
+        { condition, entity: processEntity, jwtPayload },
       );
       return await firstValueFrom(result);
     }
 
-    async delete(id: ID, payload?: JwtPayload): Promise<T> {
+    async delete(id: ID, jwtPayload?: JwtPayload): Promise<T> {
       const condition: ICondition<T> = { id };
-      const result = this.client.send<T>({ cmd: `${nameSingular}.delete` }, { condition, jwtPayload: payload });
+      const result = this.client.send<T>({ cmd: `${nameSingular}.delete` }, { condition, jwtPayload });
       return await firstValueFrom(result);
     }
   }

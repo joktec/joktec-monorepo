@@ -67,8 +67,9 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiOkResponse({ type: props.dto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
-    async findOne(@Param('id') id: ID, @Req() res: Request): Promise<T> {
-      return this.service.findOne(id, res['payload'] as JwtPayload);
+    @UseInterceptors(QueryInterceptor)
+    async findOne(@Param('id') id: ID, @Query() req: IBaseRequest<T>, @Req() res: Request): Promise<T> {
+      return this.service.findOne(id, req, res['payload'] as JwtPayload);
     }
 
     @Post('/')
