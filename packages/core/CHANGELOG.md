@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.47](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.46...@joktec/core@0.0.47) (2023-04-29)
+
+
+### Bug Fixes
+
+* find one function ([eaa232e](https://github.com/joktec/joktec-monorepo/commit/eaa232eb19ba421eb8b786a8c755b9c4a635d0fc))
+
+
+
+
+
 ## [0.0.46](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.45...@joktec/core@0.0.46) (2023-04-29)
 
 **Note:** Version bump only for package @joktec/core
