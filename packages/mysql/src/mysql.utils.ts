@@ -9,9 +9,9 @@ export const preHandleQuery = <T extends Model<T>>(query: IMysqlRequest<T>): Fin
 
   for (const [key, value] of Object.entries(condition)) {
     if (key === '$and') {
-      where[Op.and] = (value as ICondition<T>[]).map(c => preHandleQuery(c));
+      where[Op.and] = (value as ICondition<T>[]).map(c => preHandleQuery({ condition: c }));
     } else if (key === '$or') {
-      where[Op.or] = (value as ICondition<T>[]).map(c => preHandleQuery(c));
+      where[Op.or] = (value as ICondition<T>[]).map(c => preHandleQuery({ condition: c }));
     } else if (typeof value === 'object') {
       const entries = Object.entries(value) as [IOperation, IDataType][];
       for (const [op, val] of entries) {
