@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.44](https://github.com/joktec/joktec-monorepo/compare/@joktec/redis@0.0.43...@joktec/redis@0.0.44) (2023-04-29)
+
+**Note:** Version bump only for package @joktec/redis
+
+
+
+
+
 ## [0.0.43](https://github.com/joktec/joktec-monorepo/compare/@joktec/redis@0.0.42...@joktec/redis@0.0.43) (2023-04-25)
 
 **Note:** Version bump only for package @joktec/redis
