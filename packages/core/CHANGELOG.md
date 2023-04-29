@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.48](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.47...@joktec/core@0.0.48) (2023-04-29)
+
+
+### Bug Fixes
+
+* base request and fine one ([e35548e](https://github.com/joktec/joktec-monorepo/commit/e35548e4cddc4c964dd6e5c2d97f54b5efd70802))
+
+
+
+
+
 ## [0.0.47](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.46...@joktec/core@0.0.47) (2023-04-29)
 
 
