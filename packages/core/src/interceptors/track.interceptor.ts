@@ -26,11 +26,11 @@ export class TrackInterceptor implements NestInterceptor {
     request.clientInfo = {
       userAgent,
       ipAddress,
-      browser: ua.browser,
-      version: ua.version,
-      os: ua.os,
-      platform: ua.platform || ua.os,
-      geoIp: ua.geoIp,
+      browser: ua?.browser || 'Unknown',
+      version: ua?.version || 'Unknown',
+      os: ua?.os || 'Unknown',
+      platform: ua?.platform || ua?.os || 'Unknown',
+      geoIp: ua?.geoIp,
     } as ClientInfo;
 
     return next.handle();

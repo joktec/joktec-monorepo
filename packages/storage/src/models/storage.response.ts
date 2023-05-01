@@ -8,7 +8,7 @@ export interface StorageUploadResponse {
 }
 
 export interface StorageDownloadResponse {
-  file: Buffer | Uint8Array | string | Readable | ReadableStream;
+  file: Readable | ReadableStream | Blob;
   key: string;
   eTag?: string;
   contentType?: string;
@@ -17,4 +17,12 @@ export interface StorageDownloadResponse {
 export interface StoragePreSignedResponse {
   key: string;
   url: string;
+}
+
+export interface StorageListObjectsResponse {
+  key: string;
+  eTag: string;
+  size?: number;
+  lastModified?: Date;
+  contentType?: string;
 }

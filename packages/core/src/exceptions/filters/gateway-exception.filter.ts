@@ -55,6 +55,7 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
       Object.assign(errorBody, { path: request.url, method: request.method });
       if (!isEmpty(request.body)) errorBody.body = request.body;
       if (!isEmpty(request.query)) errorBody.query = request.query;
+      if (!isEmpty(request['originQuery'])) errorBody.query = request['originQuery'];
       if (!isEmpty(request.params)) errorBody.params = request.params;
     }
     response.status(status).json({ ...errorBody });
@@ -62,7 +63,7 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
 
   private handleGqlException(exception: any): GraphQLError {
     let message: string = exception?.message || ExceptionMessage.INTERNAL_SERVER_ERROR;
-    let status: string | number = exception?.status || ExceptionMessage.INTERNAL_SERVER_ERROR;
+    let status: number = exception?.status || ExceptionMessage.INTERNAL_SERVER_ERROR;
     let data: any = exception?.data;
 
     if (exception instanceof RpcException) {

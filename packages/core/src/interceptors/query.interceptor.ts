@@ -7,6 +7,7 @@ import { IBaseRequest } from '../models';
 export class QueryInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest();
+    req.originQuery = req.query;
     req.query = {
       condition: req.query?.condition || {},
       page: toInt(req.query?.page, 1),
@@ -15,6 +16,12 @@ export class QueryInterceptor implements NestInterceptor {
       language: req.headers['content-language'] || req.query?.language || '*',
       ...req.query,
     } as IBaseRequest<any>;
+
+    const paramId = req.params?._id || req.params?.id;
+    if (paramId) {
+      req.query.condition = { ...req.query.condition, id: paramId };
+    }
+
     return next.handle();
   }
 }

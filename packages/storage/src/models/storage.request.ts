@@ -1,9 +1,3 @@
-import AWS from 'aws-sdk';
-
-export type GetObjectRequest = AWS.S3.Types.GetObjectRequest;
-
-export type PutObjectRequest = AWS.S3.Types.PutObjectRequest;
-
 export enum StorageACL {
   PRIVATE = 'private',
   PUBLIC_READ = 'public-read',
@@ -40,4 +34,10 @@ export interface StoragePreSignedRequest {
   expires?: number;
   acl?: StorageACL;
   contentType?: string;
+}
+
+export interface StorageListObjectsRequest {
+  bucket?: string;
+  prefix?: string;
+  filePattern?: string;
 }
