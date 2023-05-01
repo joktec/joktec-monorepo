@@ -8,7 +8,6 @@ import {
   projection,
 } from '../mongo.utils';
 import { IMongoRequest } from '../models';
-import { mongoose } from '@typegoose/typegoose';
 
 describe('preHandleCondition function', () => {
   it('should not modify a simple condition', () => {
@@ -186,7 +185,7 @@ describe('preHandleUpdateBody function', () => {
 
   it('should handle fields with "$" character', () => {
     const input = {
-      _id: new mongoose.Types.ObjectId(),
+      _id: '123',
       name: 'Test',
       age: 25,
       createdAt: new Date(),

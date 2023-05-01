@@ -16,7 +16,7 @@ import {
 import { isNil, pick } from 'lodash';
 import { MongoCatch } from './mongo.exception';
 
-export abstract class MongoRepo<T extends MongoSchema, ID> implements IMongoRepository<T, ID>, OnModuleInit {
+export abstract class MongoRepo<T extends MongoSchema, ID = string> implements IMongoRepository<T, ID>, OnModuleInit {
   protected model: ModelType<T>;
 
   protected constructor(

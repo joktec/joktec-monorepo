@@ -5,7 +5,7 @@ import { IMongoAggregation, MongoSchema } from './models';
 
 export interface MongoClient extends Client<MongoConfig, Connection> {}
 
-export interface IMongoRepository<T extends MongoSchema, ID> extends BaseRepository<T, ID> {
+export interface IMongoRepository<T extends MongoSchema, ID = string> extends BaseRepository<T, ID> {
   aggregate(aggregations: IMongoAggregation[]): Promise<T[]>;
 
   upsert(condition: ICondition<T>, body: T): Promise<T>;
