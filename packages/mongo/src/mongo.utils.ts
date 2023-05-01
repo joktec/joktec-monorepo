@@ -1,6 +1,7 @@
 import { ICondition, IPopulate, IPopulateOption } from '@joktec/core';
 import { IMongoRequest, MongoSchema } from './models';
 import { PopulateOptions, QueryOptions } from 'mongoose';
+import { omit } from 'lodash';
 
 export const UPDATE_OPTIONS: QueryOptions = {
   runValidators: true,
@@ -43,26 +44,18 @@ export const preHandleQuery = <T extends MongoSchema>(
   return overrideCondition;
 };
 
-export const preHandleBody = <T extends MongoSchema>(body: Partial<T>): Partial<T> => {
-  const processBody = { ...body };
-  delete processBody._id;
-  delete processBody.createdAt;
-  delete processBody.updatedAt;
-  delete processBody.deletedAt;
-
-  if (processBody['lng'] && processBody['lat']) {
+export const preHandleBody = <T extends MongoSchema>(body: any): Partial<T> => {
+  const processBody = omit(body, ['_id', 'createdAt', 'updatedAt', 'deletedAt', 'lat', 'lng']);
+  if (body['lng'] && body['lat']) {
     processBody['location'] = {
       type: 'Point',
-      coordinates: [parseFloat(processBody['lng'] ?? 0), parseFloat(processBody['lat'] ?? 0)],
+      coordinates: [parseFloat(body['lng'] ?? 0), parseFloat(body['lat'] ?? 0)],
     };
-    delete processBody['lng'];
-    delete processBody['lat'];
   }
-
   return processBody;
 };
 
-export const preHandleUpdateBody = <T extends MongoSchema>(body: Partial<T>): Partial<T> => {
+export const preHandleUpdateBody = <T extends MongoSchema>(body: any): Partial<T> => {
   const plain = preHandleBody(body);
   const outputObj = {};
   for (const [key, value] of Object.entries(plain)) {
