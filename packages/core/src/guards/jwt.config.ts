@@ -10,6 +10,7 @@ export class JwtConfig {
 
   constructor(props: Partial<JwtConfig> = {}) {
     Object.assign(this, {
+      ...props,
       secretKey: props.secretKey || '$ecr3t_4ey',
       refreshKey: props.refreshKey || 'r3fre$h_4ey',
       expired: props.expired || '30 days',
