@@ -1,4 +1,17 @@
-import { Body, Delete, Get, Param, Post, Put, Query, Req, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import {
+  Body,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+  NestInterceptor,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -12,13 +25,14 @@ import {
 import { Request } from 'express';
 import { BaseService } from './base.service';
 import { BaseListResponse, Constructor, IBaseRequest } from '../models';
-import { QueryInterceptor } from '../interceptors';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
 import { startCase } from 'lodash';
 import { JwtGuard, JwtPayload } from '../guards';
-import { BaseValidationPipe } from '../validation';
 import { ApiSchema } from '../swagger';
+import { QueryInterceptor } from '../interceptors';
+import { BaseValidationPipe } from '../validation';
 
+export type ControllerMethod = 'findAll' | 'findOne' | 'create' | 'update' | 'delete';
 export enum ControllerExclude {
   ALL,
   LIST,
@@ -36,6 +50,7 @@ export interface IBaseControllerProps<T> {
   apiTag?: string;
   useGuard?: boolean;
   excludes?: ControllerExclude[];
+  hooks?: { [key in ControllerMethod]?: NestInterceptor[] };
 }
 
 export const BaseController = <T extends object, ID>(props: IBaseControllerProps<T>): any => {
@@ -57,7 +72,6 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
-    @UseInterceptors(QueryInterceptor)
     async findAll(@Query() req: IBaseRequest<T>, @Req() res: Request): Promise<PaginationDto> {
       return this.service.findAll(req, res['payload'] as JwtPayload);
     }
@@ -67,7 +81,6 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiOkResponse({ type: props.dto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
-    @UseInterceptors(QueryInterceptor)
     async findOne(@Param('id') id: ID, @Query() req: IBaseRequest<T>, @Req() res: Request): Promise<T> {
       return this.service.findOne(id, req, res['payload'] as JwtPayload);
     }
@@ -108,6 +121,15 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     UseGuards(JwtGuard)(Controller);
     ApiBearerAuth()(Controller);
   }
+
+  Object.keys(props?.hooks || {}).map(key => {
+    const hookByKey = toArray(props.hooks[key]);
+    if ((key === 'findAll' || key === 'findOne' )) hookByKey.unshift(QueryInterceptor);
+    if (hookByKey.length) {
+      const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, key);
+      UseInterceptors(...hookByKey)(Controller.prototype, key, descriptor);
+    }
+  });
 
   return Controller;
 };

@@ -36,7 +36,7 @@
   "dependencies": {
     "@joktec/core": "0.0.50",
     "@joktec/http": "^0.0.49",
-    "@joktec/mongo": "0.0.60"
+    "@joktec/mongo": "0.0.62"
   },
   "lint-staged": {
     "*.ts": [
