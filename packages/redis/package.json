@@ -1,7 +1,7 @@
 {
   "name": "@joktec/redis",
   "description": "JokTec - Redis Service",
-  "version": "0.0.49",
+  "version": "0.0.50",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -42,7 +42,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.51",
+    "@joktec/core": "0.0.52",
     "dot-object": "^2.1.4",
     "ioredis": "^5.2.3",
     "lodash": "^4.17.21",
