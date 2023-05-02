@@ -50,7 +50,7 @@ export interface IBaseControllerProps<T> {
   apiTag?: string;
   useGuard?: boolean;
   excludes?: ControllerExclude[];
-  hooks?: { [key in ControllerMethod]?: NestInterceptor[] };
+  hooks?: { [key in ControllerMethod]?: (NestInterceptor | Function)[] };
 }
 
 export const BaseController = <T extends object, ID>(props: IBaseControllerProps<T>): any => {
@@ -124,7 +124,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
 
   Object.keys(props?.hooks || {}).map(key => {
     const hookByKey = toArray(props.hooks[key]);
-    if ((key === 'findAll' || key === 'findOne' )) hookByKey.unshift(QueryInterceptor);
+    if (key === 'findAll' || key === 'findOne') hookByKey.unshift(QueryInterceptor);
     if (hookByKey.length) {
       const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, key);
       UseInterceptors(...hookByKey)(Controller.prototype, key, descriptor);
