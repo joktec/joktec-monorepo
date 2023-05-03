@@ -45,7 +45,7 @@ export const preHandleQuery = <T extends MongoSchema>(
 };
 
 export const preHandleBody = <T extends MongoSchema>(body: any): Partial<T> => {
-  const processBody = omit(body, ['_id', 'createdAt', 'updatedAt', 'deletedAt', 'lat', 'lng']);
+  const processBody = omit(body, ['_id', 'createdAt', 'updatedAt', 'deletedAt', '__v', '__t', 'lat', 'lng']);
   if (body['lng'] && body['lat']) {
     processBody['location'] = {
       type: 'Point',
