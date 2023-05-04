@@ -36,8 +36,8 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.8.14",
     "@grpc/proto-loader": "^0.7.6",
-    "@joktec/core": "0.0.53",
-    "@joktec/mysql": "0.0.54"
+    "@joktec/core": "0.0.54",
+    "@joktec/mysql": "0.0.55"
   },
   "lint-staged": {
     "*.ts": [
