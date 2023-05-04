@@ -58,21 +58,37 @@ export const preHandleBody = <T extends MongoSchema>(body: any): Partial<T> => {
 export const preHandleUpdateBody = <T extends MongoSchema>(body: any): Partial<T> => {
   const plain = preHandleBody(body);
   const outputObj = {};
+  if (Object.keys(body).some(k => k.startsWith('$'))) {
+    outputObj['$set'] = {};
+  }
+
   for (const [key, value] of Object.entries(plain)) {
-    if (key.includes('$')) {
-      outputObj[key] = value;
+    if (key.startsWith('$')) {
+      if (outputObj.hasOwnProperty(key)) {
+        outputObj[key] = Object.assign({}, outputObj[key], value);
+      } else {
+        outputObj[key] = value;
+      }
       continue;
     }
 
     if (typeof value === 'object' && !Array.isArray(value)) {
       const nestedObj = preHandleUpdateBody(value);
       for (const [nestedKey, nestedValue] of Object.entries(nestedObj)) {
-        outputObj[`${key}.${nestedKey}`] = nestedValue;
+        if (outputObj.hasOwnProperty('$set')) {
+          outputObj['$set'][`${key}.${nestedKey}`] = nestedValue;
+        } else {
+          outputObj[`${key}.${nestedKey}`] = nestedValue;
+        }
       }
       continue;
     }
 
-    outputObj[key] = value;
+    if (outputObj.hasOwnProperty('$set')) {
+      outputObj['$set'][key] = value;
+    } else {
+      outputObj[key] = value;
+    }
   }
   return outputObj;
 };

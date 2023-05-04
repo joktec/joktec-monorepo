@@ -21,7 +21,6 @@
       "options": {
         "cacheableOperations": [
           "build",
-          "format",
           "lint",
           "test",
           "test:cov"
@@ -33,8 +32,7 @@
   "targetDefaults": {
     "build": {
       "dependsOn": [
-        "^build",
-        "prebuild"
+        "^build"
       ],
       "outputs": [
         "{projectRoot}/dist"
@@ -51,11 +49,6 @@
       ],
       "outputs": [
         "{projectRoot}/coverage"
-      ]
-    },
-    "format": {
-      "dependsOn": [
-        "^format"
       ]
     },
     "lint": {

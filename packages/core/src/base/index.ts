@@ -10,6 +10,7 @@ export {
   HttpAdapterHost,
   AbstractHttpAdapter,
   REQUEST,
+  Reflector,
 } from '@nestjs/core';
 export {
   ClientsModule,
@@ -56,6 +57,7 @@ export {
   PipeTransform,
   Post,
   Put,
+  Patch,
   Query as QueryParam,
   Req,
   RequestMethod,
@@ -67,6 +69,8 @@ export {
   UseGuards,
   UseInterceptors,
   UsePipes,
+  SetMetadata,
+  CanActivate,
 } from '@nestjs/common';
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
 export { Express, Request, Response, NextFunction } from 'express';

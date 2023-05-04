@@ -191,15 +191,25 @@ describe('preHandleUpdateBody function', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,
-      $set: { 'address.city': 'LA', 'address.zipCode': '12345' },
+      address: {
+        city: 'LA',
+        zipCode: '12345',
+        nested: { field: 'value' },
+      },
+      $push: { tags: ['test'], $position: 0 },
     };
 
     const output = preHandleUpdateBody(input);
 
     expect(output).toEqual({
-      name: 'Test',
-      age: 25,
-      $set: { 'address.city': 'LA', 'address.zipCode': '12345' },
+      $set: {
+        name: 'Test',
+        age: 25,
+        'address.city': 'LA',
+        'address.zipCode': '12345',
+        'address.nested.field': 'value',
+      },
+      $push: { tags: ['test'], $position: 0 },
     });
   });
 });
