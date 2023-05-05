@@ -1,7 +1,7 @@
 {
   "name": "@joktec/mysql",
   "description": "JokTec - MySql Service",
-  "version": "0.0.55",
+  "version": "0.0.56",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -48,7 +48,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.54",
+    "@joktec/core": "0.0.55",
     "lodash": "^4.17.21",
     "mysql": "2.18.1",
     "mysql2": "^3.1.2",

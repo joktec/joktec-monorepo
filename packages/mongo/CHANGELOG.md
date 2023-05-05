@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.67](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.66...@joktec/mongo@0.0.67) (2023-05-05)
+
+
+### Bug Fixes
+
+* pre handle body ([72f9c01](https://github.com/joktec/joktec-monorepo/commit/72f9c01a751022bcd0bc919139b6dccfeee091ae))
+* pre handle body ([3370b58](https://github.com/joktec/joktec-monorepo/commit/3370b588ea38399a631b4c6bd23ef8d0bcdaa215))
+
+
+
+
+
 ## [0.0.66](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.65...@joktec/mongo@0.0.66) (2023-05-04)
 
 **Note:** Version bump only for package @joktec/mongo
