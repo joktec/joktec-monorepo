@@ -98,16 +98,23 @@ export const projection = (select: string): string => select.split(',').join(' '
 /**
  * Convert populate object to mongoose populate options
  * @param populate
+ * @param isSoftDelete
  */
-export const convertPopulate = <T extends MongoSchema>(populate: IPopulate<T> = {}): PopulateOptions[] => {
+export const convertPopulate = <T extends MongoSchema>(
+  populate: IPopulate<T> = {},
+  isSoftDelete: boolean = true,
+): PopulateOptions[] => {
   return Object.keys(populate).map<PopulateOptions>(path => {
     const populateOptions: PopulateOptions = { path };
+    const populateMatch = {};
     const options: '*' | IPopulateOption = populate[path];
     if (options !== '*') {
       if (options.select) populateOptions.select = projection(options.select);
       if (options.model) populateOptions.model = options.model;
       if (options.populate) populateOptions.populate = convertPopulate(options.populate);
+      if (options.match) Object.assign(populateMatch, populateOptions.match);
     }
+    populateOptions.match = preHandleQuery({ condition: populateMatch }, isSoftDelete);
     return populateOptions;
   });
 };

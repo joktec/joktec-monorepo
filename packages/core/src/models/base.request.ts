@@ -23,6 +23,7 @@ export type IPopulateOption = {
   select?: string;
   model?: string;
   populate?: IPopulate<object>;
+  match?: ICondition<object>;
 };
 
 export interface IBaseRequest<T extends object = {}> {

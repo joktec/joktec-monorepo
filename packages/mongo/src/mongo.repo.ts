@@ -45,7 +45,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     if (query.select) qb.select(projection(query.select));
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
     if (query.sort) qb.sort(query.sort);
-    if (query.populate) qb.populate(convertPopulate(query.populate));
+    if (query.populate) qb.populate(convertPopulate(query.populate, this.isSoftDelete));
 
     const docs: any[] = await qb.lean().exec();
     return this.transform(docs) as T[];
@@ -65,7 +65,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
     const qb = this.model.findOne(condition);
     if (query.select) qb.select(projection(query.select));
-    if (query.populate) qb.populate(convertPopulate(query.populate));
+    if (query.populate) qb.populate(convertPopulate(query.populate, this.isSoftDelete));
     const doc = await qb.lean().exec();
     return this.transform(doc) as T;
   }
