@@ -52,7 +52,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   @MongoCatch
   async count(query: IMongoRequest<T>): Promise<number> {
     const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
-    if (query.near || query.condition.hasOwnProperty(query.near.field || 'location')) {
+    if (query.near && query.condition.hasOwnProperty(query.near.field || 'location')) {
       return this.model.estimatedDocumentCount(condition);
     }
     return this.model.countDocuments(condition);
