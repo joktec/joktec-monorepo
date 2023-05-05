@@ -16,7 +16,7 @@ export type ICondition<T extends object = {}> = {
 
 export type ILanguage = '*' | 'vi' | 'en';
 export type ISort<T extends object = {}> = { [key in keyof T]?: 'asc' | 'desc' };
-export type INear = { lat: number; lng: number; distance?: number };
+export type INear = { lat: number; lng: number; distance?: number; field?: string };
 
 export type IPopulate<T extends object = {}> = { [key in keyof T]?: '*' | IPopulateOption };
 export type IPopulateOption = {
@@ -37,3 +37,13 @@ export interface IBaseRequest<T extends object = {}> {
   near?: INear;
   populate?: IPopulate<T>;
 }
+
+export type PartialDeep<T> = {
+  [P in keyof T]?: T[P] extends (infer U)[]
+    ? U extends IDataType
+      ? U[]
+      : PartialDeep<U>[]
+    : T[P] extends object
+    ? PartialDeep<T[P]>
+    : T[P];
+};

@@ -1,12 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import {
-  convertPopulate,
-  preHandleBody,
-  preHandleCondition,
-  preHandleQuery,
-  preHandleUpdateBody,
-  projection,
-} from '../mongo.utils';
+import { convertPopulate, preHandleBody, preHandleCondition, preHandleQuery, projection } from '../mongo.utils';
 import { IMongoRequest } from '../models';
 
 describe('preHandleCondition function', () => {
@@ -83,134 +76,104 @@ describe('preHandleQuery function', () => {
 });
 
 describe('preHandleBody function', () => {
-  it('should remove _id, createdAt, updatedAt, deletedAt fields', () => {
-    const input = {
+  const body = {
+    _id: '123',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: new Date(),
+    __v: 1,
+    __t: 'MyType',
+    name: 'John',
+    age: 30,
+    address: {
       _id: '123',
+      street: '123 Main St',
+      city: 'Anytown',
+      state: 'CA',
+      zip: '12345',
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: new Date(),
-      name: 'John Doe',
-      age: 30,
-    };
-    const output: any = preHandleBody(input);
-    expect(output._id).toBeUndefined();
-    expect(output.createdAt).toBeUndefined();
-    expect(output.updatedAt).toBeUndefined();
-    expect(output.deletedAt).toBeUndefined();
-    expect(output.name).toEqual('John Doe');
-    expect(output.age).toEqual(30);
+      __v: 1,
+      __t: 'MyType',
+    },
+    tags: ['foo', 'bar', 'baz'],
+    items: [
+      { _id: '123', name: 'Item 1', quantity: 2, createdAt: new Date(), updatedAt: new Date(), deletedAt: new Date() },
+      { _id: '456', name: 'Item 2', quantity: 3, createdAt: new Date(), updatedAt: new Date(), deletedAt: new Date() },
+    ],
+  };
+
+  it('should remove specified fields from body', () => {
+    const processed = preHandleBody(body);
+    expect(processed).not.toHaveProperty('_id');
+    expect(processed).not.toHaveProperty('createdAt');
+    expect(processed).not.toHaveProperty('updatedAt');
+    expect(processed).not.toHaveProperty('deletedAt');
+    expect(processed).not.toHaveProperty('__v');
+    expect(processed).not.toHaveProperty('__t');
   });
 
-  it('should convert lng and lat fields to location field', () => {
-    const input = {
-      _id: '123',
-      lng: '-122.4194',
-      lat: '37.7749',
-      name: 'San Francisco',
-    };
-    const output: any = preHandleBody(input);
-    expect(output.lng).toBeUndefined();
-    expect(output.lat).toBeUndefined();
-    expect(output.location).toEqual({
-      type: 'Point',
-      coordinates: [-122.4194, 37.7749],
+  it('should handle nested objects', () => {
+    const processed: any = preHandleBody(body);
+    expect(processed).toHaveProperty('address');
+    expect(processed.address).toHaveProperty('street');
+    expect(processed.address).toHaveProperty('city');
+    expect(processed.address).toHaveProperty('state');
+    expect(processed.address).toHaveProperty('zip');
+
+    expect(processed.address).not.toHaveProperty('_id');
+    expect(processed.address).not.toHaveProperty('createdAt');
+    expect(processed.address).not.toHaveProperty('updatedAt');
+    expect(processed.address).not.toHaveProperty('deletedAt');
+    expect(processed.address).not.toHaveProperty('__v');
+    expect(processed.address).not.toHaveProperty('__t');
+  });
+
+  it('should handle arrays of objects', () => {
+    const processed: any = preHandleBody(body);
+    expect(processed).toHaveProperty('items');
+    expect(processed.items.length).toBe(2);
+    expect(processed.items[0]).toHaveProperty('name');
+    expect(processed.items[0]).toHaveProperty('quantity');
+    expect(processed.items[0]).not.toHaveProperty('_id');
+    expect(processed.items[0]).not.toHaveProperty('createdAt');
+    expect(processed.items[0]).not.toHaveProperty('updatedAt');
+    expect(processed.items[0]).not.toHaveProperty('deletedAt');
+    expect(processed.items[0]).not.toHaveProperty('__v');
+    expect(processed.items[0]).not.toHaveProperty('__t');
+
+    expect(processed.items[1]).toHaveProperty('name');
+    expect(processed.items[1]).toHaveProperty('quantity');
+  });
+
+  it('should skip null and undefined values', () => {
+    const bodyWithNull = { ...body, nullValue: null };
+    const bodyWithUndefined = { ...body, undefinedValue: undefined };
+    const processedWithNull = preHandleBody(bodyWithNull);
+    const processedWithUndefined = preHandleBody(bodyWithUndefined);
+    expect(processedWithNull).toHaveProperty('nullValue');
+    expect(processedWithUndefined).toHaveProperty('undefinedValue');
+  });
+
+  it('should return a partial object', () => {
+    const processed = preHandleBody(body);
+    expect(processed).toMatchObject({
+      name: 'John',
+      age: 30,
+      address: {},
+      tags: ['foo', 'bar', 'baz'],
+      items: [
+        { name: 'Item 1', quantity: 2 },
+        { name: 'Item 2', quantity: 3 },
+      ],
     });
-    expect(output.name).toEqual('San Francisco');
   });
 
   it('should handle empty input', () => {
     const input = {};
     const output = preHandleBody(input);
     expect(output).toEqual({});
-  });
-});
-
-describe('preHandleUpdateBody function', () => {
-  it('should remove unnecessary fields and transform location fields', () => {
-    const input = {
-      _id: '123',
-      name: 'Test',
-      age: 25,
-      lat: '1.23',
-      lng: '4.56',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null,
-      address: { city: 'New York', state: 'NY', country: 'USA' },
-      'address.city': 'LA',
-      'address.zipCode': '12345',
-    };
-
-    const output = preHandleUpdateBody(input);
-    expect(output).toEqual({
-      name: 'Test',
-      age: 25,
-      'location.type': 'Point',
-      'location.coordinates': [4.56, 1.23],
-      'address.state': 'NY',
-      'address.country': 'USA',
-      'address.city': 'LA',
-      'address.zipCode': '12345',
-    });
-  });
-
-  it('should handle nested objects', () => {
-    const input = {
-      _id: '123',
-      name: 'Test',
-      age: 25,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null,
-      address: {
-        city: 'New York',
-        state: 'NY',
-        country: 'USA',
-        zipCode: '12345',
-        nested: { field: 'value' },
-      },
-    };
-
-    const output = preHandleUpdateBody(input);
-    expect(output).toEqual({
-      name: 'Test',
-      age: 25,
-      'address.state': 'NY',
-      'address.country': 'USA',
-      'address.nested.field': 'value',
-      'address.city': 'New York',
-      'address.zipCode': '12345',
-    });
-  });
-
-  it('should handle fields with "$" character', () => {
-    const input = {
-      _id: '123',
-      name: 'Test',
-      age: 25,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      deletedAt: null,
-      address: {
-        city: 'LA',
-        zipCode: '12345',
-        nested: { field: 'value' },
-      },
-      $push: { tags: ['test'], $position: 0 },
-    };
-
-    const output = preHandleUpdateBody(input);
-
-    expect(output).toEqual({
-      $set: {
-        name: 'Test',
-        age: 25,
-        'address.city': 'LA',
-        'address.zipCode': '12345',
-        'address.nested.field': 'value',
-      },
-      $push: { tags: ['test'], $position: 0 },
-    });
   });
 });
 
@@ -251,15 +214,24 @@ describe('convertPopulate function', () => {
 
     const expected = [
       {
+        match: { deletedAt: { $eq: null } },
         path: 'author',
         model: 'User',
         select: 'name',
         populate: [
           {
+            match: { deletedAt: { $eq: null } },
             path: 'comments',
             model: 'Comment',
             select: 'text',
-            populate: [{ path: 'user', model: 'User', select: 'email' }],
+            populate: [
+              {
+                match: { deletedAt: { $eq: null } },
+                path: 'user',
+                model: 'User',
+                select: 'email',
+              },
+            ],
           },
         ],
       },

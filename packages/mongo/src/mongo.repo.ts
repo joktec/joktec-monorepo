@@ -1,4 +1,4 @@
-import { Constructor, DEFAULT_CON_ID, ICondition, OnModuleInit, plainToInstance, toBool } from '@joktec/core';
+import { Constructor, DEFAULT_CON_ID, ICondition, OnModuleInit, plainToInstance, toBool, toInt } from '@joktec/core';
 import { IMongoRepository } from './mongo.client';
 import { MongoService } from './mongo.service';
 import { ModelType } from '@typegoose/typegoose/lib/types';
@@ -8,7 +8,6 @@ import {
   DELETE_OPTIONS,
   preHandleBody,
   preHandleQuery,
-  preHandleUpdateBody,
   projection,
   UPDATE_OPTIONS,
   UPSERT_OPTIONS,
@@ -46,7 +45,6 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
     if (query.sort) qb.sort(query.sort);
     if (query.populate) qb.populate(convertPopulate(query.populate, this.isSoftDelete));
-
     const docs: any[] = await qb.lean().exec();
     return this.transform(docs) as T[];
   }
@@ -54,7 +52,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   @MongoCatch
   async count(query: IMongoRequest<T>): Promise<number> {
     const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
-    if (condition.hasOwnProperty('location')) {
+    if (query.near || query.condition.hasOwnProperty(query.near.field || 'location')) {
       return this.model.estimatedDocumentCount(condition);
     }
     return this.model.countDocuments(condition);
@@ -87,7 +85,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   @MongoCatch
   async update(condition: ICondition<T>, body: Partial<T>): Promise<T> {
     const transformBody: T = this.transform(body) as T;
-    const processBody: Partial<T> = preHandleUpdateBody<T>(transformBody);
+    const processBody: Partial<T> = preHandleBody<T>(transformBody);
     const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
     const qb = this.model.findOneAndUpdate(overrideCondition, processBody, UPDATE_OPTIONS);
     const doc = await qb.lean().exec();

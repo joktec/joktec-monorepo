@@ -1,7 +1,7 @@
-import { ICondition, IPopulate, IPopulateOption } from '@joktec/core';
+import { ICondition, IPopulate, IPopulateOption, toInt } from '@joktec/core';
 import { IMongoRequest, MongoSchema } from './models';
 import { PopulateOptions, QueryOptions } from 'mongoose';
-import { omit } from 'lodash';
+import { omit, isNil } from 'lodash';
 
 export const UPDATE_OPTIONS: QueryOptions = {
   runValidators: true,
@@ -37,60 +37,43 @@ export const preHandleQuery = <T extends MongoSchema>(
   query: IMongoRequest<T>,
   isSoftDelete: boolean = true,
 ): ICondition<T> => {
-  const { condition = {}, keyword } = query;
+  const { condition = {}, keyword, near } = query;
   const overrideCondition: ICondition<T> = preHandleCondition(condition);
   if (keyword) overrideCondition['$text'] = { $search: keyword };
   if (isSoftDelete) overrideCondition['deletedAt'] = { $eq: null };
+  if (near) {
+    const { lat, lng, distance, field = 'location' } = near;
+    overrideCondition[field] = {
+      $near: {
+        $geometry: {
+          type: 'Point',
+          coordinates: [lng, lat],
+        },
+        $maxDistance: toInt(distance, 1000),
+      },
+    };
+  }
   return overrideCondition;
 };
 
-export const preHandleBody = <T extends MongoSchema>(body: any): Partial<T> => {
-  const processBody = omit(body, ['_id', 'createdAt', 'updatedAt', 'deletedAt', '__v', '__t', 'lat', 'lng']);
-  if (body['lng'] && body['lat']) {
-    processBody['location'] = {
-      type: 'Point',
-      coordinates: [parseFloat(body['lng'] ?? 0), parseFloat(body['lat'] ?? 0)],
-    };
-  }
-  return processBody;
-};
+export const preHandleBody = <T extends object>(body: object): Partial<T> => {
+  const processBody = omit(body, ['_id', 'createdAt', 'updatedAt', 'deletedAt', '__v', '__t']);
+  const result: Partial<T> = {};
 
-export const preHandleUpdateBody = <T extends MongoSchema>(body: any): Partial<T> => {
-  const plain = preHandleBody(body);
-  const outputObj = {};
-  if (Object.keys(body).some(k => k.startsWith('$'))) {
-    outputObj['$set'] = {};
-  }
-
-  for (const [key, value] of Object.entries(plain)) {
-    if (key.startsWith('$')) {
-      if (outputObj.hasOwnProperty(key)) {
-        outputObj[key] = Object.assign({}, outputObj[key], value);
+  for (const key in processBody) {
+    if (Object.prototype.hasOwnProperty.call(processBody, key)) {
+      const value = processBody[key];
+      if (Array.isArray(value)) {
+        result[key] = value.map(item => (typeof item === 'object' && !isNil(item) ? preHandleBody(item) : item));
+      } else if (typeof value === 'object' && !isNil(value)) {
+        result[key] = preHandleBody(value);
       } else {
-        outputObj[key] = value;
+        result[key] = value;
       }
-      continue;
-    }
-
-    if (typeof value === 'object' && !Array.isArray(value)) {
-      const nestedObj = preHandleUpdateBody(value);
-      for (const [nestedKey, nestedValue] of Object.entries(nestedObj)) {
-        if (outputObj.hasOwnProperty('$set')) {
-          outputObj['$set'][`${key}.${nestedKey}`] = nestedValue;
-        } else {
-          outputObj[`${key}.${nestedKey}`] = nestedValue;
-        }
-      }
-      continue;
-    }
-
-    if (outputObj.hasOwnProperty('$set')) {
-      outputObj['$set'][key] = value;
-    } else {
-      outputObj[key] = value;
     }
   }
-  return outputObj;
+
+  return result;
 };
 
 export const projection = (select: string): string => select.split(',').join(' ');
