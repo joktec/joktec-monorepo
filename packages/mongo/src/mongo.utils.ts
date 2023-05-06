@@ -1,7 +1,8 @@
 import { ICondition, IPopulate, IPopulateOption, toInt } from '@joktec/core';
 import { IMongoRequest, MongoSchema } from './models';
 import { PopulateOptions, QueryOptions } from 'mongoose';
-import { omit, isNil } from 'lodash';
+import { omit, isNil, pick } from 'lodash';
+import Dot from 'dot-object';
 
 export const UPDATE_OPTIONS: QueryOptions = {
   runValidators: true,
@@ -74,6 +75,25 @@ export const preHandleBody = <T extends object>(body: object): Partial<T> => {
   }
 
   return result;
+};
+
+export const preHandleUpdateBody = <T extends object>(body: object): Partial<T> => {
+  const dot = new Dot('.', true, true, false);
+  const isUseOperator = Object.keys(body).some(key => key.startsWith('$'));
+  if (isUseOperator) {
+    const fields = Object.keys(body).filter(key => !key.startsWith('$'));
+    const operatorFields = Object.keys(body).filter(key => key.startsWith('$'));
+
+    const processBody: any = pick(body, operatorFields);
+    if (!body.hasOwnProperty('$set')) processBody['$set'] = {};
+
+    processBody['$set'] = {
+      ...dot.dot(preHandleBody(pick(body, fields))),
+      ...dot.dot(preHandleBody(body['$set'])),
+    };
+    return processBody;
+  }
+  return dot.dot(preHandleBody(body));
 };
 
 export const projection = (select: string): string => select.split(',').join(' ');

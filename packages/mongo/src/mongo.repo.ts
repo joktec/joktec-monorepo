@@ -8,6 +8,7 @@ import {
   DELETE_OPTIONS,
   preHandleBody,
   preHandleQuery,
+  preHandleUpdateBody,
   projection,
   UPDATE_OPTIONS,
   UPSERT_OPTIONS,
@@ -85,7 +86,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   @MongoCatch
   async update(condition: ICondition<T>, body: Partial<T>): Promise<T> {
     const transformBody: T = this.transform(body) as T;
-    const processBody: Partial<T> = preHandleBody<T>(transformBody);
+    const processBody: Partial<T> = preHandleUpdateBody<T>(transformBody);
     const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
     const qb = this.model.findOneAndUpdate(overrideCondition, processBody, UPDATE_OPTIONS);
     const doc = await qb.lean().exec();

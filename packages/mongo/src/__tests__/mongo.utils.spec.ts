@@ -1,5 +1,12 @@
 import { describe, expect, it } from '@jest/globals';
-import { convertPopulate, preHandleBody, preHandleCondition, preHandleQuery, projection } from '../mongo.utils';
+import {
+  convertPopulate,
+  preHandleBody,
+  preHandleCondition,
+  preHandleQuery,
+  preHandleUpdateBody,
+  projection,
+} from '../mongo.utils';
 import { IMongoRequest } from '../models';
 
 describe('preHandleCondition function', () => {
@@ -174,6 +181,188 @@ describe('preHandleBody function', () => {
     const input = {};
     const output = preHandleBody(input);
     expect(output).toEqual({});
+  });
+});
+
+describe('preHandleUpdateBody function', () => {
+  it('should remove unwanted fields and convert object to dot notation', () => {
+    const body = {
+      _id: '1234',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: new Date(),
+      __v: 1,
+      __t: 'MyModel',
+      name: 'John Doe',
+      address: {
+        street: '123 Main St',
+        city: 'New York',
+        state: 'NY',
+        zip: '10001',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: new Date(),
+      },
+      'address.state': 'CA',
+      tags: ['tag3', 'tag4'],
+      items: [
+        { name: 'item1', price: 10, createdAt: new Date(), updatedAt: new Date(), deletedAt: new Date() },
+        { name: 'item2', price: 20, createdAt: new Date(), updatedAt: new Date(), deletedAt: new Date() },
+      ],
+    };
+
+    const expected = {
+      name: 'John Doe',
+      'address.street': '123 Main St',
+      'address.city': 'New York',
+      'address.zip': '10001',
+      'address.state': 'CA',
+      'tags.0': 'tag3',
+      'tags.1': 'tag4',
+      'items.0.name': 'item1',
+      'items.0.price': 10,
+      'items.1.name': 'item2',
+      'items.1.price': 20,
+    };
+
+    const result = preHandleUpdateBody(body);
+
+    expect(result).toEqual(expected);
+  });
+
+  it('should remove unwanted fields and convert object to dot notation with $set', () => {
+    const body = {
+      $set: {
+        _id: '1234',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: new Date(),
+        __v: 1,
+        __t: 'MyModel',
+        name: 'John Doe',
+        address: {
+          street: '123 Main St',
+          city: 'New York',
+          state: 'NY',
+          zip: '10001',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: new Date(),
+        },
+        'address.state': 'CA',
+        tags: ['tag3', 'tag4'],
+        items: [
+          { name: 'item1', price: 10, createdAt: new Date(), updatedAt: new Date(), deletedAt: new Date() },
+          { name: 'item2', price: 20, createdAt: new Date(), updatedAt: new Date(), deletedAt: new Date() },
+        ],
+      },
+    };
+
+    const expected = {
+      $set: {
+        name: 'John Doe',
+        'address.street': '123 Main St',
+        'address.city': 'New York',
+        'address.state': 'CA',
+        'address.zip': '10001',
+        'tags.0': 'tag3',
+        'tags.1': 'tag4',
+        'items.0.name': 'item1',
+        'items.0.price': 10,
+        'items.1.name': 'item2',
+        'items.1.price': 20,
+      },
+    };
+
+    const result = preHandleUpdateBody(body);
+
+    expect(result).toEqual(expected);
+  });
+
+  it('should combine with exist $set', () => {
+    const body = {
+      name: 'John Doe',
+      address: {
+        street: '123 Main St',
+        city: 'New York',
+        state: 'NY',
+        zip: '10001',
+      },
+      'address.state': 'CA',
+      tags: ['tag3', 'tag4'],
+      items: [
+        { name: 'item1', price: 10 },
+        { name: 'item2', price: 20 },
+      ],
+      $set: {
+        address: { zip: '10002' },
+        'address.city': 'New York City',
+      },
+    };
+
+    const expected = {
+      $set: {
+        name: 'John Doe',
+        'address.street': '123 Main St',
+        'address.city': 'New York City',
+        'address.state': 'CA',
+        'address.zip': '10002',
+        'tags.0': 'tag3',
+        'tags.1': 'tag4',
+        'items.0.name': 'item1',
+        'items.0.price': 10,
+        'items.1.name': 'item2',
+        'items.1.price': 20,
+      },
+    };
+
+    const result = preHandleUpdateBody(body);
+
+    expect(result).toEqual(expected);
+  });
+
+  it('should put into $set when met $push', () => {
+    const body = {
+      name: 'John Doe',
+      address: {
+        street: '123 Main St',
+        city: 'New York',
+        state: 'NY',
+        zip: '10001',
+      },
+      'address.state': 'CA',
+      tags: ['tag3', 'tag4'],
+      items: [
+        { name: 'item1', price: 10 },
+        { name: 'item2', price: 20 },
+      ],
+      $push: {
+        tags: 'tag5',
+      },
+    };
+
+    const expected = {
+      $set: {
+        name: 'John Doe',
+        'address.street': '123 Main St',
+        'address.city': 'New York',
+        'address.state': 'CA',
+        'address.zip': '10001',
+        'tags.0': 'tag3',
+        'tags.1': 'tag4',
+        'items.0.name': 'item1',
+        'items.0.price': 10,
+        'items.1.name': 'item2',
+        'items.1.price': 20,
+      },
+      $push: {
+        tags: 'tag5',
+      },
+    };
+
+    const result = preHandleUpdateBody(body);
+
+    expect(result).toEqual(expected);
   });
 });
 

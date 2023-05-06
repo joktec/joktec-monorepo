@@ -46,12 +46,14 @@
   "dependencies": {
     "@joktec/core": "0.0.55",
     "@typegoose/typegoose": "^10.3.2",
+    "dot-object": "^2.1.4",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mongoose": "^6.10.0",
     "mongoose-beautiful-unique-validation": "^7.1.1"
   },
   "devDependencies": {
+    "@types/dot-object": "^2.1.2",
     "@types/mongoose": "^5.11.97"
   },
   "lint-staged": {
