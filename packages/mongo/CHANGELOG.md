@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.70](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.69...@joktec/mongo@0.0.70) (2023-05-06)
+
+
+### Bug Fixes
+
+* mongo find one sort ([4b8f01f](https://github.com/joktec/joktec-monorepo/commit/4b8f01f3c440cbd09f1565ba5a853cc2e593b2b3))
+
+
+
+
+
 ## [0.0.69](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.68...@joktec/mongo@0.0.69) (2023-05-06)
 
 
