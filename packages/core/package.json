@@ -138,5 +138,19 @@
       "path": "./node_modules/cz-conventional-changelog"
     }
   },
+  "jest": {
+    "passWithNoTests": true,
+    "preset": "ts-jest",
+    "rootDir": "src",
+    "transform": {
+      "^.+\\.(t|s)s$": "ts-jest"
+    },
+    "coverageDirectory": "<rootDir>/../coverage/",
+    "collectCoverageFrom": [
+      "**/*.{ts,js}",
+      "!**/index.ts",
+      "!**/*.{d,enum}.ts"
+    ]
+  },
   "gitHead": "c6ee0ffb76c431d0422181f99fd9edfb6ed7a72e"
 }

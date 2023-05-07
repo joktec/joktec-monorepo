@@ -64,8 +64,6 @@ export class MailerConfig extends ClientConfig {
         pass: props?.auth?.pass,
       }),
     });
-
-    if (transport) this.secure = true;
   }
 }
 

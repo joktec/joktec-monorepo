@@ -37,12 +37,26 @@
     "@joktec/core": "0.0.55",
     "@joktec/http": "^0.0.54",
     "@joktec/mailer": "^0.0.53",
-    "@joktec/mongo": "0.0.67"
+    "@joktec/mongo": "0.0.71"
   },
   "lint-staged": {
     "*.ts": [
       "prettier --write --ignore-path ./.prettierignore",
       "eslint --fix"
+    ]
+  },
+  "jest": {
+    "passWithNoTests": true,
+    "preset": "ts-jest",
+    "rootDir": "src",
+    "transform": {
+      "^.+\\.(t|s)s$": "ts-jest"
+    },
+    "coverageDirectory": "<rootDir>/../coverage/",
+    "collectCoverageFrom": [
+      "**/*.{ts,js}",
+      "!**/index.ts",
+      "!**/*.{d,enum}.ts"
     ]
   },
   "gitHead": "b74397663527dd2bd67714cddaefe03c1b9112d2"
