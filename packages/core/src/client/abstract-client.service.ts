@@ -1,7 +1,7 @@
 import { Inject, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '../config';
 import { LogService } from '../log';
-import { toArray } from '../utils';
+import { sleep, toArray } from '../utils';
 import { isEmpty } from 'lodash';
 import { ClientConfig, DEFAULT_CON_ID } from './client.config';
 import { Client } from './client';
@@ -42,6 +42,7 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
     const endMessage = first ? 'initialized' : 're-initialized';
 
     this.configs[conId] = this.validateConfig(config);
+    if (!first) await sleep(this.configs[conId].initTimeout);
 
     this.logService.debug('`%s` %s is %s', conId, this.service, beginMessage);
     this.clients[conId] = await this.init(this.configs[conId]);

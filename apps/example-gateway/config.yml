@@ -22,3 +22,12 @@ guard:
 
 http:
   timeout: 30000
+
+mailer:
+  host: smtp.example.com
+  port: 587
+  secure: false
+  sender: admin@joktec.com
+  auth:
+    user: admin@joktec.com
+    pass: joktec123

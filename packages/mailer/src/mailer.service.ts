@@ -1,13 +1,13 @@
-import { AbstractClientService, DEFAULT_CON_ID, Retry } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Retry, sleep } from '@joktec/core';
 import { Mailer, MailerClient } from './mailer.client';
-import { MailerConfig, MailerServiceType } from './mailer.config';
+import { MailerConfig } from './mailer.config';
 import { MailerSendRequest, MailerSendResponse } from './models';
 import { SendEmailMetric } from './mailer.metric';
 import { MailerException } from './mailer.exception';
-import { MailgunService, SendgridService } from './services';
 import fs from 'fs';
 import handlebars from 'handlebars';
 import path from 'path';
+import nodemailer from 'nodemailer';
 
 const RETRY_OPTS = 'mailer.retry';
 
@@ -18,24 +18,39 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
 
   @Retry(RETRY_OPTS)
   protected async init(config: MailerConfig): Promise<Mailer> {
-    switch (config.service) {
-      case MailerServiceType.MAILGUN:
-        return MailgunService.init(config);
-
-      case MailerServiceType.SENDGRID:
-        return SendgridService.init(config);
-
-      default:
-        throw new MailerException('MAILER_SERVICE_NOT_IMPLEMENTED', config);
-    }
+    return nodemailer.createTransport({
+      host: config.host,
+      port: config.port,
+      secure: config.secure,
+      auth: {
+        user: config.auth.user,
+        pass: config.auth.pass,
+      },
+      logger: {
+        level: lvl => this.logService.trace(lvl),
+        trace: msg => this.logService.trace(msg),
+        debug: msg => this.logService.debug(msg),
+        info: msg => this.logService.info(msg),
+        warn: msg => this.logService.warn(msg),
+        error: msg => this.logService.error(msg),
+        fatal: msg => this.logService.fatal(msg),
+      },
+    });
   }
 
   async start(client: Mailer, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // Do nothing
+    try {
+      await client.verify();
+      this.logService.info(`Mailer client ${conId} is ready`);
+    } catch (err) {
+      this.logService.error(err, `Mailer client ${conId} is not ready`);
+      this.clientInit(this.getConfig(conId), false);
+    }
   }
 
   async stop(client: Mailer, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // Do nothing
+    client.close();
+    this.logService.info(`Mailer client ${conId} is closed`);
   }
 
   async buildHtml(
@@ -58,6 +73,6 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
   async send(req: MailerSendRequest, conId: string = DEFAULT_CON_ID): Promise<MailerSendResponse> {
     const config = this.getConfig(conId);
     const sender = req.from || `MyCompany <${config.sender}>`;
-    return this.getClient(conId).send({ ...req, from: sender });
+    return this.getClient(conId).sendMail({ ...req, from: sender });
   }
 }

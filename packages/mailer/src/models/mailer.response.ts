@@ -1,4 +1,3 @@
-import { messages } from 'mailgun-js';
-import { classes } from '@sendgrid/helpers';
+import { SentMessageInfo } from 'nodemailer';
 
-export type MailerSendResponse = messages.SendResponse | classes.Response;
+export type MailerSendResponse = SentMessageInfo;

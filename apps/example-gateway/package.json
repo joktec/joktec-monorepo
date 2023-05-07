@@ -36,6 +36,7 @@
   "dependencies": {
     "@joktec/core": "0.0.55",
     "@joktec/http": "^0.0.54",
+    "@joktec/mailer": "^0.0.53",
     "@joktec/mongo": "0.0.67"
   },
   "lint-staged": {
