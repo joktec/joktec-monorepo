@@ -1,8 +1,9 @@
 import { ICondition, IPopulate, IPopulateOption, toInt } from '@joktec/core';
 import { IMongoRequest, MongoSchema } from './models';
 import { PopulateOptions, QueryOptions } from 'mongoose';
-import { omit, isNil, pick } from 'lodash';
+import { omit, isNil, pick, isDate } from 'lodash';
 import Dot from 'dot-object';
+import { isMoment } from 'moment';
 
 export const UPDATE_OPTIONS: QueryOptions = {
   runValidators: true,
@@ -66,6 +67,10 @@ export const preHandleBody = <T extends object>(body: object): Partial<T> => {
       const value = processBody[key];
       if (Array.isArray(value)) {
         result[key] = value.map(item => (typeof item === 'object' && !isNil(item) ? preHandleBody(item) : item));
+      } else if (isDate(value)) {
+        result[key] = value;
+      } else if (isMoment(value)) {
+        result[key] = value.toDate();
       } else if (typeof value === 'object' && !isNil(value)) {
         result[key] = preHandleBody(value);
       } else {
