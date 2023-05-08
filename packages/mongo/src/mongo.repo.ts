@@ -108,9 +108,25 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async upsert(condition: ICondition<T>, body: T): Promise<T> {
+  async deleteMany(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T[]> {
+    const force: boolean = toBool(opts?.force, false);
     const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
-    const res = await this.model.updateOne(overrideCondition, body, UPSERT_OPTIONS);
+    if (!force && this.isSoftDelete) {
+      const bodyDeleted = { deletedAt: new Date(), deletedBy: opts?.userId ?? null };
+      const docs = await this.model.updateMany(overrideCondition, bodyDeleted, UPDATE_OPTIONS).lean().exec();
+      return this.transform(docs) as T[];
+    }
+    const docs = await this.model.deleteMany(overrideCondition, DELETE_OPTIONS).lean().exec();
+    return this.transform(docs) as T[];
+  }
+
+  @MongoCatch
+  async upsert(condition: ICondition<T>, body: Partial<T>): Promise<T> {
+    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
+    const transformBody: T = this.transform(body) as T;
+    const processBody: Partial<T> = preHandleBody<T>(transformBody);
+
+    const res = await this.model.updateOne(overrideCondition, processBody, UPSERT_OPTIONS);
     const doc = await this.model.findById(res.upsertedId).lean().exec();
     return this.transform(doc) as T;
   }

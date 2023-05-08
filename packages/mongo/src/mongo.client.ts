@@ -8,5 +8,7 @@ export interface MongoClient extends Client<MongoConfig, Connection> {}
 export interface IMongoRepository<T extends MongoSchema, ID = string> extends BaseRepository<T, ID> {
   aggregate(aggregations: IMongoAggregation[]): Promise<T[]>;
 
-  upsert(condition: ICondition<T>, body: T): Promise<T>;
+  upsert(condition: ICondition<T>, body: Partial<T>): Promise<T>;
+
+  deleteMany(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T[]>;
 }
