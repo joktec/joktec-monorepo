@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsOptional, IsString, validateSync, ValidationError } from '../validation';
+import { buildError, IsBoolean, IsNumber, IsOptional, IsString, validateSync, ValidationError } from '../validation';
 import { toBool, toInt } from '../utils';
 
 export const DEFAULT_CON_ID = 'default';
@@ -22,8 +22,8 @@ export class ClientConfig {
 
   constructor(props: ClientConfig) {
     Object.assign(this, {
+      ...props,
       conId: props?.conId ?? DEFAULT_CON_ID,
-      context: props?.context,
       inherit: toBool(props.inherit, true),
       initTimeout: toInt(props.initTimeout, 3000),
     });
@@ -31,6 +31,8 @@ export class ClientConfig {
 
   validate(): string[] {
     const errors: ValidationError[] = validateSync(this);
-    return errors.length ? errors.reduce((res, err) => res.concat(Object.values(err.constraints)), []) : null;
+    if (!errors.length) return null;
+    const formatError = buildError(errors);
+    return Object.values(formatError).flat();
   }
 }
