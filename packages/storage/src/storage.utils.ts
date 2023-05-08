@@ -1,23 +1,19 @@
-import { BadRequestException } from '@joktec/core';
 import urlParse from 'url-parse';
+import { isEmpty } from 'lodash';
 
-export const parseKey = (link: string, bucket: string): string => {
-  let path: string;
-
+/**
+ * Get the object key from a link
+ * @param link
+ * @param bucket
+ */
+export const parseKey = (link: string, bucket: string = ''): string => {
+  let path: string = link;
   if (link.startsWith('http://') || link.startsWith('https://')) {
     const parsedUrl = urlParse(link);
     path = parsedUrl.pathname;
-  } else {
-    path = `/${bucket}/${link}`;
   }
 
-  path = path.replace(/^\/+/, '');
-  const bucketPath = `${bucket}/`;
-  const index = path.indexOf(bucketPath);
-  if (index === -1) {
-    throw new BadRequestException(`Bucket ${bucket} not found in link`);
-  }
-
-  const key = path.substring(index + bucketPath.length);
+  const pathArr = path.split('/').filter(p => !isEmpty(p) && p !== bucket);
+  const key = pathArr.join('/');
   return decodeURIComponent(key);
 };
