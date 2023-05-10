@@ -2,7 +2,7 @@ import { ICondition, IPopulate, IPopulateOption, toInt } from '@joktec/core';
 import { IMongoRequest, MongoSchema } from './models';
 import { PopulateOptions, QueryOptions } from 'mongoose';
 import { omit, isNil, pick, isDate } from 'lodash';
-import Dot from 'dot-object';
+import dot from 'dot-object';
 import { isMoment } from 'moment';
 
 export const UPDATE_OPTIONS: QueryOptions = {
@@ -83,22 +83,19 @@ export const preHandleBody = <T extends object>(body: object): Partial<T> => {
 };
 
 export const preHandleUpdateBody = <T extends object>(body: object): Partial<T> => {
-  const dot = new Dot('.', true, true, false);
-  const isUseOperator = Object.keys(body).some(key => key.startsWith('$'));
-  if (isUseOperator) {
-    const fields = Object.keys(body).filter(key => !key.startsWith('$'));
-    const operatorFields = Object.keys(body).filter(key => key.startsWith('$'));
+  const fields = Object.keys(body).filter(key => !key.startsWith('$'));
+  const operatorFields = Object.keys(body).filter(key => key.startsWith('$'));
 
-    const processBody: any = pick(body, operatorFields);
-    if (!body.hasOwnProperty('$set')) processBody['$set'] = {};
+  const processBody: any = pick(body, operatorFields);
+  if (!processBody.hasOwnProperty('$set')) processBody['$set'] = {};
 
-    processBody['$set'] = {
-      ...dot.dot(preHandleBody(pick(body, fields))),
-      ...dot.dot(preHandleBody(body['$set'])),
-    };
-    return processBody;
-  }
-  return dot.dot(preHandleBody(body));
+  dot.keepArray = true;
+  processBody['$set'] = {
+    ...dot.dot(preHandleBody(pick(body, fields))),
+    ...dot.dot(preHandleBody(processBody['$set'])),
+  };
+
+  return processBody;
 };
 
 export const projection = (select: string): string => select.split(',').join(' ');

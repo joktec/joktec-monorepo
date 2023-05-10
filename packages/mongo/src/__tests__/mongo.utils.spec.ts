@@ -212,17 +212,18 @@ describe('preHandleUpdateBody function', () => {
     };
 
     const expected = {
-      name: 'John Doe',
-      'address.street': '123 Main St',
-      'address.city': 'New York',
-      'address.zip': '10001',
-      'address.state': 'CA',
-      'tags.0': 'tag3',
-      'tags.1': 'tag4',
-      'items.0.name': 'item1',
-      'items.0.price': 10,
-      'items.1.name': 'item2',
-      'items.1.price': 20,
+      $set: {
+        name: 'John Doe',
+        'address.street': '123 Main St',
+        'address.city': 'New York',
+        'address.zip': '10001',
+        'address.state': 'CA',
+        tags: ['tag3', 'tag4'],
+        items: [
+          { name: 'item1', price: 10 },
+          { name: 'item2', price: 20 },
+        ],
+      },
     };
 
     const result = preHandleUpdateBody(body);
@@ -265,12 +266,11 @@ describe('preHandleUpdateBody function', () => {
         'address.city': 'New York',
         'address.state': 'CA',
         'address.zip': '10001',
-        'tags.0': 'tag3',
-        'tags.1': 'tag4',
-        'items.0.name': 'item1',
-        'items.0.price': 10,
-        'items.1.name': 'item2',
-        'items.1.price': 20,
+        tags: ['tag3', 'tag4'],
+        items: [
+          { name: 'item1', price: 10 },
+          { name: 'item2', price: 20 },
+        ],
       },
     };
 
@@ -307,12 +307,11 @@ describe('preHandleUpdateBody function', () => {
         'address.city': 'New York City',
         'address.state': 'CA',
         'address.zip': '10002',
-        'tags.0': 'tag3',
-        'tags.1': 'tag4',
-        'items.0.name': 'item1',
-        'items.0.price': 10,
-        'items.1.name': 'item2',
-        'items.1.price': 20,
+        tags: ['tag3', 'tag4'],
+        items: [
+          { name: 'item1', price: 10 },
+          { name: 'item2', price: 20 },
+        ],
       },
     };
 
@@ -348,12 +347,11 @@ describe('preHandleUpdateBody function', () => {
         'address.city': 'New York',
         'address.state': 'CA',
         'address.zip': '10001',
-        'tags.0': 'tag3',
-        'tags.1': 'tag4',
-        'items.0.name': 'item1',
-        'items.0.price': 10,
-        'items.1.name': 'item2',
-        'items.1.price': 20,
+        tags: ['tag3', 'tag4'],
+        items: [
+          { name: 'item1', price: 10 },
+          { name: 'item2', price: 20 },
+        ],
       },
       $push: {
         tags: 'tag5',
