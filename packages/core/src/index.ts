@@ -9,7 +9,6 @@ export * from './guards';
 export * from './infras';
 export * from './interceptors';
 export * from './log';
-export * from './metric';
 export * from './models';
 export * from './retry';
 export * from './swagger';

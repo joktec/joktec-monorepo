@@ -2,9 +2,9 @@ import { Global, Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule, ConfigService, initConfig } from './config';
 import { createPinoHttp, LoggerModule } from './log';
-import { MetricModule } from './metric';
 import { CqrsModule, GatewayConfig, GatewayModule, MicroModule } from './infras';
 import path from 'path';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Global()
 @Module({
@@ -24,7 +24,12 @@ import path from 'path';
         return [{ rootPath: path.resolve(staticPath), exclude: [...excludePath] }];
       },
     }),
-    MetricModule,
+    PrometheusModule.register({
+      path: '/metrics',
+      defaultMetrics: {
+        enabled: false,
+      },
+    }),
     CqrsModule,
     GatewayModule,
     MicroModule,
