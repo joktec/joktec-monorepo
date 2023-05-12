@@ -3649,6 +3649,27 @@
   dependencies:
     make-plural "^7.0.0"
 
+"@mikro-orm/core@^5.7.5":
+  version "5.7.5"
+  resolved "https://registry.yarnpkg.com/@mikro-orm/core/-/core-5.7.5.tgz#b5eae691580547aeac105fbb6dd5f6b2d8682412"
+  integrity sha512-Jakjz7qScsoHBHkFG7/A73M0TVTsNylPD/eDNQ+yoq73GwQ1NcJmhzQhMQQuF+5YpKdvnL2gUbNSzQ1MJ3OEcQ==
+  dependencies:
+    acorn-loose "8.3.0"
+    acorn-walk "8.2.0"
+    dotenv "16.0.3"
+    fs-extra "11.1.1"
+    globby "11.1.0"
+    mikro-orm "~5.7.5"
+    reflect-metadata "0.1.13"
+
+"@mikro-orm/mongodb@^5.7.5":
+  version "5.7.5"
+  resolved "https://registry.yarnpkg.com/@mikro-orm/mongodb/-/mongodb-5.7.5.tgz#b336408beb3819cedde079cf1a610edb760fd5f7"
+  integrity sha512-YmgLsflGFZUvwjzA1RMJtnrf65EJcRNSdQiWFcBXL1+oGp5YkZjsxQ6slmGk9V8pK5R1mHqu7ctC0zUYvBXImQ==
+  dependencies:
+    bson "^5.2.0"
+    mongodb "5.4.0"
+
 "@msgpackr-extract/msgpackr-extract-darwin-arm64@2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@msgpackr-extract/msgpackr-extract-darwin-arm64/-/msgpackr-extract-darwin-arm64-2.2.0.tgz#901c5937e1441572ea23e631fe6deca68482fe76"
@@ -5042,7 +5063,14 @@ acorn-jsx@^5.3.2:
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
   integrity sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==
 
-acorn-walk@^8.1.1:
+acorn-loose@8.3.0:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/acorn-loose/-/acorn-loose-8.3.0.tgz#0cd62461d21dce4f069785f8d3de136d5525029a"
+  integrity sha512-75lAs9H19ldmW+fAbyqHdjgdCrz0pWGXKmnqFoh8PyVd1L2RIb4RzYrSjmopeqv3E1G3/Pimu6GgLlrGbrkF7w==
+  dependencies:
+    acorn "^8.5.0"
+
+acorn-walk@8.2.0, acorn-walk@^8.1.1:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-8.2.0.tgz#741210f2e2426454508853a2f44d0ab83b7f69c1"
   integrity sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==
@@ -5051,6 +5079,11 @@ acorn@^8.4.1, acorn@^8.8.0:
   version "8.8.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.8.1.tgz#0a3f9cbecc4ec3bea6f0a80b66ae8dd2da250b73"
   integrity sha512-7zFpHzhnqYKrkYdUjF1HI1bzd0VygEGX8lFk4k5zVMqHEoES+P+7TKI+EvLO9WVMJ8eekdO0aDEK044xTXwPPA==
+
+acorn@^8.5.0:
+  version "8.8.2"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.8.2.tgz#1b2f25db02af965399b9776b0c2c391276d37c4a"
+  integrity sha512-xjIYgE8HBrkpd/sJqOGNspf8uHG+NOHGOw6a/Urj8taM2EXfdNAH2oFcPeIFfsv3+kz/mJrS5VuMqbNLjCa2vw==
 
 add-stream@^1.0.0:
   version "1.0.0"
@@ -5770,6 +5803,11 @@ bson@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/bson/-/bson-5.0.1.tgz#4cd3eeeabf6652ef0d6ab600f9a18212d39baac3"
   integrity sha512-y09gBGusgHtinMon/GVbv1J6FrXhnr/+6hqLlSmEFzkz6PodqF6TxjyvfvY3AfO+oG1mgUtbC86xSbOlwvM62Q==
+
+bson@^5.2.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/bson/-/bson-5.3.0.tgz#37b006df4cd91ed125cb686467c1dd6d4606b514"
+  integrity sha512-ukmCZMneMlaC5ebPHXIkP8YJzNl5DC41N5MAIvKDqLggdao342t4McltoJBQfQya/nHBWAcSsYRqlXPoQkTJag==
 
 buffer-alloc-unsafe@^1.1.0:
   version "1.1.0"
@@ -8007,6 +8045,15 @@ fs-constants@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs-constants/-/fs-constants-1.0.0.tgz#6be0de9be998ce16af8afc24497b9ee9b7ccd9ad"
   integrity sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==
 
+fs-extra@11.1.1:
+  version "11.1.1"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-11.1.1.tgz#da69f7c39f3b002378b0954bb6ae7efdc0876e2d"
+  integrity sha512-MGIE4HOvQCeUCzmlHs0vXpih4ysz4wg9qiSAu6cd42lVwPbTM1TjV7RusoyQqMmk/95gdQZX72u+YW+c3eEpFQ==
+  dependencies:
+    graceful-fs "^4.2.0"
+    jsonfile "^6.0.1"
+    universalify "^2.0.0"
+
 fs-extra@9.1.0, fs-extra@^9.1.0:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-9.1.0.tgz#5954460c764a8da2094ba3554bf839e6b9a7c86d"
@@ -8336,7 +8383,7 @@ globals@^13.15.0:
   dependencies:
     type-fest "^0.20.2"
 
-globby@^11.0.2, globby@^11.0.4, globby@^11.1.0:
+globby@11.1.0, globby@^11.0.2, globby@^11.0.4, globby@^11.1.0:
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/globby/-/globby-11.1.0.tgz#bd4be98bb042f83d796f7e3811991fbe82a0d34b"
   integrity sha512-jhIXaOzy1sb8IyocaruWSn1TjmnBVs8Ayhcy83rmxNJ8q2uWKCAj3CnJY+KpGSXCueAPc0i05kVvVKtP1t9S3g==
@@ -10582,6 +10629,11 @@ micromatch@^4.0.2, micromatch@^4.0.4, micromatch@^4.0.5:
     braces "^3.0.2"
     picomatch "^2.3.1"
 
+mikro-orm@~5.7.5:
+  version "5.7.5"
+  resolved "https://registry.yarnpkg.com/mikro-orm/-/mikro-orm-5.7.5.tgz#eca06c8c9c15f77d9bcb93ba4142ec2432a0028d"
+  integrity sha512-nx+hKgjK4+VgCiESmcVDvuBfVtSIrYodEjFHlVG85whEOwjYYi3ntBE1HloRVOVj0CAp1/KUEybo28ki8v0VNA==
+
 mime-db@1.52.0:
   version "1.52.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.52.0.tgz#bbabcdc02859f4987301c856e3387ce5ec43bf70"
@@ -10842,6 +10894,17 @@ mongodb@5.1.0:
   integrity sha512-qgKb7y+EI90y4weY3z5+lIgm8wmexbonz0GalHkSElQXVKtRuwqXuhXKccyvIjXCJVy9qPV82zsinY0W1FBnJw==
   dependencies:
     bson "^5.0.1"
+    mongodb-connection-string-url "^2.6.0"
+    socks "^2.7.1"
+  optionalDependencies:
+    saslprep "^1.0.3"
+
+mongodb@5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-5.4.0.tgz#ce217194b49572f32af5ddd9a1e3ae1282954795"
+  integrity sha512-6GDKgO7WiYUw+ILap143VXfAou06hjxDGgYUZWGnI4hgoZfP3el0G3l69JqJF8SEQbZmC+SN/2a0aWI/aWJoxA==
+  dependencies:
+    bson "^5.2.0"
     mongodb-connection-string-url "^2.6.0"
     socks "^2.7.1"
   optionalDependencies:
@@ -12830,7 +12893,7 @@ redis-parser@^3.0.0:
   dependencies:
     redis-errors "^1.0.0"
 
-reflect-metadata@^0.1.12, reflect-metadata@^0.1.13:
+reflect-metadata@0.1.13, reflect-metadata@^0.1.12, reflect-metadata@^0.1.13:
   version "0.1.13"
   resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.13.tgz#67ae3ca57c972a2aa1642b10fe363fe32d49dc08"
   integrity sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==
