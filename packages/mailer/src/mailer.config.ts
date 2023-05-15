@@ -5,6 +5,7 @@ export enum MailerServiceType {
   MAILGUN = 'mailgun',
   SENDGRID = 'sendgrid',
   MAILCHIMP = 'mailchimp',
+  ZOHO = 'zoho',
 }
 
 export class MailerAuth {
@@ -80,6 +81,11 @@ export const MailerTransport = {
   },
   [MailerServiceType.MAILCHIMP]: {
     host: 'smtp.mandrillapp.com',
+    port: 587,
+    user: 'apikey',
+  },
+  [MailerServiceType.ZOHO]: {
+    host: 'smtppro.zoho.com',
     port: 587,
     user: 'apikey',
   },
