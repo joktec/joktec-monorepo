@@ -11,31 +11,31 @@ import { IMongoRequest } from '../models';
 
 describe('preHandleCondition function', () => {
   it('should not modify a simple condition', () => {
-    const condition = { foo: 'bar' };
+    const condition: any = { foo: 'bar' };
     const result = preHandleCondition(condition);
     expect(result).toEqual(condition);
   });
 
   it('should replace "id" key with "_id"', () => {
-    const condition = { id: '123', foo: 'bar' };
+    const condition: any = { id: '123', foo: 'bar' };
     const result = preHandleCondition(condition);
     expect(result).toEqual({ _id: '123', foo: 'bar' });
   });
 
   it('should handle nested objects', () => {
-    const condition = { foo: 'bar', nested: { id: '123', baz: 'qux' } };
+    const condition: any = { foo: 'bar', nested: { id: '123', baz: 'qux' } };
     const result = preHandleCondition(condition);
     expect(result).toEqual({ foo: 'bar', nested: { _id: '123', baz: 'qux' } });
   });
 
   it('should handle multiple nested objects', () => {
-    const condition = { foo: 'bar', nested: { id: '123', baz: 'qux', deeper: { id: '456', quux: 'corge' } } };
+    const condition: any = { foo: 'bar', nested: { id: '123', baz: 'qux', deeper: { id: '456', quux: 'corge' } } };
     const result = preHandleCondition(condition);
     expect(result).toEqual({ foo: 'bar', nested: { _id: '123', baz: 'qux', deeper: { _id: '456', quux: 'corge' } } });
   });
 
   it('should handle empty object', () => {
-    const condition = {};
+    const condition: any = {};
     const result = preHandleCondition(condition);
     expect(result).toEqual(condition);
   });

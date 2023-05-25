@@ -16,7 +16,10 @@ export const preHandleQuery = <T extends Model<T>>(query: IMysqlRequest<T>): Fin
       const entries = Object.entries(value) as [IOperation, IDataType][];
       for (const [op, val] of entries) {
         const sqlOp = convertOp(op);
-        where[key] = { ...where[key], [sqlOp]: val };
+        where[key] = {
+          ...where[key],
+          [sqlOp]: sqlOp === Op.like || sqlOp === Op.notLike ? `%${val}%` : val,
+        };
       }
     } else {
       where[key] = value;
@@ -42,6 +45,8 @@ export const convertOp = (op: IOperation): symbol => {
     $in: Op.in,
     $nin: Op.notIn,
     $eq: Op.eq,
+    $like: Op.like,
+    $unlike: Op.notLike,
   };
   return mapping[op] || Op.eq;
 };

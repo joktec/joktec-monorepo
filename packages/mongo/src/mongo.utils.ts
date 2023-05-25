@@ -20,7 +20,7 @@ export const UPSERT_OPTIONS: QueryOptions = {
   runValidators: true,
 };
 
-export const preHandleCondition = <T extends MongoSchema>(condition: any): ICondition<T> => {
+export const preHandleCondition = <T extends MongoSchema>(condition: ICondition<T>): ICondition<T> => {
   if (condition && typeof condition === 'object') {
     const keys = Object.keys(condition);
     for (const key of keys) {
@@ -28,6 +28,15 @@ export const preHandleCondition = <T extends MongoSchema>(condition: any): ICond
         condition['_id'] = condition['id'];
         delete condition['id'];
       } else if (typeof condition[key] === 'object') {
+        if (condition[key].hasOwnProperty('$like')) {
+          condition[key]['$regex'] = new RegExp(condition[key]['$like'], 'i');
+          delete condition[key]['$like'];
+        } else if (condition[key].hasOwnProperty('$unlike')) {
+          condition[key] = {
+            $not: { $regex: new RegExp(condition[key]['$unlike'], 'i') },
+          };
+          delete condition[key]['$unlike'];
+        }
         condition[key] = preHandleCondition(condition[key]);
       }
     }

@@ -59,7 +59,7 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
     conId: string = DEFAULT_CON_ID,
   ): Promise<string> {
     const config = this.getConfig(conId);
-    const templatePath = path.posix.join(__dirname, config.templateDir, filename);
+    const templatePath = path.posix.join(config.templateDir, filename);
     if (!fs.existsSync(templatePath)) {
       throw new MailerException('TEMPLATE_PATH_NOT_FOUND', templatePath);
     }
