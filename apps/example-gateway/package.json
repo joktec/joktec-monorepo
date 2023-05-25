@@ -37,7 +37,7 @@
     "@joktec/core": "0.0.56",
     "@joktec/http": "^0.0.55",
     "@joktec/mailer": "^0.0.54",
-    "@joktec/mongo": "0.0.72"
+    "@joktec/mongo": "0.0.74"
   },
   "lint-staged": {
     "*.ts": [

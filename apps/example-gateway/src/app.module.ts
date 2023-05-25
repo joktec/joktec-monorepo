@@ -12,6 +12,7 @@ import { HttpModule } from '@joktec/http';
 import { MongoModule } from '@joktec/mongo';
 import { CategoryModule } from './modules';
 import { ProductModule } from './modules/products';
+import { MailerModule } from '@joktec/mailer';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ProductModule } from './modules/products';
     MongoModule,
     HttpModule,
     JwtModule,
+    MailerModule,
     // Module
     CategoryModule,
     ProductModule, // Microservice

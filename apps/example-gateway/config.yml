@@ -24,10 +24,12 @@ http:
   timeout: 30000
 
 mailer:
-  host: smtp.example.com
-  port: 587
-  secure: false
-  sender: admin@joktec.com
+  service: custom
+  host: smtppro.zoho.com
+  port: 465
+  secure: true
   auth:
-    user: admin@joktec.com
-    pass: joktec123
+    user: support@lostnfound.com.vn
+    pass: pxa2UMV-dak@geu*var
+  sender: 'LnF Support <support@lostnfound.com.vn>'
+  templateDir: ./public/templates
