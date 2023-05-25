@@ -4,7 +4,7 @@ import { ConfigModule, ConfigService, initConfig } from './config';
 import { createPinoHttp, LoggerModule } from './log';
 import { CqrsModule, GatewayConfig, GatewayModule, MicroModule } from './infras';
 import path from 'path';
-import { PrometheusModule } from '@willsoto/nestjs-prometheus';
+import { MetricModule } from './metric';
 
 @Global()
 @Module({
@@ -24,12 +24,7 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
         return [{ rootPath: path.resolve(staticPath), exclude: [...excludePath] }];
       },
     }),
-    PrometheusModule.register({
-      path: '/metrics',
-      defaultMetrics: {
-        enabled: false,
-      },
-    }),
+    MetricModule,
     CqrsModule,
     GatewayModule,
     MicroModule,

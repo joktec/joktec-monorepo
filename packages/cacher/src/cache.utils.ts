@@ -1,7 +1,7 @@
 import { DEFAULT_CON_ID } from '@joktec/core';
 import hash from 'object-hash';
 import dot from 'dot-object';
-import { CacheableOption, CacheEvictOption, CacheKey } from './redis.config';
+import { CacheableOption, CacheEvictOption, CacheKey } from './cache.config';
 import { isEmpty } from 'lodash';
 
 export const generateCacheKey = (key: 'params' | CacheKey, methodName: string, params: any): string => {

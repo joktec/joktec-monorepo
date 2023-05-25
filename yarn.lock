@@ -2846,19 +2846,6 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
-"@joktec/mongo@0.0.72":
-  version "0.0.72"
-  resolved "https://registry.yarnpkg.com/@joktec/mongo/-/mongo-0.0.72.tgz#615d16e999527d113e1da87bf7ecd5ef2b066df9"
-  integrity sha512-+iTACKbACpN7RWoKM0pssb0+sIxgjmFGLdsnO2tbkSLdayB17uc2ntP5H1yTa5WuheIm4LDI8nCvFWt8kueIRQ==
-  dependencies:
-    "@joktec/core" "0.0.56"
-    "@typegoose/typegoose" "^10.3.2"
-    dot-object "^2.1.4"
-    lodash "^4.17.21"
-    moment "^2.29.4"
-    mongoose "^6.10.0"
-    mongoose-beautiful-unique-validation "^7.1.1"
-
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -4685,6 +4672,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/node-persist@^3.1.3":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@types/node-persist/-/node-persist-3.1.3.tgz#4ad222ccc3c80373e3afc7e1b758d7a28d44edf2"
+  integrity sha512-6MdN3tQcBdlnswJ/JGJYEwWh72Ru3RHH3I16PCQ/GB7ecM3YFfcUB4Yysim6HHnKbCse5vgk5r51JKR7w5zE0Q==
+  dependencies:
+    "@types/node" "*"
+
 "@types/node-pushnotifications@^1.0.4":
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@types/node-pushnotifications/-/node-pushnotifications-1.0.4.tgz#2d669b903b91e09ef343142c130751c6353d4bd4"
@@ -6228,6 +6222,11 @@ clone-deep@^4.0.1:
     is-plain-object "^2.0.4"
     kind-of "^6.0.2"
     shallow-clone "^3.0.0"
+
+clone@2.x:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
+  integrity sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==
 
 clone@^1.0.2:
   version "1.0.4"
@@ -11099,6 +11098,13 @@ node-adm@0.9.1:
   resolved "https://registry.yarnpkg.com/node-adm/-/node-adm-0.9.1.tgz#f8c6a72ffadb1a7dfd6637102c950a9a9496e842"
   integrity sha512-npudU9I1l6wUEUcZme6yhe1WTi48nMSM7v2BxqGtE7hO12knzCnRj+IeUmaDdNzNMNiOU8ZYqN6PE6PXX2F/3w==
 
+node-cache@^5.1.2:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/node-cache/-/node-cache-5.1.2.tgz#f264dc2ccad0a780e76253a694e9fd0ed19c398d"
+  integrity sha512-t1QzWwnk4sjLWaQAS8CHgOJ+RAfmHpxFWmc36IWTiWHQfs0w5JDMBS1b1ZxQteo0vVVuWJvIUKHDkkeK7vIGCg==
+  dependencies:
+    clone "2.x"
+
 node-fetch@^2.6.1, node-fetch@^2.6.7:
   version "2.6.7"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
@@ -11160,6 +11166,11 @@ node-machine-id@^1.1.12:
   version "1.1.12"
   resolved "https://registry.yarnpkg.com/node-machine-id/-/node-machine-id-1.1.12.tgz#37904eee1e59b320bb9c5d6c0a59f3b469cb6267"
   integrity sha512-QNABxbrPa3qEIfrE6GOJ7BYIuignnJw7iQ2YPbc3Nla1HzRJjXzZOiikfF8m7eAMfichLt3M4VgLOetqgDmgGQ==
+
+node-persist@^3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/node-persist/-/node-persist-3.1.3.tgz#41e77a375fc56eeabb86cd02553cfc5e75b0ed6b"
+  integrity sha512-CaFv+kSZtsc+VeDRldK1yR47k1vPLBpzYB9re2z7LIwITxwBtljMq3s8VQnnr+x3E8pQfHbc5r2IyJsBLJhtXg==
 
 node-preload@^0.2.1:
   version "0.2.1"

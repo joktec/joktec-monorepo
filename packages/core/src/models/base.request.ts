@@ -3,7 +3,7 @@ export type IDataType = string | number | boolean | Date | object;
 export type IBindingType = IDataType | IDataType[];
 
 /** A union of MongoDB query operators that can be used to specify more complex conditions */
-export type IOperation = '$eq' | '$gt' | '$gte' | '$in' | '$lt' | '$lte' | '$ne' | '$nin';
+export type IOperation = '$eq' | '$gt' | '$gte' | '$in' | '$lt' | '$lte' | '$ne' | '$nin' | '$like' | '$unlike';
 
 /** An object that maps string keys to values that can be of type */
 export type IOpField = { [op in IOperation]?: IBindingType };

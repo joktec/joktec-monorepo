@@ -1,4 +1,4 @@
-export interface RedisModel<T> {
+export interface CacheModel<T> {
   conId?: string;
   namespace?: string;
   value: T;
