@@ -28,7 +28,7 @@ mailer:
   port: 465
   secure: true
   auth:
-    user: support@lostnfound.com.vn
-    pass: pxa2UMV-dak@geu*var
-  sender: 'LnF Support <support@lostnfound.com.vn>'
+    user: test@joktec.com
+    pass: joktec123
+  sender: 'JokTec <support@joktec.com>'
   templateDir: ./public/templates

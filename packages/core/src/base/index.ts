@@ -71,6 +71,7 @@ export {
   UsePipes,
   SetMetadata,
   CanActivate,
+  Render,
 } from '@nestjs/common';
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
 export { Express, Request, Response, NextFunction } from 'express';

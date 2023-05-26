@@ -21,7 +21,12 @@ import { MetricModule } from './metric';
       useFactory: (cfg: ConfigService) => {
         const gatewayConfig = cfg.get<GatewayConfig>('gateway');
         const { staticPath = './public', excludePath = [] } = gatewayConfig?.static || {};
-        return [{ rootPath: path.resolve(staticPath), exclude: [...excludePath] }];
+        return [
+          {
+            rootPath: path.resolve(staticPath),
+            exclude: ['swagger', 'bulls', 'views', ...excludePath],
+          },
+        ];
       },
     }),
     MetricModule,
