@@ -1,7 +1,7 @@
 {
-  "name": "@joktec/redis",
-  "description": "JokTec - Cached Service",
-  "version": "0.0.54",
+  "name": "@joktec/cacher",
+  "description": "JokTec - Cache Service",
+  "version": "0.0.0",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -21,10 +21,9 @@
     "access": "public"
   },
   "keywords": [
-    "redis",
-    "message",
-    "broker",
-    "cache"
+    "cache",
+    "persist",
+    "redis"
   ],
   "scripts": {
     "clean": "rimraf -rf dist",
@@ -79,6 +78,5 @@
       "!**/index.ts",
       "!**/*.{d,enum}.ts"
     ]
-  },
-  "gitHead": "c6ee0ffb76c431d0422181f99fd9edfb6ed7a72e"
+  }
 }

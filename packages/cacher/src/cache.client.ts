@@ -10,15 +10,13 @@ export interface ICacheClient {
 
   getItem(key: string): Promise<string>;
 
-  delItem(key: string): Promise<any>;
+  delItem(key: string): Promise<boolean>;
 }
 
 export interface CacheClient extends Client<CacheConfig, ICacheClient> {
-  set<T>(key: string, value: T, namespace?: string, expiry?: number, conId?: string): Promise<any>;
+  set<T>(key: string, value: T, opts?: { namespace?: string; expiry?: number }, conId?: string): Promise<any>;
 
-  get<T>(key: string, namespace?: string, conId?: string): Promise<T>;
+  get<T>(key: string, opts?: { namespace?: string }, conId?: string): Promise<T>;
 
-  del(key: string, namespace?: string, conId?: string): Promise<any>;
-
-  delWildcard(namespace: string, conId?: string): Promise<any>;
+  del(key: string, opts?: { namespace?: string }, conId?: string): Promise<any>;
 }

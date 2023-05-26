@@ -23,13 +23,15 @@ export class RedisService implements ICacheClient {
 
   async connect() {
     await this.client.connect();
+    this.logger.info('Redis cache have been connected to the server.');
   }
 
   async disconnect() {
     await this.client.disconnect(false);
+    this.logger.info('Redis cache have been stopped.');
   }
 
-  async setItem(key: string, value: string, expiry?: number): Promise<any> {
+  async setItem(key: string, value: string, expiry: number): Promise<any> {
     await this.client.set(key, value, 'EX', expiry);
   }
 
@@ -37,7 +39,8 @@ export class RedisService implements ICacheClient {
     return this.client.get(key);
   }
 
-  async delItem(key: string): Promise<any> {
+  async delItem(key: string): Promise<boolean> {
     await this.client.del(key);
+    return true;
   }
 }

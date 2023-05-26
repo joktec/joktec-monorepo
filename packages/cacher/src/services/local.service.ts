@@ -17,11 +17,14 @@ export class LocalService implements ICacheClient {
 
   async connect() {
     await this.client.init();
+    this.logger.info('Local cache have been connected to the server.');
   }
 
-  async disconnect() {}
+  async disconnect() {
+    this.logger.info('Local cache have been stopped.');
+  }
 
-  async setItem(key: string, value: string, expiry?: number): Promise<any> {
+  async setItem(key: string, value: string, expiry: number): Promise<any> {
     await this.client.set(key, value, { ttl: expiry });
   }
 
@@ -29,7 +32,8 @@ export class LocalService implements ICacheClient {
     return this.client.get(key);
   }
 
-  async delItem(key: string): Promise<any> {
-    await this.client.del(key);
+  async delItem(key: string): Promise<boolean> {
+    const res = await this.client.del(key);
+    return res.removed;
   }
 }
