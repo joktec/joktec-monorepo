@@ -1,7 +1,7 @@
 import { BaseService, Injectable, OnModuleInit } from '@joktec/core';
+import { MailerService } from '@joktec/mailer';
 import { Category } from './models';
 import { CategoryRepo } from './category.repo';
-import { MailerService } from '@joktec/mailer';
 
 @Injectable()
 export class CategoryService extends BaseService<Category, string> implements OnModuleInit {
@@ -10,15 +10,17 @@ export class CategoryService extends BaseService<Category, string> implements On
   }
 
   async onModuleInit() {
-    const html = await this.mailerService.buildHtml('verification.hbs', {
-      fullName: 'Bảo Trần',
-      verifyLink: 'https://google.com',
-    });
-    const mailRes = await this.mailerService.send({
-      to: ['trangiabao1203@gmail.com', 'thangnv.uit@gmail.com', 'lehai.gdrs@gmail.com', 'gespe.tran@gmail.com'],
-      subject: '[LF] Email Verification',
-      html,
-    });
-    console.log('mailRes', mailRes);
+    // const mailRes = await this.mailerService.send({
+    //   to: 'Lê Hải <lehai.grds@gmail.com>',
+    //   subject: '[LF] Email Verification',
+    //   template: {
+    //     filename: 'verification.hbs',
+    //     variables: {
+    //       fullName: 'Lê Hải',
+    //       verifyLink: 'https://google.com',
+    //     },
+    //   },
+    // });
+    // console.log('mailRes', mailRes);
   }
 }

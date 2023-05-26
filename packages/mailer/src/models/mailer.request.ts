@@ -1,6 +1,6 @@
 export interface MailerTemplate {
-  templateId: string;
-  templateData?: { [key: string]: any };
+  filename: string;
+  variables?: { [key: string]: any };
 }
 
 export interface MailerSendRequest {

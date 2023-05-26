@@ -1,4 +1,4 @@
-import { AbstractClientService, DEFAULT_CON_ID, Retry, sleep } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Retry } from '@joktec/core';
 import { Mailer, MailerClient } from './mailer.client';
 import { MailerConfig } from './mailer.config';
 import { MailerSendRequest, MailerSendResponse } from './models';
@@ -8,6 +8,7 @@ import fs from 'fs';
 import handlebars from 'handlebars';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import Mail from 'nodemailer/lib/mailer';
 
 const RETRY_OPTS = 'mailer.retry';
 
@@ -27,7 +28,7 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
         pass: config.auth.pass,
       },
       logger: {
-        level: lvl => this.logService.trace(lvl),
+        level: lv => this.logService.trace(lv),
         trace: msg => this.logService.trace(msg),
         debug: msg => this.logService.debug(msg),
         info: msg => this.logService.info(msg),
@@ -44,7 +45,7 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
       this.logService.info(`Mailer client ${conId} is ready`);
     } catch (err) {
       this.logService.error(err, `Mailer client ${conId} is not ready`);
-      this.clientInit(this.getConfig(conId), false);
+      await this.clientInit(this.getConfig(conId), false);
     }
   }
 
@@ -72,7 +73,17 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
   @SendEmailMetric()
   async send(req: MailerSendRequest, conId: string = DEFAULT_CON_ID): Promise<MailerSendResponse> {
     const config = this.getConfig(conId);
-    const sender = req.from || `MyCompany <${config.sender}>`;
-    return this.getClient(conId).sendMail({ ...req, from: sender });
+    const mailOptions: Mail.Options = {
+      ...req,
+      from: req.from || config.sender,
+    };
+
+    if (req.template) {
+      const { filename, variables } = req.template;
+      mailOptions.html = await this.buildHtml(filename, variables, conId);
+      delete mailOptions.text;
+    }
+
+    return this.getClient(conId).sendMail(mailOptions);
   }
 }

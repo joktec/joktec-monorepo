@@ -24,7 +24,6 @@ http:
   timeout: 30000
 
 mailer:
-  service: custom
   host: smtppro.zoho.com
   port: 465
   secure: true

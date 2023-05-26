@@ -1,7 +1,7 @@
-import { ClientConfig, IsNotEmpty, IsNumber, IsOptional, IsString, Type, toBool, toInt, IsBoolean } from '@joktec/core';
+import { ClientConfig, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, toBool, toInt, Type } from '@joktec/core';
 
 export enum MailerServiceType {
-  CUSTOM = 'custom',
+  SELF = 'self',
   MAILGUN = 'mailgun',
   SENDGRID = 'sendgrid',
   MAILCHIMP = 'mailchimp',
@@ -25,7 +25,7 @@ export class MailerAuth {
 export class MailerConfig extends ClientConfig {
   @IsNotEmpty()
   @IsNotEmpty()
-  service: MailerServiceType = MailerServiceType.CUSTOM;
+  service: MailerServiceType = MailerServiceType.SELF;
 
   @IsString()
   @IsNotEmpty()
@@ -86,7 +86,6 @@ export const MailerTransport = {
   },
   [MailerServiceType.ZOHO]: {
     host: 'smtppro.zoho.com',
-    port: 587,
-    user: 'apikey',
+    port: 465,
   },
 };
