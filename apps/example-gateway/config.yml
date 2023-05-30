@@ -3,6 +3,7 @@ gateway:
 
 log:
   level: info
+  useFilter: false
   logStash:
     host: 51.222.44.17
     port: 31658

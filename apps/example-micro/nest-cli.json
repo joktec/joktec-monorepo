@@ -4,10 +4,10 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [
-      "config.yml",
-      "public/**/*",
+      "../config.yml",
+      "../public/**/*",
       "**/*.proto"
-    ]
-  },
-  "watchAssets": true
+    ],
+    "watchAssets": true
+  }
 }

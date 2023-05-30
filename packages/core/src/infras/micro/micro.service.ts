@@ -7,7 +7,6 @@ import { toArray, toBool } from '../../utils';
 import { GlobalOptions } from '../../base';
 import glob from 'glob';
 import fs from 'fs';
-import mergeDeep from 'merge-deep';
 
 export class MicroService {
   static async bootstrap(app: INestApplication, opts?: GlobalOptions) {
@@ -56,7 +55,6 @@ export class MicroService {
         host: buildOptions.host || '0.0.0.0',
         port: buildOptions.port || microConfig.port || DEFAULT_MICRO_PORT,
       });
-      console.log('buildOptions', JSON.stringify(buildOptions, null, 4));
     } else if (transport === MicroTransport.GRPC) {
       const filePattern = options?.filePattern ?? `${config.get('env') == ENV.DEV ? 'src' : 'dist'}/**/*.proto`;
       const files = glob.sync(filePattern);
