@@ -24,7 +24,7 @@ import { MetricModule } from './metric';
         return [
           {
             rootPath: path.resolve(staticPath),
-            exclude: ['swagger', 'bulls', 'views', ...excludePath],
+            exclude: ['swagger', 'bulls', 'views', 'metrics', ...excludePath],
           },
         ];
       },

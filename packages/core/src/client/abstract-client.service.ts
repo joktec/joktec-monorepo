@@ -23,8 +23,8 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
 
   async onModuleInit(): Promise<void> {
     this.logService.setContext(this.constructor.name);
-    const config: IConfig = new this.configClass(this.configService.get<IConfig>(this.service));
 
+    const config: IConfig = this.configService.get<IConfig>(this.service);
     if (isEmpty(config)) {
       this.logService.warn('%s service not found config!', this.service);
     }

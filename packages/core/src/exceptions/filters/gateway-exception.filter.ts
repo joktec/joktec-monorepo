@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { isEmpty, isString } from 'lodash';
 import { GraphQLError } from 'graphql/index';
@@ -7,7 +7,6 @@ import { RpcException } from '@nestjs/microservices';
 import { ConfigService, ENV } from '../../config';
 import { IResponseDto } from '../../models';
 import { LogService } from '../../log';
-import { toBool } from '../../utils';
 
 @Catch()
 export class GatewayExceptionsFilter implements ExceptionFilter {
@@ -57,7 +56,7 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
       error: errorData,
     };
 
-    const useFilter = toBool(this.cfg.get<boolean>('log.useFilter'), false);
+    const useFilter = this.cfg.get<boolean>('log.useFilter', false);
     if (useFilter && status < HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(exception, message);
     }

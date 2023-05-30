@@ -1,11 +1,11 @@
 import { Global, Module } from '@nestjs/common';
-import { gatewayPromInterceptors } from './gateway-prom.interceptor';
-import { GatewayRest } from './gateway.rest';
+import { gatewayDurationSeconds, GatewayPromInterceptor, gatewayTotal } from './gateway-prom.interceptor';
+import { GatewayController } from './gateway.controller';
 
 @Global()
 @Module({
-  controllers: [GatewayRest],
-  providers: [...gatewayPromInterceptors],
-  exports: [...gatewayPromInterceptors],
+  controllers: [GatewayController],
+  providers: [GatewayPromInterceptor, gatewayDurationSeconds, gatewayTotal],
+  exports: [GatewayPromInterceptor, gatewayDurationSeconds, gatewayTotal],
 })
 export class GatewayModule {}

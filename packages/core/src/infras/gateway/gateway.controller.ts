@@ -1,10 +1,25 @@
-import { Controller, UseInterceptors } from '@nestjs/common';
-import { GatewayPromInterceptor } from './gateway-prom.interceptor';
+import { Controller, Get } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
+import { AppConfig, initConfig } from '../../config';
+import { toBool } from '../../utils';
 
-export const GatewayController = (prefix: string, opts?: { metric: boolean }) => {
-  return Clazz => {
-    const metric = opts?.metric ?? true;
-    if (metric) Clazz = UseInterceptors(GatewayPromInterceptor)(Clazz);
-    Controller(prefix)(Clazz);
-  };
-};
+@Controller()
+export class GatewayController {
+  @Get('/')
+  @ApiResponse({ type: Object })
+  async getHello() {
+    const appConfig: AppConfig = initConfig();
+    return {
+      name: appConfig.name.replace('@', '').replace('/', '-'),
+      description: appConfig.description,
+      version: appConfig.version,
+      isProd: toBool(appConfig.isProd, false),
+    };
+  }
+
+  @Get('/health')
+  @ApiResponse({ type: Object })
+  health() {
+    return { status: 'ok' };
+  }
+}

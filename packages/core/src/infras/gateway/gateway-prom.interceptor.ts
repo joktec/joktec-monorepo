@@ -1,19 +1,27 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Counter, Histogram } from 'prom-client';
 import { InjectMetric, makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
+import { LogService } from '../../log';
+import { Exception } from '../../exceptions';
 
 const GATEWAY_DURATION_SECONDS_METRIC = 'gateway_duration_seconds';
 const GATEWAY_TOTAL_METRIC = 'gateway_total';
 
-const gatewayDurationSeconds = makeHistogramProvider({
+export enum GatewayStatus {
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+}
+
+export const gatewayDurationSeconds = makeHistogramProvider({
   name: GATEWAY_DURATION_SECONDS_METRIC,
   help: 'Gateway duration by path',
   labelNames: ['path'],
 });
 
-const gatewayTotal = makeCounterProvider({
+export const gatewayTotal = makeCounterProvider({
   name: GATEWAY_TOTAL_METRIC,
   help: `Gateway call total`,
   labelNames: ['path', 'status', 'statusCode', 'className'],
@@ -22,10 +30,13 @@ const gatewayTotal = makeCounterProvider({
 @Injectable()
 export class GatewayPromInterceptor implements NestInterceptor {
   constructor(
-    @InjectMetric(GATEWAY_DURATION_SECONDS_METRIC)
-    private gatewayDurationSecondsMetric: Histogram<string>,
+    private reflector: Reflector,
+    private logger: LogService,
+    @InjectMetric(GATEWAY_DURATION_SECONDS_METRIC) private gatewayDurationSecondsMetric: Histogram<string>,
     @InjectMetric(GATEWAY_TOTAL_METRIC) private gatewayTotalMetric: Counter<string>,
-  ) {}
+  ) {
+    this.logger.setContext(GatewayPromInterceptor.name);
+  }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
@@ -35,34 +46,43 @@ export class GatewayPromInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap(_ => {
-        duration();
+        const elapsedTime = duration();
+        const timeString = this.getTimeString(elapsedTime);
+        const statusCode = context.switchToHttp().getResponse().statusCode;
 
-        this.gatewayTotalMetric.inc({
-          path,
-          status: 'SUCCESS',
-          statusCode: context.switchToHttp().getResponse().statusCode || 'unknown',
-        });
+        this.gatewayTotalMetric.inc({ path, status: GatewayStatus.SUCCESS, statusCode });
+        this.logger.info('http: %s (%s) %s', path, timeString, statusCode);
       }),
       catchError(err => {
-        duration();
+        const elapsedTime = duration();
+        const timeString = this.getTimeString(elapsedTime);
+        let statusCode = context.switchToHttp().getResponse().statusCode;
 
-        let functionName: string;
+        if (err instanceof Exception) statusCode = err.status;
+
+        let className: string = 'Unknown';
         try {
           const stack = err.stack?.split(/\r\n|\r|\n/);
-          functionName = stack[1].split(/\b(\s)/)[2];
+          className = stack[1].split(/\b(\s)/)[2];
         } catch (error) {}
 
-        this.gatewayTotalMetric.inc({
-          path,
-          status: 'FAILED',
-          statusCode: err.status || 'unknown',
-          className: functionName || 'unknown',
-        });
+        this.gatewayTotalMetric.inc({ path, status: GatewayStatus.FAILED, statusCode, className });
+        if (statusCode >= HttpStatus.BAD_REQUEST && statusCode < HttpStatus.INTERNAL_SERVER_ERROR) {
+          this.logger.warn('http: %s (%s) %s', path, timeString, statusCode);
+        } else {
+          this.logger.error('http: %s (%s) %s', path, timeString, statusCode);
+        }
 
         return throwError(err);
       }),
     );
   }
-}
 
-export const gatewayPromInterceptors = [GatewayPromInterceptor, gatewayDurationSeconds, gatewayTotal];
+  private getTimeString(duration: number): string {
+    let timeString = `${duration} ms`;
+    if (duration >= 1500) {
+      timeString = `${(duration / 1000).toFixed(2)} s`;
+    }
+    return timeString;
+  }
+}

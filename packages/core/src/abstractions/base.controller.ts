@@ -33,6 +33,7 @@ import { QueryInterceptor } from '../interceptors';
 import { BaseValidationPipe } from '../validation';
 
 export type ControllerMethod = 'findAll' | 'findOne' | 'create' | 'update' | 'delete';
+
 export enum ControllerExclude {
   ALL,
   LIST,
