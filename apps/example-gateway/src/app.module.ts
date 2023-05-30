@@ -4,6 +4,7 @@ import {
   CoreModule,
   GatewayExceptionsFilter,
   JwtModule,
+  LoggerInterceptor,
   Module,
   ResponseInterceptor,
   TrackInterceptor,
@@ -13,8 +14,10 @@ import { MongoModule } from '@joktec/mongo';
 import { CategoryModule } from './modules';
 import { ProductModule } from './modules/products';
 import { MailerModule } from '@joktec/mailer';
+import { AppController } from './app.controller';
 
 @Module({
+  controllers: [AppController],
   imports: [
     // Libs
     CoreModule,
@@ -27,6 +30,7 @@ import { MailerModule } from '@joktec/mailer';
     ProductModule, // Microservice
   ],
   providers: [
+    { provide: APP_INTERCEPTOR, useClass: LoggerInterceptor },
     { provide: APP_INTERCEPTOR, useClass: TrackInterceptor },
     { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
     { provide: APP_FILTER, useClass: GatewayExceptionsFilter },

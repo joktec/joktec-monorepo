@@ -4,11 +4,17 @@ import { isEmpty, isString } from 'lodash';
 import { GraphQLError } from 'graphql/index';
 import { ExceptionMessage } from '../exception-message';
 import { RpcException } from '@nestjs/microservices';
-import { ENV } from '../../config';
+import { ConfigService, ENV } from '../../config';
 import { IResponseDto } from '../../models';
+import { LogService } from '../../log';
+import { toBool } from '../../utils';
 
 @Catch()
 export class GatewayExceptionsFilter implements ExceptionFilter {
+  constructor(private cfg: ConfigService, private logger: LogService) {
+    this.logger.setContext(GatewayExceptionsFilter.name);
+  }
+
   catch(exception: any, host: ArgumentsHost): any {
     const type: string = host.getType();
 
@@ -21,7 +27,7 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
       throw this.handleGqlException(exception);
     }
 
-    Logger.error('Something when wrong', exception.stack, GatewayExceptionsFilter.name);
+    this.logger.error(exception, 'Something when wrong');
   }
 
   private handleHttpException(exception: any, host: ArgumentsHost) {
@@ -41,7 +47,7 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
     }
 
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      Logger.error('Something when wrong', exception.stack, GatewayExceptionsFilter.name);
+      this.logger.error(exception, 'Something when wrong');
     }
 
     const errorBody: IResponseDto = {
@@ -50,7 +56,13 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
       message,
       error: errorData,
     };
-    const isProd: boolean = process.env.NODE_ENV === 'production';
+
+    const useFilter = toBool(this.cfg.get<boolean>('log.useFilter'), false);
+    if (useFilter && status < HttpStatus.INTERNAL_SERVER_ERROR) {
+      this.logger.error(exception, message);
+    }
+
+    const isProd: boolean = this.cfg.get<ENV>('env') === ENV.PROD;
     if (!isProd) {
       Object.assign(errorBody, { path: request.url, method: request.method });
       if (!isEmpty(request.body)) errorBody.body = request.body;
@@ -80,12 +92,12 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
     }
 
     // If exception status is gte 500, it will be print in log console
-    if (500 <= status && status <= 999) {
-      Logger.error(exception.message, exception.stack, GatewayExceptionsFilter.name);
+    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+      this.logger.error(exception, exception.message);
     }
 
     // Hidden message in Production
-    const env: ENV = (process.env['NODE_ENV'] ?? ENV.DEV) as ENV;
+    const env: ENV = this.cfg.get<ENV>('env');
     if (env === ENV.PROD) {
       data = {};
     }

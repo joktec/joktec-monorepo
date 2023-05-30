@@ -2,7 +2,7 @@ gateway:
   port: 9010
 
 log:
-  level: debug
+  level: info
   logStash:
     host: 51.222.44.17
     port: 31658

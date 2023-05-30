@@ -34,10 +34,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.57",
+    "@joktec/core": "^0.0.57",
     "@joktec/http": "^0.0.56",
     "@joktec/mailer": "^0.0.55",
-    "@joktec/mongo": "0.0.75"
+    "@joktec/mongo": "^0.0.75"
   },
   "lint-staged": {
     "*.ts": [
