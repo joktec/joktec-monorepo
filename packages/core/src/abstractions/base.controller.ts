@@ -2,6 +2,7 @@ import {
   Body,
   Delete,
   Get,
+  NestInterceptor,
   Param,
   Post,
   Put,
@@ -10,7 +11,6 @@ import {
   UseGuards,
   UseInterceptors,
   UsePipes,
-  NestInterceptor,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -32,6 +32,7 @@ import { ApiSchema } from '../swagger';
 import { QueryInterceptor } from '../interceptors';
 import { BaseValidationPipe } from '../validation';
 import { GatewayPromInterceptor } from '../infras';
+import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../exceptions';
 
 export type ControllerMethod = 'findAll' | 'findOne' | 'create' | 'update' | 'delete';
 
@@ -71,11 +72,18 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
   abstract class Controller {
     protected constructor(protected service: BaseService<T, ID>) {}
 
+    protected checkMethod(...methodExcludes: ControllerExclude[]) {
+      if (excludes.includes(ControllerExclude.ALL))
+        throw new ServiceUnavailableException(ExceptionMessage.UNDERGOING_MAINTENANCE);
+      if (someIncludes(excludes, ...methodExcludes)) throw new MethodNotAllowedException();
+    }
+
     @Get('/')
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
     async findAll(@Query() req: IBaseRequest<T>, @Req() res: Request): Promise<PaginationDto> {
+      this.checkMethod(ControllerExclude.READ, ControllerExclude.LIST);
       return this.service.findAll(req, res['payload'] as JwtPayload);
     }
 
@@ -85,6 +93,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
     async findOne(@Param('id') id: ID, @Query() req: IBaseRequest<T>, @Req() res: Request): Promise<T> {
+      this.checkMethod(ControllerExclude.READ, ControllerExclude.GET);
       return this.service.findOne(id, req, res['payload'] as JwtPayload);
     }
 
@@ -95,6 +104,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
     @UsePipes(new BaseValidationPipe())
     async create(@Body() entity: T, @Req() res: Request): Promise<T> {
+      this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
       return this.service.create(entity, res['payload'] as JwtPayload);
     }
 
@@ -106,6 +116,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }))
     async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Req() res: Request): Promise<T> {
+      this.checkMethod(ControllerExclude.WRITE, ControllerExclude.UPDATE);
       return this.service.update(id, entity, res['payload'] as JwtPayload);
     }
 
@@ -115,6 +126,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiParam({ name: 'id' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.DELETE))
     async delete(@Param('id') id: ID, @Req() res: Request): Promise<T> {
+      this.checkMethod(ControllerExclude.WRITE, ControllerExclude.DELETE);
       return this.service.delete(id, res['payload'] as JwtPayload);
     }
   }

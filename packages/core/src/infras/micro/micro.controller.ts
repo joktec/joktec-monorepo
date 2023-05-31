@@ -1,8 +1,7 @@
 import { Body, Controller, Param, Post, UseInterceptors } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
-import { MicroMethodNotFoundException, MicroServiceNotFoundException } from './exceptions';
-import { ExceptionMessage } from '../../exceptions';
+import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../../exceptions';
 import { MicroPromInterceptor } from './micro-prom.interceptor';
 
 @Controller()
@@ -22,12 +21,12 @@ export class MicroController {
     try {
       serviceInstance = await this.moduleRef.get(service, { strict: false });
     } catch (ex) {
-      throw new MicroServiceNotFoundException(ExceptionMessage.MICRO_SERVICE_NOT_FOUND, { service });
+      throw new ServiceUnavailableException(ExceptionMessage.MICRO_SERVICE_NOT_FOUND, { service });
     }
 
     const methodInstance = serviceInstance[method];
     if (!methodInstance) {
-      throw new MicroMethodNotFoundException(ExceptionMessage.MICRO_METHOD_NOT_FOUND, { service, method });
+      throw new MethodNotAllowedException(ExceptionMessage.MICRO_METHOD_NOT_FOUND, { service, method });
     }
     return methodInstance(req);
   }
