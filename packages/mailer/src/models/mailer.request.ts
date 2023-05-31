@@ -4,11 +4,11 @@ export interface MailerTemplate {
 }
 
 export interface MailerSendRequest {
-  from?: string;
+  subject: string;
   to: string | string[];
+  from?: string;
   cc?: string | string[];
   bcc?: string | string[];
-  subject?: string;
   text?: string;
   html?: string;
   template?: MailerTemplate;
