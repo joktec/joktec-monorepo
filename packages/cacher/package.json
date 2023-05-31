@@ -78,5 +78,6 @@
       "!**/index.ts",
       "!**/*.{d,enum}.ts"
     ]
-  }
+  },
+  "gitHead": "25fef554d74349f4b06e8da1628fd3dd73069196"
 }
