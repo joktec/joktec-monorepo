@@ -1,15 +1,17 @@
+import { UseInterceptors, UsePipes } from '@nestjs/common';
 import { Ctx, MessagePattern, Payload, Transport } from '@nestjs/microservices';
 import { BaseService } from './base.service';
 import { Constructor, IBaseRequest, IListResponseDto } from '../models';
 import { JwtPayload } from '../guards';
 import { startCase } from 'lodash';
-import { toSingular } from '../utils';
-import { UsePipes } from '@nestjs/common';
+import { toBool, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
+import { MicroPromInterceptor } from '../infras';
 
 export interface IMicroserviceControllerProps<T> {
   dto: Constructor<T>;
   dtoName?: string;
+  metric?: boolean;
   transport?: Transport;
 }
 
@@ -65,6 +67,11 @@ export const MicroserviceController = <T extends object, ID>(props: IMicroservic
     async delete(@Payload('id') id: ID, @Payload('jwt') jwtPayload: JwtPayload, @Ctx() context: any): Promise<T> {
       return this.service.delete(id, jwtPayload);
     }
+  }
+
+  const metric = toBool(props.metric, true);
+  if (metric) {
+    UseInterceptors(MicroPromInterceptor)(Controller);
   }
 
   return Controller;

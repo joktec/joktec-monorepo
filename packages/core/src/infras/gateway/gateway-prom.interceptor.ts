@@ -1,12 +1,15 @@
 import { Reflector } from '@nestjs/core';
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
+import { Request } from 'express';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Counter, Histogram } from 'prom-client';
 import { InjectMetric, makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
 import { LogService } from '../../log';
 import { Exception } from '../../exceptions';
+import { getTimeString } from '../../utils';
 
+const ExcludePaths = ['/swagger', '/bulls', '/metrics'];
 const GATEWAY_DURATION_SECONDS_METRIC = 'gateway_duration_seconds';
 const GATEWAY_TOTAL_METRIC = 'gateway_total';
 
@@ -39,15 +42,18 @@ export class GatewayPromInterceptor implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest();
-    const path = `${request.method} ${request.route?.path ?? request.path}`;
+    const request = context.switchToHttp().getRequest<Request>();
+    if (ExcludePaths.includes(request.path)) {
+      return next.handle();
+    }
 
+    const path = `${request.method} ${request.route?.path ?? request.path}`;
     const duration = this.gatewayDurationSecondsMetric.startTimer({ path });
 
     return next.handle().pipe(
       tap(_ => {
         const elapsedTime = duration();
-        const timeString = this.getTimeString(elapsedTime);
+        const timeString = getTimeString(elapsedTime);
         const statusCode = context.switchToHttp().getResponse().statusCode;
 
         this.gatewayTotalMetric.inc({ path, status: GatewayStatus.SUCCESS, statusCode });
@@ -55,7 +61,7 @@ export class GatewayPromInterceptor implements NestInterceptor {
       }),
       catchError(err => {
         const elapsedTime = duration();
-        const timeString = this.getTimeString(elapsedTime);
+        const timeString = getTimeString(elapsedTime);
         let statusCode = context.switchToHttp().getResponse().statusCode;
 
         if (err instanceof Exception) statusCode = err.status;
@@ -76,13 +82,5 @@ export class GatewayPromInterceptor implements NestInterceptor {
         return throwError(err);
       }),
     );
-  }
-
-  private getTimeString(duration: number): string {
-    let timeString = `${duration} ms`;
-    if (duration >= 1500) {
-      timeString = `${(duration / 1000).toFixed(2)} s`;
-    }
-    return timeString;
   }
 }

@@ -56,3 +56,15 @@ export const hashPassword = (password: string, salt: number = 12): string => {
 export const matchPassword = (password: string, hashPassword: string): boolean => {
   return bcrypt.compareSync(password, hashPassword);
 };
+
+/**
+ * Converts a duration time (in milliseconds) to a formatted display string, including both milliseconds and seconds.
+ * @param duration - The duration time in milliseconds.
+ * @returns The formatted display string representing the duration.
+ */
+export const getTimeString = (duration: number): string => {
+  if (Math.abs(duration) >= 1500) {
+    return `${(duration / 1000).toFixed(2)} s`;
+  }
+  return `${duration} ms`;
+};

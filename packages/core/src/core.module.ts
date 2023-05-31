@@ -3,8 +3,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule, ConfigService, initConfig } from './config';
 import { createPinoHttp, LoggerModule } from './log';
 import { CqrsModule, GatewayConfig, GatewayModule, MicroModule } from './infras';
-import path from 'path';
 import { MetricModule } from './metric';
+import path from 'path';
 
 @Global()
 @Module({
@@ -21,12 +21,7 @@ import { MetricModule } from './metric';
       useFactory: (cfg: ConfigService) => {
         const gatewayConfig = cfg.get<GatewayConfig>('gateway');
         const { staticPath = './public', excludePath = [] } = gatewayConfig?.static || {};
-        return [
-          {
-            rootPath: path.resolve(staticPath),
-            exclude: ['swagger', 'bulls', 'views', 'metrics', ...excludePath],
-          },
-        ];
+        return [{ rootPath: path.resolve(staticPath), exclude: ['swagger', 'bulls', 'metrics', ...excludePath] }];
       },
     }),
     MetricModule,

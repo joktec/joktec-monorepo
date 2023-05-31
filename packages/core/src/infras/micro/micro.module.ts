@@ -1,11 +1,11 @@
 import { Global, Module } from '@nestjs/common';
-import { microPromInterceptors } from './micro-prom.interceptor';
-import { MicroRest } from './micro.rest';
+import { microLatency, MicroPromInterceptor, totalMicroCounter } from './micro-prom.interceptor';
+import { MicroController } from './micro.controller';
 
 @Global()
 @Module({
-  controllers: [MicroRest],
-  providers: [...microPromInterceptors],
-  exports: [...microPromInterceptors],
+  controllers: [MicroController],
+  providers: [MicroPromInterceptor, microLatency, totalMicroCounter],
+  exports: [MicroPromInterceptor, microLatency, totalMicroCounter],
 })
 export class MicroModule {}

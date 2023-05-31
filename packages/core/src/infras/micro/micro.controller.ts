@@ -1,17 +1,34 @@
-import { Controller, UseInterceptors } from '@nestjs/common';
-import { GrpcMethod as CMicroMethod } from '@nestjs/microservices';
+import { Body, Controller, Param, Post, UseInterceptors } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { MicroMethodNotFoundException, MicroServiceNotFoundException } from './exceptions';
+import { ExceptionMessage } from '../../exceptions';
 import { MicroPromInterceptor } from './micro-prom.interceptor';
 
-export const MicroController = (opts?: { metric: boolean }) => {
-  return Clazz => {
-    const metric = opts?.metric ?? true;
-    if (metric) Clazz = UseInterceptors(MicroPromInterceptor)(Clazz);
-    Controller()(Clazz);
-  };
-};
+@Controller()
+export class MicroController {
+  constructor(private moduleRef: ModuleRef) {}
 
-export const MicroMethod = () => {
-  return (target: any, method: string, descriptor?: any) => {
-    return CMicroMethod(target.constructor.serviceName, method)(target, method, descriptor) as any;
-  };
-};
+  @Post('/micro/:service/:method')
+  @ApiBody({ type: Object })
+  @ApiResponse({ type: Object })
+  @UseInterceptors(MicroPromInterceptor)
+  async micro(
+    @Param('service') service: string,
+    @Param('method') method: string,
+    @Body() req: object,
+  ): Promise<Object> {
+    let serviceInstance = null;
+    try {
+      serviceInstance = await this.moduleRef.get(service, { strict: false });
+    } catch (ex) {
+      throw new MicroServiceNotFoundException(ExceptionMessage.MICRO_SERVICE_NOT_FOUND, { service });
+    }
+
+    const methodInstance = serviceInstance[method];
+    if (!methodInstance) {
+      throw new MicroMethodNotFoundException(ExceptionMessage.MICRO_METHOD_NOT_FOUND, { service, method });
+    }
+    return methodInstance(req);
+  }
+}

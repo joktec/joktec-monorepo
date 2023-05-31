@@ -23,6 +23,7 @@ export {
   ClientProxy,
   EventPattern,
   ClientProxyFactory,
+  MicroserviceOptions,
 } from '@nestjs/microservices';
 export {
   ArgumentMetadata,

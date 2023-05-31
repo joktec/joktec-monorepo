@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from '@jest/globals';
-import { generateOTP, generateUUID, hashPassword, matchPassword, rand } from '../generator';
+import { generateOTP, generateUUID, getTimeString, hashPassword, matchPassword, rand } from '../generator';
 import bcrypt from 'bcryptjs';
 
 describe('rand function', () => {
@@ -93,5 +93,37 @@ describe('matchPassword', () => {
     const hash = bcrypt.hashSync('wrongPassword', 12);
     const result = matchPassword(password, hash);
     expect(result).toBe(false);
+  });
+});
+
+describe('getTimeString function', () => {
+  it('should return the duration in milliseconds when duration is less than 1500', () => {
+    const duration = 1000;
+    const result = getTimeString(duration);
+    expect(result).toEqual('1000 ms');
+  });
+
+  it('should return the duration in seconds with two decimal places when duration is greater than or equal to 1500', () => {
+    const duration = 2000;
+    const result = getTimeString(duration);
+    expect(result).toEqual('2.00 s');
+  });
+
+  it('should return the duration in milliseconds when duration is 0', () => {
+    const duration = 0;
+    const result = getTimeString(duration);
+    expect(result).toEqual('0 ms');
+  });
+
+  it('should return the duration in milliseconds when duration is negative', () => {
+    const duration = -500;
+    const result = getTimeString(duration);
+    expect(result).toEqual('-500 ms');
+  });
+
+  it('should return the duration in seconds with two decimal places when duration is negative and lower and 1500', () => {
+    const duration = -2000;
+    const result = getTimeString(duration);
+    expect(result).toEqual('-2.00 s');
   });
 });

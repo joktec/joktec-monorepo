@@ -30,7 +30,6 @@ import { AppController } from './app.controller';
     ProductModule, // Microservice
   ],
   providers: [
-    { provide: APP_INTERCEPTOR, useClass: GatewayPromInterceptor },
     { provide: APP_INTERCEPTOR, useClass: TrackInterceptor },
     { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
     { provide: APP_FILTER, useClass: GatewayExceptionsFilter },

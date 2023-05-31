@@ -1,18 +1,28 @@
+import { Reflector } from '@nestjs/core';
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Counter, Gauge } from 'prom-client';
 import { InjectMetric, makeCounterProvider, makeGaugeProvider } from '@willsoto/nestjs-prometheus';
+import { Request } from 'express';
+import { LogService } from '../../log';
+import { getTimeString } from '../../utils';
 
-export const MICRO_LATENCY_METRIC = 'micro_call_latency';
-const microLatency = makeGaugeProvider({
+const ExcludePaths = ['/swagger', '/bulls', '/metrics'];
+const MICRO_LATENCY_METRIC = 'micro_call_latency';
+const TOTAL_MICRO_METRIC = 'total_micro_call';
+
+export enum MicroStatus {
+  SUCCESS = 'SUCCESS',
+}
+
+export const microLatency = makeGaugeProvider({
   name: MICRO_LATENCY_METRIC,
   help: `Micro Call Latency`,
   labelNames: ['service', 'status'],
 });
 
-export const TOTAL_MICRO_METRIC = 'total_micro_call';
-const totalMicroCounter = makeCounterProvider({
+export const totalMicroCounter = makeCounterProvider({
   name: TOTAL_MICRO_METRIC,
   help: `Total Micro Call Counter`,
   labelNames: ['service'],
@@ -21,39 +31,44 @@ const totalMicroCounter = makeCounterProvider({
 @Injectable()
 export class MicroPromInterceptor implements NestInterceptor {
   constructor(
+    private reflector: Reflector,
+    private logger: LogService,
     @InjectMetric(MICRO_LATENCY_METRIC) private latencyMetric: Gauge<string>,
     @InjectMetric(TOTAL_MICRO_METRIC) private totalCallLatency: Counter<string>,
-  ) {}
+  ) {
+    this.logger.setContext(MicroPromInterceptor.name);
+  }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const request = context.switchToHttp().getRequest<Request>();
+    if (ExcludePaths.includes(request.path)) {
+      return next.handle();
+    }
+
     const startedAt = new Date().getTime();
-
-    const method = context.getHandler().name;
     const service = (context.getClass() as any).serviceName ?? context.getClass().name;
+    const method = context.getHandler().name;
+    const serviceName = `${service}#${method}`;
 
-    this.totalCallLatency.inc({ service: `${service}#${method}` });
+    this.totalCallLatency.inc({ service: serviceName });
 
-    return next
-      .handle()
-      .pipe(
-        map(data => {
-          this.latencyMetric.set(
-            { service: `${service}#${method}`, status: 'SUCCESS' },
-            new Date().getTime() - startedAt,
-          );
-          return data;
-        }),
-      )
-      .pipe(
-        catchError(err => {
-          this.latencyMetric.set(
-            { service: `${service}#${method}`, status: err.status },
-            new Date().getTime() - startedAt,
-          );
-          return throwError(err);
-        }),
-      );
+    return next.handle().pipe(
+      tap(_ => {
+        const duration = new Date().getTime() - startedAt;
+        this.latencyMetric.set({ service: serviceName, status: MicroStatus.SUCCESS }, duration);
+
+        const timeString = getTimeString(duration);
+        this.logger.info('micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
+      }),
+      catchError(err => {
+        const duration = new Date().getTime() - startedAt;
+        this.latencyMetric.set({ service: serviceName, status: err.status }, duration);
+
+        const timeString = getTimeString(duration);
+        this.logger.warn('micro: %s (%s) %s', serviceName, timeString, err.status);
+
+        return throwError(err);
+      }),
+    );
   }
 }
-
-export const microPromInterceptors = [MicroPromInterceptor, microLatency, totalMicroCounter];

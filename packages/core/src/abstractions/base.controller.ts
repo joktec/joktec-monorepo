@@ -31,6 +31,7 @@ import { JwtGuard, JwtPayload } from '../guards';
 import { ApiSchema } from '../swagger';
 import { QueryInterceptor } from '../interceptors';
 import { BaseValidationPipe } from '../validation';
+import { GatewayPromInterceptor } from '../infras';
 
 export type ControllerMethod = 'findAll' | 'findOne' | 'create' | 'update' | 'delete';
 
@@ -52,6 +53,7 @@ export interface IBaseControllerProps<T> {
   useGuard?: boolean;
   excludes?: ControllerExclude[];
   hooks?: { [key in ControllerMethod]?: (NestInterceptor | Function)[] };
+  metric?: boolean;
 }
 
 export const BaseController = <T extends object, ID>(props: IBaseControllerProps<T>): any => {
@@ -121,6 +123,11 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
   if (useGuard) {
     UseGuards(JwtGuard)(Controller);
     ApiBearerAuth()(Controller);
+  }
+
+  const metric = toBool(props.metric, true);
+  if (metric) {
+    UseInterceptors(GatewayPromInterceptor)(Controller);
   }
 
   Object.keys(props?.hooks || {}).map(key => {

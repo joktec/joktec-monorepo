@@ -4,8 +4,6 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [
-      "../config.yml",
-      "../public/**/*",
       "**/*.proto"
     ],
     "watchAssets": true
