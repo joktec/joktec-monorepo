@@ -28,6 +28,11 @@ export const preHandleCondition = <T extends MongoSchema>(condition: ICondition<
         condition['_id'] = condition['id'];
         delete condition['id'];
       } else if (typeof condition[key] === 'object') {
+        if (isNil(condition[key])) {
+          condition[key] = null;
+          continue;
+        }
+
         if (condition[key].hasOwnProperty('$like')) {
           condition[key]['$regex'] = new RegExp(condition[key]['$like'], 'i');
           delete condition[key]['$like'];
@@ -37,6 +42,7 @@ export const preHandleCondition = <T extends MongoSchema>(condition: ICondition<
           };
           delete condition[key]['$unlike'];
         }
+
         condition[key] = preHandleCondition(condition[key]);
       }
     }

@@ -39,6 +39,18 @@ describe('preHandleCondition function', () => {
     const result = preHandleCondition(condition);
     expect(result).toEqual(condition);
   });
+
+  it('should handle if have null value', () => {
+    const condition: any = {
+      type: 'service',
+      status: 'activated',
+      deletedAt: {
+        $eq: null,
+      },
+    };
+    const result = preHandleCondition(condition);
+    expect(result).toEqual(condition);
+  });
 });
 
 describe('preHandleQuery function', () => {
