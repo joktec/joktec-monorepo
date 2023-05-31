@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.79](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.78...@joktec/mongo@0.0.79) (2023-05-31)
+
+
+### Bug Fixes
+
+* mongo parse condition ([7a87385](https://github.com/joktec/joktec-monorepo/commit/7a873851346bfb70387e635549c483c83a642cb2))
+
+
+
+
+
 ## [0.0.78](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.77...@joktec/mongo@0.0.78) (2023-05-31)
 
 
