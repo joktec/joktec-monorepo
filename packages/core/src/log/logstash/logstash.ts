@@ -1,11 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { LogStashConfig } from './logstash.config';
+import { DestinationStream } from 'pino';
 
 const net = require('net');
 const stream = require('stream');
 const backoff = require('backoff');
 
-export const createLogstashStream = (appName: string, cfg: LogStashConfig) => {
+export const createLogstashStream = (appName: string, cfg: LogStashConfig): DestinationStream => {
   const logger = new Logger('LogStashService');
   const options: any = {
     address: '127.0.0.1',
@@ -112,5 +113,6 @@ export const createLogstashStream = (appName: string, cfg: LogStashConfig) => {
       logger.error(`Service could not connect to \n ${JSON.stringify(options, null, 2)}`);
     }
   });
+
   return outputStream;
 };

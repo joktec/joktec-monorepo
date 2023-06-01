@@ -1,8 +1,8 @@
 import { CloudWatchConfig } from './cloudwatch.config';
+import cloudwatch from 'pino-cloudwatch';
+import { DestinationStream } from 'pino';
 
-const cloudwatch = require('pino-cloudwatch');
-
-export const createCloudWatchStream = (appName: string, cfg: CloudWatchConfig) => {
+export const createCloudWatchStream = (appName: string, cfg: CloudWatchConfig): DestinationStream => {
   const { accessKeyId, secretAccessKey, region } = cfg;
   return cloudwatch({
     interval: 2000,

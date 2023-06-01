@@ -1,1 +1,3 @@
-export type LogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace' | 'silent';
+import pino from 'pino';
+
+export type LogLevel = pino.Level;

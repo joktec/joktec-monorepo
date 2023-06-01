@@ -1,7 +1,7 @@
 import { FluentdConfig } from './fluentd.config';
+import createFluentd from 'pino-fluentd';
+import { DestinationStream } from 'pino';
 
-const createFluentd = require('pino-fluentd');
-
-export const createFluentdStream = (appName: string, cfg: FluentdConfig) => {
+export const createFluentdStream = (appName: string, cfg: FluentdConfig): DestinationStream => {
   return createFluentd({ ...cfg, tag: appName });
 };

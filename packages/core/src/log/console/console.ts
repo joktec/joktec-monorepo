@@ -1,1 +1,3 @@
-export const createConsoleStream = (level = 'trace') => ({ level, stream: process.stdout });
+import { DestinationStream } from 'pino';
+
+export const createConsoleStream = (): DestinationStream => process.stdout;

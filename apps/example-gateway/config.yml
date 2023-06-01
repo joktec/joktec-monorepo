@@ -10,7 +10,7 @@ log:
     enable: false
   loki:
     enable: false
-    host: https://logs-prod-011.grafana.net
+    host: https://logs-prod-011222.grafana.net
 
 mongo:
   host: localhost
