@@ -8,7 +8,7 @@ import {
   ValidationArguments,
   ValidationOptions,
 } from 'class-validator';
-import { Constructor } from '../models';
+import { Clazz } from '../models';
 
 const primitiveTypeValidator = {
   string(value: any, args: ValidationArguments) {
@@ -24,8 +24,6 @@ const primitiveTypeValidator = {
     return isBoolean(value);
   },
 };
-
-type Clazz = Constructor<any>;
 
 export function IsTypes(
   types: ReadonlyArray<'int' | 'string' | 'boolean' | 'string[]' | Clazz>,

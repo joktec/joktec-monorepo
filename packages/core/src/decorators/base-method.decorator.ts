@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { ConfigService } from '../config';
 import { LogService } from '../log';
 import { camelCase, fromPairs, map, union } from 'lodash';
-import { Constructor } from '../models';
+import { Clazz } from '../models';
 
 export type ServicesInject = {
   configService: ConfigService;
@@ -21,14 +21,13 @@ export type CallbackDecoratorOptions = {
 };
 
 type InjectType = (target: object, key: string | symbol, index?: number) => void;
-type InjectClass = Constructor<any>;
 
 export const BaseMethodDecorator = (
   callback: (options: CallbackDecoratorOptions) => Promise<any> | any,
-  injects: InjectClass[] = [],
+  injects: Clazz[] = [],
 ): MethodDecorator => {
   injects = union(injects, [LogService, ConfigService]);
-  const injectServices: InjectType[] = injects.map((inject: InjectClass) => Inject(inject));
+  const injectServices: InjectType[] = injects.map((inject: Clazz) => Inject(inject));
 
   return (target: Object, propertyKey: string | symbol, descriptor: PropertyDescriptor) => {
     const originMethod = descriptor.value;
@@ -50,7 +49,7 @@ export const BaseMethodDecorator = (
         propertyKey,
         descriptor,
         method: originMethod.bind(this), // bind `this` help us have context when `callback` is a arrow functions.
-        services: fromPairs(map(injects, (i: InjectClass) => [camelCase(i.name), this[i.name]])),
+        services: fromPairs(map(injects, (i: Clazz) => [camelCase(i.name), this[i.name]])),
       });
     };
 

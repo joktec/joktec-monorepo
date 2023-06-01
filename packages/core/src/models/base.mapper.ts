@@ -1,9 +1,10 @@
 import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { ClassConstructor, ClassTransformOptions } from 'class-transformer/types/interfaces';
+import { ClassTransformOptions } from 'class-transformer/types/interfaces';
 import { validateSync, ValidationError } from 'class-validator';
+import { Constructor } from './base.dto';
 
 export abstract class BaseMapper<D, P extends Record<string, any> = any> {
-  protected constructor(protected domainModel: ClassConstructor<D>) {}
+  protected constructor(protected domainModel: Constructor<D>) {}
 
   /**
    * It is your domain entities. This is where OOD fits into your code and where you code business logic.

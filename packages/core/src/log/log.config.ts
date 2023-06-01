@@ -3,6 +3,7 @@ import { LogStashConfig } from './logstash/logstash.config';
 import { LogLevel } from './log.level';
 import { CloudWatchConfig } from './cloudwatch/cloudwatch.config';
 import { GoogleLogConfig } from './googleLog/googleLog.config';
+import { LokiConfig } from './loki/loki.config';
 
 export class LogConfig {
   level: LogLevel;
@@ -12,6 +13,7 @@ export class LogConfig {
   logStash?: LogStashConfig;
   cloudWatch?: CloudWatchConfig;
   googleLog?: GoogleLogConfig;
+  loki?: LokiConfig;
 
   constructor(props: LogConfig) {
     this.level = props?.level ?? 'info';
@@ -21,6 +23,7 @@ export class LogConfig {
     this.fluentd = props?.fluentd ? new FluentdConfig(props?.fluentd) : null;
     this.cloudWatch = props?.cloudWatch ? new CloudWatchConfig(props?.cloudWatch) : null;
     this.googleLog = props?.googleLog ? new GoogleLogConfig(props?.googleLog) : null;
+    this.loki = props?.loki ? new LokiConfig(props?.loki) : null;
   }
 
   setSearchValue(contexts: string | string[]): string {

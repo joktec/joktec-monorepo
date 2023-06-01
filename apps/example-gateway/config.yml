@@ -8,6 +8,9 @@ log:
     host: 51.222.44.17
     port: 31658
     enable: false
+  loki:
+    enable: false
+    host: https://logs-prod-011.grafana.net
 
 mongo:
   host: localhost
