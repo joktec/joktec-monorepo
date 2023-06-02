@@ -1,7 +1,7 @@
 {
   "name": "@joktec/kafka",
   "description": "JokTec - Kafka Service",
-  "version": "0.0.60",
+  "version": "0.0.61",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -41,7 +41,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.62",
+    "@joktec/core": "0.0.63",
     "kafkajs": "^1.14.0",
     "lodash": "^4.17.21"
   },
