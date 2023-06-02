@@ -1,10 +1,10 @@
 import { Global, Module } from '@joktec/core';
-import { HttpModule as NestHttpModule } from '@nestjs/axios';
+import { HttpModule } from '@joktec/http';
 import { ElasticService } from './elastic.service';
 
 @Global()
 @Module({
-  imports: [NestHttpModule],
+  imports: [HttpModule],
   providers: [ElasticService],
   exports: [ElasticService],
 })

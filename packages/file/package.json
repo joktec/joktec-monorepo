@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.62",
-    "@nestjs/axios": "^1.0.1",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
     "nodejs-fs-utils": "^1.2.6",

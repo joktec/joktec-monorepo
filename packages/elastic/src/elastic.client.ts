@@ -1,9 +1,9 @@
 import { Client } from '@joktec/core';
 import { EsGetResponse, EsSearchRequest, EsSearchResponse, EsWriteResponse } from './models';
-import { HttpService as NestHttpService } from '@nestjs/axios';
+import { HttpService } from '@joktec/http';
 import { ElasticConfig } from './elastic.config';
 
-export interface ElasticClient extends Client<ElasticConfig, NestHttpService> {
+export interface ElasticClient extends Client<ElasticConfig, HttpService> {
   search<TDoc = any, TAgg = any>(
     index: string,
     req: EsSearchRequest,

@@ -42,12 +42,9 @@
   "dependencies": {
     "@elastic/elasticsearch": "^8.5.0",
     "@joktec/core": "0.0.62",
-    "@nestjs/axios": "^1.0.1",
-    "axios": "^1.2.1",
+    "@joktec/http": "^0.0.61",
     "lodash": "^4.17.21",
-    "merge-deep": "^3.0.3",
-    "retry-axios": "^3.0.0",
-    "rxjs": "^7.2.0"
+    "merge-deep": "^3.0.3"
   },
   "devDependencies": {
     "@types/merge-deep": "^3.0.0"
