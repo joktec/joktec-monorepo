@@ -21,7 +21,7 @@
     "access": "public"
   },
   "keywords": [
-    "SearchEngien",
+    "SearchEngine",
     "ElasticSearch"
   ],
   "scripts": {
