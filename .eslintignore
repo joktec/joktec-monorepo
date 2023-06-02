@@ -1,4 +1,4 @@
 **/node_modules/**
 **/dist/**
 "**/*.js"
-jest.config.js
+**/__tests__/*.spec.ts
