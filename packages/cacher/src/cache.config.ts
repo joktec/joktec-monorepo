@@ -29,6 +29,7 @@ export interface CacheEvictOption {
 export enum CacheType {
   LOCAL = 'local',
   REDIS = 'redis',
+  MEMCACHED = 'memcached',
 }
 
 export class CacheConfig extends ClientConfig {
@@ -40,12 +41,12 @@ export class CacheConfig extends ClientConfig {
   @IsNotEmpty({ groups: [CacheType.LOCAL] })
   cacheDir?: string;
 
-  @IsString({ groups: [CacheType.REDIS] })
-  @IsNotEmpty({ groups: [CacheType.REDIS] })
+  @IsString({ groups: [CacheType.REDIS, CacheType.MEMCACHED] })
+  @IsNotEmpty({ groups: [CacheType.REDIS, CacheType.MEMCACHED] })
   host!: string;
 
-  @IsInt({ groups: [CacheType.REDIS] })
-  @IsNotEmpty({ groups: [CacheType.REDIS] })
+  @IsInt({ groups: [CacheType.REDIS, CacheType.MEMCACHED] })
+  @IsNotEmpty({ groups: [CacheType.REDIS, CacheType.MEMCACHED] })
   port!: number;
 
   @IsOptional({ groups: [CacheType.REDIS] })
@@ -68,12 +69,21 @@ export class CacheConfig extends ClientConfig {
   @IsInt({ groups: [CacheType.LOCAL, CacheType.REDIS] })
   retryTimeout?: number;
 
+  @IsOptional({ groups: [CacheType.LOCAL, CacheType.REDIS] })
+  @IsInt({ groups: [CacheType.LOCAL, CacheType.REDIS] })
+  connectTimeout?: number;
+
+  @IsOptional({ groups: [CacheType.LOCAL, CacheType.REDIS] })
+  @IsInt({ groups: [CacheType.LOCAL, CacheType.REDIS] })
+  maxConnections?: number;
+
   constructor(props: CacheConfig) {
     super(props);
     Object.assign(this, {
       ...props,
       type: props.type || CacheType.LOCAL,
       retryTimeout: toInt(props?.retryTimeout, 20000),
+      connectTimeout: toInt(props?.connectTimeout, 20000),
     });
   }
 

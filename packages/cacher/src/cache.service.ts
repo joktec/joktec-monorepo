@@ -4,7 +4,7 @@ import { CacheConfig, CacheType } from './cache.config';
 import { CacheClient, ICacheClient } from './cache.client';
 import { DelCacheMetric, GetCacheMetric, SetCacheMetric } from './cache.metric';
 import { CacheModel, CacheTtlSeconds } from './models';
-import { LocalService, RedisService } from './services';
+import { LocalService, MemcachedService, RedisService } from './services';
 
 const RETRY_OPTS = 'cacher.retry';
 
@@ -16,9 +16,8 @@ export class CacheService extends AbstractClientService<CacheConfig, ICacheClien
 
   @Retry(RETRY_OPTS)
   async init(config: CacheConfig): Promise<ICacheClient> {
-    if (config.type === CacheType.REDIS) {
-      return new RedisService(config, this.logService);
-    }
+    if (config.type === CacheType.REDIS) return new RedisService(config, this.logService);
+    if (config.type === CacheType.MEMCACHED) return new MemcachedService(config, this.logService);
     return new LocalService(config, this.logService);
   }
 
