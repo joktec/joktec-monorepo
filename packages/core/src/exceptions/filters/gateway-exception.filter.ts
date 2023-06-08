@@ -7,6 +7,7 @@ import { RpcException } from '@nestjs/microservices';
 import { ConfigService, ENV } from '../../config';
 import { IResponseDto } from '../../models';
 import { LogService } from '../../log';
+import { IValidateError, ValidateException } from '../../validation';
 
 @Catch()
 export class GatewayExceptionsFilter implements ExceptionFilter {
@@ -59,6 +60,13 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
     const useFilter = this.cfg.get<boolean>('log.useFilter', false);
     if (useFilter && status < HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(exception, message);
+    }
+
+    if (exception instanceof ValidateException) {
+      const validateError: IValidateError = exception.data;
+      errorBody.validate = Object.entries(validateError).map(([path, messages]) => {
+        return { path, messages: messages };
+      });
     }
 
     const isProd: boolean = this.cfg.get<ENV>('env') === ENV.PROD;

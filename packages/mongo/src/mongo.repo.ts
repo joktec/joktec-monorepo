@@ -1,4 +1,4 @@
-import { Constructor, DEFAULT_CON_ID, ICondition, OnModuleInit, plainToInstance, toBool, toInt } from '@joktec/core';
+import { Constructor, DEFAULT_CON_ID, ICondition, OnModuleInit, plainToInstance, toBool } from '@joktec/core';
 import { IMongoRepository } from './mongo.client';
 import { MongoService } from './mongo.service';
 import { ModelType } from '@typegoose/typegoose/lib/types';

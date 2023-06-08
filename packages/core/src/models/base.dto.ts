@@ -9,6 +9,7 @@ export interface IResponseDto<T = any> {
   message?: string;
   data?: T;
 
+  validate?: Array<{ path: string; messages: string[] }>;
   error?: any;
   path?: string;
   method?: string;
