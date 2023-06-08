@@ -42,8 +42,16 @@ export class GatewayService {
     await app.listen(port, () => {
       const baseUrl = `http://localhost:${port}`;
       logger.info(`🚀 Application %s is running on %s`, gatewayName, joinUrl(baseUrl, { paths: [contextPath] }));
+
       if (gatewayConfig.swagger !== 'off') {
         logger.info(`🗒️ Access API Document at %s`, joinUrl(baseUrl, { paths: [contextPath, 'swagger'] }));
+      }
+
+      if (config.get('bull.host')) {
+        logger.info(
+          `🎯 Access bull dashboard at %. Make sure Redis is running by default`,
+          joinUrl(baseUrl, { paths: [contextPath, 'bulls'] }),
+        );
       }
     });
   }
