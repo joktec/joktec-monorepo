@@ -49,7 +49,7 @@ export class GatewayService {
 
       if (config.get('bull.host')) {
         logger.info(
-          `🎯 Access bull dashboard at %. Make sure Redis is running by default`,
+          `🎯 Access bull dashboard at %s. Make sure Redis is running by default`,
           joinUrl(baseUrl, { paths: [contextPath, 'bulls'] }),
         );
       }
