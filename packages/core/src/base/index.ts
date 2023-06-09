@@ -77,6 +77,16 @@ export {
   Redirect,
 } from '@nestjs/common';
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
+export {
+  Processor,
+  Process,
+  ProcessOptions,
+  ProcessorOptions,
+  BullModule,
+  BullRootModuleOptions,
+  InjectQueue,
+} from '@nestjs/bull';
+export { Queue, QueueOptions, Job, JobOptions } from 'bull';
 export { Express, Request, Response, NextFunction } from 'express';
 export * from './app';
 export { FileInterceptor, FilesInterceptor, FileFieldsInterceptor, MulterModule } from '@nestjs/platform-express';

@@ -26,7 +26,7 @@ import { Request } from 'express';
 import { BaseService } from './base.service';
 import { BaseListResponse, Constructor, IBaseRequest } from '../models';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
-import { startCase } from 'lodash';
+import { isBoolean, isNil, startCase } from 'lodash';
 import { JwtGuard, JwtPayload } from '../guards';
 import { ApiSchema } from '../swagger';
 import { QueryInterceptor } from '../interceptors';
@@ -51,7 +51,7 @@ export interface IBaseControllerProps<T> {
   dto: Constructor<T>;
   dtoName?: string;
   apiTag?: string;
-  useGuard?: boolean;
+  useGuard?: boolean | { [key in ControllerMethod]: boolean };
   excludes?: ControllerExclude[];
   hooks?: { [key in ControllerMethod]?: (NestInterceptor | Function)[] };
   metric?: boolean;
@@ -131,10 +131,20 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     }
   }
 
-  const useGuard = toBool(props.useGuard, true);
-  if (useGuard) {
-    UseGuards(JwtGuard)(Controller);
-    ApiBearerAuth()(Controller);
+  if (isBoolean(props.useGuard) || isNil(props.useGuard)) {
+    const useGuard = toBool(props.useGuard, true);
+    if (useGuard) {
+      UseGuards(JwtGuard)(Controller);
+      ApiBearerAuth()(Controller);
+    }
+  } else {
+    Object.entries(props.useGuard || {}).map(([method, useGuard]) => {
+      if (useGuard) {
+        const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
+        UseGuards(JwtGuard)(Controller.prototype, method, descriptor);
+        ApiBearerAuth()(Controller.prototype, method, descriptor);
+      }
+    });
   }
 
   const metric = toBool(props.metric, true);
