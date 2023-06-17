@@ -8,6 +8,7 @@ import * as bodyParser from 'body-parser';
 import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
 import path from 'path';
 import csurf from 'csurf';
+import helmet from 'helmet';
 import { ConfigService } from '../../config';
 import { LogService } from '../../log';
 import { joinUrl, toArray, toInt } from '../../utils';
@@ -119,5 +120,6 @@ export class GatewayService {
     const gatewayConfig = config.get<GatewayConfig>('gateway');
     if (gatewayConfig.csrf) app.use(csurf());
     if (gatewayConfig.cors) app.enableCors(gatewayConfig.cors);
+    if (gatewayConfig.helmet) app.use(helmet(gatewayConfig.helmet));
   }
 }
