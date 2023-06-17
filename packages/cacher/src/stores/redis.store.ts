@@ -1,9 +1,9 @@
 import { LogService, toBool, toInt } from '@joktec/core';
-import { ICacheClient } from '../cache.client';
+import { ICacheStore } from '../cache.client';
 import { CacheConfig } from '../cache.config';
 import Redis from 'ioredis';
 
-export class RedisService implements ICacheClient {
+export class RedisStore implements ICacheStore {
   private readonly client: Redis;
 
   constructor(config: CacheConfig, private logger: LogService) {

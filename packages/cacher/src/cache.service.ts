@@ -1,31 +1,31 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { isNull } from 'lodash';
 import { CacheConfig, CacheType } from './cache.config';
-import { CacheClient, ICacheClient } from './cache.client';
+import { CacheClient, ICacheStore } from './cache.client';
 import { DelCacheMetric, GetCacheMetric, SetCacheMetric } from './cache.metric';
 import { CacheModel, CacheTtlSeconds } from './models';
-import { LocalService, MemcachedService, RedisService } from './services';
+import { LocalStore, MemcachedStore, RedisStore } from './stores';
 
 const RETRY_OPTS = 'cacher.retry';
 
 @Injectable()
-export class CacheService extends AbstractClientService<CacheConfig, ICacheClient> implements CacheClient {
+export class CacheService extends AbstractClientService<CacheConfig, ICacheStore> implements CacheClient {
   constructor() {
     super('cacher', CacheConfig);
   }
 
   @Retry(RETRY_OPTS)
-  async init(config: CacheConfig): Promise<ICacheClient> {
-    if (config.type === CacheType.REDIS) return new RedisService(config, this.logService);
-    if (config.type === CacheType.MEMCACHED) return new MemcachedService(config, this.logService);
-    return new LocalService(config, this.logService);
+  async init(config: CacheConfig): Promise<ICacheStore> {
+    if (config.type === CacheType.REDIS) return new RedisStore(config, this.logService);
+    if (config.type === CacheType.MEMCACHED) return new MemcachedStore(config, this.logService);
+    return new LocalStore(config, this.logService);
   }
 
-  async start(client: ICacheClient, conId: string = DEFAULT_CON_ID): Promise<void> {
+  async start(client: ICacheStore, conId: string = DEFAULT_CON_ID): Promise<void> {
     await client.connect();
   }
 
-  async stop(client: ICacheClient, conId: string = DEFAULT_CON_ID): Promise<void> {
+  async stop(client: ICacheStore, conId: string = DEFAULT_CON_ID): Promise<void> {
     await client.disconnect();
   }
 

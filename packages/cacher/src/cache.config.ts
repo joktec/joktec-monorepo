@@ -12,16 +12,14 @@ import {
 } from '@joktec/core';
 import { validateSync, ValidationError } from '@joktec/core/dist/validation';
 
-export type CacheKey = `#${string}` | `#${string}.${string}`;
-
 export interface CacheableOption {
-  key?: 'params' | CacheKey;
+  key?: 'auto' | string;
   expiry?: number;
   conId?: string;
 }
 
 export interface CacheEvictOption {
-  key?: 'params' | CacheKey;
+  key?: 'auto' | string;
   allEntries?: boolean;
   conId?: string;
 }

@@ -1,7 +1,7 @@
 import { Client } from '@joktec/core';
 import { CacheConfig } from './cache.config';
 
-export interface ICacheClient {
+export interface ICacheStore {
   connect(): Promise<void>;
 
   disconnect(): Promise<void>;
@@ -13,7 +13,7 @@ export interface ICacheClient {
   delItem(key: string): Promise<boolean>;
 }
 
-export interface CacheClient extends Client<CacheConfig, ICacheClient> {
+export interface CacheClient extends Client<CacheConfig, ICacheStore> {
   set<T>(key: string, value: T, opts?: { namespace?: string; expiry?: number }, conId?: string): Promise<any>;
 
   get<T>(key: string, opts?: { namespace?: string }, conId?: string): Promise<T>;

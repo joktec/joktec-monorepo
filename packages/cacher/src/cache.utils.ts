@@ -1,11 +1,10 @@
 import hash from 'object-hash';
-import dot from 'dot-object';
-import { CacheKey } from './cache.config';
-import { isEmpty } from 'lodash';
+import { isEmpty, get, isArray, isObject } from 'lodash';
 
-export const generateCacheKey = (key: 'params' | CacheKey, methodName: string, params: any): string => {
+export const generateCacheKey = (key: 'auto' | string, methodName: string, params: object): string => {
   if (isEmpty(params)) return methodName;
-  if (key === 'params') return hash(params, { unorderedArrays: true });
-  if (!key.match(/#.*(\..*)/)) return methodName;
-  return dot.pick(key.replace('#', ''), params);
+  if (key === 'auto') return hash(params, { unorderedArrays: true });
+  const value = get(params, key);
+  if (isObject(value) || isArray(value)) return hash(value, { unorderedArrays: true });
+  return String(value);
 };

@@ -8,7 +8,7 @@ export const Cacheable = <T>(namespace: string, cacheableOptions?: CacheableOpti
   return BaseMethodDecorator(
     async (options: CallbackDecoratorOptions): Promise<T> => {
       const { method, args, services, params } = options;
-      const { key = 'params', expiry = CacheTtlSeconds.ONE_DAY, conId = DEFAULT_CON_ID } = { ...cacheableOptions };
+      const { key = 'auto', expiry = CacheTtlSeconds.ONE_DAY, conId = DEFAULT_CON_ID } = { ...cacheableOptions };
       const cacheService: CacheService = services.cacheService;
 
       try {
@@ -36,7 +36,7 @@ export const CachePut = <T>(namespace: string, cacheableOptions?: CacheableOptio
   return BaseMethodDecorator(
     async (options: CallbackDecoratorOptions): Promise<any> => {
       const { method, args, services, params } = options;
-      const { key = 'params', expiry = CacheTtlSeconds.ONE_DAY, conId = DEFAULT_CON_ID } = { ...cacheableOptions };
+      const { key = 'auto', expiry = CacheTtlSeconds.ONE_DAY, conId = DEFAULT_CON_ID } = { ...cacheableOptions };
       const cacheService: CacheService = services.cacheService;
 
       try {
@@ -58,7 +58,7 @@ export const CacheEvict = <T>(namespace: string, cacheEvictOption?: CacheEvictOp
   return BaseMethodDecorator(
     async (options: CallbackDecoratorOptions): Promise<any> => {
       const { method, args, services, params } = options;
-      const { key = 'params', allEntries = false, conId = DEFAULT_CON_ID } = { ...cacheEvictOption };
+      const { key = 'auto', allEntries = false, conId = DEFAULT_CON_ID } = { ...cacheEvictOption };
       const cacheService: CacheService = services.cacheService;
 
       try {

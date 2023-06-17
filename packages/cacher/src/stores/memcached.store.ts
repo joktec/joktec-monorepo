@@ -1,9 +1,9 @@
 import { LogService } from '@joktec/core';
 import { MemcacheClient } from 'memcache-client';
-import { ICacheClient } from '../cache.client';
+import { ICacheStore } from '../cache.client';
 import { CacheConfig } from '../cache.config';
 
-export class MemcachedService implements ICacheClient {
+export class MemcachedStore implements ICacheStore {
   private readonly client: MemcacheClient;
 
   constructor(config: CacheConfig, private logger: LogService) {
