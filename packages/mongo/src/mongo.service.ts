@@ -46,18 +46,20 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     });
 
     this.logService.info('Start connecting to mongo database %s', uri);
-    const client = await mongoose.connect(uri, connectOptions);
+    const client = mongoose.createConnection(uri, connectOptions);
+    this.logService.info('`%s` Connection to MongoDB established', config.conId);
 
-    this.logService.info('Connected to mongo database successfully');
-    client.connection.on('error', async err => {
-      this.logService.error(err, 'Error when connecting to MongoDB. Reconnecting...');
+    client.on('open', () => this.logService.info('`%s` Connected to mongo database successfully', config.conId));
+    client.on('error', async err => {
+      this.logService.error(err, '`%s` Error when connecting to MongoDB. Reconnecting...', config.conId);
       await this.clientInit(config, false);
     });
-    client.connection.on('disconnected', async () => {
-      this.logService.error('MongoDB connection disconnected. Reconnecting...');
+    client.on('disconnected', async () => {
+      this.logService.error('`%s` MongoDB connection disconnected. Reconnecting...', config.conId);
       await this.clientInit(config, false);
     });
-    return client.connection;
+
+    return client;
   }
 
   private buildUri(config: MongoConfig): string {
@@ -76,7 +78,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
 
   public getModel<T>(schemaClass: Constructor<T>, conId: string = DEFAULT_CON_ID): ModelType<T> {
     const model = getModelForClass(schemaClass, { existingConnection: this.getClient(conId) });
-    this.logService.trace('Schema `%s` registered', schemaClass.name);
+    this.logService.debug('Schema `%s` registered', schemaClass.name);
     return model;
   }
 }
