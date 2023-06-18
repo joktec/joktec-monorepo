@@ -31,7 +31,7 @@ import { JwtGuard, JwtPayload } from '../guards';
 import { ApiSchema } from '../swagger';
 import { QueryInterceptor } from '../interceptors';
 import { BaseValidationPipe } from '../validation';
-import { GatewayPromInterceptor } from '../infras';
+import { GatewayMetric } from '../infras';
 import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../exceptions';
 
 export type ControllerMethod = 'findAll' | 'findOne' | 'create' | 'update' | 'delete';
@@ -149,7 +149,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
 
   const metric = toBool(props.metric, true);
   if (metric) {
-    UseInterceptors(GatewayPromInterceptor)(Controller);
+    UseInterceptors(GatewayMetric)(Controller);
   }
 
   Object.keys(props?.hooks || {}).map(key => {

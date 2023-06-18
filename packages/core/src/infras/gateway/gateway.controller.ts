@@ -2,13 +2,13 @@ import { Controller, Get, UseInterceptors } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { AppConfig, initConfig } from '../../config';
 import { toBool } from '../../utils';
-import { GatewayPromInterceptor } from './gateway-prom.interceptor';
+import { GatewayMetric } from './gateway.metric';
 
 @Controller()
 export class GatewayController {
   @Get('/')
   @ApiResponse({ type: Object })
-  @UseInterceptors(GatewayPromInterceptor)
+  @UseInterceptors(GatewayMetric)
   async getHello() {
     const appConfig: AppConfig = initConfig();
     return {
@@ -21,7 +21,7 @@ export class GatewayController {
 
   @Get('/health')
   @ApiResponse({ type: Object })
-  @UseInterceptors(GatewayPromInterceptor)
+  @UseInterceptors(GatewayMetric)
   healthCheck() {
     return { status: 'ok' };
   }

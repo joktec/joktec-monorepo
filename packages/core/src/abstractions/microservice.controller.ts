@@ -6,7 +6,7 @@ import { JwtPayload } from '../guards';
 import { startCase } from 'lodash';
 import { toBool, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
-import { MicroPromInterceptor } from '../infras';
+import { MicroMetric } from '../infras';
 
 export interface IMicroserviceControllerProps<T> {
   dto: Constructor<T>;
@@ -71,7 +71,7 @@ export const MicroserviceController = <T extends object, ID>(props: IMicroservic
 
   const metric = toBool(props.metric, true);
   if (metric) {
-    UseInterceptors(MicroPromInterceptor)(Controller);
+    UseInterceptors(MicroMetric)(Controller);
   }
 
   return Controller;

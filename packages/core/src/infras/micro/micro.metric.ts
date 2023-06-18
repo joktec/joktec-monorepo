@@ -29,14 +29,14 @@ export const totalMicroCounter = makeCounterProvider({
 });
 
 @Injectable()
-export class MicroPromInterceptor implements NestInterceptor {
+export class MicroMetric implements NestInterceptor {
   constructor(
     private reflector: Reflector,
     private logger: LogService,
     @InjectMetric(MICRO_LATENCY_METRIC) private latencyMetric: Gauge<string>,
     @InjectMetric(TOTAL_MICRO_METRIC) private totalCallLatency: Counter<string>,
   ) {
-    this.logger.setContext(MicroPromInterceptor.name);
+    this.logger.setContext(MicroMetric.name);
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
