@@ -3,7 +3,6 @@ import {
   APP_INTERCEPTOR,
   CoreModule,
   GatewayExceptionsFilter,
-  GatewayPromInterceptor,
   JwtModule,
   Module,
   ResponseInterceptor,

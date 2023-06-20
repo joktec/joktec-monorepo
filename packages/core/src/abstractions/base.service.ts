@@ -28,7 +28,7 @@ export abstract class BaseService<T extends Record<string, any>, ID> {
   async create(entity: Partial<T>, payload?: JwtPayload): Promise<T> {
     const processEntity: Partial<T> = cloneInstance(entity);
     if (payload) {
-      Object.assign(processEntity, { createdBy: payload.userId, updatedBy: payload.userId });
+      Object.assign(processEntity, { createdBy: payload.sub, updatedBy: payload.sub });
     }
     return this.repository.create(processEntity);
   }
@@ -37,13 +37,13 @@ export abstract class BaseService<T extends Record<string, any>, ID> {
     const condition: ICondition<T> = { id };
     const processEntity: Partial<T> = cloneInstance(entity);
     if (payload) {
-      Object.assign(processEntity, { updatedBy: payload.userId });
+      Object.assign(processEntity, { updatedBy: payload.sub });
     }
     return this.repository.update(condition, processEntity);
   }
 
   async delete(id: ID, payload?: JwtPayload): Promise<T> {
     const condition: ICondition<T> = { id };
-    return this.repository.delete(condition, { userId: payload?.userId });
+    return this.repository.delete(condition, { userId: payload?.sub });
   }
 }
