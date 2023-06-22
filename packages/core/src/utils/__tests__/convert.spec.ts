@@ -3,6 +3,7 @@ import {
   flattenKeys,
   joinUrl,
   linkTransform,
+  nullKeysToObject,
   objectToQueryString,
   toArray,
   toBool,
@@ -268,5 +269,45 @@ describe('joinUrl function', () => {
     const params = { key1: 'value1', key2: 'value2' };
     const result = joinUrl(host, { paths, params });
     expect(result).toEqual('https://example.com/path1/path2?key1=value1&key2=value2');
+  });
+});
+
+describe('nullKeysToObject function', () => {
+  it("should convert a nested object with 'null' values to null", () => {
+    const obj = { b: 1, c: { d: 'null' } };
+    const expected = { b: 1, c: { d: null } };
+    const converted = nullKeysToObject(obj);
+    expect(converted).toEqual(expected);
+  });
+
+  it('should handle an nil value', () => {
+    expect(nullKeysToObject(null)).toEqual({});
+    expect(nullKeysToObject(undefined)).toEqual({});
+  });
+
+  it('should handle an empty object', () => {
+    const obj = {};
+    const converted = nullKeysToObject(obj);
+    expect(converted).toEqual({});
+  });
+
+  it("should handle an object with no 'null' values", () => {
+    const obj = { a: 1, b: { c: 'test' } };
+    const converted = nullKeysToObject(obj);
+    expect(converted).toEqual(obj);
+  });
+
+  it("should convert multiple 'null' values in the same object", () => {
+    const obj = { a: 'null', b: { c: 'null' }, d: 'null' };
+    const expected = { a: null, b: { c: null }, d: null };
+    const converted = nullKeysToObject(obj);
+    expect(converted).toEqual(expected);
+  });
+
+  it("should handle an object with mixed values and 'null'", () => {
+    const obj = { a: 1, b: 'null', c: { d: 'null' }, e: null };
+    const expected = { a: 1, b: null, c: { d: null }, e: null };
+    const converted = nullKeysToObject(obj);
+    expect(converted).toEqual(expected);
   });
 });

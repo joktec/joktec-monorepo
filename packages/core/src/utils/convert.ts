@@ -133,3 +133,25 @@ export const joinUrl = (host: string, parts?: { paths?: string[]; params?: objec
   }
   return result;
 };
+
+/**
+ * Recursively converts any key with the value "null" into null in a nested object.
+ * @param {object} obj - The object to convert.
+ * @returns {object} - The converted object.
+ */
+export const nullKeysToObject = (obj: { [key: string]: any }): any => {
+  if (!obj) return {};
+  const result: { [key: string]: any } = {};
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        result[key] = nullKeysToObject(obj[key]);
+      } else {
+        result[key] = obj[key] === 'null' ? null : obj[key];
+      }
+    }
+  }
+
+  return result;
+};

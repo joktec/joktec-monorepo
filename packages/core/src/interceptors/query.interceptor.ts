@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { toInt } from '../utils';
+import { nullKeysToObject, toInt } from '../utils';
 import { IBaseRequest } from '../models';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class QueryInterceptor implements NestInterceptor {
     const req = context.switchToHttp().getRequest();
     req.originQuery = req.query;
     req.query = {
-      condition: req.query?.condition || {},
+      condition: nullKeysToObject(req.query?.condition),
       page: toInt(req.query?.page, 1),
       limit: toInt(req.query?.limit, 20),
       sort: req.query?.sort || { createdAt: 'desc' },
