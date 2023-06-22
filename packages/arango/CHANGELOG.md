@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.65](https://github.com/joktec/joktec-monorepo/compare/@joktec/arango@0.0.64...@joktec/arango@0.0.65) (2023-06-22)
+
+**Note:** Version bump only for package @joktec/arango
+
+
+
+
+
 ## [0.0.64](https://github.com/joktec/joktec-monorepo/compare/@joktec/arango@0.0.63...@joktec/arango@0.0.64) (2023-06-22)
 
 **Note:** Version bump only for package @joktec/arango
