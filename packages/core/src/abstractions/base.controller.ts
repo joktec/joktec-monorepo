@@ -8,9 +8,11 @@ import {
   Put,
   Query,
   Req,
+  SetMetadata,
   UseGuards,
   UseInterceptors,
   UsePipes,
+  CanActivate,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -26,8 +28,8 @@ import { Request } from 'express';
 import { BaseService } from './base.service';
 import { BaseListResponse, Constructor, IBaseRequest } from '../models';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
-import { isBoolean, isNil, startCase } from 'lodash';
-import { JwtGuard, JwtPayload } from '../guards';
+import { isArray, isBoolean, startCase } from 'lodash';
+import { JwtPayload } from '../guards';
 import { ApiSchema } from '../swagger';
 import { QueryInterceptor } from '../interceptors';
 import { BaseValidationPipe } from '../validation';
@@ -51,9 +53,11 @@ export interface IBaseControllerProps<T> {
   dto: Constructor<T>;
   dtoName?: string;
   apiTag?: string;
-  useGuard?: boolean | { [key in ControllerMethod]: boolean };
   excludes?: ControllerExclude[];
+  useBearer?: boolean | ControllerMethod[];
   hooks?: { [key in ControllerMethod]?: (NestInterceptor | Function)[] };
+  guards?: { [key in ControllerMethod]?: (CanActivate | Function)[] };
+  metadata?: { [key in ControllerMethod]?: { key: string; value: any }[] };
   metric?: boolean;
 }
 
@@ -82,9 +86,11 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
-    async findAll(@Query() req: IBaseRequest<T>, @Req() res: Request): Promise<PaginationDto> {
+    @UseGuards(...toArray(props?.guards?.findAll))
+    @UseInterceptors(QueryInterceptor, ...toArray(props?.hooks?.findAll))
+    async findAll(@Query() query: IBaseRequest<T>, @Req() req: Request): Promise<PaginationDto> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.LIST);
-      return this.service.findAll(req, res['payload'] as JwtPayload);
+      return this.service.findAll(query, req['payload'] as JwtPayload);
     }
 
     @Get('/:id')
@@ -92,9 +98,11 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiOkResponse({ type: props.dto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
-    async findOne(@Param('id') id: ID, @Query() req: IBaseRequest<T>, @Req() res: Request): Promise<T> {
+    @UseGuards(...toArray(props?.guards?.findOne))
+    @UseInterceptors(QueryInterceptor, ...toArray(props?.hooks?.findOne))
+    async findOne(@Param('id') id: ID, @Query() query: IBaseRequest<T>, @Req() req: Request): Promise<T> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.GET);
-      return this.service.findOne(id, req, res['payload'] as JwtPayload);
+      return this.service.findOne(id, query, req['payload'] as JwtPayload);
     }
 
     @Post('/')
@@ -102,10 +110,12 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiOkResponse({ type: props.dto })
     @ApiBody({ type: props.dto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
+    @UseGuards(...toArray(props?.guards?.create))
     @UsePipes(new BaseValidationPipe())
-    async create(@Body() entity: T, @Req() res: Request): Promise<T> {
+    @UseInterceptors(...toArray(props?.hooks?.create))
+    async create(@Body() entity: T, @Req() req: Request): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
-      return this.service.create(entity, res['payload'] as JwtPayload);
+      return this.service.create(entity, req['payload'] as JwtPayload);
     }
 
     @Put('/:id')
@@ -114,10 +124,12 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiParam({ name: 'id' })
     @ApiBody({ type: props.dto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
+    @UseGuards(...toArray(props?.guards?.update))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }))
-    async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Req() res: Request): Promise<T> {
+    @UseInterceptors(...toArray(props?.hooks?.update))
+    async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Req() req: Request): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.UPDATE);
-      return this.service.update(id, entity, res['payload'] as JwtPayload);
+      return this.service.update(id, entity, req['payload'] as JwtPayload);
     }
 
     @Delete('/:id')
@@ -125,25 +137,23 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.DELETE))
-    async delete(@Param('id') id: ID, @Req() res: Request): Promise<T> {
+    @UseGuards(...toArray(props?.guards?.delete))
+    @UseInterceptors(...toArray(props?.hooks?.delete))
+    async delete(@Param('id') id: ID, @Req() req: Request): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.DELETE);
-      return this.service.delete(id, res['payload'] as JwtPayload);
+      return this.service.delete(id, req['payload'] as JwtPayload);
     }
   }
 
-  if (isBoolean(props.useGuard) || isNil(props.useGuard)) {
-    const useGuard = toBool(props.useGuard, true);
-    if (useGuard) {
-      UseGuards(JwtGuard)(Controller);
-      ApiBearerAuth()(Controller);
-    }
-  } else {
-    Object.entries(props.useGuard || {}).map(([method, useGuard]) => {
-      if (useGuard) {
-        const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
-        UseGuards(JwtGuard)(Controller.prototype, method, descriptor);
-        ApiBearerAuth()(Controller.prototype, method, descriptor);
-      }
+  if (isBoolean(props?.useBearer)) {
+    const useBearer = toBool(props?.useBearer, true);
+    if (useBearer) ApiBearerAuth()(Controller);
+  }
+
+  if (isArray(props?.useBearer)) {
+    props.useBearer.map(method => {
+      const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
+      ApiBearerAuth()(Controller.prototype, method, descriptor);
     });
   }
 
@@ -152,13 +162,10 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     UseInterceptors(GatewayMetric)(Controller);
   }
 
-  Object.keys(props?.hooks || {}).map(key => {
-    const hookByKey = toArray(props.hooks[key]);
-    if (key === 'findAll' || key === 'findOne') hookByKey.unshift(QueryInterceptor);
-    if (hookByKey.length) {
-      const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, key);
-      UseInterceptors(...hookByKey)(Controller.prototype, key, descriptor);
-    }
+  Object.keys(props?.metadata || {}).map(method => {
+    const metaArr: { key: string; value: any }[] = toArray(props.metadata[method]);
+    const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
+    metaArr.map(({ key, value }) => SetMetadata(key, value)(Controller.prototype, method, descriptor));
   });
 
   return Controller;

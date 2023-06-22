@@ -9,7 +9,6 @@ export class QueryInterceptor implements NestInterceptor {
     const req = context.switchToHttp().getRequest();
     req.originQuery = req.query;
     req.query = {
-      condition: nullKeysToObject(req.query?.condition),
       page: toInt(req.query?.page, 1),
       limit: toInt(req.query?.limit, 20),
       sort: req.query?.sort || { createdAt: 'desc' },
@@ -17,11 +16,7 @@ export class QueryInterceptor implements NestInterceptor {
       ...req.query,
     } as IBaseRequest<any>;
 
-    const paramId = req.params?._id || req.params?.id;
-    if (paramId) {
-      req.query.condition = { ...req.query.condition, id: paramId };
-    }
-
+    req.query.condition = nullKeysToObject(req.query?.condition);
     return next.handle();
   }
 }
