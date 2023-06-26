@@ -37,13 +37,3 @@ export interface IBaseRequest<T extends object = {}> {
   near?: INear;
   populate?: IPopulate<T>;
 }
-
-export type PartialDeep<T> = {
-  [P in keyof T]?: T[P] extends (infer U)[]
-    ? U extends IDataType
-      ? U[]
-      : PartialDeep<U>[]
-    : T[P] extends object
-    ? PartialDeep<T[P]>
-    : T[P];
-};

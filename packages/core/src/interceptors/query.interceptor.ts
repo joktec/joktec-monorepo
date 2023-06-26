@@ -9,13 +9,12 @@ export class QueryInterceptor implements NestInterceptor {
     const req = context.switchToHttp().getRequest();
     req.originQuery = req.query;
     req.query = {
+      ...req.query,
       page: toInt(req.query?.page, 1),
       limit: toInt(req.query?.limit, 20),
       sort: req.query?.sort || { createdAt: 'desc' },
       language: req.headers['content-language'] || req.query?.language || '*',
-      ...req.query,
     } as IBaseRequest<any>;
-
     req.query.condition = nullKeysToObject(req.query?.condition);
     return next.handle();
   }
