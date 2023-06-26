@@ -24,22 +24,13 @@ export const MicroserviceController = <T extends object, ID>(props: IMicroservic
     protected constructor(protected service: BaseService<T, ID>) {}
 
     @MessagePattern({ cmd: `${nameSingular}.findAll` }, transport)
-    async findAll(
-      @Payload('req') req: IBaseRequest<T>,
-      @Payload('jwt') jwtPayload: JwtPayload,
-      @Ctx() context: any,
-    ): Promise<IListResponseDto<T>> {
-      return this.service.findAll(req, jwtPayload);
+    async findAll(@Payload('req') req: IBaseRequest<T>, @Ctx() context: any): Promise<IListResponseDto<T>> {
+      return this.service.findAll(req);
     }
 
     @MessagePattern({ cmd: `${nameSingular}.findOne` }, transport)
-    async findOne(
-      @Payload('id') id: ID,
-      @Payload('req') req: IBaseRequest<T>,
-      @Payload('jwt') jwtPayload: JwtPayload,
-      @Ctx() context: any,
-    ): Promise<T> {
-      return this.service.findOne(id, req, jwtPayload);
+    async findOne(@Payload('id') id: ID, @Payload('req') req: IBaseRequest<T>, @Ctx() context: any): Promise<T> {
+      return this.service.findById(id, req);
     }
 
     @MessagePattern({ cmd: `${nameSingular}.create` }, transport)

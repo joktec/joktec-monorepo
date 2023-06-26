@@ -32,7 +32,7 @@ export const BaseResolver = <T extends object, ID>(props: IBaseResolverProps<T>)
       @Args('id', { type: () => String }) id: ID,
       @Args('query', { type: () => PaginationDto, nullable: true, defaultValue: {} }) req: IBaseRequest<T>,
     ): Promise<T> {
-      return this.service.findOne(id, req);
+      return this.service.findById(id, req);
     }
 
     @Mutation(() => props.dto, { name: `create${nameSingular}` })

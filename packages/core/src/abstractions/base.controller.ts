@@ -88,9 +88,9 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
     @UseGuards(...toArray(props?.guards?.findAll))
     @UseInterceptors(QueryInterceptor, ...toArray(props?.hooks?.findAll))
-    async findAll(@Query() query: IBaseRequest<T>, @Req() req: Request): Promise<PaginationDto> {
+    async findAll(@Query() query: IBaseRequest<T>): Promise<PaginationDto> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.LIST);
-      return this.service.findAll(query, req['payload'] as JwtPayload);
+      return this.service.findAll(query);
     }
 
     @Get('/:id')
@@ -100,9 +100,9 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiParam({ name: 'id' })
     @UseGuards(...toArray(props?.guards?.findOne))
     @UseInterceptors(QueryInterceptor, ...toArray(props?.hooks?.findOne))
-    async findOne(@Param('id') id: ID, @Query() query: IBaseRequest<T>, @Req() req: Request): Promise<T> {
+    async findOne(@Param('id') id: ID, @Query() query: IBaseRequest<T>): Promise<T> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.GET);
-      return this.service.findOne(id, query, req['payload'] as JwtPayload);
+      return this.service.findById(id, query);
     }
 
     @Post('/')

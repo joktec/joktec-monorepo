@@ -6,23 +6,25 @@ import { cloneInstance } from '../utils';
 export abstract class BaseService<T extends Record<string, any>, ID> {
   protected constructor(protected repository: BaseRepository<T, ID>) {}
 
-  async findAll(query: IBaseRequest<T>, payload?: JwtPayload): Promise<IListResponseDto<T>> {
+  async findAll(query: IBaseRequest<T>): Promise<IListResponseDto<T>> {
     const [items, totalItems] = await Promise.all([this.repository.find(query), this.repository.count(query)]);
-    return {
-      items,
-      totalItems,
-      totalPage: Math.ceil(totalItems / query.limit),
-      isLastPage: items.length < query.limit,
-    };
+    const totalPage = Math.ceil(totalItems / query.limit);
+    const isLastPage = items.length < query.limit;
+    return { items, totalItems, totalPage, isLastPage };
   }
 
-  async find(query: IBaseRequest<T>, payload?: JwtPayload): Promise<T[]> {
+  async find(query: IBaseRequest<T>): Promise<T[]> {
     return this.repository.find(query);
   }
 
-  async findOne(id: ID, query: IBaseRequest<T> = {}, payload?: JwtPayload): Promise<T> {
-    query.condition = { id };
-    return this.repository.findOne(query);
+  async findById(id: ID, query?: IBaseRequest<T>): Promise<T> {
+    const processQuery: IBaseRequest<T> = { ...query, condition: { id } };
+    return this.repository.findOne(processQuery);
+  }
+
+  async findOne(condition: ICondition<T>, query?: IBaseRequest<T>): Promise<T> {
+    const processQuery: IBaseRequest<T> = { ...query, condition: { ...query?.condition, ...condition } };
+    return this.repository.findOne(processQuery);
   }
 
   async create(entity: Partial<T>, payload?: JwtPayload): Promise<T> {
