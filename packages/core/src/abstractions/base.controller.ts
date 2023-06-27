@@ -145,16 +145,14 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     }
   }
 
-  if (isBoolean(props?.useBearer)) {
-    const useBearer = toBool(props?.useBearer, true);
-    if (useBearer) ApiBearerAuth()(Controller);
-  }
-
   if (isArray(props?.useBearer)) {
     props.useBearer.map(method => {
       const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
       ApiBearerAuth()(Controller.prototype, method, descriptor);
     });
+  } else {
+    const useBearer = toBool(props?.useBearer, true);
+    if (useBearer) ApiBearerAuth()(Controller);
   }
 
   const metric = toBool(props.metric, true);
