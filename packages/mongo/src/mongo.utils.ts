@@ -158,9 +158,9 @@ export const buildAggregation = <T extends MongoSchema>(
   query: IMongoRequest<T>,
   isSoftDelete: boolean = true,
 ): IMongoAggregation[] => {
-  const condition: ICondition<T> = preHandleQuery(query, isSoftDelete);
-  const aggregations: IMongoAggregation[] = [{ $match: condition }];
+  const aggregations: IMongoAggregation[] = [];
 
+  if (query.condition) aggregations.push({ $match: preHandleQuery(query, isSoftDelete) });
   if (query.sort) aggregations.push({ $sort: buildSorter(query.sort) });
   if (query.limit && query.page) {
     aggregations.push({ $skip: (query.page - 1) * query.limit });
