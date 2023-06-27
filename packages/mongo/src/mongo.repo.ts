@@ -17,9 +17,11 @@ import {
   preHandleBody,
   preHandleQuery,
   preHandleUpdateBody,
-  projection,
+  buildProjection,
   UPDATE_OPTIONS,
   UPSERT_OPTIONS,
+  buildSorter,
+  buildAggregation,
 } from './mongo.utils';
 import { isNil, pick } from 'lodash';
 import { MongoCatch } from './mongo.exception';
@@ -49,11 +51,17 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async find(query: IMongoRequest<T>): Promise<T[]> {
+    if (query.aggregations?.length) {
+      const aggregations = buildAggregation(query, this.isSoftDelete);
+      const docs = await this.model.aggregate(aggregations).exec();
+      return this.transform(docs) as T[];
+    }
+
     const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
     const qb = this.model.find(condition);
-    if (query.select) qb.select(projection(query.select));
+    if (query.select) qb.select(buildProjection(query.select));
+    if (query.sort) qb.sort(buildSorter(query.sort));
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
-    if (query.sort) qb.sort(query.sort);
     if (query.populate) qb.populate(convertPopulate(query.populate, this.isSoftDelete));
     const docs: any[] = await qb.lean().exec();
     return this.transform(docs) as T[];
@@ -72,15 +80,15 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   async findOne(query: IMongoRequest<T>): Promise<T> {
     const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
     const qb = this.model.findOne(condition);
-    if (query.select) qb.select(projection(query.select));
-    if (query.sort) qb.sort(query.sort);
+    if (query.select) qb.select(buildProjection(query.select));
+    if (query.sort) qb.sort(buildSorter(query.sort));
     if (query.populate) qb.populate(convertPopulate(query.populate, this.isSoftDelete));
     const doc = await qb.lean().exec();
     return this.transform(doc) as T;
   }
 
   @MongoCatch
-  async aggregate(aggregations: IMongoAggregation[]): Promise<T[]> {
+  async aggregate<U = T>(aggregations: IMongoAggregation[]): Promise<U[]> {
     const qb = this.model.aggregate(aggregations);
     return qb.exec();
   }

@@ -1,5 +1,5 @@
-import { ICondition, IPopulate, IPopulateOption, toInt } from '@joktec/core';
-import { IMongoRequest, MongoSchema } from './models';
+import { ICondition, IPopulate, IPopulateOption, ISort, toInt } from '@joktec/core';
+import { IMongoRequest, IMongoProject, IMongoSorter, MongoSchema, IMongoAggregation } from './models';
 import { PopulateOptions, QueryOptions } from 'mongoose';
 import { omit, isNil, pick, isDate } from 'lodash';
 import dot from 'dot-object';
@@ -113,7 +113,22 @@ export const preHandleUpdateBody = <T extends object>(body: object): Partial<T> 
   return processBody;
 };
 
-export const projection = (select: string): string => select.split(',').join(' ');
+export const buildProjection = (select: string): IMongoProject => {
+  return select.split(',').reduce((acc, field) => {
+    const trimField = field.trim();
+    if (!trimField) return acc;
+    if (trimField.startsWith('-')) acc[trimField.slice(1)] = 0;
+    else acc[trimField] = 1;
+    return acc;
+  }, {});
+};
+
+export const buildSorter = (sort: ISort<any>): IMongoSorter => {
+  return Object.entries(sort).reduce((acc, [field, order]) => {
+    acc[field] = order === 'asc' ? 1 : -1;
+    return acc;
+  }, {});
+};
 
 /**
  * Convert populate object to mongoose populate options
@@ -129,7 +144,7 @@ export const convertPopulate = <T extends MongoSchema>(
     const populateMatch = {};
     const options: '*' | IPopulateOption = populate[path];
     if (options !== '*') {
-      if (options.select) populateOptions.select = projection(options.select);
+      if (options.select) populateOptions.select = buildProjection(options.select);
       if (options.model) populateOptions.model = options.model;
       if (options.populate) populateOptions.populate = convertPopulate(options.populate);
       if (options.match) Object.assign(populateMatch, populateOptions.match);
@@ -137,4 +152,22 @@ export const convertPopulate = <T extends MongoSchema>(
     populateOptions.match = preHandleQuery({ condition: populateMatch }, isSoftDelete);
     return populateOptions;
   });
+};
+
+export const buildAggregation = <T extends MongoSchema>(
+  query: IMongoRequest<T>,
+  isSoftDelete: boolean = true,
+): IMongoAggregation[] => {
+  const condition: ICondition<T> = preHandleQuery(query, isSoftDelete);
+  const aggregations: IMongoAggregation[] = [{ $match: condition }];
+
+  if (query.sort) aggregations.push({ $sort: buildSorter(query.sort) });
+  if (query.limit && query.page) {
+    aggregations.push({ $skip: (query.page - 1) * query.limit });
+    aggregations.push({ $limit: query.limit });
+  }
+  if (query.select) aggregations.push({ $project: buildProjection(query.select) });
+  if (query.aggregations?.length) aggregations.push(...query.aggregations);
+
+  return aggregations;
 };

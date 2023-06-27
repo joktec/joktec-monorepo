@@ -5,9 +5,11 @@ import {
   preHandleCondition,
   preHandleQuery,
   preHandleUpdateBody,
-  projection,
+  buildProjection,
+  buildSorter,
 } from '../mongo.utils';
 import { IMongoRequest } from '../models';
+import { ISort } from '@joktec/core';
 
 describe('preHandleCondition function', () => {
   it('should not modify a simple condition', () => {
@@ -376,17 +378,36 @@ describe('preHandleUpdateBody function', () => {
   });
 });
 
-describe('projection', () => {
-  it('should return a string with spaces instead of commas', () => {
+describe('buildProjection function', () => {
+  it('should return a mongo projection to includes some fields', () => {
     const select = 'name,age,address.city';
-    const result = projection(select);
-    expect(result).toEqual('name age address.city');
+    const result = buildProjection(select);
+    expect(result).toEqual({ name: 1, age: 1, 'address.city': 1 });
   });
 
-  it('should return an empty string if select is empty', () => {
+  it('should return a mongo projection to includes and excludes some fields', () => {
+    const select = 'name,-age,address.city';
+    const result = buildProjection(select);
+    expect(result).toEqual({ name: 1, age: 0, 'address.city': 1 });
+  });
+
+  it('should return an empty object if select is empty', () => {
     const select = '';
-    const result = projection(select);
-    expect(result).toEqual('');
+    const result = buildProjection(select);
+    expect(result).toEqual({});
+  });
+});
+
+describe('buildSorter function', () => {
+  it('should return a mongo sorter structure', () => {
+    const sort: ISort = { name: 'asc', createdAt: 'desc' };
+    const result = buildSorter(sort);
+    expect(result).toEqual({ name: 1, createdAt: -1 });
+  });
+
+  it('should return an empty object if select is empty', () => {
+    const result = buildSorter({});
+    expect(result).toEqual({});
   });
 });
 
@@ -416,19 +437,19 @@ describe('convertPopulate function', () => {
         match: { deletedAt: { $eq: null } },
         path: 'author',
         model: 'User',
-        select: 'name',
+        select: { name: 1 },
         populate: [
           {
             match: { deletedAt: { $eq: null } },
             path: 'comments',
             model: 'Comment',
-            select: 'text',
+            select: { text: 1 },
             populate: [
               {
                 match: { deletedAt: { $eq: null } },
                 path: 'user',
                 model: 'User',
-                select: 'email',
+                select: { email: 1 },
               },
             ],
           },
