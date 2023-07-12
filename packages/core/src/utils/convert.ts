@@ -104,7 +104,7 @@ export const objectToQueryString = (queryParameters: { [key: string]: any }) => 
   return queryParameters
     ? Object.entries(queryParameters).reduce((queryString, [key, val], index) => {
         const symbol = queryString.length === 0 ? '?' : '&';
-        queryString += `${symbol}${key}=${encodeURIComponent(val || '')}`;
+        queryString += `${symbol}${key}=${encodeURI(val || '')}`;
         return queryString;
       }, '')
     : '';
