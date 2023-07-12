@@ -104,7 +104,7 @@ export const objectToQueryString = (queryParameters: { [key: string]: any }) => 
   return queryParameters
     ? Object.entries(queryParameters).reduce((queryString, [key, val], index) => {
         const symbol = queryString.length === 0 ? '?' : '&';
-        queryString += `${symbol}${key}=${encodeURI(val || '')}`;
+        queryString += `${symbol}${key}=${encodeURIComponent(val || '')}`;
         return queryString;
       }, '')
     : '';
@@ -122,7 +122,7 @@ export const joinUrl = (host: string, parts?: { paths?: string[]; params?: objec
   const { paths = [], params = {} } = parts || {};
   let result = [host, ...paths, objectToQueryString(params)]
     .join('/')
-    .replace(/[\/]+/g, '/')
+    .replace(/\/+/g, '/')
     .replace(/^(.+):\//, '$1://')
     .replace(/^file:/, 'file:/')
     .replace(/\/(\?|&|#[^!])/g, '$1')
