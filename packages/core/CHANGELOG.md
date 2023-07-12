@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.71](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.70...@joktec/core@0.0.71) (2023-07-12)
+
+
+### Bug Fixes
+
+* encode uri ([2bd0308](https://github.com/joktec/joktec-monorepo/commit/2bd03081a92cb67ed39e7495512202cb5de5c3a9))
+
+
+
+
+
 ## [0.0.70](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.69...@joktec/core@0.0.70) (2023-07-12)
 
 
