@@ -152,7 +152,7 @@ describe('toArray function', () => {
   });
 
   it('should return the string array with separator', () => {
-    expect(toArray('A,B,C', { separator: ',' })).toEqual(['A', 'B', 'C']);
+    expect(toArray('A,B,C', { split: ',' })).toEqual(['A', 'B', 'C']);
   });
 });
 
