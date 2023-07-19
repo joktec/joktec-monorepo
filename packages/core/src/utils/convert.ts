@@ -1,4 +1,4 @@
-import { isArray, isBoolean, isNaN, isNil, isPlainObject } from 'lodash';
+import { isArray, isBoolean, isNaN, isNil, isPlainObject, isString } from 'lodash';
 import pluralize from 'pluralize';
 import slug from 'slug';
 
@@ -58,11 +58,15 @@ export const toBool = (b: boolean | string | number | Buffer, def: boolean = fal
 /**
  * Converts a value to an array.
  * @param {T | Array<T>} data - The value to convert.
+ * @param {} opts - Options
  * @returns {Array<T>} An array containing the input value, or an empty array if the input is null, undefined, or an empty array.
  * @template T
  */
-export const toArray = <T>(data: T | Array<T>): T[] => {
+export const toArray = <T>(data: T | Array<T>, opts: { separator: string | RegExp } = { separator: ',' }): T[] => {
   if (!data || (isArray(data) && !data.length)) return [];
+  if (isString(data) && opts?.separator) {
+    return data.split(opts.separator) as T[];
+  }
   return isArray(data) ? data : [data];
 };
 

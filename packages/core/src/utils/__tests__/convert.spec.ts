@@ -150,6 +150,10 @@ describe('toArray function', () => {
   it('should return the input array as is', () => {
     expect(toArray([1, 2, 3])).toEqual([1, 2, 3]);
   });
+
+  it('should return the string array with separator', () => {
+    expect(toArray('A,B,C', { separator: ',' })).toEqual(['A', 'B', 'C']);
+  });
 });
 
 describe('linkTransform function', () => {
