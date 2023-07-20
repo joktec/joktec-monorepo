@@ -1,8 +1,7 @@
-import { get, pick, set, snakeCase } from 'lodash';
 import { existsSync, readFileSync } from 'fs';
 import { safeLoad } from 'js-yaml';
+import { get, pick, set, snakeCase } from 'lodash';
 import { flattenKeys } from '../utils';
-
 const execSync = require('child_process').execSync;
 
 export enum ENV {

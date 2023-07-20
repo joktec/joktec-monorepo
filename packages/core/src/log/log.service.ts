@@ -1,15 +1,15 @@
-import pino, { DestinationStream, StreamEntry } from 'pino';
 import { Params as LoggerParam } from 'nestjs-pino';
+import pino, { DestinationStream, StreamEntry } from 'pino';
 import { Options as PinoHttpOptions } from 'pino-http';
-import { ConfigService, ENV } from '../config';
-import { LogConfig } from './log.config';
-import { createConsoleStream } from './console/console';
-import { createLogstashStream } from './logstash/logstash';
-import { createFluentdStream } from './fluentd/fluentd';
-import { createCloudWatchStream } from './cloudwatch/cloudwatch';
-import { createGoogleCloudLoggingStream } from './googleLog/googleLog';
-import { createLokiStream } from './loki/loki';
 import { PrettyOptions } from 'pino-pretty';
+import { ConfigService, ENV } from '../config';
+import { createCloudWatchStream } from './cloudwatch/cloudwatch';
+import { createConsoleStream } from './console/console';
+import { createFluentdStream } from './fluentd/fluentd';
+import { createGoogleCloudLoggingStream } from './googleLog/googleLog';
+import { LogConfig } from './log.config';
+import { createLogstashStream } from './logstash/logstash';
+import { createLokiStream } from './loki/loki';
 
 export const createPinoHttp = (configService: ConfigService): LoggerParam => {
   const config: LogConfig = configService.parse(LogConfig, 'log');

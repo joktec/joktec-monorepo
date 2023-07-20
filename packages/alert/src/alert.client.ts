@@ -1,8 +1,8 @@
 import { Client } from '@joktec/core';
-import { AlertConfig } from './alert.config';
-import { AlertRequest, AlertResponse } from './models';
 import { IncomingWebhook } from '@slack/webhook';
 import { Telegraf } from 'telegraf';
+import { AlertConfig } from './alert.config';
+import { AlertRequest, AlertResponse } from './models';
 
 export type AlertClient = Telegraf;
 

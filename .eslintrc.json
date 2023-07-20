@@ -6,9 +6,12 @@
     "ecmaVersion": 2018
   },
   "plugins": [
-    "@typescript-eslint/eslint-plugin"
+    "@typescript-eslint/eslint-plugin",
+    "unused-imports",
+    "import"
   ],
   "extends": [
+    "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier"
@@ -18,6 +21,9 @@
     "node": true,
     "jest": true
   },
+  "ignorePatterns": [
+    "**/*.spec.ts"
+  ],
   "rules": {
     "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
@@ -29,9 +35,55 @@
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-namespace": "off",
+    "@typescript-eslint/naming-convention": "off",
+    "@typescript-eslint/no-magic-numbers": "warn",
+    "@typescript-eslint/no-duplicate-imports": "error",
+    "unused-imports/no-unused-imports": "error",
+    "no-prototype-builtins": "off",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_"
+      }
+    ],
     "semi": [
       "error",
       "always"
+    ],
+    "object-curly-newline": [
+      "error",
+      {
+        "consistent": true
+      }
+    ],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "never",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "unknown",
+          "parent",
+          "sibling",
+          "index",
+          "object",
+          "type"
+        ]
+      }
     ]
   }
 }

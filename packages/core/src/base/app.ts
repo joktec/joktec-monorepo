@@ -1,4 +1,3 @@
-import { NestExpressApplication } from '@nestjs/platform-express';
 import {
   NestApplicationOptions,
   NestModule,
@@ -7,8 +6,9 @@ import {
   CanActivate,
   ExceptionFilter,
 } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger } from 'nestjs-pino';
 import { GatewayConfig, GatewayService, MicroConfig, MicroService } from '../infras';
 

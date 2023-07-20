@@ -1,10 +1,10 @@
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { BigQuery, Dataset, Table } from '@google-cloud/bigquery';
 import { File, TableMetadata } from '@google-cloud/bigquery/build/src/table';
-import { BigQueryRequest, BigQuerySchema, ISort, Row, SortOrder } from './models';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
+import { BigQueryClient } from './bigquery.client';
 import { BigQueryConfig } from './bigquery.config';
 import { BigQueryUtils } from './bigquery.utils';
-import { BigQueryClient } from './bigquery.client';
+import { BigQueryRequest, BigQuerySchema, ISort, Row, SortOrder } from './models';
 
 const RETRY_OPTS = 'bigquery.retry';
 

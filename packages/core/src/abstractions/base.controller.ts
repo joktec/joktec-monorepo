@@ -25,16 +25,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
-import { BaseService } from './base.service';
-import { BaseListResponse, Constructor, IBaseRequest } from '../models';
-import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
-import { isArray, isBoolean, startCase } from 'lodash';
-import { JwtPayload } from '../guards';
-import { ApiSchema } from '../swagger';
-import { QueryInterceptor } from '../interceptors';
-import { BaseValidationPipe } from '../validation';
-import { GatewayMetric } from '../infras';
+import { isArray, startCase } from 'lodash';
 import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../exceptions';
+import { JwtPayload } from '../guards';
+import { GatewayMetric } from '../infras';
+import { QueryInterceptor } from '../interceptors';
+import { BaseListResponse, Constructor, IBaseRequest } from '../models';
+import { ApiSchema } from '../swagger';
+import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
+import { BaseValidationPipe } from '../validation';
+import { BaseService } from './base.service';
 
 export type ControllerMethod = 'findAll' | 'findOne' | 'create' | 'update' | 'delete';
 

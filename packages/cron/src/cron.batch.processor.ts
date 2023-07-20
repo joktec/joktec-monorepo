@@ -1,5 +1,5 @@
-import { CronQueue } from './cron.queue';
 import { CronProcessor } from './cron.processor';
+import { CronQueue } from './cron.queue';
 import { CronModel } from './models';
 
 export abstract class CronBatchProcessor<I, O> extends CronProcessor<I, O> {

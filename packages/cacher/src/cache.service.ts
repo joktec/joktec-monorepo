@@ -1,7 +1,7 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { isNull } from 'lodash';
-import { CacheConfig, CacheType } from './cache.config';
 import { CacheClient, ICacheStore } from './cache.client';
+import { CacheConfig, CacheType } from './cache.config';
 import { DelCacheMetric, GetCacheMetric, SetCacheMetric } from './cache.metric';
 import { CacheModel, CacheTtlSeconds } from './models';
 import { LocalStore, MemcachedStore, RedisStore } from './stores';

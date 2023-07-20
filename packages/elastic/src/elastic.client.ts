@@ -1,7 +1,7 @@
 import { Client } from '@joktec/core';
-import { EsGetResponse, EsSearchRequest, EsSearchResponse, EsWriteResponse } from './models';
 import { HttpService } from '@joktec/http';
 import { ElasticConfig } from './elastic.config';
+import { EsGetResponse, EsSearchRequest, EsSearchResponse, EsWriteResponse } from './models';
 
 export interface ElasticClient extends Client<ElasticConfig, HttpService> {
   search<TDoc = any, TAgg = any>(

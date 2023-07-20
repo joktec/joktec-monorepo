@@ -1,8 +1,8 @@
+import { BigQuery, Table } from '@google-cloud/bigquery';
+import { File } from '@google-cloud/bigquery/build/src/table';
 import { Client } from '@joktec/core';
 import { BigQueryConfig } from './bigquery.config';
-import { BigQuery, Table } from '@google-cloud/bigquery';
 import { BigQueryRequest, BigQuerySchema, ISort, Row } from './models';
-import { File } from '@google-cloud/bigquery/build/src/table';
 
 export interface BigQueryClient extends Client<BigQueryConfig, BigQuery> {
   isTableExist(tableId: string, conId?: string): Promise<boolean>;

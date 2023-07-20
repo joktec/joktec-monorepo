@@ -1,7 +1,6 @@
 import { isObject, merge } from 'lodash';
-import { RetryOptions } from './retry.config';
 import { BaseMethodDecorator, CallbackDecoratorOptions } from '../decorators';
-
+import { RetryOptions } from './retry.config';
 const retry = require('async-retry');
 
 export const Retry = (retryOptions: RetryOptions | string = {}): MethodDecorator => {

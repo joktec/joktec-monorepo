@@ -8,9 +8,8 @@ import {
   Histogram,
 } from '@joktec/core';
 import { AxiosError, AxiosResponse } from 'axios';
-import { CustomHttpException, httpExceptionHandler } from './http.exception';
 import { HttpConfig } from './http.config';
-
+import { httpExceptionHandler } from './http.exception';
 const validUrl = require('valid-url');
 
 export const HTTP_DURATION_SECONDS_METRIC = 'http_duration_seconds';

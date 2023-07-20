@@ -1,6 +1,6 @@
 import { BaseRepository, Client, ICondition } from '@joktec/core';
-import { MysqlConfig } from './mysql.config';
 import { Model, Sequelize } from 'sequelize-typescript';
+import { MysqlConfig } from './mysql.config';
 
 export interface MysqlClient extends Client<MysqlConfig, Sequelize> {}
 

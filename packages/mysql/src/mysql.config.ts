@@ -1,5 +1,5 @@
 import { ClientConfig, IsArray, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toInt } from '@joktec/core';
-import { omit, pick } from 'lodash';
+import { pick } from 'lodash';
 import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
 import { ConnectionOptions } from 'sequelize/types/sequelize';
 

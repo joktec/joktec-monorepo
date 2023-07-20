@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
-import { RuntimeException } from '../runtime.exception';
 import { ExceptionMessage } from '../exception-message';
+import { RuntimeException } from '../runtime.exception';
 
 export class ForbiddenException<T = any> extends RuntimeException {
   constructor(message: string = ExceptionMessage.FORBIDDEN, data: T = null) {

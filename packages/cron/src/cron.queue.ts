@@ -1,5 +1,5 @@
-import async, { QueueObject } from 'async';
 import { Logger } from '@nestjs/common';
+import async, { QueueObject } from 'async';
 
 export class QueueConfig<T> {
   consume: (d: T[]) => Promise<void>;

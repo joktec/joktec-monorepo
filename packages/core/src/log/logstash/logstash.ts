@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
-import { LogStashConfig } from './logstash.config';
 import { DestinationStream } from 'pino';
-
+import { LogStashConfig } from './logstash.config';
 const net = require('net');
 const stream = require('stream');
 const backoff = require('backoff');

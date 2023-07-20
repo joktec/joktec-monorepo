@@ -1,12 +1,12 @@
+import fs from 'fs';
 import { INestApplication, INestMicroservice } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import glob from 'glob';
+import { GlobalOptions } from '../../base';
 import { ConfigService, ENV } from '../../config';
-import { DEFAULT_MICRO_PORT, MicroConfig, MicroTransport } from './micro.config';
 import { LogService } from '../../log';
 import { toArray, toBool } from '../../utils';
-import { GlobalOptions } from '../../base';
-import glob from 'glob';
-import fs from 'fs';
+import { DEFAULT_MICRO_PORT, MicroConfig, MicroTransport } from './micro.config';
 
 export class MicroService {
   static async bootstrap(app: INestApplication, opts?: GlobalOptions) {

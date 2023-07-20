@@ -1,7 +1,7 @@
 import { Client } from '@joktec/core';
-import { NotifierConfig } from './notifier.config';
-import { NotifierRegIds, NotifierRequest, NotifierResponse } from './models';
 import PushNotifications from 'node-pushnotifications';
+import { NotifierRegIds, NotifierRequest, NotifierResponse } from './models';
+import { NotifierConfig } from './notifier.config';
 
 export type NotifierInstance = PushNotifications;
 

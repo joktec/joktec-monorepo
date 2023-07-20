@@ -1,6 +1,6 @@
 import { CounterProviders, Global, Module } from '@joktec/core';
-import { MailerService } from './mailer.service';
 import { MailerMetricService, TRACK_STATUS_MAILER_METRIC } from './mailer.metric';
+import { MailerService } from './mailer.service';
 
 @Global()
 @Module({

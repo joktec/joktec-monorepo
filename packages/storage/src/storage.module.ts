@@ -1,6 +1,6 @@
 import { CounterProviders, Module, Global } from '@joktec/core';
-import { StorageService } from './storage.service';
 import { StorageMetricService, TRACK_STATUS_STORAGE_METRIC } from './storage.metric';
+import { StorageService } from './storage.service';
 
 @Global()
 @Module({

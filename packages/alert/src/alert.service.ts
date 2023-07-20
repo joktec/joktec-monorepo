@@ -1,11 +1,11 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
-import { AlertConfig } from './alert.config';
 import { IncomingWebhook } from '@slack/webhook';
-import { AlertRequest } from './models';
-import { Alert } from './alert.client';
 import { IncomingWebhookResult } from '@slack/webhook/dist/IncomingWebhook';
-import { AlertUtils, buildTitle } from './alert.utils';
 import { Telegraf } from 'telegraf';
+import { Alert } from './alert.client';
+import { AlertConfig } from './alert.config';
+import { AlertUtils, buildTitle } from './alert.utils';
+import { AlertRequest } from './models';
 
 const RETRY_OPTS = 'alert.retry';
 

@@ -1,7 +1,7 @@
 import { BaseRepository, Client, ICondition } from '@joktec/core';
-import { MongoConfig } from './mongo.config';
 import { Connection } from 'mongoose';
 import { IMongoAggregation, MongoSchema } from './models';
+import { MongoConfig } from './mongo.config';
 
 export interface MongoClient extends Client<MongoConfig, Connection> {}
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService as JsConfigService, NoInferType } from '@nestjs/config';
-import { Constructor } from '../models';
 import { ConfigGetOptions } from '@nestjs/config/dist/config.service';
+import { Constructor } from '../models';
 
 @Injectable()
 export class ConfigService extends JsConfigService {

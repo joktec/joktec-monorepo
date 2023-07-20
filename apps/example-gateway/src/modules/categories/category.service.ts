@@ -1,7 +1,7 @@
 import { BaseService, Injectable, OnModuleInit } from '@joktec/core';
 import { MailerService } from '@joktec/mailer';
-import { Category } from './models';
 import { CategoryRepo } from './category.repo';
+import { Category } from './models';
 
 @Injectable()
 export class CategoryService extends BaseService<Category, string> implements OnModuleInit {

@@ -1,5 +1,5 @@
-import hash from 'object-hash';
 import { isEmpty, get, isArray, isObject } from 'lodash';
+import hash from 'object-hash';
 
 export const generateCacheKey = (key: 'auto' | string, methodName: string, params: object): string => {
   if (isEmpty(params)) return methodName;

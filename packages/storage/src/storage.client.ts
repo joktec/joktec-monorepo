@@ -1,6 +1,5 @@
-import { Client } from '@joktec/core';
-import { StorageConfig } from './storage.config';
 import { S3Client } from '@aws-sdk/client-s3';
+import { Client } from '@joktec/core';
 import {
   StorageDownloadRequest,
   StorageDownloadResponse,
@@ -11,6 +10,7 @@ import {
   StorageUploadRequest,
   StorageUploadResponse,
 } from './models';
+import { StorageConfig } from './storage.config';
 
 export interface StorageClient extends Client<StorageConfig, S3Client> {
   bucketExists(bucket: string, conId?: string): Promise<boolean>;

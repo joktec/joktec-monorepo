@@ -1,7 +1,7 @@
 import { Client } from '@joktec/core';
+import { Transporter } from 'nodemailer';
 import { MailerConfig } from './mailer.config';
 import { MailerSendRequest, MailerSendResponse } from './models';
-import { Transporter } from 'nodemailer';
 
 export type Mailer = Transporter;
 

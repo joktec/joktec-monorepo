@@ -10,8 +10,8 @@ import {
   RabbitPurgeQueue,
   RabbitEmpty,
 } from './models';
-import { RabbitConfig } from './rabbit.config';
 import { RabbitClient } from './rabbit.client';
+import { RabbitConfig } from './rabbit.config';
 import { RabbitMetric, RabbitMetricService } from './rabbit.metric';
 
 const RETRY_OPTS = 'rabbit.retry';

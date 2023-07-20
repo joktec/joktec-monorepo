@@ -1,7 +1,7 @@
 import { Injectable, DEFAULT_CON_ID } from '@joktec/core';
 import { MysqlRepo, MysqlService, Op } from '@joktec/mysql';
-import { CronModel, CronStatus } from './models';
 import { chunk } from 'lodash';
+import { CronModel, CronStatus } from './models';
 
 @Injectable()
 export class CronRepo extends MysqlRepo<CronModel, string> {

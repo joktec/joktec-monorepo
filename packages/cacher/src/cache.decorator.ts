@@ -1,7 +1,7 @@
 import { BaseMethodDecorator, CallbackDecoratorOptions, DEFAULT_CON_ID } from '@joktec/core';
 import { CacheableOption, CacheEvictOption } from './cache.config';
-import { generateCacheKey } from './cache.utils';
 import { CacheService } from './cache.service';
+import { generateCacheKey } from './cache.utils';
 import { CacheTtlSeconds } from './models';
 
 export const Cacheable = <T>(namespace: string, cacheableOptions?: CacheableOption): MethodDecorator => {

@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import useragent from 'express-useragent';
+import { Observable } from 'rxjs';
 
 export interface ClientInfo {
   userAgent: string;

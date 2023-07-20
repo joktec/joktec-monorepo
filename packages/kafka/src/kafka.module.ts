@@ -1,6 +1,6 @@
 import { CounterProviders, Module, Global } from '@joktec/core';
-import { KafkaService } from './kafka.service';
 import { TOTAL_PUBLISH_KAFKA_METRIC, KafkaMetricService } from './kafka.metric';
+import { KafkaService } from './kafka.service';
 
 @Global()
 @Module({

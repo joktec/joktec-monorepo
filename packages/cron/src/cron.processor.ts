@@ -1,6 +1,6 @@
 import { ConfigService, Inject, LogService } from '@joktec/core';
-import { CronModel } from './models';
 import { CronProcessorConfig } from './cron.processor.config';
+import { CronModel } from './models';
 
 export abstract class CronProcessor<I, O> {
   @Inject() protected logService: LogService;

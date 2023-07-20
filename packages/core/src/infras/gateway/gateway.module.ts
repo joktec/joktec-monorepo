@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
-import { gatewayDurationSeconds, GatewayMetric, gatewayTotal } from './gateway.metric';
 import { GatewayController } from './gateway.controller';
+import { gatewayDurationSeconds, GatewayMetric, gatewayTotal } from './gateway.metric';
 
 @Global()
 @Module({

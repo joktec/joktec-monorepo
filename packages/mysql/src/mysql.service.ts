@@ -1,9 +1,9 @@
 import { AbstractClientService, Injectable, Retry, DEFAULT_CON_ID } from '@joktec/core';
-import { MysqlConfig } from './mysql.config';
-import { MysqlClient } from './mysql.client';
-import { Model, ModelCtor, Sequelize } from 'sequelize-typescript';
 import { pick } from 'lodash';
+import { Model, ModelCtor, Sequelize } from 'sequelize-typescript';
 import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
+import { MysqlClient } from './mysql.client';
+import { MysqlConfig } from './mysql.config';
 
 const RETRY_OPTS = 'mysql.retry';
 

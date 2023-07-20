@@ -1,9 +1,9 @@
 import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable } from '@joktec/core';
 import { HttpRequest, HttpService } from '@joktec/http';
-import { EsGetResponse, EsSearchRequest, EsSearchResponse, EsWriteResponse } from './models';
-import { ElasticConfig } from './elastic.config';
-import { ElasticClient } from './elastic.client';
 import mergeDeep from 'merge-deep';
+import { ElasticClient } from './elastic.client';
+import { ElasticConfig } from './elastic.config';
+import { EsGetResponse, EsSearchRequest, EsSearchResponse, EsWriteResponse } from './models';
 
 @Injectable()
 export class ElasticService extends AbstractClientService<ElasticConfig, HttpService> implements ElasticClient {

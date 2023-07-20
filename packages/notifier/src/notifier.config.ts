@@ -1,7 +1,7 @@
 import { ClientConfig, toBool } from '@joktec/core';
+import mergeDeep from 'merge-deep';
 import PushNotifications from 'node-pushnotifications';
 import webPush from 'web-push';
-import mergeDeep from 'merge-deep';
 
 export class NotifierConfig extends ClientConfig implements PushNotifications.Settings {
   gcm?: {

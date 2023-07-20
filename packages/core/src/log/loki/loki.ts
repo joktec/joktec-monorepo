@@ -1,7 +1,7 @@
+import { Logger } from '@nestjs/common';
+import { DestinationStream } from 'pino';
 import pinoLoki, { LokiOptions } from 'pino-loki';
 import { LokiConfig } from './loki.config';
-import { DestinationStream } from 'pino';
-import { Logger } from '@nestjs/common';
 
 export const createLokiStream = (appName: string, cfg: LokiConfig): DestinationStream => {
   const logger = new Logger('LokiService');

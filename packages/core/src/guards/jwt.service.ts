@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { JwtConfig } from './jwt.config';
+import { Request } from 'express';
+import jwt from 'jsonwebtoken';
+import moment from 'moment';
+import ms from 'ms';
 import { ConfigService } from '../config';
 import { ExceptionMessage, UnauthorizedException } from '../exceptions';
+import { JwtConfig } from './jwt.config';
 import { JwtPayload, JwtToken } from './jwt.model';
-import jwt from 'jsonwebtoken';
-import ms from 'ms';
-import moment from 'moment';
-import { Request } from 'express';
 
 @Injectable()
 export class JwtService {

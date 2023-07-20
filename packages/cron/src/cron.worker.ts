@@ -1,10 +1,10 @@
 import { ConfigService, Inject, LogService, OnModuleInit, sleep } from '@joktec/core';
-import { CronRepo } from './cron.repo';
-import { CronModel, CronStatus } from './models';
-import { CronQueue } from './cron.queue';
 import { flatten, isArray, isString, snakeCase, upperCase } from 'lodash';
 import moment from 'moment-timezone';
+import { CronQueue } from './cron.queue';
+import { CronRepo } from './cron.repo';
 import { CronWorkerConfig } from './cron.worker.config';
+import { CronModel, CronStatus } from './models';
 
 const FORMAT = 'YYYY-MM-DD';
 

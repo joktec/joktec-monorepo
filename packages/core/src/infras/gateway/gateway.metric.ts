@@ -1,12 +1,12 @@
-import { Reflector } from '@nestjs/core';
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { InjectMetric, makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
 import { Request } from 'express';
+import { Counter, Histogram } from 'prom-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { Counter, Histogram } from 'prom-client';
-import { InjectMetric, makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
-import { LogService } from '../../log';
 import { Exception } from '../../exceptions';
+import { LogService } from '../../log';
 import { getTimeString } from '../../utils';
 
 const ExcludePaths = ['/swagger', '/bulls', '/metrics'];
@@ -70,7 +70,9 @@ export class GatewayMetric implements NestInterceptor {
         try {
           const stack = err.stack?.split(/\r\n|\r|\n/);
           className = stack[1].split(/\b(\s)/)[2];
-        } catch (error) {}
+        } catch (error) {
+          this.logger.debug('Error to get className');
+        }
 
         this.gatewayTotalMetric.inc({ path, status: GatewayStatus.FAILED, statusCode, className });
         if (statusCode >= HttpStatus.BAD_REQUEST && statusCode < HttpStatus.INTERNAL_SERVER_ERROR) {

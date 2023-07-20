@@ -1,6 +1,6 @@
+import bcrypt from 'bcryptjs';
 import { range, snakeCase } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import bcrypt from 'bcryptjs';
 import { InternalServerException } from '../exceptions';
 
 /**

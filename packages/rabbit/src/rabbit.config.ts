@@ -1,5 +1,5 @@
-import { Options } from 'amqplib/properties';
 import { ClientConfig, RetryOptions, toInt } from '@joktec/core';
+import { Options } from 'amqplib/properties';
 
 export class RabbitConfig extends ClientConfig implements Options.Connect {
   hostname?: string;

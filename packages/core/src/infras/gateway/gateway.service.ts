@@ -1,18 +1,18 @@
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ExpressAdapter } from '@bull-board/express';
+import path from 'path';
 import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
-import Queue from 'bull';
+import { ExpressAdapter } from '@bull-board/express';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as bodyParser from 'body-parser';
-import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
-import path from 'path';
+import Queue from 'bull';
 import csurf from 'csurf';
 import helmet from 'helmet';
+import { GlobalOptions } from '../../base';
 import { ConfigService } from '../../config';
 import { LogService } from '../../log';
 import { joinUrl, toArray, toInt } from '../../utils';
-import { GlobalOptions } from '../../base';
+import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
 
 export class GatewayService {
   static async bootstrap(app: NestExpressApplication, opts?: GlobalOptions) {

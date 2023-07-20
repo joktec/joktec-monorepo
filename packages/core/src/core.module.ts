@@ -1,10 +1,10 @@
+import path from 'path';
 import { Global, Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule, ConfigService, initConfig } from './config';
-import { createPinoHttp, LoggerModule } from './log';
 import { CqrsModule, GatewayConfig, GatewayModule, MicroModule } from './infras';
+import { createPinoHttp, LoggerModule } from './log';
 import { MetricModule } from './metric';
-import path from 'path';
 
 @Global()
 @Module({

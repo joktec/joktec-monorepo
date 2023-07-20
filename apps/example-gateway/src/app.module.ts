@@ -9,11 +9,11 @@ import {
   TrackInterceptor,
 } from '@joktec/core';
 import { HttpModule } from '@joktec/http';
+import { MailerModule } from '@joktec/mailer';
 import { MongoModule } from '@joktec/mongo';
+import { AppController } from './app.controller';
 import { CategoryModule } from './modules';
 import { ProductModule } from './modules/products';
-import { MailerModule } from '@joktec/mailer';
-import { AppController } from './app.controller';
 
 @Module({
   controllers: [AppController],

@@ -7,10 +7,12 @@ import {
   plainToInstance,
   toBool,
 } from '@joktec/core';
-import { IMongoRepository } from './mongo.client';
-import { MongoService } from './mongo.service';
 import { ModelType } from '@typegoose/typegoose/lib/types';
+import { isNil, pick } from 'lodash';
 import { IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema } from './models';
+import { IMongoRepository } from './mongo.client';
+import { MongoCatch } from './mongo.exception';
+import { MongoService } from './mongo.service';
 import {
   convertPopulate,
   DELETE_OPTIONS,
@@ -23,8 +25,6 @@ import {
   buildSorter,
   buildAggregation,
 } from './mongo.utils';
-import { isNil, pick } from 'lodash';
-import { MongoCatch } from './mongo.exception';
 
 @Injectable()
 export abstract class MongoRepo<T extends MongoSchema, ID = string> implements IMongoRepository<T, ID>, OnModuleInit {

@@ -1,11 +1,11 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
-import { pick, values } from 'lodash';
-import { ArangoConfig, CollectionImportOpts } from './arango.config';
-import { ArangoClient } from './arango.client';
-import { QueryOptions } from 'arangojs/database';
-import { ArrayCursor } from 'arangojs/cursor';
-import { ArangoQueryRequest } from './models';
 import { Database } from 'arangojs';
+import { ArrayCursor } from 'arangojs/cursor';
+import { QueryOptions } from 'arangojs/database';
+import { pick, values } from 'lodash';
+import { ArangoClient } from './arango.client';
+import { ArangoConfig, CollectionImportOpts } from './arango.config';
+import { ArangoQueryRequest } from './models';
 
 @Injectable()
 export class ArangoService extends AbstractClientService<ArangoConfig, Database> implements ArangoClient {

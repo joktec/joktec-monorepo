@@ -3,7 +3,6 @@ import { isEmpty, isObject } from 'lodash';
 import { ConfigService } from '../config';
 import { LogService } from '../log';
 import { BreakerConfig } from './breaker.config';
-
 const CircuitBreaker = require('opossum');
 
 export const Breaker = (

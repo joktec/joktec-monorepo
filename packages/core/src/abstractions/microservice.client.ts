@@ -1,9 +1,9 @@
-import { Constructor, IBaseRequest, ICondition, IListResponseDto } from '../models';
-import { startCase } from 'lodash';
-import { cloneInstance, toSingular } from '../utils';
 import { ClientProxy } from '@nestjs/microservices';
-import { JwtPayload } from '../guards';
+import { startCase } from 'lodash';
 import { firstValueFrom } from 'rxjs';
+import { JwtPayload } from '../guards';
+import { Constructor, IBaseRequest, ICondition, IListResponseDto } from '../models';
+import { cloneInstance, toSingular } from '../utils';
 
 export interface IMicroserviceClientProps<T> {
   dto: Constructor<T>;

@@ -1,6 +1,6 @@
 import { CounterProviders, Module, Global } from '@joktec/core';
-import { RabbitService } from './rabbit.service';
 import { TOTAL_PUBLISH_RABBIT_METRIC, TOTAL_CONSUME_RABBIT_METRIC, RabbitMetricService } from './rabbit.metric';
+import { RabbitService } from './rabbit.service';
 
 @Global()
 @Module({

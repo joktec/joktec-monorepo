@@ -1,12 +1,12 @@
 import { DEFAULT_CON_ID, ICondition, OnModuleInit, toBool } from '@joktec/core';
-import { IMysqlRepository } from './mysql.client';
-import { MysqlService } from './mysql.service';
-import { Model, ModelCtor } from 'sequelize-typescript';
 import { FindOptions } from 'sequelize';
-import { IMysqlRequest, MysqlId } from './models';
-import { preHandleQuery } from './mysql.utils';
+import { Model, ModelCtor } from 'sequelize-typescript';
 import { DestroyOptions } from 'sequelize/types/model';
+import { IMysqlRequest, MysqlId } from './models';
+import { IMysqlRepository } from './mysql.client';
 import { MysqlCatch } from './mysql.exception';
+import { MysqlService } from './mysql.service';
+import { preHandleQuery } from './mysql.utils';
 
 export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMysqlRepository<T, ID>, OnModuleInit {
   protected constructor(

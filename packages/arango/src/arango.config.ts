@@ -1,6 +1,6 @@
 import { ClientConfig, toBool, toInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/core';
-import { AgentOptions, Config, Headers, LoadBalancingStrategy, RequestInterceptors } from 'arangojs/connection';
 import { CollectionImportOptions } from 'arangojs/collection';
+import { AgentOptions, Config, Headers, LoadBalancingStrategy, RequestInterceptors } from 'arangojs/connection';
 
 class BasicAuthCredentials {
   @IsString()

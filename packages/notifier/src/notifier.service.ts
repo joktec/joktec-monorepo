@@ -1,8 +1,8 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
-import { NotifierConfig } from './notifier.config';
-import { NotifierClient, NotifierInstance } from './notifier.client';
-import { NotifierRegIds, NotifierRequest, NotifierResponse } from './models';
 import PushNotifications from 'node-pushnotifications';
+import { NotifierRegIds, NotifierRequest, NotifierResponse } from './models';
+import { NotifierClient, NotifierInstance } from './notifier.client';
+import { NotifierConfig } from './notifier.config';
 
 const RETRY_OPTS = 'notifier.retry';
 

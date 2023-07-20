@@ -1,9 +1,9 @@
 import { AbstractClientService, Constructor, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
-import mongoose, { Connection as Mongoose } from 'mongoose';
-import { MongoConfig } from './mongo.config';
-import { MongoClient } from './mongo.client';
-import { ModelType } from '@typegoose/typegoose/lib/types';
 import { getModelForClass, setGlobalOptions, Severity } from '@typegoose/typegoose';
+import { ModelType } from '@typegoose/typegoose/lib/types';
+import mongoose, { Connection as Mongoose } from 'mongoose';
+import { MongoClient } from './mongo.client';
+import { MongoConfig } from './mongo.config';
 
 const RETRY_OPTS = 'mongo.retry';
 

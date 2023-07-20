@@ -1,10 +1,9 @@
-import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
 import fs from 'fs';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
 import moment from 'moment';
 import { FileClient } from './file.client';
-import { FileMetric } from './file.metric';
 import { FileConfig } from './file.config';
-
+import { FileMetric } from './file.metric';
 const fsUtils = require('nodejs-fs-utils');
 
 @Injectable()

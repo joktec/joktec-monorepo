@@ -1,7 +1,7 @@
-import { BaseRepository } from './base.repository';
-import { IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { JwtPayload } from '../guards';
+import { IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { cloneInstance } from '../utils';
+import { BaseRepository } from './base.repository';
 
 export abstract class BaseService<T extends Record<string, any>, ID> {
   protected constructor(protected repository: BaseRepository<T, ID>) {}

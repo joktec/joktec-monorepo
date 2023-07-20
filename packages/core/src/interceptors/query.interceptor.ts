@@ -1,7 +1,7 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { nullKeysToObject, toInt } from '../utils';
 import { IBaseRequest } from '../models';
+import { nullKeysToObject, toInt } from '../utils';
 
 @Injectable()
 export class QueryInterceptor implements NestInterceptor {

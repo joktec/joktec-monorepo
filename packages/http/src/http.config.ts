@@ -10,9 +10,9 @@ import {
   LogService,
   IsArray,
 } from '@joktec/core';
-import { AxiosRequestConfig, Method, AxiosBasicCredentials, AxiosError } from 'axios';
-import { RetryConfig } from 'retry-axios';
+import { AxiosRequestConfig, AxiosBasicCredentials, AxiosError } from 'axios';
 import mergeDeep from 'merge-deep';
+import { RetryConfig } from 'retry-axios';
 import { HttpMethod } from './models';
 
 const defaultRetryConfig = {

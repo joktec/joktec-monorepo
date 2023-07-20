@@ -1,6 +1,6 @@
 import { CounterProviders, Module, Global } from '@joktec/core';
-import { CacheService } from './cache.service';
 import { CacheMetricService, TRACK_STATUS_CACHE_METRIC } from './cache.metric';
+import { CacheService } from './cache.service';
 
 @Global()
 @Module({

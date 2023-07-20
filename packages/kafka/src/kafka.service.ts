@@ -1,7 +1,6 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
 import { ConsumerConfig, ConsumerSubscribeTopic, Kafka, ProducerConfig } from 'kafkajs';
 import { KafkaClient, KafkaProp } from './kafka.client';
-import { PublishKafkaMetric } from './kafka.metric';
 import {
   ConsumerBatchRunConfig,
   ConsumerMessageRunConfig,
@@ -9,6 +8,7 @@ import {
   ProducerTopic,
   ProducerManyTopic,
 } from './kafka.config';
+import { PublishKafkaMetric } from './kafka.metric';
 
 @Injectable()
 export class KafkaService extends AbstractClientService<KafkaClientConfig, Kafka> implements KafkaClient {

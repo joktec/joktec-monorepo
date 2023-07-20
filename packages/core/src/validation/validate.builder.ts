@@ -1,5 +1,5 @@
-import { IValidateError } from './validate.exception';
 import { uniq } from 'lodash';
+import { IValidateError } from './validate.exception';
 
 export class ValidateBuilder {
   private readonly validateError: IValidateError;

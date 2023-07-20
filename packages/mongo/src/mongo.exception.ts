@@ -32,6 +32,7 @@ export const MongoCatch = BaseMethodDecorator(async (options: CallbackDecoratorO
     }
 
     if (err?.code === 11000 || err?.code === 11001) {
+      // Skip
     }
 
     throw new MongoException(err.message, err);

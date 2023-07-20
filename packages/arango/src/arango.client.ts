@@ -1,10 +1,10 @@
 import { Client } from '@joktec/core';
-import { ArangoConfig } from './arango.config';
-import { QueryOptions } from 'arangojs/database';
-import { ArrayCursor } from 'arangojs/cursor';
-import { CollectionImportOptions } from 'arangojs/collection';
-import { ArangoQueryRequest } from './models';
 import { Database } from 'arangojs';
+import { CollectionImportOptions } from 'arangojs/collection';
+import { ArrayCursor } from 'arangojs/cursor';
+import { QueryOptions } from 'arangojs/database';
+import { ArangoConfig } from './arango.config';
+import { ArangoQueryRequest } from './models';
 
 export interface ArangoClient extends Client<ArangoConfig, Database> {
   query(query: ArangoQueryRequest, options?: QueryOptions, conId?: string): Promise<ArrayCursor>;

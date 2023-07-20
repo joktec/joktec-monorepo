@@ -1,16 +1,16 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray } from '@joktec/core';
-import { cloneDeep } from 'lodash';
-import * as rax from 'retry-axios';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import FormData from 'form-data';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
+import { cloneDeep } from 'lodash';
 import mergeDeep from 'merge-deep';
-import { HttpConfig } from './http.config';
+import qs from 'qs';
+import * as rax from 'retry-axios';
 import { HttpClient } from './http.client';
+import { HttpConfig } from './http.config';
 import { HttpMetricDecorator } from './http.metric';
 import { HttpFormData, HttpProxy, HttpRequest, HttpResponse } from './models';
-import FormData from 'form-data';
-import qs from 'qs';
 
 @Injectable()
 export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance> implements HttpClient {

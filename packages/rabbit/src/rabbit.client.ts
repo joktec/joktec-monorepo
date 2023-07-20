@@ -1,7 +1,7 @@
 import { Client } from '@joktec/core';
 import { ConfirmChannel, Connection } from 'amqplib';
-import { RabbitConfig } from './rabbit.config';
 import { RabbitMessage, RabbitConsumeOptions, RabbitPublishOptions } from './models';
+import { RabbitConfig } from './rabbit.config';
 
 export interface RabbitClient extends Client<RabbitConfig, Connection> {
   sendToQueue(queue: string, messages: string[], opts?: RabbitPublishOptions, conId?: string): Promise<void>;

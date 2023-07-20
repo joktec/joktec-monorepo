@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { ExceptionMessage, UnauthorizedException } from '../exceptions';
 import { JwtContext } from './jwt.config';
 import { JwtPayload } from './jwt.model';
-import { ExceptionMessage, UnauthorizedException } from '../exceptions';
 
 export const JwtPayloadData = <T extends JwtPayload>(context: JwtContext = JwtContext.HTTP): ParameterDecorator => {
   if (context === JwtContext.HTTP) {

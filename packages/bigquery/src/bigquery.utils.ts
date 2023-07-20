@@ -1,5 +1,5 @@
-import { BigQuerySchema, Row } from './models';
 import _ from 'lodash';
+import { BigQuerySchema, Row } from './models';
 
 export class BigQueryUtils {
   /**

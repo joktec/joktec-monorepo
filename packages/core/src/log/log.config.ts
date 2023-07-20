@@ -1,8 +1,8 @@
-import { FluentdConfig } from './fluentd/fluentd.config';
-import { LogStashConfig } from './logstash/logstash.config';
-import { LogLevel } from './log.level';
 import { CloudWatchConfig } from './cloudwatch/cloudwatch.config';
+import { FluentdConfig } from './fluentd/fluentd.config';
 import { GoogleLogConfig } from './googleLog/googleLog.config';
+import { LogLevel } from './log.level';
+import { LogStashConfig } from './logstash/logstash.config';
 import { LokiConfig } from './loki/loki.config';
 
 export class LogConfig {

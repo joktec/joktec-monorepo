@@ -1,8 +1,8 @@
+import path from 'path';
 import { LogService } from '@joktec/core';
+import storage, { LocalStorage } from 'node-persist';
 import { ICacheStore } from '../cache.client';
 import { CacheConfig } from '../cache.config';
-import storage, { LocalStorage } from 'node-persist';
-import path from 'path';
 
 export class LocalStore implements ICacheStore {
   private client: LocalStorage;

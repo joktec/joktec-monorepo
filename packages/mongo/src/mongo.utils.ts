@@ -1,9 +1,9 @@
 import { ICondition, IPopulate, IPopulateOption, ISort, toInt } from '@joktec/core';
-import { IMongoRequest, IMongoProject, IMongoSorter, MongoSchema, IMongoAggregation } from './models';
-import { PopulateOptions, QueryOptions } from 'mongoose';
-import { omit, isNil, pick, isDate } from 'lodash';
 import dot from 'dot-object';
+import { omit, isNil, pick, isDate } from 'lodash';
 import { isMoment } from 'moment';
+import { PopulateOptions, QueryOptions } from 'mongoose';
+import { IMongoRequest, IMongoProject, IMongoSorter, MongoSchema, IMongoAggregation } from './models';
 
 export const UPDATE_OPTIONS: QueryOptions = {
   runValidators: true,

@@ -1,5 +1,5 @@
-import { CreatedAt, DeletedAt, Model, UpdatedAt } from 'sequelize-typescript';
 import { ApiProperty, Field } from '@joktec/core';
+import { CreatedAt, DeletedAt, Model, UpdatedAt } from 'sequelize-typescript';
 
 export abstract class MysqlModel<T> extends Model<T> {
   @CreatedAt

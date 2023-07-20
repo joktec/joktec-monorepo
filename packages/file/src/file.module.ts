@@ -1,6 +1,6 @@
 import { CounterProviders, HistogramProviders, Global, Module } from '@joktec/core';
-import { FileService } from './file.service';
 import { FILE_DURATION_METRIC, FILE_TRACK_STATUS_METRIC, FileMetricService } from './file.metric';
+import { FileService } from './file.service';
 
 @Global()
 @Module({

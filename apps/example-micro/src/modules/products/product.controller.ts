@@ -1,6 +1,6 @@
 import { MicroserviceController, Controller } from '@joktec/core';
-import { ProductService } from './product.service';
 import { Product } from './models';
+import { ProductService } from './product.service';
 
 @Controller()
 export class ProductController extends MicroserviceController<Product, string>({ dto: Product }) {

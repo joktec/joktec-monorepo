@@ -1,4 +1,4 @@
-import { Exception, HttpStatus, InternalServerException, RuntimeException } from '@joktec/core';
+import { Exception, HttpStatus, InternalServerException } from '@joktec/core';
 import { AxiosError } from 'axios';
 
 export class CustomHttpException extends InternalServerException {

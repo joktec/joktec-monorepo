@@ -1,14 +1,14 @@
-import { AbstractClientService, DEFAULT_CON_ID, Retry } from '@joktec/core';
-import { Mailer, MailerClient } from './mailer.client';
-import { MailerConfig } from './mailer.config';
-import { MailerSendRequest, MailerSendResponse } from './models';
-import { SendEmailMetric } from './mailer.metric';
-import { MailerException } from './mailer.exception';
 import fs from 'fs';
-import handlebars from 'handlebars';
 import path from 'path';
+import { AbstractClientService, DEFAULT_CON_ID, Retry } from '@joktec/core';
+import handlebars from 'handlebars';
 import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
+import { Mailer, MailerClient } from './mailer.client';
+import { MailerConfig } from './mailer.config';
+import { MailerException } from './mailer.exception';
+import { SendEmailMetric } from './mailer.metric';
+import { MailerSendRequest, MailerSendResponse } from './models';
 
 const RETRY_OPTS = 'mailer.retry';
 
