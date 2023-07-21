@@ -1,7 +1,7 @@
 import { AbstractClientService, Constructor, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { getModelForClass, setGlobalOptions, Severity } from '@typegoose/typegoose';
 import { ModelType } from '@typegoose/typegoose/lib/types';
-import mongoose, { Connection as Mongoose } from 'mongoose';
+import mongoose, { Connection as Mongoose, ConnectionStates } from 'mongoose';
 import { MongoClient } from './mongo.client';
 import { MongoConfig } from './mongo.config';
 
@@ -30,14 +30,6 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
 
   @Retry(RETRY_OPTS)
   protected async init(config: MongoConfig): Promise<Mongoose> {
-    try {
-      return await this.createConnection(config);
-    } catch (err) {
-      await this.clientInit(config, false);
-    }
-  }
-
-  private createConnection(config: MongoConfig): Promise<Mongoose> {
     const uri = this.buildUri(config);
     const connectOptions: mongoose.ConnectOptions = {
       user: config.username,
@@ -47,32 +39,27 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
       autoCreate: config.autoCreate,
     };
 
-    return new Promise((resolve, reject) => {
-      mongoose.set('strictQuery', config.strictQuery);
-      mongoose.set('debug', (collectionName: string, methodName: string, ...methodArgs: any[]) => {
-        const args = methodArgs.map(arg => JSON.stringify(arg)).join(', ');
-        this.logService.debug(`Mongoose: %s.%s(%s)`, collectionName, methodName, args);
-      });
-
-      this.logService.info('Start connecting to mongo database %s', uri);
-      const client = mongoose.createConnection(uri, connectOptions);
-      this.logService.info('`%s` Connection to MongoDB established', config.conId);
-
-      client.on('open', () => {
-        this.logService.info('`%s` Connected to mongo database successfully', config.conId);
-        resolve(client);
-      });
-
-      client.on('error', async err => {
-        this.logService.error(err, '`%s` Error when connecting to MongoDB. Reconnecting...', config.conId);
-        reject(false);
-      });
-
-      client.on('disconnected', async () => {
-        this.logService.error('`%s` MongoDB connection disconnected. Reconnecting...', config.conId);
-        reject(false);
-      });
+    mongoose.set('strictQuery', config.strictQuery);
+    mongoose.set('debug', (collectionName: string, methodName: string, ...methodArgs: any[]) => {
+      const args = methodArgs.map(arg => JSON.stringify(arg)).join(', ');
+      this.logService.debug(`Mongoose: %s.%s(%s)`, collectionName, methodName, args);
     });
+
+    this.logService.info('Start connecting to mongo database %s', uri);
+    const client = mongoose.createConnection(uri, connectOptions);
+    this.logService.info('`%s` Connection to MongoDB established', config.conId);
+
+    client.on('open', () => this.logService.info('`%s` Connected to mongo database successfully', config.conId));
+    client.on('error', async err => {
+      this.logService.error(err, '`%s` Error when connecting to MongoDB. Reconnecting...', config.conId);
+      await this.clientInit(config, false);
+    });
+    client.on('disconnected', async () => {
+      this.logService.error('`%s` MongoDB connection disconnected. Reconnecting...', config.conId);
+      await this.clientInit(config, false);
+    });
+
+    return client;
   }
 
   private buildUri(config: MongoConfig): string {
@@ -89,7 +76,12 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     await client.close(true);
   }
 
+  public isConnected(conId: string = DEFAULT_CON_ID): boolean {
+    return this.getClient(conId).readyState === ConnectionStates.connected;
+  }
+
   public getModel<T>(schemaClass: Constructor<T>, conId: string = DEFAULT_CON_ID): ModelType<T> {
+    if (!this.isConnected(conId)) return null;
     const model = getModelForClass(schemaClass, { existingConnection: this.getClient(conId) });
     this.logService.debug('Schema `%s` registered', schemaClass.name);
     return model;

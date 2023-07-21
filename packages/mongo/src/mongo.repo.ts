@@ -28,7 +28,7 @@ import {
 
 @Injectable()
 export abstract class MongoRepo<T extends MongoSchema, ID = string> implements IMongoRepository<T, ID>, OnModuleInit {
-  protected model: ModelType<T>;
+  protected model: ModelType<T> = null;
 
   protected constructor(
     protected mongoService: MongoService,
@@ -37,8 +37,21 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   ) {}
 
   onModuleInit() {
-    this.model = this.mongoService.getModel(this.schema, this.conId);
+    // this.model = this.mongoService.getModel(this.schema, this.conId);
+    this.lazyRegister();
   }
+
+  private lazyRegister() {
+    if (this.mongoService.isConnected(this.conId)) {
+      this.model = this.mongoService.getModel(this.schema, this.conId);
+      return;
+    }
+    setTimeout(this.lazyRegister.bind(this), 1000);
+  }
+
+  // private get model(): ModelType<T> {
+  //   return this.mongoService.getModel(this.schema, this.conId);
+  // }
 
   protected get isSoftDelete(): boolean {
     return this.model.schema.paths.hasOwnProperty('deletedAt');
