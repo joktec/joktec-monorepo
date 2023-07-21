@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.92](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.91...@joktec/mongo@0.0.92) (2023-07-21)
+
+
+### Bug Fixes
+
+* mongo connection ([dedb293](https://github.com/joktec/joktec-monorepo/commit/dedb29327b5f22ea4e7a2e0d53a522d2cd2adc4b))
+
+
+
+
+
 ## [0.0.91](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.90...@joktec/mongo@0.0.91) (2023-07-19)
 
 **Note:** Version bump only for package @joktec/mongo
