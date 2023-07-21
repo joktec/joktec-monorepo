@@ -30,6 +30,14 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
 
   @Retry(RETRY_OPTS)
   protected async init(config: MongoConfig): Promise<Mongoose> {
+    try {
+      return await this.createConnection(config);
+    } catch (err) {
+      await this.clientInit(config, false);
+    }
+  }
+
+  private createConnection(config: MongoConfig): Promise<Mongoose> {
     const uri = this.buildUri(config);
     const connectOptions: mongoose.ConnectOptions = {
       user: config.username,
@@ -39,27 +47,32 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
       autoCreate: config.autoCreate,
     };
 
-    mongoose.set('strictQuery', config.strictQuery);
-    mongoose.set('debug', (collectionName: string, methodName: string, ...methodArgs: any[]) => {
-      const args = methodArgs.map(arg => JSON.stringify(arg)).join(', ');
-      this.logService.debug(`Mongoose: %s.%s(%s)`, collectionName, methodName, args);
-    });
+    return new Promise((resolve, reject) => {
+      mongoose.set('strictQuery', config.strictQuery);
+      mongoose.set('debug', (collectionName: string, methodName: string, ...methodArgs: any[]) => {
+        const args = methodArgs.map(arg => JSON.stringify(arg)).join(', ');
+        this.logService.debug(`Mongoose: %s.%s(%s)`, collectionName, methodName, args);
+      });
 
-    this.logService.info('Start connecting to mongo database %s', uri);
-    const client = mongoose.createConnection(uri, connectOptions);
-    this.logService.info('`%s` Connection to MongoDB established', config.conId);
+      this.logService.info('Start connecting to mongo database %s', uri);
+      const client = mongoose.createConnection(uri, connectOptions);
+      this.logService.info('`%s` Connection to MongoDB established', config.conId);
 
-    client.on('open', () => this.logService.info('`%s` Connected to mongo database successfully', config.conId));
-    client.on('error', async err => {
-      this.logService.error(err, '`%s` Error when connecting to MongoDB. Reconnecting...', config.conId);
-      await this.clientInit(config, false);
-    });
-    client.on('disconnected', async () => {
-      this.logService.error('`%s` MongoDB connection disconnected. Reconnecting...', config.conId);
-      await this.clientInit(config, false);
-    });
+      client.on('open', () => {
+        this.logService.info('`%s` Connected to mongo database successfully', config.conId);
+        resolve(client);
+      });
 
-    return client;
+      client.on('error', async err => {
+        this.logService.error(err, '`%s` Error when connecting to MongoDB. Reconnecting...', config.conId);
+        reject(false);
+      });
+
+      client.on('disconnected', async () => {
+        this.logService.error('`%s` MongoDB connection disconnected. Reconnecting...', config.conId);
+        reject(false);
+      });
+    });
   }
 
   private buildUri(config: MongoConfig): string {
