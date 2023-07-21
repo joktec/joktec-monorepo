@@ -1,7 +1,7 @@
 import { AbstractClientService, Constructor, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { getModelForClass, setGlobalOptions, Severity } from '@typegoose/typegoose';
 import { ModelType } from '@typegoose/typegoose/lib/types';
-import mongoose, { Connection as Mongoose, ConnectionStates } from 'mongoose';
+import mongoose, { Connection as Mongoose } from 'mongoose';
 import { MongoClient } from './mongo.client';
 import { MongoConfig } from './mongo.config';
 
@@ -78,7 +78,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
 
   public isConnected(conId: string = DEFAULT_CON_ID): boolean {
     if (!this.getClient(conId)) return false;
-    return this.getClient(conId).readyState === ConnectionStates.connected;
+    return this.getClient(conId).readyState === 1;
   }
 
   public getModel<T>(schemaClass: Constructor<T>, conId: string = DEFAULT_CON_ID): ModelType<T> {
