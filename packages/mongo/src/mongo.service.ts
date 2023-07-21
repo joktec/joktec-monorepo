@@ -77,6 +77,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   }
 
   public isConnected(conId: string = DEFAULT_CON_ID): boolean {
+    if (!this.getClient(conId)) return false;
     return this.getClient(conId).readyState === ConnectionStates.connected;
   }
 
