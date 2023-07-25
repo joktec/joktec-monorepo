@@ -1,4 +1,4 @@
-import { isEmpty, get, isArray, isObject } from 'lodash';
+import { get, isArray, isEmpty, isObject } from 'lodash';
 import hash from 'object-hash';
 
 export const generateCacheKey = (key: 'auto' | string, methodName: string, params: object): string => {

@@ -1,14 +1,14 @@
 import {
+  buildError,
   ClientConfig,
+  IsBoolean,
+  IsEnum,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsInt,
-  IsBoolean,
   IsTypes,
   toInt,
-  IsEnum,
-  buildError,
 } from '@joktec/core';
 import { validateSync, ValidationError } from '@joktec/core/dist/validation';
 

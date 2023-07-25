@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosProxyConfig } from 'axios';
+import { AxiosProxyConfig, AxiosRequestConfig } from 'axios';
 
 export type HttpProxy = AxiosProxyConfig | false;
 

@@ -1,6 +1,6 @@
 import { Client } from '@joktec/core';
 import { ConfirmChannel, Connection } from 'amqplib';
-import { RabbitMessage, RabbitConsumeOptions, RabbitPublishOptions } from './models';
+import { RabbitConsumeOptions, RabbitMessage, RabbitPublishOptions } from './models';
 import { RabbitConfig } from './rabbit.config';
 
 export interface RabbitClient extends Client<RabbitConfig, Connection> {

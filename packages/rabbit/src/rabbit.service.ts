@@ -2,13 +2,13 @@ import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry } from
 import amqp, { ConfirmChannel, Connection, Options } from 'amqplib';
 import { has } from 'lodash';
 import {
+  RabbitAssertExchange,
+  RabbitAssertQueue,
+  RabbitConsumeOptions,
+  RabbitEmpty,
   RabbitMessage,
   RabbitPublishOptions,
-  RabbitConsumeOptions,
-  RabbitAssertQueue,
-  RabbitAssertExchange,
   RabbitPurgeQueue,
-  RabbitEmpty,
 } from './models';
 import { RabbitClient } from './rabbit.client';
 import { RabbitConfig } from './rabbit.config';

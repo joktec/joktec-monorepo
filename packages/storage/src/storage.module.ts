@@ -1,4 +1,4 @@
-import { CounterProviders, Module, Global } from '@joktec/core';
+import { CounterProviders, Global, Module } from '@joktec/core';
 import { StorageMetricService, TRACK_STATUS_STORAGE_METRIC } from './storage.metric';
 import { StorageService } from './storage.service';
 

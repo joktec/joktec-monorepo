@@ -14,16 +14,16 @@ import { IMongoRepository } from './mongo.client';
 import { MongoCatch } from './mongo.exception';
 import { MongoService } from './mongo.service';
 import {
+  buildAggregation,
+  buildProjection,
+  buildSorter,
   convertPopulate,
   DELETE_OPTIONS,
   preHandleBody,
   preHandleQuery,
   preHandleUpdateBody,
-  buildProjection,
   UPDATE_OPTIONS,
   UPSERT_OPTIONS,
-  buildSorter,
-  buildAggregation,
 } from './mongo.utils';
 
 @Injectable()
@@ -37,7 +37,6 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   ) {}
 
   onModuleInit() {
-    // this.model = this.mongoService.getModel(this.schema, this.conId);
     this.lazyRegister();
   }
 
@@ -48,10 +47,6 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     }
     setTimeout(this.lazyRegister.bind(this), 1000);
   }
-
-  // private get model(): ModelType<T> {
-  //   return this.mongoService.getModel(this.schema, this.conId);
-  // }
 
   protected get isSoftDelete(): boolean {
     return this.model.schema.paths.hasOwnProperty('deletedAt');

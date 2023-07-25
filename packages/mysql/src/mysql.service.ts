@@ -1,4 +1,4 @@
-import { AbstractClientService, Injectable, Retry, DEFAULT_CON_ID } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { pick } from 'lodash';
 import { Model, ModelCtor, Sequelize } from 'sequelize-typescript';
 import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';

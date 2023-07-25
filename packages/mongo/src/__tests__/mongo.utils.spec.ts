@@ -1,12 +1,12 @@
 import { describe, expect, it } from '@jest/globals';
 import {
+  buildProjection,
+  buildSorter,
   convertPopulate,
   preHandleBody,
   preHandleCondition,
   preHandleQuery,
   preHandleUpdateBody,
-  buildProjection,
-  buildSorter,
 } from '../mongo.utils';
 import { IMongoRequest } from '../models';
 import { ISort } from '@joktec/core';

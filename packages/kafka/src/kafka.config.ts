@@ -1,25 +1,25 @@
 import {
-  ClientConfig,
-  IsString,
-  IsOptional,
   ArrayNotEmpty,
-  IsBoolean,
+  ClientConfig,
   IsArray,
+  IsBoolean,
   IsEnum,
+  IsOptional,
   IsPositive,
+  IsString,
   LogService,
 } from '@joktec/core';
 import {
-  KafkaConfig,
   EachBatchPayload,
   EachMessagePayload,
-  SASLOptions,
-  RetryOptions,
   ISocketFactory,
-  logLevel,
+  KafkaConfig,
   logCreator,
-  ProducerRecord,
+  logLevel,
   ProducerBatch,
+  ProducerRecord,
+  RetryOptions,
+  SASLOptions,
 } from 'kafkajs';
 
 export interface ProducerTopic extends ProducerRecord {

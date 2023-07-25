@@ -1,4 +1,4 @@
-import { CounterProviders, Module, Global } from '@joktec/core';
+import { CounterProviders, Global, Module } from '@joktec/core';
 import { CacheMetricService, TRACK_STATUS_CACHE_METRIC } from './cache.metric';
 import { CacheService } from './cache.service';
 

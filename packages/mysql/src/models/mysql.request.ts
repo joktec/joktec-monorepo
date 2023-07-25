@@ -1,4 +1,4 @@
-import { IDataType, IBaseRequest } from '@joktec/core';
+import { IBaseRequest, IDataType } from '@joktec/core';
 import { Model } from 'sequelize-typescript';
 
 export type MysqlId = string | number | bigint;

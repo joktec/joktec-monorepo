@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsInt, toInt } from '@joktec/core';
+import { IsInt, IsOptional, IsString, toInt } from '@joktec/core';
 import { HttpConfig } from '@joktec/http';
 import mergeDeep from 'merge-deep';
 

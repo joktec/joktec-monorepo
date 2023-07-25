@@ -3,9 +3,9 @@ import {
   CallbackDecoratorOptions,
   Counter,
   DEFAULT_CON_ID,
+  Histogram,
   Injectable,
   InjectMetric,
-  Histogram,
 } from '@joktec/core';
 import { AxiosError, AxiosResponse } from 'axios';
 import { HttpConfig } from './http.config';

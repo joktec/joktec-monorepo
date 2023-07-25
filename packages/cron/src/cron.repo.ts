@@ -1,4 +1,4 @@
-import { Injectable, DEFAULT_CON_ID } from '@joktec/core';
+import { DEFAULT_CON_ID, Injectable } from '@joktec/core';
 import { MysqlRepo, MysqlService, Op } from '@joktec/mysql';
 import { chunk } from 'lodash';
 import { CronModel, CronStatus } from './models';

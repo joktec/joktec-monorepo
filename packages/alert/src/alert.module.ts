@@ -1,4 +1,4 @@
-import { CoreModule, Module, Global } from '@joktec/core';
+import { CoreModule, Global, Module } from '@joktec/core';
 import { AlertService } from './alert.service';
 
 @Global()

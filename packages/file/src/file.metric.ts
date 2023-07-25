@@ -3,9 +3,9 @@ import {
   CallbackDecoratorOptions,
   Counter,
   DEFAULT_CON_ID,
+  Histogram,
   Injectable,
   InjectMetric,
-  Histogram,
 } from '@joktec/core';
 
 export const FILE_TRACK_STATUS_METRIC = 'file_track_status_metric';

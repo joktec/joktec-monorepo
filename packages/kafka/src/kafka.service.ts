@@ -5,8 +5,8 @@ import {
   ConsumerBatchRunConfig,
   ConsumerMessageRunConfig,
   KafkaClientConfig,
-  ProducerTopic,
   ProducerManyTopic,
+  ProducerTopic,
 } from './kafka.config';
 import { PublishKafkaMetric } from './kafka.metric';
 

@@ -1,4 +1,4 @@
-import { ClientConfig, toBool, toInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/core';
+import { ClientConfig, IsNotEmpty, IsOptional, IsString, IsTypes, toBool, toInt } from '@joktec/core';
 import { CollectionImportOptions } from 'arangojs/collection';
 import { AgentOptions, Config, Headers, LoadBalancingStrategy, RequestInterceptors } from 'arangojs/connection';
 
