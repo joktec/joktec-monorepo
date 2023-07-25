@@ -1,24 +1,24 @@
 import {
   ClientConfig,
-  IsString,
-  IsOptional,
-  IsPositive,
+  HttpMethod,
+  IsArray,
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsOptional,
+  IsPositive,
+  IsString,
   IsTypes,
   LogService,
-  IsArray,
 } from '@joktec/core';
-import { AxiosRequestConfig, AxiosBasicCredentials, AxiosError } from 'axios';
+import { AxiosBasicCredentials, AxiosError, AxiosRequestConfig } from 'axios';
 import mergeDeep from 'merge-deep';
 import { RetryConfig } from 'retry-axios';
-import { HttpMethod } from './models';
 
 const defaultRetryConfig = {
   retry: 0,
   retryDelay: 1000,
-  httpMethodsToRetry: ['GET', 'POST'],
+  httpMethodsToRetry: [HttpMethod.GET, HttpMethod.POST],
 };
 
 export enum ApiKeyType {

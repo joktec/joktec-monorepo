@@ -3,6 +3,7 @@ export * from './base';
 export * from './breaker';
 export * from './client';
 export * from './config';
+export * from './constants';
 export * from './decorators';
 export * from './exceptions';
 export * from './guards';
