@@ -52,6 +52,10 @@ export enum ControllerExclude {
 export interface IBaseControllerProps<T> {
   dto: Constructor<T>;
   dtoName?: string;
+  customDto?: {
+    createDto?: Constructor<T>;
+    updatedDto?: Constructor<T>;
+  };
   apiTag?: string;
   excludes?: ControllerExclude[];
   useBearer?: boolean | ControllerMethod[];
@@ -67,6 +71,9 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
   const namePlural = toPlural(nameSingular);
   const apiTag = props.apiTag || toPlural(dtoName);
   const excludes = toArray<ControllerExclude>(props.excludes);
+
+  const createDto: Constructor<T> = props.customDto?.createDto || props.dto;
+  const updatedDto: Constructor<T> = props.customDto?.updatedDto || props.dto;
 
   @ApiSchema({ name: `${nameSingular}Pagination` })
   class PaginationDto extends BaseListResponse<T>(props.dto) {}
@@ -108,7 +115,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @Post('/')
     @ApiOperation({ summary: `Create ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
-    @ApiBody({ type: props.dto })
+    @ApiBody({ type: createDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
     @UseGuards(...toArray(props?.guards?.create))
     @UsePipes(new BaseValidationPipe())
@@ -122,7 +129,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiOperation({ summary: `Update ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
-    @ApiBody({ type: props.dto })
+    @ApiBody({ type: updatedDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
     @UseGuards(...toArray(props?.guards?.update))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }))
