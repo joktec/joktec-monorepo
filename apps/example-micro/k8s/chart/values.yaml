@@ -1,5 +1,5 @@
 image:
-  repository: public.ecr.aws/f8d9n2r3/nest-service-core-14
+  repository: docker.io/joktec/joktec-nest-core
   pullPolicy: IfNotPresent
   tag: 1.0.0
 
