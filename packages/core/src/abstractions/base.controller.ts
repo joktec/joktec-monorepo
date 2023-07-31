@@ -120,7 +120,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @UseGuards(...toArray(props?.guards?.create))
     @UsePipes(new BaseValidationPipe())
     @UseInterceptors(...toArray(props?.hooks?.create))
-    async create(@Body() entity: T, @Req() req: Request): Promise<T> {
+    async create(@Body() entity: Partial<T>, @Req() req: Request): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
       return this.service.create(entity, req['payload'] as JwtPayload);
     }

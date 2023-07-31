@@ -5,7 +5,7 @@ import { Category, CategoryDto } from './models';
 @Controller('categories')
 export class CategoryController extends BaseController<Category, string>({
   dto: Category,
-  customDto: { createDto: CategoryDto, updatedDto: CategoryDto },
+  customDto: { createDto: CategoryDto },
   useBearer: false,
   metadata: {
     findAll: [{ key: RESPONSE_MESSAGE_KEY, value: 'QUERY_CATEGORY_SUCCESS' }],
