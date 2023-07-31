@@ -1,5 +1,6 @@
 import {
   Body,
+  CanActivate,
   Delete,
   Get,
   NestInterceptor,
@@ -12,7 +13,6 @@ import {
   UseGuards,
   UseInterceptors,
   UsePipes,
-  CanActivate,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -53,8 +53,8 @@ export interface IBaseControllerProps<T> {
   dto: Constructor<T>;
   dtoName?: string;
   customDto?: {
-    createDto?: Constructor<T>;
-    updatedDto?: Constructor<T>;
+    createDto?: Constructor<T | any>;
+    updatedDto?: Constructor<T | any>;
   };
   apiTag?: string;
   excludes?: ControllerExclude[];
@@ -72,8 +72,8 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
   const apiTag = props.apiTag || toPlural(dtoName);
   const excludes = toArray<ControllerExclude>(props.excludes);
 
-  const createDto: Constructor<T> = props.customDto?.createDto || props.dto;
-  const updatedDto: Constructor<T> = props.customDto?.updatedDto || props.dto;
+  const createDto: Constructor<T | any> = props.customDto?.createDto || props.dto;
+  const updatedDto: Constructor<T | any> = props.customDto?.updatedDto || createDto;
 
   @ApiSchema({ name: `${nameSingular}Pagination` })
   class PaginationDto extends BaseListResponse<T>(props.dto) {}
