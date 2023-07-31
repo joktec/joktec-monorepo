@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.77](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.76...@joktec/cron@0.0.77) (2023-07-31)
+
+**Note:** Version bump only for package @joktec/cron
+
+
+
+
+
 ## [0.0.76](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.75...@joktec/cron@0.0.76) (2023-07-30)
 
 **Note:** Version bump only for package @joktec/cron

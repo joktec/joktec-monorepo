@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.76](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.75...@joktec/core@0.0.76) (2023-07-31)
+
+
+### Bug Fixes
+
+* custom dto ([9a2479a](https://github.com/joktec/joktec-monorepo/commit/9a2479ac55f5879d1d99fe24064bb2d3c25f4129))
+
+
+
+
+
 ## [0.0.75](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.74...@joktec/core@0.0.75) (2023-07-30)
 
 **Note:** Version bump only for package @joktec/core
