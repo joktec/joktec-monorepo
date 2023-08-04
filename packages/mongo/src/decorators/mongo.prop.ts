@@ -1,21 +1,27 @@
-import { linkTransform } from '@joktec/core';
+import { applyDecorators, linkTransform } from '@joktec/core';
 import { prop, PropType } from '@typegoose/typegoose';
 import { BasePropOptions } from '@typegoose/typegoose/lib/types';
+import { isArray } from 'lodash';
 
 export const propUrl = (options?: BasePropOptions & { host?: string }, kind?: PropType): PropertyDecorator => {
-  const host = options?.host || process.env.MISC_CDN_URL || '';
-  const isArray: boolean = kind === PropType.ARRAY;
-  const getter = (value: string | string[]): string | string[] => {
-    if (Array.isArray(value)) {
-      return value.map(v => linkTransform(v, host, 'absolute'));
-    }
-    return linkTransform(value, host, 'absolute');
-  };
-  const setter = (value: string | string[]): string | string[] => {
-    if (Array.isArray(value)) {
-      return value.map(v => linkTransform(v, host, 'relative'));
-    }
-    return linkTransform(value, host, 'relative');
-  };
-  return prop({ default: isArray ? [] : null, type: String, get: getter, set: setter, ...options }, kind);
+  return applyDecorators(
+    prop(
+      {
+        default: kind === PropType.ARRAY ? [] : null,
+        type: String,
+        get: (value: string | string[]): string | string[] => {
+          const host = options?.host || process.env.MISC_CDN_URL;
+          if (isArray(value)) return value.map(item => linkTransform(item, host, 'relative'));
+          return linkTransform(value, host, 'relative');
+        },
+        set: (value: string | string[]): string | string[] => {
+          const host = options?.host || process.env.MISC_CDN_URL;
+          if (isArray(value)) return value.map(item => linkTransform(item, host, 'absolute'));
+          return linkTransform(value, host, 'absolute');
+        },
+        ...options,
+      },
+      kind,
+    ),
+  );
 };

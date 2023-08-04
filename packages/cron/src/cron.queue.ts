@@ -1,3 +1,4 @@
+import { toInt } from '@joktec/core';
 import { Logger } from '@nestjs/common';
 import async, { QueueObject } from 'async';
 
@@ -105,12 +106,12 @@ export class CronQueue<T> {
   }
 
   async kill() {
-    await this.queue.kill();
+    this.queue.kill();
   }
 
   async reset() {
-    await this.queue.kill();
-    await this.init();
+    this.queue.kill();
+    this.init();
   }
 
   static async batchProcess<I, O>(
@@ -131,10 +132,10 @@ export class CronQueue<T> {
           const out = await eachBatch(d);
           res.push(...out);
         },
-        concurrent: opts.concurrent ?? 1,
-        batchSize: opts.batchSize ?? 1,
-        maxRetries: opts.maxRetries,
-        failedIdleTimeout: opts.retryTimeout,
+        concurrent: toInt(opts.concurrent, 1),
+        batchSize: toInt(opts.batchSize, 1),
+        maxRetries: toInt(opts.maxRetries, 3),
+        failedIdleTimeout: toInt(opts.retryTimeout, 15000),
       },
       context,
     );

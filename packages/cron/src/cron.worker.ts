@@ -1,4 +1,4 @@
-import { ConfigService, Inject, LogService, OnModuleInit, sleep } from '@joktec/core';
+import { ConfigService, Inject, LogService, OnModuleInit, sleep, toArray } from '@joktec/core';
 import { flatten, isArray, isString, snakeCase, upperCase } from 'lodash';
 import moment from 'moment-timezone';
 import { CronQueue } from './cron.queue';
@@ -33,17 +33,15 @@ export abstract class CronWorker<C extends CronModel> implements OnModuleInit {
 
   protected async createNewCrons(date: string): Promise<C[]> {
     const type = upperCase(snakeCase(this.getConfig().type));
-    return [
-      new CronModel({
-        id: `${type}-${date}`,
-        type,
-        date,
-        status: CronStatus.TODO,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        data: {},
-      }) as C,
-    ];
+    return toArray({
+      id: `${type}-${date}`,
+      type,
+      date,
+      status: CronStatus.TODO,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      data: {},
+    } as C);
   }
 
   private initCronQueue() {
@@ -98,10 +96,12 @@ export abstract class CronWorker<C extends CronModel> implements OnModuleInit {
   }
 
   protected async onStartHook(cron: C): Promise<void> {
+    this.logService.info('On start hook for cron: %s', cron.id);
     return;
   }
 
   protected async onDoneHook(cron: C): Promise<void> {
+    this.logService.info('On done hook for cron: %s', cron.id);
     return;
   }
 

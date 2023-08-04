@@ -15,7 +15,7 @@ export class CronRepo extends MysqlRepo<CronModel, string> {
       const newCrons: CronModel[] = [];
       const chunkCrons = chunk(crons, 100);
       for (const subCrons of chunkCrons) {
-        const rows = await this.model.bulkCreate(crons, { transaction, updateOnDuplicate: ['id'], returning: true });
+        const rows = await this.model.bulkCreate(subCrons, { transaction, updateOnDuplicate: ['id'], returning: true });
         newCrons.push(...rows);
       }
       await transaction.commit();
