@@ -3,11 +3,13 @@ import { prop, PropType } from '@typegoose/typegoose';
 import { BasePropOptions } from '@typegoose/typegoose/lib/types';
 import { isArray } from 'lodash';
 
-export const propUrl = (options?: BasePropOptions & { host?: string }, kind?: PropType): PropertyDecorator => {
+export const propUrl = (
+  options?: BasePropOptions & { host?: string },
+  kind: PropType = PropType.NONE,
+): PropertyDecorator => {
   return applyDecorators(
     prop(
       {
-        default: kind === PropType.ARRAY ? [] : null,
         type: String,
         set: (value: string | string[]): string | string[] => {
           const host = options?.host || process.env.MISC_CDN_URL;
