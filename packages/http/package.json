@@ -51,8 +51,7 @@
     "merge-deep": "^3.0.3",
     "qs": "^6.11.0",
     "retry-axios": "^2.3.0",
-    "rxjs": "^7.2.0",
-    "valid-url": "^1.0.9"
+    "rxjs": "^7.2.0"
   },
   "devDependencies": {
     "@types/form-data": "^2.5.0",

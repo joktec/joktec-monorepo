@@ -6,11 +6,11 @@ import {
   Histogram,
   Injectable,
   InjectMetric,
+  linkTransform,
 } from '@joktec/core';
 import { AxiosError, AxiosResponse } from 'axios';
 import { HttpConfig } from './http.config';
 import { httpExceptionHandler } from './http.exception';
-const validUrl = require('valid-url');
 
 export const HTTP_DURATION_SECONDS_METRIC = 'http_duration_seconds';
 export const HTTP_TOTAL_METRIC = 'http_total';
@@ -50,10 +50,8 @@ export const HttpMetricDecorator = () =>
       const baseUrl = config.baseURL ?? httpConfig?.baseURL;
       const url = config.url ?? httpConfig?.url;
 
-      let path = `[${methodName.toUpperCase()}] ${url}`;
-      if (!validUrl.isUri(url) && baseUrl) {
-        path = `[${methodName.toUpperCase()}] ${url ? `${baseUrl}/${url}` : baseUrl}`;
-      }
+      const absoluteUrl = linkTransform(url, baseUrl, 'absolute');
+      const path = `[${methodName.toUpperCase()}] ${absoluteUrl}`;
 
       const httpMetric: HttpMetricService = services.httpMetricService;
       const duration = httpMetric.duration(path);

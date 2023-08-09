@@ -1,10 +1,18 @@
 import { Client } from '@joktec/core';
 import { FileConfig } from './file.config';
 
-export interface FileClient extends Client<FileConfig, any> {
+export interface FileClient extends Client<FileConfig> {
+  getSize(conId: string): Promise<number>;
+
+  deleteDir(mkdir: boolean, conId: string): Promise<void>;
+
   getModifiedFile(start: Date | string, end: Date | string, conId: string): Promise<any>;
 
-  readFile(fileName: string, conId: string): Promise<string>;
+  readFile(filename: string, conId: string): Promise<string>;
 
-  appendFile(fileName: string, content: string, separator: string, conId: string): Promise<any>;
+  appendFile(filename: string, content: string, separator: string, conId: string): Promise<any>;
+
+  deleteFile(filename: string, conId: string): Promise<void>;
+
+  deleteFiles(start: Date | string, end: Date | string, conId: string): Promise<void>;
 }

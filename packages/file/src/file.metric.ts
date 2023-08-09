@@ -8,8 +8,8 @@ import {
   InjectMetric,
 } from '@joktec/core';
 
-export const FILE_TRACK_STATUS_METRIC = 'file_track_status_metric';
-export const FILE_DURATION_METRIC = 'file_duration_metric';
+export const FILE_TRACK_STATUS_METRIC: string = 'file_track_status_metric';
+export const FILE_DURATION_METRIC: string = 'file_duration_metric';
 
 @Injectable()
 export class FileMetricService {
