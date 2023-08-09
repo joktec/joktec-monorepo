@@ -1,8 +1,8 @@
+import { execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
 import { safeLoad } from 'js-yaml';
 import { get, pick, set, snakeCase } from 'lodash';
 import { flattenKeys } from '../utils';
-const execSync = require('child_process').execSync;
 
 export enum ENV {
   DEV = 'develop',
@@ -20,9 +20,9 @@ export class AppConfig {
   env: ENV;
 }
 
-const YAML_CONFIG_FILENAME = 'config.yml';
-const PACKAGE_CONFIG_FILENAME = 'package.json';
-const DOPPLER_CONFIG_FILENAME = 'doppler.yaml';
+const YAML_CONFIG_FILENAME: string = 'config.yml';
+const PACKAGE_CONFIG_FILENAME: string = 'package.json';
+const DOPPLER_CONFIG_FILENAME: string = 'doppler.yaml';
 
 export const initConfig = (): AppConfig => {
   const env: ENV = (process.env['NODE_ENV'] ?? ENV.DEV) as ENV;
@@ -31,7 +31,7 @@ export const initConfig = (): AppConfig => {
 
   let dopplerSecret: object = {};
   if (existsSync(DOPPLER_CONFIG_FILENAME)) {
-    dopplerSecret = JSON.parse(execSync('doppler secrets download --no-file --format json'));
+    dopplerSecret = JSON.parse(execSync('doppler secrets download --no-file --format json', { encoding: 'utf-8' }));
   }
 
   for (const path of paths) {

@@ -1,9 +1,9 @@
+import net, { Socket } from 'net';
+import stream from 'stream';
 import { Logger } from '@nestjs/common';
+import backoff from 'backoff';
 import { DestinationStream } from 'pino';
 import { LogStashConfig } from './logstash.config';
-const net = require('net');
-const stream = require('stream');
-const backoff = require('backoff');
 
 export const createLogstashStream = (appName: string, cfg: LogStashConfig): DestinationStream => {
   const logger = new Logger('LogStashService');
@@ -19,13 +19,13 @@ export const createLogstashStream = (appName: string, cfg: LogStashConfig): Dest
   process.stdin.pipe(inputStream);
   inputStream.pause();
 
-  let socket = null;
-  let connected = false;
-  let connecting = false;
-  let socketError = null;
+  let socket: Socket = null;
+  let connected: boolean = false;
+  let connecting: boolean = false;
+  let socketError: Error = null;
 
-  const outputStream = stream.Writable({
-    close() {
+  const outputStream = new stream.Writable({
+    final() {
       socket.end();
     },
     write(data, encoding, callback) {
@@ -87,7 +87,7 @@ export const createLogstashStream = (appName: string, cfg: LogStashConfig): Dest
     if (options.reconnect) reconnect();
   }
 
-  function errorListener(err) {
+  function errorListener(err: Error) {
     socketError = err;
   }
 
@@ -105,7 +105,7 @@ export const createLogstashStream = (appName: string, cfg: LogStashConfig): Dest
     socket.removeAllListeners('error');
   }
 
-  connect((_, isConnected) => {
+  connect((_, isConnected: boolean) => {
     if (isConnected) {
       logger.log('Service is configured');
     } else {

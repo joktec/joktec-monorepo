@@ -2822,6 +2822,19 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
+"@joktec/mongo@^0.0.98":
+  version "0.0.98"
+  resolved "https://registry.yarnpkg.com/@joktec/mongo/-/mongo-0.0.98.tgz#41601b10326179875ecd1789e9559b8532a46846"
+  integrity sha512-HSLALH02B1p0h2G+dgfcsutsH/NinXo/rktGCVkBYsvDyqrDfqnVQY8dqWR5RB3LUqhWjbnOd8fKqJsT8WMt/A==
+  dependencies:
+    "@joktec/core" "0.0.77"
+    "@typegoose/typegoose" "^10.3.2"
+    dot-object "^2.1.4"
+    lodash "^4.17.21"
+    moment "^2.29.4"
+    mongoose "^6.10.0"
+    mongoose-beautiful-unique-validation "^7.1.1"
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -4395,6 +4408,13 @@
     "@types/bluebird" "*"
     "@types/node" "*"
 
+"@types/async-retry@^1.4.5":
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/@types/async-retry/-/async-retry-1.4.5.tgz#02680eb366739a327550f6ad38bb898a5571a095"
+  integrity sha512-YrdjSD+yQv7h6d5Ip+PMxh3H6ZxKyQk0Ts+PvaNRInxneG9PFVZjFg77ILAN+N6qYf7g4giSJ1l+ZjQ1zeegvA==
+  dependencies:
+    "@types/retry" "*"
+
 "@types/async@^3.2.20":
   version "3.2.20"
   resolved "https://registry.yarnpkg.com/@types/async/-/async-3.2.20.tgz#53517caaa68c94f99da1c4e986cf7f2954981515"
@@ -4432,6 +4452,13 @@
   integrity sha512-FcFaxOr2V5KZCviw1TnutEMVUVsGt4D2hP1TAfXZAMKuHYW3xQhe3jTxNPWutgCJ3/X1c5yX8ZoGVEItxKbwBg==
   dependencies:
     "@babel/types" "^7.3.0"
+
+"@types/backoff@^2.5.2":
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/@types/backoff/-/backoff-2.5.2.tgz#960214100f1329e2a6022eac9dd43af28618ea15"
+  integrity sha512-oa1YvggujhVppgeIct3LBkbCVXKh97fvOFIR6VlFLxRCeswk/KBRQKg7zoX832vlCP5bGLOFqC9hY7vsDeL9AA==
+  dependencies:
+    "@types/node" "*"
 
 "@types/bcryptjs@^2.4.2":
   version "2.4.2"
@@ -4525,6 +4552,14 @@
   dependencies:
     form-data "*"
 
+"@types/fs-extra@^11.0.1":
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-11.0.1.tgz#f542ec47810532a8a252127e6e105f487e0a6ea5"
+  integrity sha512-MxObHvNl4A69ofaTRU8DFqvgzzv8s9yRtaPPm5gud9HDNvpB3GPQFvNuTWAI59B9huVGV5jXYJwbCsmBsOGYWA==
+  dependencies:
+    "@types/jsonfile" "*"
+    "@types/node" "*"
+
 "@types/graceful-fs@^4.1.3":
   version "4.1.5"
   resolved "https://registry.yarnpkg.com/@types/graceful-fs/-/graceful-fs-4.1.5.tgz#21ffba0d98da4350db64891f92a9e5db3cdb4e15"
@@ -4609,6 +4644,13 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
+
+"@types/jsonfile@*":
+  version "6.1.1"
+  resolved "https://registry.yarnpkg.com/@types/jsonfile/-/jsonfile-6.1.1.tgz#ac84e9aefa74a2425a0fb3012bdea44f58970f1b"
+  integrity sha512-GSgiRCVeapDN+3pqA35IkQwasaCh/0YFH5dEF6S88iDvEn901DjOeH3/QPY+XYP1DFzDZPvIvfeEgk+7br5png==
+  dependencies:
+    "@types/node" "*"
 
 "@types/jsonwebtoken@^9.0.1":
   version "9.0.1"
@@ -4759,6 +4801,13 @@
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.1.tgz#d3357479a0fdfdd5907fe67e17e0a85c906e1301"
   integrity sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==
 
+"@types/opossum@^8.1.0":
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/@types/opossum/-/opossum-8.1.0.tgz#fa699391a803e8e935da317f14eab075ca00e157"
+  integrity sha512-+xcQBTP7st1HZGtahEu54nbZjPyBZflTGuPegB28VVDVbvfET2UfeWJnTcl3lIyf4bZW3wvRIOqSnhz/9P+O1g==
+  dependencies:
+    "@types/node" "*"
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
@@ -4807,6 +4856,11 @@
   integrity sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==
   dependencies:
     "@types/node" "*"
+
+"@types/retry@*":
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/@types/retry/-/retry-0.12.2.tgz#ed279a64fa438bb69f2480eda44937912bb7480a"
+  integrity sha512-XISRgDJ2Tc5q4TRqvgJtzsRkFYNJzZrhTdtMoGVBttwzzQJkPnS3WWTFc7kuDRoPtPakl+T+OfdEUjYJj7Jbow==
 
 "@types/semver@^7.3.12":
   version "7.3.13"
@@ -7981,6 +8035,15 @@ fs-extra@^10.0.0, fs-extra@^10.1.0:
     jsonfile "^6.0.1"
     universalify "^2.0.0"
 
+fs-extra@^11.1.1:
+  version "11.1.1"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-11.1.1.tgz#da69f7c39f3b002378b0954bb6ae7efdc0876e2d"
+  integrity sha512-MGIE4HOvQCeUCzmlHs0vXpih4ysz4wg9qiSAu6cd42lVwPbTM1TjV7RusoyQqMmk/95gdQZX72u+YW+c3eEpFQ==
+  dependencies:
+    graceful-fs "^4.2.0"
+    jsonfile "^6.0.1"
+    universalify "^2.0.0"
+
 fs-minipass@^2.0.0, fs-minipass@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/fs-minipass/-/fs-minipass-2.1.0.tgz#7f5036fdbf12c63c169190cbe4199c852271f9fb"
@@ -10805,11 +10868,6 @@ modify-values@^1.0.0:
   resolved "https://registry.yarnpkg.com/modify-values/-/modify-values-1.0.1.tgz#b3939fa605546474e3e3e3c63d64bd43b4ee6022"
   integrity sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==
 
-module-require@*:
-  version "1.4.5"
-  resolved "https://registry.yarnpkg.com/module-require/-/module-require-1.4.5.tgz#633df0833443c9ad8596f4c42e5237348355af88"
-  integrity sha512-ksEXPs62btutKsbJKph7rLhdu7A6JIIHXTqvr3uhOP1mViI8JeHkNzYHJnVlHVCaRCuHa7XMBnKmxc23YZGl6Q==
-
 moment-timezone@*:
   version "0.5.43"
   resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.43.tgz#3dd7f3d0c67f78c23cd1906b9b2137a09b3c4790"
@@ -11223,13 +11281,6 @@ node-telegram-bot-api@^0.61.0:
     pump "^2.0.0"
     request "^2.83.0"
     request-promise "^4.2.2"
-
-nodejs-fs-utils@^1.2.6:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/nodejs-fs-utils/-/nodejs-fs-utils-1.2.6.tgz#a0a55839d5d28d074fb6ee5ecff83246de5cb9ce"
-  integrity sha512-uDIfV3Qvjrtis2jOhHYzvUTAReqtnBXCVm0efjAYDgrCgZZBDxMQcZE7SsDAui4zzQ7GpqYUFUwoOpOoQD4vpA==
-  dependencies:
-    module-require "*"
 
 nodemailer@^6.9.1:
   version "6.9.1"
@@ -11714,10 +11765,10 @@ open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-opossum@^6.2.1:
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/opossum/-/opossum-6.4.0.tgz#9eeb8af88257967be37b778b750485eb72caedb7"
-  integrity sha512-JVSEBsP3L1S8n6OEyFFfXqE9jzmM7QBeDGMT7/EPfv/TMHvbkFUxgXfklE3j1YeOIfIixfpT/4oKbNMhpAsHUQ==
+opossum@^8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/opossum/-/opossum-8.1.0.tgz#6eabb1b05566b97116df8b921b079498cb073796"
+  integrity sha512-HEdo+rD3Wxs52KpJrXx0BUHB1L/DxNcuU1ZK2Jk/fFv59swCVsBZahfGvQn+FNyfNs/dE4QCwFz0gFCKAFZcWA==
 
 optional-require@1.1.8:
   version "1.1.8"
@@ -14498,11 +14549,6 @@ v8-to-istanbul@^9.0.1:
     "@jridgewell/trace-mapping" "^0.3.12"
     "@types/istanbul-lib-coverage" "^2.0.1"
     convert-source-map "^1.6.0"
-
-valid-url@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/valid-url/-/valid-url-1.0.9.tgz#1c14479b40f1397a75782f115e4086447433a200"
-  integrity sha512-QQDsV8OnSf5Uc30CKSwG9lnhMPe6exHtTXLRYX8uMwKENy640pU+2BgBL0LRbDh/eYRahNCS7aewCx0wf3NYVA==
 
 validate-npm-package-license@^3.0.1, validate-npm-package-license@^3.0.4:
   version "3.0.4"

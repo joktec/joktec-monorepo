@@ -1,7 +1,7 @@
 import { toBool, toInt } from '../utils';
 import { buildError, IsBoolean, IsNumber, IsOptional, IsString, validateSync, ValidationError } from '../validation';
 
-export const DEFAULT_CON_ID = 'default';
+export const DEFAULT_CON_ID: string = 'default';
 
 export class ClientConfig {
   @IsString()

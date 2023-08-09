@@ -1,2 +1,2 @@
-export * from './retry';
+export * from './retry.decorator';
 export * from './retry.config';

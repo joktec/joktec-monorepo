@@ -1,7 +1,7 @@
+import retry from 'async-retry';
 import { isObject, merge } from 'lodash';
 import { BaseMethodDecorator, CallbackDecoratorOptions } from '../decorators';
 import { RetryOptions } from './retry.config';
-const retry = require('async-retry');
 
 export const Retry = (retryOptions: RetryOptions | string = {}): MethodDecorator => {
   return BaseMethodDecorator(async (options: CallbackDecoratorOptions): Promise<any> => {
@@ -17,7 +17,7 @@ export const Retry = (retryOptions: RetryOptions | string = {}): MethodDecorator
             services.pinoLogger.error(e, msgError + `, retry ${attempt} times`);
           },
         },
-        isObject(retryOptions) ? retryOptions : services.configService.get(retryOptions as string) || {},
+        isObject(retryOptions) ? retryOptions : services.configService.get<RetryOptions>(retryOptions as string) || {},
       ),
     );
   });
