@@ -1,23 +1,7 @@
 {
-  "extends": "nx/presets/npm.json",
-  "affected": {
-    "defaultBase": "main"
-  },
-  "workspaceLayout": {
-    "appsDir": "apps",
-    "libsDir": "packages"
-  },
-  "implicitDependencies": {
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
-    "tsconfig.json": "*",
-    "nx.json": "*"
-  },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nrwl/nx-cloud",
+      "runner": "nx-cloud",
       "options": {
         "cacheableOperations": [
           "build",
@@ -28,6 +12,20 @@
         "accessToken": "OTAwNDhiZjYtYTBmMi00ZWEzLTgzY2ItYmE0YWExOWJiZWRhfHJlYWQtd3JpdGU="
       }
     }
+  },
+  "extends": "nx/presets/npm.json",
+  "affected": {
+    "defaultBase": "main"
+  },
+  "workspaceLayout": {
+    "appsDir": "apps",
+    "libsDir": "packages"
+  },
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "{projectRoot}/tsconfig.json"
+    ]
   },
   "targetDefaults": {
     "build": {
