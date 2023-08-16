@@ -1,5 +1,6 @@
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool } from '@joktec/core';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import curlirize from 'axios-curlirize';
 import FormData from 'form-data';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
@@ -23,6 +24,7 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     config.onRetryAttempt(this.logService);
     myAxiosInstance.defaults.raxConfig = { instance: myAxiosInstance, ...config.raxConfig };
     rax.attach(myAxiosInstance);
+    curlirize(myAxiosInstance);
     return myAxiosInstance;
   }
 
@@ -51,8 +53,11 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
 
   @HttpMetricDecorator()
   async request<T = any>(config: HttpRequest, conId: string = DEFAULT_CON_ID): Promise<HttpResponse<T>> {
+    const clientConfig = this.getConfig(conId);
     const proxyConfig = this.buildProxy(config.url, config.proxy);
-    const cf: AxiosRequestConfig = mergeDeep(cloneDeep(this.getConfig(conId)), config, proxyConfig);
+    const cf: AxiosRequestConfig = mergeDeep(cloneDeep(clientConfig), config, proxyConfig, {
+      curlirize: toBool(config.curlirize, clientConfig.curlirize),
+    });
     if (config.serializer) {
       cf.paramsSerializer = { encode: params => qs.stringify(params) };
     }
@@ -68,11 +73,13 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     const formData = new FormData();
     Object.keys(data).map(key => toArray(data[key]).map(v => formData.append(key, v, 'file')));
 
+    const clientConfig = this.getConfig(conId);
     const proxyConfig = this.buildProxy(config.url, config.proxy);
-    const cf: AxiosRequestConfig = mergeDeep(cloneDeep(this.getConfig(conId)), config, proxyConfig, {
+    const cf: AxiosRequestConfig = mergeDeep(cloneDeep(clientConfig), config, proxyConfig, {
       method: 'POST',
       headers: { ...config.headers, 'Content-Type': 'multipart/form-data' },
       data: formData,
+      curlirize: toBool(config.curlirize, clientConfig.curlirize),
     });
 
     if (config.serializer) {

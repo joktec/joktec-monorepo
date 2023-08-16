@@ -2,6 +2,7 @@ import {
   ClientConfig,
   HttpMethod,
   IsArray,
+  IsBoolean,
   IsEnum,
   IsInt,
   IsNotEmpty,
@@ -10,6 +11,7 @@ import {
   IsString,
   IsTypes,
   LogService,
+  toBool,
 } from '@joktec/core';
 import { AxiosBasicCredentials, AxiosError, AxiosRequestConfig } from 'axios';
 import mergeDeep from 'merge-deep';
@@ -100,6 +102,10 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
   params?: any;
 
   @IsOptional()
+  @IsBoolean()
+  curlirize?: any;
+
+  @IsOptional()
   raxConfig?: RetryConfig;
 
   constructor(props: HttpConfig) {
@@ -110,6 +116,7 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
       raxConfig: props?.raxConfig || defaultRetryConfig,
       headers: props?.headers || { accept: 'application/json' },
       params: props?.params || {},
+      curlirize: toBool(props?.curlirize, false),
     });
 
     if (props?.apiKeys?.length) {

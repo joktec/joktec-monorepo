@@ -1,9 +1,17 @@
-import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, toBool } from '@joktec/core';
 import { HttpRequest, HttpService } from '@joktec/http';
 import mergeDeep from 'merge-deep';
 import { ElasticClient } from './elastic.client';
 import { ElasticConfig } from './elastic.config';
-import { EsGetResponse, EsSearchRequest, EsSearchResponse, EsWriteResponse } from './models';
+import {
+  EsDeleteRequest,
+  EsGetRequest,
+  EsGetResponse,
+  EsIndexRequest,
+  EsSearchRequest,
+  EsSearchResponse,
+  EsWriteResponse,
+} from './models';
 
 @Injectable()
 export class ElasticService extends AbstractClientService<ElasticConfig, HttpService> implements ElasticClient {
@@ -27,58 +35,56 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
   }
 
   async search<TDoc = any, TAgg = any>(
-    index: string,
     req: EsSearchRequest,
     conId: string = DEFAULT_CON_ID,
   ): Promise<EsSearchResponse<TDoc, TAgg>> {
     const config: HttpRequest = mergeDeep({}, this.getConfig(conId), {
-      url: `${index}/_search`,
+      url: `${req.index}/_search`,
       method: 'GET',
       data: { ...req },
       params: { pretty: true },
       headers: { 'Content-Type': 'application/json' },
+      curlirize: toBool(req.curlirize, false),
     });
     this.logService.debug('Query URL: %s/%s', config.baseURL, config.url);
     const res = await this.getClient(conId).request<EsSearchResponse<TDoc, TAgg>>(config);
     return res.data;
   }
 
-  async index<TDoc = any>(
-    id: string,
-    index: string,
-    doc: TDoc,
-    conId: string = DEFAULT_CON_ID,
-  ): Promise<EsWriteResponse> {
+  async index<TDoc = any>(req: EsIndexRequest<TDoc>, conId: string = DEFAULT_CON_ID): Promise<EsWriteResponse> {
     const config: HttpRequest = mergeDeep({}, this.getConfig(conId), {
-      url: `${index}/_doc/${id}`,
+      url: `${req.index}/_doc/${req.id}`,
       method: 'POST',
-      data: doc,
+      data: req.doc,
       params: { pretty: true },
       headers: { 'Content-Type': 'application/json' },
+      curlirize: toBool(req.curlirize, false),
     });
     this.logService.debug('Query URL: %s/%s', config.baseURL, config.url);
     const res = await this.getClient(conId).request<EsWriteResponse>(config);
     return res.data;
   }
 
-  async get<TDoc = any>(id: string, index: string, conId: string = DEFAULT_CON_ID): Promise<EsGetResponse<TDoc>> {
+  async get<TDoc = any>(req: EsGetRequest, conId: string = DEFAULT_CON_ID): Promise<EsGetResponse<TDoc>> {
     const config: HttpRequest = mergeDeep({}, this.getConfig(conId), {
-      url: `${index}/_doc/${id}`,
+      url: `${req.index}/_doc/${req.id}`,
       method: 'GET',
       params: { pretty: true },
       headers: { 'Content-Type': 'application/json' },
+      curlirize: toBool(req.curlirize, false),
     });
     this.logService.debug('Query URL: %s/%s', config.baseURL, config.url);
     const res = await this.getClient(conId).request<EsGetResponse<TDoc>>(config);
     return res.data;
   }
 
-  async delete<TDoc = any>(id: string, index: string, conId: string = DEFAULT_CON_ID): Promise<EsWriteResponse> {
+  async delete(req: EsDeleteRequest, conId: string = DEFAULT_CON_ID): Promise<EsWriteResponse> {
     const config: HttpRequest = mergeDeep({}, this.getConfig(conId), {
-      url: `${index}/_doc/${id}`,
+      url: `${req.index}/_doc/${req.id}`,
       method: 'DELETE',
       params: { pretty: true },
       headers: { 'Content-Type': 'application/json' },
+      curlirize: toBool(req.curlirize, false),
     });
     this.logService.debug('Query URL: %s/%s', config.baseURL, config.url);
     const res = await this.getClient(conId).request<EsWriteResponse>(config);
