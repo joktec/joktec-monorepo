@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.79](https://github.com/joktec/joktec-monorepo/compare/@joktec/http@0.0.78...@joktec/http@0.0.79) (2023-08-16)
+
+
+### Bug Fixes
+
+* downgrade curlirize ([833c71a](https://github.com/joktec/joktec-monorepo/commit/833c71ac823a1b39cc4d33f25d8311d9a975e26c))
+
+
+
+
+
 ## [0.0.78](https://github.com/joktec/joktec-monorepo/compare/@joktec/http@0.0.77...@joktec/http@0.0.78) (2023-08-16)
 
 **Note:** Version bump only for package @joktec/http
