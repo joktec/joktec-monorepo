@@ -2836,128 +2836,6 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
-"@joktec/core@0.0.77", "@joktec/core@^0.0.77":
-  version "0.0.77"
-  resolved "https://registry.yarnpkg.com/@joktec/core/-/core-0.0.77.tgz#78ba4c219f282fa159250a342eec2a31cd2941ca"
-  integrity sha512-o/ODNuq3z3WPIapft3fFR44F+dGkOMSGfGyZrnbmp480iZ+uU1jGlUBAFBSnvgtVEK4i+RIOavzdf06H8QEqJQ==
-  dependencies:
-    "@bull-board/api" "^5.2.1"
-    "@bull-board/express" "^5.2.1"
-    "@bull-board/ui" "^5.2.1"
-    "@grpc/proto-loader" "^0.7.3"
-    "@nestjs/bull" "^0.6.3"
-    "@nestjs/common" "^9.4.0"
-    "@nestjs/config" "^2.3.1"
-    "@nestjs/core" "^9.4.0"
-    "@nestjs/cqrs" "^9.0.3"
-    "@nestjs/graphql" "^11.0.5"
-    "@nestjs/mapped-types" "^1.2.2"
-    "@nestjs/microservices" "^9.4.0"
-    "@nestjs/platform-express" "^9.4.0"
-    "@nestjs/serve-static" "^3.0.1"
-    "@nestjs/swagger" "^6.3.0"
-    "@nestjs/terminus" "^9.2.2"
-    "@nestjs/testing" "^9.4.0"
-    "@nestjs/throttler" "^4.0.0"
-    "@willsoto/nestjs-prometheus" "^5.1.2"
-    async "^3.2.0"
-    async-retry "^1.3.3"
-    backoff "^2.5.0"
-    bcryptjs "^2.4.3"
-    bull "^4.10.4"
-    class-transformer "^0.5.1"
-    class-validator "^0.14.0"
-    csurf "^1.11.0"
-    dataloader "^2.1.0"
-    dot-object "^2.1.4"
-    express "^4.18.2"
-    express-useragent "^1.0.15"
-    graphql "^16.6.0"
-    hbs "^4.2.0"
-    helmet "^7.0.0"
-    i18n "^0.15.1"
-    js-yaml "3.14.0"
-    jsonwebtoken "^9.0.0"
-    lodash "^4.17.21"
-    merge-deep "^3.0.3"
-    moment "^2.29.4"
-    ms "^2.1.3"
-    multer "^1.4.5-lts.1"
-    nestjs-pino "^3.2.0"
-    opossum "^6.2.1"
-    pino "^8.14.1"
-    pino-cloudwatch "^0.7.0"
-    pino-fluentd "^0.2.4"
-    pino-http "^8.3.3"
-    pino-loki "^2.1.3"
-    pino-pretty "^10.0.0"
-    pino-stackdriver "^3.0.0"
-    pluralize "^8.0.0"
-    prom-client "^13.0.0"
-    qs "^6.7.0"
-    reflect-metadata "^0.1.13"
-    retry "^0.13.1"
-    rxjs "^7.2.0"
-    slug "^8.2.2"
-    swagger-ui-express "^4.6.2"
-    type-cacheable "^4.1.2"
-    uuid "^9.0.0"
-
-"@joktec/http@^0.0.76":
-  version "0.0.76"
-  resolved "https://registry.yarnpkg.com/@joktec/http/-/http-0.0.76.tgz#b904c1102e99999675faa69ba8bb758042917f18"
-  integrity sha512-4MTCdxwy3OjzEd6th0xke+6QeximCjI1+UHk2X+9lr5NVmiRg+QJGghWawi/Jtp+Qanc8IQqIoZihjksCLGWzQ==
-  dependencies:
-    "@joktec/core" "0.0.77"
-    axios "^1.3.5"
-    form-data "^4.0.0"
-    http-proxy-agent "^5.0.0"
-    http-status-codes "^2.2.0"
-    https-proxy-agent "^5.0.1"
-    lodash "^4.17.21"
-    merge-deep "^3.0.3"
-    qs "^6.11.0"
-    retry-axios "^2.3.0"
-    rxjs "^7.2.0"
-    valid-url "^1.0.9"
-
-"@joktec/mailer@^0.0.75":
-  version "0.0.75"
-  resolved "https://registry.yarnpkg.com/@joktec/mailer/-/mailer-0.0.75.tgz#145de3178d42adec5756e147dbbd719a867651b9"
-  integrity sha512-a6eWQc6TAJhjXqRXl6NUjft1eMLDx0C90/pRfugp9z0JoL2Xzx61m7FxGWaKxnfPzOnoSiFZM62SFHKFjsGbsA==
-  dependencies:
-    "@joktec/core" "0.0.77"
-    aws-sdk "^2.1267.0"
-    handlebars "^4.7.7"
-    lodash "^4.17.21"
-    nodemailer "^6.9.1"
-
-"@joktec/mongo@^0.0.98":
-  version "0.0.98"
-  resolved "https://registry.yarnpkg.com/@joktec/mongo/-/mongo-0.0.98.tgz#41601b10326179875ecd1789e9559b8532a46846"
-  integrity sha512-HSLALH02B1p0h2G+dgfcsutsH/NinXo/rktGCVkBYsvDyqrDfqnVQY8dqWR5RB3LUqhWjbnOd8fKqJsT8WMt/A==
-  dependencies:
-    "@joktec/core" "0.0.77"
-    "@typegoose/typegoose" "^10.3.2"
-    dot-object "^2.1.4"
-    lodash "^4.17.21"
-    moment "^2.29.4"
-    mongoose "^6.10.0"
-    mongoose-beautiful-unique-validation "^7.1.1"
-
-"@joktec/mysql@0.0.78":
-  version "0.0.78"
-  resolved "https://registry.yarnpkg.com/@joktec/mysql/-/mysql-0.0.78.tgz#45e4511b35396ab47bc75a1bca527b5967bb885d"
-  integrity sha512-MMd++Aae06ut3va8+vbjBnAMFCNDgDbYWKs2taABCGmQCvFNISLblmiHa14UpJr0H6UmeDbkgR9NkS1dS9CSiQ==
-  dependencies:
-    "@joktec/core" "0.0.77"
-    lodash "^4.17.21"
-    mysql "2.18.1"
-    mysql2 "^3.1.2"
-    reflect-metadata "*"
-    sequelize "^6.28.0"
-    sequelize-typescript "^2.1.5"
-
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"
@@ -11430,11 +11308,6 @@ open@~8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-opossum@^6.2.1:
-  version "6.4.0"
-  resolved "https://registry.yarnpkg.com/opossum/-/opossum-6.4.0.tgz#9eeb8af88257967be37b778b750485eb72caedb7"
-  integrity sha512-JVSEBsP3L1S8n6OEyFFfXqE9jzmM7QBeDGMT7/EPfv/TMHvbkFUxgXfklE3j1YeOIfIixfpT/4oKbNMhpAsHUQ==
-
 opossum@^8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/opossum/-/opossum-8.1.0.tgz#6eabb1b05566b97116df8b921b079498cb073796"
@@ -14237,11 +14110,6 @@ v8-to-istanbul@^9.0.1:
     "@jridgewell/trace-mapping" "^0.3.12"
     "@types/istanbul-lib-coverage" "^2.0.1"
     convert-source-map "^1.6.0"
-
-valid-url@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/valid-url/-/valid-url-1.0.9.tgz#1c14479b40f1397a75782f115e4086447433a200"
-  integrity sha512-QQDsV8OnSf5Uc30CKSwG9lnhMPe6exHtTXLRYX8uMwKENy640pU+2BgBL0LRbDh/eYRahNCS7aewCx0wf3NYVA==
 
 validate-npm-package-license@3.0.4, validate-npm-package-license@^3.0.1, validate-npm-package-license@^3.0.4:
   version "3.0.4"
