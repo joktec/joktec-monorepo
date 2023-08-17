@@ -24,7 +24,14 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     config.onRetryAttempt(this.logService);
     myAxiosInstance.defaults.raxConfig = { instance: myAxiosInstance, ...config.raxConfig };
     rax.attach(myAxiosInstance);
-    curlirize(myAxiosInstance);
+    curlirize(myAxiosInstance, (result, err) => {
+      const { command } = result;
+      if (err) {
+        this.logService.error(err);
+        return;
+      }
+      this.logService.info(command);
+    });
     return myAxiosInstance;
   }
 
