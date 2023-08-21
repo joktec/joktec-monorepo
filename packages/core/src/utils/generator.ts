@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import { range, snakeCase } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,6 +10,14 @@ import { InternalServerException } from '../exceptions';
  * @param max
  */
 export const rand = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
+
+/**
+ * Create a random string with md5
+ * @param content
+ */
+export const md5 = (content: string) => {
+  return crypto.createHash('md5').update(content, 'utf8').digest('hex');
+};
 
 /**
  * Generate a random OTP Code with specific length
@@ -36,6 +45,23 @@ export const generateUUID = (opts?: { prefix?: string }): string => {
 
 export const cloneInstance = <T extends object>(origin: Partial<T>, addition: Partial<T> = {}): T => {
   return Object.assign(Object.create(Object.getPrototypeOf(origin)), origin, addition);
+};
+
+/**
+ * Hash string to UUID
+ * @param target
+ * @param scope
+ */
+export const hashString = (target: string, scope: string = 'DEFAULT'): string => {
+  const upperScope: string = snakeCase(scope).toUpperCase();
+  const hashStatus: string = md5(`${target}@${upperScope}`);
+  return [
+    hashStatus.substring(0, 8),
+    hashStatus.substring(8, 12),
+    hashStatus.substring(14, 18),
+    hashStatus.substring(19, 23),
+    hashStatus.substring(24, 36),
+  ].join('-');
 };
 
 /**

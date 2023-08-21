@@ -1,11 +1,18 @@
-import { AxiosProxyConfig, AxiosRequestConfig } from 'axios';
+import { Agent } from 'http';
+import { AxiosRequestConfig } from 'axios';
+import { HttpProxyConfig } from '../http.config';
 
-export type HttpProxy = AxiosProxyConfig | false;
-
+/**
+ * See more: https://axios-http.com/docs/req_config
+ */
 export interface HttpRequest extends AxiosRequestConfig {
-  proxy?: HttpProxy;
+  proxy?: HttpProxyConfig;
+  httpAgent?: Agent;
+  httpsAgent?: Agent;
   serializer?: boolean;
   curlirize?: boolean;
+
+  [key: string]: any;
 }
 
 export interface HttpFormData {

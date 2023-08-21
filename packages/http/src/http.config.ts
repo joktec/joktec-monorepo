@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsPositive,
   IsString,
@@ -13,7 +14,7 @@ import {
   LogService,
   toBool,
 } from '@joktec/core';
-import { AxiosBasicCredentials, AxiosError, AxiosRequestConfig } from 'axios';
+import { AxiosBasicCredentials, AxiosError, AxiosProxyConfig, AxiosRequestConfig } from 'axios';
 import mergeDeep from 'merge-deep';
 import { RetryConfig } from 'retry-axios';
 
@@ -56,6 +57,28 @@ export class BasicCredentials implements AxiosBasicCredentials {
   password: string;
 
   constructor(props: BasicCredentials) {
+    Object.assign(this, props);
+  }
+}
+
+export class HttpProxyConfig implements AxiosProxyConfig {
+  @IsNotEmpty()
+  @IsString()
+  host: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  port: number;
+
+  @IsOptional()
+  @IsTypes([BasicCredentials])
+  auth?: BasicCredentials;
+
+  @IsOptional()
+  @IsString()
+  protocol?: string;
+
+  constructor(props: HttpProxyConfig) {
     Object.assign(this, props);
   }
 }
@@ -108,6 +131,10 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
   @IsOptional()
   raxConfig?: RetryConfig;
 
+  @IsOptional()
+  @IsTypes([HttpProxyConfig])
+  proxy?: HttpProxyConfig;
+
   constructor(props: HttpConfig) {
     super(props);
     mergeDeep(this, {
@@ -125,6 +152,10 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
         if (!item.type || item.type === ApiKeyType.HEADER) Object.assign(this.headers, apiKey);
         if (item.type === ApiKeyType.PARAM) Object.assign(this.params, apiKey);
       });
+    }
+
+    if (props.proxy) {
+      this.proxy = new HttpProxyConfig(props.proxy);
     }
   }
 
