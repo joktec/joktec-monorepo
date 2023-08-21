@@ -31,28 +31,11 @@ export const generateOTP = (otpLength: number = 6): string => {
 };
 
 /**
- * Generate a UUID with prefix
- * @param opts
- */
-export const generateUUID = (opts?: { prefix?: string }): string => {
-  let result: string = uuidv4();
-  if (opts?.prefix) {
-    const prefix = snakeCase(opts.prefix).toUpperCase();
-    result = `${prefix}-${result}`;
-  }
-  return result;
-};
-
-export const cloneInstance = <T extends object>(origin: Partial<T>, addition: Partial<T> = {}): T => {
-  return Object.assign(Object.create(Object.getPrototypeOf(origin)), origin, addition);
-};
-
-/**
- * Hash string to UUID
+ * Generate a UUID with scope
  * @param target
  * @param scope
  */
-export const hashString = (target: string, scope: string = 'DEFAULT'): string => {
+export const generateUUID = (target: string = uuidv4(), scope: string = 'DEFAULT'): string => {
   const upperScope: string = snakeCase(scope).toUpperCase();
   const hashStatus: string = md5(`${target}@${upperScope}`);
   return [
@@ -62,6 +45,10 @@ export const hashString = (target: string, scope: string = 'DEFAULT'): string =>
     hashStatus.substring(19, 23),
     hashStatus.substring(24, 36),
   ].join('-');
+};
+
+export const cloneInstance = <T extends object>(origin: Partial<T>, addition: Partial<T> = {}): T => {
+  return Object.assign(Object.create(Object.getPrototypeOf(origin)), origin, addition);
 };
 
 /**
