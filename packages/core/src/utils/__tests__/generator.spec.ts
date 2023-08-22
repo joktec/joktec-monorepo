@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from '@jest/globals';
-import { generateOTP, generateUUID, getTimeString, hashPassword, matchPassword, rand } from '../generator';
+import { generateOTP, generateUUID, getTimeString, hashPassword, hashString, matchPassword, rand } from '../generator';
 import bcrypt from 'bcryptjs';
 
 describe('rand function', () => {
@@ -35,26 +35,64 @@ describe('generateUUID function', () => {
     expect(uuid1).not.toBe(uuid2);
   });
 
+  test('should return a uuid without prefix', () => {
+    const uuid = generateUUID();
+    expect(typeof uuid).toBe('string');
+    expect(uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+  });
+
+  test('should return a prefixed uuid', () => {
+    const uuid = generateUUID({ prefix: 'test' });
+    expect(typeof uuid).toBe('string');
+    expect(uuid).toMatch(/^TEST-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+  });
+
+  test('should return a prefixed uuid with uppercase', () => {
+    const uuid = generateUUID({ prefix: 'TEST' });
+    expect(typeof uuid).toBe('string');
+    expect(uuid).toMatch(/^TEST-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+  });
+
+  test('should return a prefixed uuid with snake case', () => {
+    const uuid = generateUUID({ prefix: 'test-case' });
+    expect(typeof uuid).toBe('string');
+    expect(uuid).toMatch(/^TEST_CASE-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+  });
+
+  test('should return a prefixed uuid with snake case and uppercase', () => {
+    const uuid = generateUUID({ prefix: 'TEST-CASE' });
+    expect(typeof uuid).toBe('string');
+    expect(uuid).toMatch(/^TEST_CASE-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+  });
+});
+
+describe('hashString function', () => {
+  test('should return a unique uuid', () => {
+    const uuid1 = hashString();
+    const uuid2 = hashString();
+    expect(uuid1).not.toEqual(uuid2);
+  });
+
   test('should return a same uuid', () => {
-    const uuid1 = generateUUID('Some test');
-    const uuid2 = generateUUID('Some test');
+    const uuid1 = hashString('Some test');
+    const uuid2 = hashString('Some test');
     expect(uuid1).toEqual(uuid2);
   });
 
   test('should return a same uuid with scope', () => {
-    const uuid1 = generateUUID('Some test', 'scope');
-    const uuid2 = generateUUID('Some test', 'SCOPE');
+    const uuid1 = hashString('Some test', 'scope');
+    const uuid2 = hashString('Some test', 'SCOPE');
     expect(uuid1).toEqual(uuid2);
   });
 
   test('should return a different uuid', () => {
-    const uuid1 = generateUUID('Some test 1');
-    const uuid2 = generateUUID('Some test 2');
+    const uuid1 = hashString('Some test 1');
+    const uuid2 = hashString('Some test 2');
     expect(uuid1).not.toEqual(uuid2);
   });
 
   test('should return a uuid without prefix', () => {
-    const uuid = generateUUID();
+    const uuid = hashString();
     expect(typeof uuid).toBe('string');
     expect(uuid).toMatch(/^[0-9a-fA-F]{1,8}-[0-9a-fA-F]{1,4}-[0-9a-fA-F]{1,4}-[0-9a-fA-F]{1,4}-[0-9a-fA-F]{1,12}$/);
   });

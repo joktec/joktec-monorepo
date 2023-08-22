@@ -12,14 +12,6 @@ import { InternalServerException } from '../exceptions';
 export const rand = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
 
 /**
- * Create a random string with md5
- * @param content
- */
-export const md5 = (content: string) => {
-  return crypto.createHash('md5').update(content, 'utf8').digest('hex');
-};
-
-/**
  * Generate a random OTP Code with specific length
  * @param otpLength
  */
@@ -31,13 +23,31 @@ export const generateOTP = (otpLength: number = 6): string => {
 };
 
 /**
- * Generate a UUID with scope
+ * Generate a UUID with prefix
+ * @param opts
+ */
+export const generateUUID = (opts?: { prefix?: string }): string => {
+  let result: string = uuidv4();
+  if (opts?.prefix) {
+    const prefix = snakeCase(opts.prefix).toUpperCase();
+    result = `${prefix}-${result}`;
+  }
+  return result;
+};
+
+export const cloneInstance = <T extends object>(origin: Partial<T>, addition: Partial<T> = {}): T => {
+  return Object.assign(Object.create(Object.getPrototypeOf(origin)), origin, addition);
+};
+
+/**
+ * Hash a string (with scope)
  * @param target
  * @param scope
  */
-export const generateUUID = (target: string = uuidv4(), scope: string = 'DEFAULT'): string => {
+export const hashString = (target: string | number = uuidv4(), scope: string = 'DEFAULT'): string => {
   const upperScope: string = snakeCase(scope).toUpperCase();
-  const hashStatus: string = md5(`${target}@${upperScope}`);
+  const content = `${target}@${upperScope}`;
+  const hashStatus: string = crypto.createHash('md5').update(content, 'utf8').digest('hex');
   return [
     hashStatus.substring(0, 8),
     hashStatus.substring(8, 12),
@@ -47,12 +57,8 @@ export const generateUUID = (target: string = uuidv4(), scope: string = 'DEFAULT
   ].join('-');
 };
 
-export const cloneInstance = <T extends object>(origin: Partial<T>, addition: Partial<T> = {}): T => {
-  return Object.assign(Object.create(Object.getPrototypeOf(origin)), origin, addition);
-};
-
 /**
- * Hash a password
+ * Hash a password (with salt)
  * @param password
  * @param salt
  */
