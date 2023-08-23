@@ -52,7 +52,7 @@
     "merge-deep": "^3.0.3",
     "qs": "^6.11.0",
     "retry-axios": "^2.3.0",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@types/axios-curlirize": "^1.3.2",
