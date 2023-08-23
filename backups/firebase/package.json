@@ -44,8 +44,6 @@
     "lodash": "^4.17.21",
     "rxjs": "^7.2.0"
   },
-  "devDependencies": {
-  },
   "lint-staged": {
     "*.ts": [
       "prettier --write --ignore-path ./.prettierignore",
