@@ -1,0 +1,72 @@
+{
+  "name": "@joktec/firebase",
+  "description": "JokTec - Firebase Admin Service",
+  "version": "0.0.0",
+  "private": false,
+  "license": "MIT",
+  "author": "JokTec",
+  "homepage": "https://github.com/joktec/joktec-monorepo.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joktec/joktec-monorepo.git",
+    "directory": "packages/firebase"
+  },
+  "main": "dist/index",
+  "types": "dist/index",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "firebase"
+  ],
+  "scripts": {
+    "clean": "rimraf -rf dist",
+    "purge": "rimraf -rf node_modules",
+    "prebuild": "yarn clean",
+    "build": "nest build -p tsconfig.json",
+    "prepublishOnly": "yarn build",
+    "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
+    "lint": "eslint --fix \"./src/**/*.ts\"",
+    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "dependencies": {
+    "@joktec/core": "^0.0.82",
+    "firebase-admin": "^11.10.1",
+    "lodash": "^4.17.21",
+    "rxjs": "^7.2.0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write --ignore-path ./.prettierignore",
+      "eslint --fix"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "jest": {
+    "passWithNoTests": true,
+    "preset": "ts-jest",
+    "rootDir": "src",
+    "transform": {
+      "^.+\\.(t|s)s$": "ts-jest"
+    },
+    "coverageDirectory": "<rootDir>/../coverage/",
+    "collectCoverageFrom": [
+      "**/*.{ts,js}",
+      "!**/index.ts",
+      "!**/*.{d,enum}.ts"
+    ]
+  }
+}
