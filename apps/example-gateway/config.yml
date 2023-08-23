@@ -36,3 +36,6 @@ mailer:
     pass: joktec123
   sender: 'JokTec <support@joktec.com>'
   templateDir: ./public/templates
+
+firebase:
+  credential: './credentials/lost-and-found-fa321-firebase-adminsdk-ozu5f-da80b722ae.json'

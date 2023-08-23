@@ -1,33 +1,38 @@
 {
-  "name": "@joktec/gateway",
-  "description": "JokTec - Example Gateway",
+  "name": "@joktec/firebase",
+  "description": "JokTec - Firebase Admin Service",
   "version": "0.0.0",
-  "author": "JokTec",
-  "private": true,
+  "private": false,
   "license": "MIT",
+  "author": "JokTec",
+  "homepage": "https://github.com/joktec/joktec-monorepo.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joktec/joktec-monorepo.git",
+    "directory": "packages/firebase"
+  },
+  "main": "dist/index",
+  "types": "dist/index",
+  "typings": "dist/index.d.ts",
   "files": [
-    "dist",
-    "bin",
-    "config.yml",
-    "migrations",
-    "k8s",
-    "Dockerfile"
+    "dist"
   ],
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
+  "keywords": [
+    "firebase"
+  ],
   "scripts": {
-    "clean": "rimraf -rf dist node_modules",
+    "clean": "rimraf -rf dist",
+    "purge": "rimraf -rf node_modules",
+    "prebuild": "yarn clean",
+    "build": "nest build -p tsconfig.json",
+    "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "prebuild": "rimraf dist",
-    "prepublishOnly": "yarn build",
-    "dev": "nest start --watch -p tsconfig.json",
-    "build": "nest build -p tsconfig.json",
-    "start": "node dist/main",
     "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
-    "deploy": "publish-helm --chart-dir ./k8s/chart",
-    "test": "echo 'Test done.'",
+    "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -35,16 +40,22 @@
   },
   "dependencies": {
     "@joktec/core": "^0.0.82",
-    "@joktec/http": "^0.0.84",
-    "@joktec/mailer": "^0.0.80",
-    "@joktec/mongo": "^0.0.106",
-    "@joktec/firebase": "^0.0.0"
+    "firebase-admin": "^11.10.1",
+    "lodash": "^4.17.21",
+    "rxjs": "^7.2.0"
+  },
+  "devDependencies": {
   },
   "lint-staged": {
     "*.ts": [
       "prettier --write --ignore-path ./.prettierignore",
       "eslint --fix"
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   },
   "jest": {
     "passWithNoTests": true,
@@ -59,6 +70,5 @@
       "!**/index.ts",
       "!**/*.{d,enum}.ts"
     ]
-  },
-  "gitHead": "b74397663527dd2bd67714cddaefe03c1b9112d2"
+  }
 }

@@ -24,9 +24,11 @@ import { ProductModule } from './modules/products';
     HttpModule,
     JwtModule,
     MailerModule,
+    // FirebaseModule,
     // Module
     CategoryModule,
     ProductModule, // Microservice
+    // FirebaseExampleModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: TrackInterceptor },
