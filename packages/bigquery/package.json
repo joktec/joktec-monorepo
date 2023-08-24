@@ -31,7 +31,7 @@
     "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
+    "dep:upgrade": "ncu -p yarn -u",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -39,7 +39,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@google-cloud/bigquery": "^5.9.1",
+    "@google-cloud/bigquery": "^7.2.0",
     "@joktec/core": "0.0.83",
     "lodash": "^4.17.21",
     "moment": "^2.29.4"

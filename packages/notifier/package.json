@@ -34,7 +34,7 @@
     "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
+    "dep:upgrade": "ncu -p yarn -u",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -45,8 +45,8 @@
     "@joktec/core": "0.0.83",
     "lodash": "^4.17.21",
     "merge-deep": "^3.0.3",
-    "node-pushnotifications": "^2.0.3",
-    "web-push": "^3.5.0"
+    "node-pushnotifications": "^2.1.0",
+    "web-push": "^3.6.4"
   },
   "devDependencies": {
     "@types/merge-deep": "^3.0.0",

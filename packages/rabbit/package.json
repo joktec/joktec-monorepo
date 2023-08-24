@@ -33,7 +33,7 @@
     "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
+    "dep:upgrade": "ncu -p yarn -u",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -47,7 +47,7 @@
     "object-hash": "^3.0.0"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.5.16"
+    "@types/amqplib": "^0.10.1"
   },
   "lint-staged": {
     "*.ts": [

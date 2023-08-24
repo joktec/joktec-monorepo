@@ -33,7 +33,7 @@
     "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
+    "dep:upgrade": "ncu -p yarn -u",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.83",
-    "kafkajs": "^1.14.0",
+    "kafkajs": "^2.2.4",
     "lodash": "^4.17.21"
   },
   "lint-staged": {

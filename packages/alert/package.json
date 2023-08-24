@@ -35,7 +35,7 @@
     "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
+    "dep:upgrade": "ncu -p yarn -u",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -47,10 +47,10 @@
     "@slack/webhook": "^6.1.0",
     "lodash": "^4.17.21",
     "node-telegram-bot-api": "^0.61.0",
-    "telegraf": "^4.11.2"
+    "telegraf": "^4.12.2"
   },
   "devDependencies": {
-    "@types/node-telegram-bot-api": "^0.61.3"
+    "@types/node-telegram-bot-api": "^0.61.7"
   },
   "lint-staged": {
     "*.ts": [

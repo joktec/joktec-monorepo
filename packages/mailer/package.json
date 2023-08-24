@@ -36,7 +36,7 @@
     "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
+    "dep:upgrade": "ncu -p yarn -u",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -45,13 +45,12 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.83",
-    "aws-sdk": "^2.1267.0",
-    "handlebars": "^4.7.7",
+    "handlebars": "^4.7.8",
     "lodash": "^4.17.21",
-    "nodemailer": "^6.9.1"
+    "nodemailer": "^6.9.4"
   },
   "devDependencies": {
-    "@types/nodemailer": "^6.4.7"
+    "@types/nodemailer": "^6.4.9"
   },
   "lint-staged": {
     "*.ts": [

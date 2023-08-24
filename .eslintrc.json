@@ -36,22 +36,10 @@
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/naming-convention": "off",
+    "@typescript-eslint/no-magic-numbers": "off",
     "@typescript-eslint/no-duplicate-imports": "error",
     "unused-imports/no-unused-imports": "error",
     "no-prototype-builtins": "off",
-    "@typescript-eslint/no-magic-numbers": [
-      "warn",
-      {
-        "ignore": [
-          0,
-          1,
-          1000,
-          10000,
-          15000,
-          30000
-        ]
-      }
-    ],
     "unused-imports/no-unused-vars": [
       "warn",
       {
