@@ -1,6 +1,7 @@
 export * from './abstractions';
 export * from './base';
 export * from './breaker';
+export * from './bull';
 export * from './client';
 export * from './config';
 export * from './constants';

@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
-import { safeLoad } from 'js-yaml';
+import { load } from 'js-yaml';
 import { get, pick, set, snakeCase } from 'lodash';
 import { flattenKeys } from '../utils';
 
@@ -26,7 +26,7 @@ const DOPPLER_CONFIG_FILENAME: string = 'doppler.yaml';
 
 export const initConfig = (): AppConfig => {
   const env: ENV = (process.env['NODE_ENV'] ?? ENV.DEV) as ENV;
-  const appCfg = safeLoad(readFileSync(YAML_CONFIG_FILENAME, 'utf8')) as object;
+  const appCfg = load(readFileSync(YAML_CONFIG_FILENAME, 'utf8')) as object;
   const paths: string[] = flattenKeys(appCfg, null);
 
   let dopplerSecret: object = {};
