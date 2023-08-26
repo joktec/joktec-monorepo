@@ -42,8 +42,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.398.0",
-    "@aws-sdk/s3-request-presigner": "^3.398.0",
+    "@aws-sdk/client-s3": "^3.400.0",
+    "@aws-sdk/s3-request-presigner": "^3.400.0",
     "@joktec/core": "0.0.83",
     "image-downloader": "^4.3.0",
     "lodash": "^4.17.21",

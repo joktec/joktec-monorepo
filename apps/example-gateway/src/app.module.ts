@@ -6,7 +6,6 @@ import {
   JwtModule,
   Module,
   ResponseInterceptor,
-  TrackInterceptor,
 } from '@joktec/core';
 import { HttpModule } from '@joktec/http';
 import { MailerModule } from '@joktec/mailer';
@@ -31,7 +30,6 @@ import { ProductModule } from './modules/products';
     // FirebaseExampleModule,
   ],
   providers: [
-    { provide: APP_INTERCEPTOR, useClass: TrackInterceptor },
     { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
     { provide: APP_FILTER, useClass: GatewayExceptionsFilter },
   ],

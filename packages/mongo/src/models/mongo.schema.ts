@@ -2,13 +2,15 @@ import { ApiHideProperty, ApiProperty, Exclude, Field, Type } from '@joktec/core
 import { mongoose, prop } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 
-export interface MongoSchema extends Base<string> {}
-
-export abstract class MongoSchema extends TimeStamps {
+export abstract class MongoSchema extends TimeStamps implements Base<string> {
   @ApiProperty()
   @Field(() => String, { nullable: true })
   @Type(() => String)
   _id!: string;
+
+  @Exclude()
+  @ApiHideProperty()
+  id: string;
 
   @prop({ type: Date, default: new Date(), immutable: true })
   @ApiProperty()

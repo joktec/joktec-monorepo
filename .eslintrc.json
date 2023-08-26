@@ -37,7 +37,7 @@
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/naming-convention": "off",
     "@typescript-eslint/no-magic-numbers": "off",
-    "@typescript-eslint/no-duplicate-imports": "error",
+    "no-duplicate-imports": "error",
     "unused-imports/no-unused-imports": "error",
     "no-prototype-builtins": "off",
     "unused-imports/no-unused-vars": [

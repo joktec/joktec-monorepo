@@ -45,11 +45,11 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.83",
-    "@typegoose/typegoose": "^10.3.2",
+    "@typegoose/typegoose": "^11.4.1",
     "dot-object": "^2.1.4",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "mongoose": "^6.10.0",
+    "mongoose": "^7.4.5",
     "mongoose-beautiful-unique-validation": "^7.1.1"
   },
   "devDependencies": {
