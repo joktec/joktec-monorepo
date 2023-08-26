@@ -1,0 +1,44 @@
+gateway:
+  port: 9010
+  swagger:
+    server: http://localhost:9010
+
+log:
+  level: info
+  useFilter: false
+
+bull:
+  queue: [ order ]
+  host: localhost
+  port: 6379
+
+misc:
+  cdnUrl: http://127.0.0.1:9000/apartment
+
+guard:
+  secretKey: $ecr3tK4y
+  expired: 1 year
+  pending: 30
+  limit: 5
+
+mongo:
+  host: localhost
+  port: 27017
+  username: joktec
+  password: joktec123
+  database: sample_db
+  connectTimeout: 20000
+  directConnection: true
+
+storage:
+  region: ap-southeast-1
+  accessKey: root
+  secretKey: root123456
+  bucket: apartment
+  endpoint: http://127.0.0.1:9000
+  useSSL: false
+  s3ForcePathStyle: true
+  linkFormat: http://127.0.0.1:9000/apartment/<key>
+
+http:
+  timeout: 30000

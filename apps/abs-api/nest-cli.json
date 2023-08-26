@@ -1,0 +1,12 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": [
+      "config.yml",
+      "public/**/*",
+      "src/**/*.proto"
+    ]
+  },
+  "watchAssets": true
+}
