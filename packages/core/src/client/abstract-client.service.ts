@@ -19,7 +19,10 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
 
-  protected constructor(protected service: string, protected configClass: Constructor<IConfig>) {}
+  protected constructor(
+    protected service: string,
+    protected configClass: Constructor<IConfig>,
+  ) {}
 
   async onModuleInit(): Promise<void> {
     this.logService.setContext(this.constructor.name);
@@ -50,7 +53,7 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
 
     this.logService.debug('`%s` %s is %s', conId, this.service, beginMessage);
     this.clients[conId] = await this.init(this.configs[conId]);
-    this.logService.debug('`%s` %s %s with config:\n%j', conId, this.service, endMessage, this.configs[conId]);
+    this.logService.debug(this.configs[conId], '`%s` %s %s with config', conId, this.service, endMessage);
 
     await this.start(this.clients[conId], conId);
   }

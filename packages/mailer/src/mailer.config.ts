@@ -1,4 +1,16 @@
-import { ClientConfig, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, toBool, toInt, Type } from '@joktec/core';
+import {
+  ClientConfig,
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  LogService,
+  toBool,
+  toInt,
+  Type,
+} from '@joktec/core';
+import shared from 'nodemailer/lib/shared';
 
 export enum MailerServiceType {
   SELF = 'self',
@@ -65,6 +77,18 @@ export class MailerConfig extends ClientConfig {
         pass: props?.auth?.pass,
       }),
     });
+  }
+
+  bindingLogger(logger: LogService): shared.Logger {
+    return {
+      level: lv => logger.trace(lv),
+      trace: params => logger.trace({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
+      debug: params => logger.debug({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
+      info: params => logger.info({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
+      warn: params => logger.warn({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
+      error: params => logger.error({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
+      fatal: params => logger.fatal({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
+    };
   }
 }
 

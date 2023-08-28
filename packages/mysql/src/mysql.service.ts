@@ -15,7 +15,6 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
 
   @Retry(RETRY_OPTS)
   protected async init(config: MysqlConfig): Promise<Sequelize> {
-    this.logService.info('MysqlConfig: %j', config);
     const connection = pick(config, ['host', 'port', 'username', 'password', 'database']);
     const options: SequelizeOptions = {
       ...connection,

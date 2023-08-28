@@ -7,11 +7,14 @@ import { CacheConfig } from '../cache.config';
 export class LocalStore implements ICacheStore {
   private client: LocalStorage;
 
-  constructor(config: CacheConfig, private logger: LogService) {
+  constructor(
+    config: CacheConfig,
+    private logger: LogService,
+  ) {
     const cacheDir = config.cacheDir || 'cache';
     this.client = storage.create({
       dir: path.posix.join(cacheDir, config.conId),
-      logging: (...args: any[]) => this.logger.info(`Local logger: %j`, args),
+      logging: (...args: any[]) => this.logger.info(args, `Local logger init`),
     });
   }
 

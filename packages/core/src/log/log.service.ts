@@ -10,17 +10,11 @@ import { createGoogleCloudLoggingStream } from './googleLog/googleLog';
 import { LogConfig } from './log.config';
 import { createLogstashStream } from './logstash/logstash';
 import { createLokiStream } from './loki/loki';
+import { createMongoLoggingStream } from './mongodb/pino-mongo';
 
-export const createPinoHttp = (configService: ConfigService): LoggerParam => {
+export const createPinoHttp = async (configService: ConfigService): Promise<LoggerParam> => {
   const config: LogConfig = configService.parse(LogConfig, 'log');
   const appName = configService.get('name').replace('@', '').replace('/', '-');
-
-  const streams: DestinationStream[] = [createConsoleStream()];
-  if (config?.logStash?.enable) streams.push(createLogstashStream(appName, config.logStash));
-  if (config?.fluentd?.enable) streams.push(createFluentdStream(appName, config.fluentd));
-  if (config?.cloudWatch?.enable) streams.push(createCloudWatchStream(appName, config.cloudWatch));
-  if (config?.googleLog?.enable) streams.push(createGoogleCloudLoggingStream(appName, config.googleLog));
-  if (config?.loki?.enable) streams.push(createLokiStream(appName, config.loki));
 
   const basePino: PinoHttpOptions = { base: { version: configService.get('version') } };
   const prettyPino: PinoHttpOptions = {
@@ -35,8 +29,16 @@ export const createPinoHttp = (configService: ConfigService): LoggerParam => {
     },
   };
 
-  const isProd = configService.get<string>('env') === ENV.PROD;
-  const pinoConfig: PinoHttpOptions = isProd || config.output === 'json' ? basePino : prettyPino;
+  const useJson = configService.get<string>('env') === ENV.PROD || config.output === 'json';
+  const pinoConfig: PinoHttpOptions = useJson ? basePino : prettyPino;
+
+  const streams: DestinationStream[] = [createConsoleStream()];
+  if (config?.logStash?.enable) streams.push(createLogstashStream(appName, config.logStash));
+  if (config?.fluentd?.enable) streams.push(createFluentdStream(appName, config.fluentd));
+  if (config?.cloudWatch?.enable) streams.push(createCloudWatchStream(appName, config.cloudWatch));
+  if (config?.googleLog?.enable) streams.push(createGoogleCloudLoggingStream(appName, config.googleLog));
+  if (config?.loki?.enable) streams.push(createLokiStream(appName, config.loki));
+  if (config?.mongo?.enable && useJson) streams.push(await createMongoLoggingStream(appName, config.mongo));
 
   return {
     pinoHttp: [

@@ -1048,6 +1048,13 @@
   dependencies:
     "@bull-board/api" "5.8.0"
 
+"@burakbey/pino-mongodb@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@burakbey/pino-mongodb/-/pino-mongodb-1.0.1.tgz#00fccf9cf1a397b2e89642faf2f647e5ea0a0c64"
+  integrity sha512-0gMm/LDX+rf7SnQUkf+cqgJnMBQPibT2MiPZyWN8fMG1CeLecRvxSWMwEHL5WU6dRmM5CPBy5n+BUvBskU40vQ==
+  dependencies:
+    mongodb "^5.7.0"
+
 "@colors/colors@1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@colors/colors/-/colors-1.5.0.tgz#bb504579c1cae923e6576a4f5da43d25f97bdbd9"
@@ -1322,10 +1329,10 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.47.0.tgz#5478fdf443ff8158f9de171c704ae45308696c7d"
   integrity sha512-P6omY1zv5MItm93kLM8s2vr1HICJH8v0dvddDhysbIuZ+vcjOHg5Zbkf1mTkcmi2JA9oBG2anOkRnW8WJTS8Og==
 
-"@faker-js/faker@^8.0.2":
-  version "8.0.2"
-  resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-8.0.2.tgz#bab698c5d3da9c52744e966e0e3eedb6c8b05c37"
-  integrity sha512-Uo3pGspElQW91PCvKSIAXoEgAUlRnH29sX2/p89kg7sP1m2PzCufHINd0FhTXQf6DYGiUlVncdSPa2F9wxed2A==
+"@faker-js/faker@^7.5.0":
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/@faker-js/faker/-/faker-7.6.0.tgz#9ea331766084288634a9247fcd8b84f16ff4ba07"
+  integrity sha512-XK6BTq1NDMo9Xqw/YkYyGjSsg44fbNwYRx7QK2CuoQgyy+f1rrTDHoExVM5PsyXCtfl2vs2vVJ0MN0yN6LppRw==
 
 "@fastify/busboy@^1.2.1":
   version "1.2.1"
@@ -2162,6 +2169,13 @@
   integrity sha512-6RU5ol2lDtO8bD9Yxe6CZkl0DArdv0qkuoZC+ZwowU+cdRlVE1157wjCmlA5Rsf1Xc/brACnsZa5PZpEDfTFFg==
   dependencies:
     make-plural "^7.0.0"
+
+"@mongodb-js/saslprep@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@mongodb-js/saslprep/-/saslprep-1.1.0.tgz#022fa36620a7287d17acd05c4aae1e5f390d250d"
+  integrity sha512-Xfijy7HvfzzqiOAhAepF4SGN5e9leLkMvg/OPOF97XemjfVCYN/oWa75wnkc6mltMSTwY+XlbhWgUOJmkFspSw==
+  dependencies:
+    sparse-bitfield "^3.0.3"
 
 "@msgpackr-extract/msgpackr-extract-darwin-arm64@2.2.0":
   version "2.2.0"
@@ -3695,7 +3709,7 @@
   resolved "https://registry.yarnpkg.com/@types/linkify-it/-/linkify-it-3.0.2.tgz#fd2cd2edbaa7eaac7e7f3c1748b52a19143846c9"
   integrity sha512-HZQYqbiFVWufzCwexrvh694SOim8z2d+xJl5UNamcvQFejLY/2YUtzXHYi3cHdI7PMlS8ejH2slRAOJQ32aNbA==
 
-"@types/lodash@^4.14.197":
+"@types/lodash@^4.14.194", "@types/lodash@^4.14.197":
   version "4.14.197"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.197.tgz#e95c5ddcc814ec3e84c891910a01e0c8a378c54b"
   integrity sha512-BMVOiWs0uNxHVlHBgzTIqJYmj+PgCo4euloGF+5m4okL3rEYzM2EEv78mw8zWSMM57dM7kVIgJ2QDvwHSoCI5g==
@@ -10688,6 +10702,17 @@ mongodb@5.7.0:
   optionalDependencies:
     saslprep "^1.0.3"
 
+mongodb@^5.7.0:
+  version "5.8.1"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-5.8.1.tgz#dc201adfbd6c6d73401cdcf12ebdb75f14771faf"
+  integrity sha512-wKyh4kZvm6NrCPH8AxyzXm3JBoEf4Xulo0aUWh3hCgwgYJxyQ1KLST86ZZaSWdj6/kxYUA3+YZuyADCE61CMSg==
+  dependencies:
+    bson "^5.4.0"
+    mongodb-connection-string-url "^2.6.0"
+    socks "^2.7.1"
+  optionalDependencies:
+    "@mongodb-js/saslprep" "^1.1.0"
+
 mongoose-beautiful-unique-validation@^7.1.1:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/mongoose-beautiful-unique-validation/-/mongoose-beautiful-unique-validation-7.1.1.tgz#50eaf88e395f9b194cd29ad76913cd9ebd515653"
@@ -10903,7 +10928,7 @@ nestjs-pino@^3.4.0:
   resolved "https://registry.yarnpkg.com/nestjs-pino/-/nestjs-pino-3.4.0.tgz#ef09d65eecda66890f78feb46215a9740edcef2d"
   integrity sha512-L79tk+WqVJApGxD4K40srSHopwlBX8WVPoIJtVhWaxJUfk9ND6eZp7kmgdgwQw8PpYUeoeOhS1g2j0Ep3c0NJA==
 
-nestjs-seeder@^0.3.2:
+nestjs-seeder@^0.3.1:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/nestjs-seeder/-/nestjs-seeder-0.3.2.tgz#71a96fa10f9b8ebdb6e82a3832f4882af5b435f4"
   integrity sha512-dCuxmhWdjgAn1HT0K7ExuCmKQc7HCGihFgzYF4keVJkR94d+diVQQg9/K1aQFnBkH9XVuugUqi4OClfwt09XVQ==

@@ -13,7 +13,7 @@ import { MetricModule } from './metric';
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (cfg: ConfigService) => createPinoHttp(cfg),
+      useFactory: async (cfg: ConfigService) => createPinoHttp(cfg),
     }),
     ServeStaticModule.forRootAsync({
       imports: [ConfigModule],

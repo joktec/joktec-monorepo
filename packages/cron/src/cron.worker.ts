@@ -16,7 +16,10 @@ export abstract class CronWorker<C extends CronModel> implements OnModuleInit {
   private config: CronWorkerConfig;
   private cronQueue: CronQueue<CronModel>;
 
-  protected constructor(private context: string, private configKey: string) {}
+  protected constructor(
+    private context: string,
+    private configKey: string,
+  ) {}
 
   onModuleInit() {
     if (!this.getConfig().enable) return;
@@ -71,18 +74,15 @@ export abstract class CronWorker<C extends CronModel> implements OnModuleInit {
       return;
     }
 
-    this.logService.info('Next cron %j will be processed', cron);
+    this.logService.info(cron, 'Next cron %s will be processed', cron.id);
     this.cronQueue.unshift(nextCron);
   }
 
   private async processOnCronDoneHook(cron: C) {
     if (cron.status == CronStatus.DONE) {
       await this.onDoneHook(cron);
-      this.logService.info(
-        'Cron %j sis completed in %s minutes',
-        cron,
-        ((cron.updatedAt.getTime() - cron.createdAt.getTime()) / 1000 / 60).toFixed(2),
-      );
+      const execTime = ((cron.updatedAt.getTime() - cron.createdAt.getTime()) / 1000 / 60).toFixed(2);
+      this.logService.info(cron, 'Cron %s sis completed in %s minutes', cron.id, execTime);
     }
   }
 

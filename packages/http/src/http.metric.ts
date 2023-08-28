@@ -68,8 +68,8 @@ export const HttpMetricDecorator = () =>
         httpMetric.trackStatus('FAILED', path, err);
         if (err.response?.data) {
           const { status, data } = err.response;
-          const msg = '`%s` http request to %s error with status [%s] and data: %j';
-          services.pinoLogger.error(msg, conId, path, status, data);
+          const msg = '`%s` http request to %s error with status %s';
+          services.pinoLogger.error({ data }, msg, conId, path, status);
         } else {
           services.pinoLogger.error(err, '`%s` http request to %s error', conId, path);
         }

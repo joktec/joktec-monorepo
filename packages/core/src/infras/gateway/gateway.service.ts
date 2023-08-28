@@ -45,7 +45,7 @@ export class GatewayService {
       logger.info(`🚀 Application %s is running on %s`, gatewayName, joinUrl(baseUrl, { paths: [contextPath] }));
 
       if (gatewayConfig.swagger !== 'off') {
-        logger.info(`🗒️ Access API Document at %s`, joinUrl(baseUrl, { paths: [contextPath, 'swagger'] }));
+        logger.info(`📕️ Access API Document at %s`, joinUrl(baseUrl, { paths: [contextPath, 'swagger'] }));
       }
 
       if (config.get('bull.host')) {

@@ -27,24 +27,16 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
         user: config.auth.user,
         pass: config.auth.pass,
       },
-      logger: {
-        level: lv => this.logService.trace(lv),
-        trace: msg => this.logService.trace(msg),
-        debug: msg => this.logService.debug(msg),
-        info: msg => this.logService.info(msg),
-        warn: msg => this.logService.warn(msg),
-        error: msg => this.logService.error(msg),
-        fatal: msg => this.logService.fatal(msg),
-      },
+      logger: config.bindingLogger(this.logService),
     });
   }
 
   async start(client: Mailer, conId: string = DEFAULT_CON_ID): Promise<void> {
     try {
       await client.verify();
-      this.logService.info(`Mailer client ${conId} is ready`);
+      this.logService.info('Mailer client `%s` is ready', conId);
     } catch (err) {
-      this.logService.error(err, `Mailer client ${conId} is not ready`);
+      this.logService.error(err, 'Mailer client `%s` is not ready', conId);
       await this.clientInit(this.getConfig(conId), false);
     }
   }
