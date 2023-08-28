@@ -31,14 +31,29 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "seed": "node dist/app.seeder",
+    "seed:refresh": "node dist/app.seeder --refresh"
   },
   "dependencies": {
     "@joktec/core": "^0.0.83",
     "@joktec/http": "^0.0.85",
     "@joktec/mailer": "^0.0.81",
     "@joktec/mongo": "^0.0.107",
-    "@joktec/firebase": "^0.0.1"
+    "@joktec/firebase": "^0.0.1",
+    "dot-object": "^2.1.4",
+    "gravatar": "^1.8.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "ms": "^2.1.3",
+    "url-parse": "^1.5.10"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^7.5.0",
+    "@types/dot-object": "^2.1.2",
+    "@types/gravatar": "^1.8.3",
+    "@types/lodash": "^4.14.194",
+    "nestjs-seeder": "^0.3.1"
   },
   "lint-staged": {
     "*.ts": [

@@ -112,7 +112,7 @@ export class Room extends MongoSchema {
   @ApiPropertyOptional({ type: String, isArray: true })
   settingIds!: Ref<Setting, string>[];
 
-  @prop({ required: true, default: [] }, PropType.ARRAY)
+  @prop({ type: RoomSchedule, required: true, default: [] }, PropType.ARRAY)
   @Type(() => RoomSchedule)
   @IsArray()
   @ValidateNested({ each: true })
