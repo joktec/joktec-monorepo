@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import { Params as LoggerParam } from 'nestjs-pino';
 import pino, { DestinationStream, StreamEntry } from 'pino';
 import { Options as PinoHttpOptions } from 'pino-http';
@@ -42,7 +43,21 @@ export const createPinoHttp = async (configService: ConfigService): Promise<Logg
 
   return {
     pinoHttp: [
-      { ...pinoConfig, level: config.level, name: appName, enabled: true, autoLogging: false },
+      {
+        ...pinoConfig,
+        level: config.level,
+        name: appName,
+        enabled: true,
+        autoLogging: false,
+        formatters: {
+          log: (object: Record<string, unknown>): Record<string, unknown> => {
+            return {
+              context: object.context,
+              args: omit(object, ['context']),
+            };
+          },
+        },
+      },
       pino.multistream(streams.map<StreamEntry>(stream => ({ level: config.level, stream }))),
     ],
   };

@@ -1,7 +1,7 @@
 import { ClientConfig, toBool } from '@joktec/core';
 import mergeDeep from 'merge-deep';
 import PushNotifications from 'node-pushnotifications';
-import webPush from 'web-push';
+// import webPush from 'web-push';
 
 export class NotifierConfig extends ClientConfig implements PushNotifications.Settings {
   gcm?: {
@@ -52,7 +52,7 @@ export class NotifierConfig extends ClientConfig implements PushNotifications.Se
       client_secret?: string;
     };
   };
-  web?: webPush.RequestOptions;
+  // web?: webPush.RequestOptions;
   isAlwaysUseFCM!: boolean;
 
   constructor(props: NotifierConfig) {

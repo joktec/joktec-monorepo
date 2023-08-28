@@ -4,7 +4,7 @@ gateway:
     server: http://localhost:9010
 
 log:
-  level: info
+  level: debug
   useFilter: false
   # output: json
   logStash:

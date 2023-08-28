@@ -82,12 +82,12 @@ export class MailerConfig extends ClientConfig {
   bindingLogger(logger: LogService): shared.Logger {
     return {
       level: lv => logger.trace(lv),
-      trace: params => logger.trace({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
-      debug: params => logger.debug({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
-      info: params => logger.info({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
-      warn: params => logger.warn({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
-      error: params => logger.error({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
-      fatal: params => logger.fatal({ smtp: params }, 'Mailer client `%s` connecting', this.conId),
+      trace: params => logger.trace(params, 'Mailer client `%s` connecting', this.conId),
+      debug: params => logger.debug(params, 'Mailer client `%s` connecting', this.conId),
+      info: params => logger.info(params, 'Mailer client `%s` connecting', this.conId),
+      warn: params => logger.warn(params, 'Mailer client `%s` connecting', this.conId),
+      error: params => logger.error(params, 'Mailer client `%s` connecting', this.conId),
+      fatal: params => logger.fatal(params, 'Mailer client `%s` connecting', this.conId),
     };
   }
 }
