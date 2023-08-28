@@ -41,6 +41,7 @@
     "@joktec/mailer": "^0.0.81",
     "@joktec/mongo": "^0.0.107",
     "@joktec/firebase": "^0.0.1",
+    "@joktec/storage": "^0.0.83",
     "dot-object": "^2.1.4",
     "gravatar": "^1.8.2",
     "lodash": "^4.17.21",
@@ -49,7 +50,7 @@
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
-    "@faker-js/faker": "^7.5.0",
+    "@faker-js/faker": "^8.0.2",
     "@types/dot-object": "^2.1.2",
     "@types/gravatar": "^1.8.3",
     "@types/lodash": "^4.14.194",
