@@ -6,7 +6,7 @@ gateway:
 log:
   level: debug
   useFilter: false
-  # output: json
+  format: pretty
   logStash:
     host: 51.222.44.17
     port: 31658

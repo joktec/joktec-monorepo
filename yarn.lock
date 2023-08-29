@@ -3992,7 +3992,7 @@
   dependencies:
     "@types/node" "*"
 
-"@types/web-push@^3.3.2":
+"@types/web-push@^3.6.0":
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/@types/web-push/-/web-push-3.6.0.tgz#8411cc58d050e877f36713ed58a499d942a11fab"
   integrity sha512-Kk23yDmYheAcQ0ALS9YE7MY7lqwaIfVQ67zVEFeqbLw+/g8jlYTg9o/zYJOk5YhebWrq2Cr/Lbh4RoYfzrn0ww==

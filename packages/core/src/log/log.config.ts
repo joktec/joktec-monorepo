@@ -8,7 +8,7 @@ import { PinoMongoConfig } from './mongodb/pino-mongo.config';
 
 export class LogConfig {
   level: LogLevel;
-  output: 'pretty' | 'json';
+  format: 'pretty' | 'json';
   contexts: string | string[];
   fluentd?: FluentdConfig;
   logStash?: LogStashConfig;
@@ -19,7 +19,7 @@ export class LogConfig {
 
   constructor(props: LogConfig) {
     this.level = props?.level ?? 'info';
-    this.output = props?.output || 'pretty';
+    this.format = props?.format || 'pretty';
     this.contexts = this.setSearchValue(props?.contexts);
     this.logStash = props?.logStash ? new LogStashConfig(props?.logStash) : null;
     this.fluentd = props?.fluentd ? new FluentdConfig(props?.fluentd) : null;

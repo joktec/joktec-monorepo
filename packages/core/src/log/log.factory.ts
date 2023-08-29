@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { isEmpty, omit, trim } from 'lodash';
 import { Params as LoggerParam } from 'nestjs-pino';
 import pino, { DestinationStream, StreamEntry } from 'pino';
 import { Options as PinoHttpOptions } from 'pino-http';
@@ -30,7 +30,7 @@ export const createPinoHttp = async (configService: ConfigService): Promise<Logg
     },
   };
 
-  const useJson = configService.get<string>('env') === ENV.PROD || config.output === 'json';
+  const useJson = configService.get<string>('env') === ENV.PROD || config.format === 'json';
   const pinoConfig: PinoHttpOptions = useJson ? basePino : prettyPino;
 
   const streams: DestinationStream[] = [createConsoleStream()];
@@ -50,11 +50,22 @@ export const createPinoHttp = async (configService: ConfigService): Promise<Logg
         enabled: true,
         autoLogging: false,
         formatters: {
-          log: (object: Record<string, unknown>): Record<string, unknown> => {
-            return {
-              context: object.context,
-              args: omit(object, ['context']),
-            };
+          level: (label: string, _: number): object => {
+            return { level: label.toUpperCase() };
+          },
+          log: (object: Record<string, any>): Record<string, any> => {
+            const args = omit(object, ['context', 'err']);
+            const result: Record<string, any> = { context: object.context };
+
+            if (object.err) {
+              result.err = object.err;
+              if (result.err?.stack) {
+                result.err.stack = result.err.stack.split('\n').map(trim);
+              }
+            }
+
+            if (!isEmpty(args)) result.args = args;
+            return result;
           },
         },
       },
