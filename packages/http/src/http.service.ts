@@ -27,10 +27,10 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     curlirize(myAxiosInstance, (result, err) => {
       const { command } = result;
       if (err) {
-        this.logService.error(err);
+        this.logService.error(err, 'Curlirize error:\n%s', command);
         return;
       }
-      this.logService.info(command);
+      this.logService.info('Curlirize:\n%s', command);
     });
     return myAxiosInstance;
   }

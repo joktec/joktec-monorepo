@@ -4,7 +4,7 @@ gateway:
     server: http://localhost:9010
 
 log:
-  level: debug
+  level: info
   useFilter: false
   format: pretty
   logStash:
@@ -15,10 +15,13 @@ log:
     enable: false
     host: https://logs-prod-011222.grafana.net
   mongo:
-    enable: true
+    enable: false
     uri: mongodb://joktec:joktec123@localhost:27017/?authSource=sample_db
     database: sample_db
     collection: logs
+  logtail:
+    enable: true
+    token: v9YTJSReTAyV6cSRff3SJ4UE
 
 bull:
   queue: [ order ]
@@ -67,4 +70,4 @@ mailer:
   templateDir: ./public/templates
 
 firebase:
-  credential: './credentials/lost-and-found-fa321-firebase-adminsdk-ozu5f-da80b722ae.json'
+  credential: './credentials/joktec-firebase-adminsdk-s49hk-1e6cd820c7.json'

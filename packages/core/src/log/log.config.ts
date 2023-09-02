@@ -3,6 +3,7 @@ import { FluentdConfig } from './fluentd/fluentd.config';
 import { GoogleLogConfig } from './googleLog/googleLog.config';
 import { LogLevel } from './log.level';
 import { LogStashConfig } from './logstash/logstash.config';
+import { LogtailConfig } from './logtail/logtail.config';
 import { LokiConfig } from './loki/loki.config';
 import { PinoMongoConfig } from './mongodb/pino-mongo.config';
 
@@ -16,6 +17,7 @@ export class LogConfig {
   googleLog?: GoogleLogConfig;
   loki?: LokiConfig;
   mongo?: PinoMongoConfig;
+  logtail?: LogtailConfig;
 
   constructor(props: LogConfig) {
     this.level = props?.level ?? 'info';
@@ -27,6 +29,7 @@ export class LogConfig {
     this.googleLog = props?.googleLog ? new GoogleLogConfig(props?.googleLog) : null;
     this.loki = props?.loki ? new LokiConfig(props?.loki) : null;
     this.mongo = props?.mongo ? new PinoMongoConfig(props?.mongo) : null;
+    this.logtail = props?.logtail ? new LogtailConfig(props?.logtail) : null;
   }
 
   setSearchValue(contexts: string | string[]): string {

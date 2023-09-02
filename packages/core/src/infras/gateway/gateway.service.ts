@@ -7,6 +7,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as bodyParser from 'body-parser';
 import Queue from 'bull';
 import csurf from 'csurf';
+import basicAuth from 'express-basic-auth';
 import helmet from 'helmet';
 import { GlobalOptions } from '../../base';
 import { ConfigService } from '../../config';
@@ -71,6 +72,7 @@ export class GatewayService {
       .addServer(gatewayConfig.swagger?.server || `http://localhost:${port}`)
       .addBearerAuth();
 
+    app.use('/swagger', basicAuth({ challenge: true, users: { admin: 'p4ssw0rd' } }));
     const document = SwaggerModule.createDocument(app, options.build());
     SwaggerModule.setup('swagger', app, document, {
       swaggerUrl: 'swagger',
@@ -93,6 +95,7 @@ export class GatewayService {
     });
 
     if (host && queues?.length) {
+      app.use('/bulls', basicAuth({ challenge: true, users: { admin: 'p4ssw0rd' } }));
       const serverAdapter = new ExpressAdapter();
       serverAdapter.setBasePath('/bulls');
       createBullBoard({ queues, serverAdapter });

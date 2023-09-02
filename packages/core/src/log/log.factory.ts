@@ -7,9 +7,10 @@ import { ConfigService, ENV } from '../config';
 import { createCloudWatchStream } from './cloudwatch/cloudwatch';
 import { createConsoleStream } from './console/console';
 import { createFluentdStream } from './fluentd/fluentd';
-import { createGoogleCloudLoggingStream } from './googleLog/googleLog';
+import { createGoogleLoggingStream } from './googleLog/googleLog';
 import { LogConfig } from './log.config';
 import { createLogstashStream } from './logstash/logstash';
+import { createLogtailStream } from './logtail/logtail';
 import { createLokiStream } from './loki/loki';
 import { createMongoLoggingStream } from './mongodb/pino-mongo';
 
@@ -37,8 +38,9 @@ export const createPinoHttp = async (configService: ConfigService): Promise<Logg
   if (config?.logStash?.enable) streams.push(createLogstashStream(appName, config.logStash));
   if (config?.fluentd?.enable) streams.push(createFluentdStream(appName, config.fluentd));
   if (config?.cloudWatch?.enable) streams.push(createCloudWatchStream(appName, config.cloudWatch));
-  if (config?.googleLog?.enable) streams.push(createGoogleCloudLoggingStream(appName, config.googleLog));
+  if (config?.googleLog?.enable) streams.push(createGoogleLoggingStream(appName, config.googleLog));
   if (config?.loki?.enable) streams.push(createLokiStream(appName, config.loki));
+  if (config?.logtail?.enable) streams.push(createLogtailStream(appName, config.logtail));
   if (config?.mongo?.enable && useJson) streams.push(await createMongoLoggingStream(appName, config.mongo));
 
   return {
@@ -50,9 +52,6 @@ export const createPinoHttp = async (configService: ConfigService): Promise<Logg
         enabled: true,
         autoLogging: false,
         formatters: {
-          level: (label: string, _: number): object => {
-            return { level: label.toUpperCase() };
-          },
           log: (object: Record<string, any>): Record<string, any> => {
             const args = omit(object, ['context', 'err']);
             const result: Record<string, any> = { context: object.context };

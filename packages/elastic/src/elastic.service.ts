@@ -46,7 +46,6 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
       headers: { 'Content-Type': 'application/json' },
       curlirize: toBool(req.curlirize, false),
     });
-    this.logService.debug('Query URL: %s/%s', config.baseURL, config.url);
     const res = await this.getClient(conId).request<EsSearchResponse<TDoc, TAgg>>(config);
     return res.data;
   }
@@ -60,7 +59,6 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
       headers: { 'Content-Type': 'application/json' },
       curlirize: toBool(req.curlirize, false),
     });
-    this.logService.debug('Query URL: %s/%s', config.baseURL, config.url);
     const res = await this.getClient(conId).request<EsWriteResponse>(config);
     return res.data;
   }
@@ -73,7 +71,6 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
       headers: { 'Content-Type': 'application/json' },
       curlirize: toBool(req.curlirize, false),
     });
-    this.logService.debug('Query URL: %s/%s', config.baseURL, config.url);
     const res = await this.getClient(conId).request<EsGetResponse<TDoc>>(config);
     return res.data;
   }
@@ -86,7 +83,6 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
       headers: { 'Content-Type': 'application/json' },
       curlirize: toBool(req.curlirize, false),
     });
-    this.logService.debug('Query URL: %s/%s', config.baseURL, config.url);
     const res = await this.getClient(conId).request<EsWriteResponse>(config);
     return res.data;
   }
