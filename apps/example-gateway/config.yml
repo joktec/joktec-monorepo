@@ -2,6 +2,9 @@ gateway:
   port: 9010
   swagger:
     server: http://localhost:9010
+    auth:
+      username: admin
+      password: p4ssw0rd
 
 log:
   level: info
@@ -27,6 +30,10 @@ bull:
   queue: [ order ]
   host: localhost
   port: 6379
+  bullBoard:
+    path: bulls
+    username: admin
+    password: p4ssw0rd
 
 misc:
   cdnUrl: http://127.0.0.1:9000/apartment

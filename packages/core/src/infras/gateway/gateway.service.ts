@@ -10,8 +10,10 @@ import csurf from 'csurf';
 import basicAuth from 'express-basic-auth';
 import helmet from 'helmet';
 import { GlobalOptions } from '../../base';
+import { BullConfig } from '../../bull';
 import { ConfigService } from '../../config';
 import { LogService } from '../../log';
+import { SwaggerConfig } from '../../swagger';
 import { joinUrl, toArray, toInt } from '../../utils';
 import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
 
@@ -34,8 +36,8 @@ export class GatewayService {
     app.useGlobalInterceptors(...toArray(opts?.interceptors));
     app.useGlobalFilters(...toArray(opts?.filters));
 
-    GatewayService.setupSwagger(app);
-    GatewayService.setUpBullBoard(app);
+    const useSwagger = GatewayService.setupSwagger(app);
+    const useBullBoard = GatewayService.setUpBullBoard(app);
     GatewayService.setUpViewEngine(app);
     GatewayService.setupSecurity(app);
 
@@ -45,38 +47,46 @@ export class GatewayService {
       const baseUrl = `http://localhost:${port}`;
       logger.info(`🚀 Application %s is running on %s`, gatewayName, joinUrl(baseUrl, { paths: [contextPath] }));
 
-      if (gatewayConfig.swagger !== 'off') {
-        logger.info(`📕️ Access API Document at %s`, joinUrl(baseUrl, { paths: [contextPath, 'swagger'] }));
+      if (useSwagger) {
+        const swagger = config.parse(SwaggerConfig, 'gateway.swagger');
+        logger.info(`📕️ Access API Document at %s`, joinUrl(baseUrl, { paths: [contextPath, swagger.path] }));
       }
 
-      if (config.get('bull.host')) {
+      if (useBullBoard) {
+        const bull = config.parse(BullConfig, 'bull');
         logger.info(
           `🎯 Access bull dashboard at %s. Make sure Redis is running by default`,
-          joinUrl(baseUrl, { paths: [contextPath, 'bulls'] }),
+          joinUrl(baseUrl, { paths: [contextPath, bull.bullBoard.path] }),
         );
       }
     });
   }
 
-  private static setupSwagger(app: NestExpressApplication) {
+  private static setupSwagger(app: NestExpressApplication): boolean {
     const config = app.get(ConfigService);
     const gatewayConfig = config.get<GatewayConfig>('gateway');
-    if (gatewayConfig.swagger === 'off') return;
+    if (gatewayConfig.swagger === 'off') return false;
 
+    const swagger = new SwaggerConfig(gatewayConfig.swagger);
     const port = toInt(gatewayConfig.port, DEFAULT_GATEWAY_PORT);
     const options = new DocumentBuilder()
-      .setTitle(gatewayConfig.swagger?.title || config.get('name'))
-      .setDescription(gatewayConfig.swagger?.description || config.get('description'))
-      .setVersion(gatewayConfig.swagger?.version || config.get('version'))
-      .setLicense('MIT', 'https://opensource.org/licenses/MIT')
-      .addServer(gatewayConfig.swagger?.server || `http://localhost:${port}`)
+      .setTitle(swagger.title || config.get('name'))
+      .setDescription(swagger.description || config.get('description'))
+      .setVersion(swagger.version || config.get('version'))
+      .setLicense(swagger.license?.name, swagger.license?.url)
+      .addServer(swagger.server || `http://localhost:${port}`)
       .addBearerAuth();
 
-    app.use('/swagger', basicAuth({ challenge: true, users: { admin: 'p4ssw0rd' } }));
+    const { username, password } = swagger.auth;
+    if (username && password) {
+      app.use(`/${swagger.path}`, basicAuth({ challenge: true, users: { [username]: password } }));
+    }
+
     const document = SwaggerModule.createDocument(app, options.build());
-    SwaggerModule.setup('swagger', app, document, {
-      swaggerUrl: 'swagger',
+    SwaggerModule.setup(swagger.path, app, document, {
+      swaggerUrl: swagger.path,
       swaggerOptions: {
+        ...swagger.options,
         docExpansion: 'list',
         filter: true,
         showRequestDuration: true,
@@ -84,23 +94,34 @@ export class GatewayService {
         operationsSorter: 'alpha',
       },
     });
+
+    return true;
   }
 
-  private static setUpBullBoard(app: NestExpressApplication) {
+  private static setUpBullBoard(app: NestExpressApplication): boolean {
     const config = app.get(ConfigService);
-    const { host, port, queue, password } = config.get('bull') ?? {};
+    const bull = config.parse(BullConfig, 'bull');
 
-    const queues = queue?.map(q => {
+    const queues = bull.queue?.map(q => {
+      const { host, port, password } = bull;
       return new BullMQAdapter(new Queue(q, { redis: { host, port, password } }));
     });
 
-    if (host && queues?.length) {
-      app.use('/bulls', basicAuth({ challenge: true, users: { admin: 'p4ssw0rd' } }));
+    if (bull.bullBoard && queues?.length) {
+      const { path, username, password } = bull.bullBoard;
+      if (username && password) {
+        app.use(`/${path}`, basicAuth({ challenge: true, users: { [username]: password } }));
+      }
+
       const serverAdapter = new ExpressAdapter();
-      serverAdapter.setBasePath('/bulls');
+      serverAdapter.setBasePath(`/${path}`);
       createBullBoard({ queues, serverAdapter });
-      app.use('/bulls', serverAdapter.getRouter());
+      app.use(`/${path}`, serverAdapter.getRouter());
+
+      return true;
     }
+
+    return false;
   }
 
   private static setUpViewEngine(app: NestExpressApplication) {
