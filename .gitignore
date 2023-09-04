@@ -251,3 +251,5 @@ node_modules
 
 central_admin_core
 central_admin_shared
+
+credentials/
