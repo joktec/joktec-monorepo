@@ -1,7 +1,7 @@
 {
   "name": "@joktec/cron",
   "description": "JokTec - Cron Service",
-  "version": "0.0.88",
+  "version": "0.0.89",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -46,8 +46,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.86",
-    "@joktec/mysql": "0.0.87",
+    "@joktec/core": "0.0.87",
+    "@joktec/mysql": "0.0.88",
     "@nestjs/common": "^10.2.2",
     "@nestjs/core": "^10.2.2",
     "@nestjs/schedule": "^3.0.3",
