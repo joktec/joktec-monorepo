@@ -23,7 +23,7 @@ export class BullConfig {
   constructor(props: BullConfig) {
     Object.assign(this, {
       ...props,
-      queue: toArray<string>(props.queue, { split: ',' }),
+      queue: toArray<string>(props?.queue, { split: ',' }),
       host: props?.host || 'localhost',
       port: toInt(props?.port, 6379),
       bullBoard: props?.bullBoard && new BullBoardConfig(props.bullBoard),
