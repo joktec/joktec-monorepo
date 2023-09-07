@@ -1,17 +1,17 @@
 import { ValidationError } from 'class-validator';
 import { IValidateError } from './validate.exception';
 
-export const isCountryCode = (value: string): boolean => {
+export function isCountryCode(value: string): boolean {
   return /^\+[0-9]{1,3}$/.test(value);
-};
+}
 
-export const isPhone = (value: any): boolean => {
+export function isPhone(value: any): boolean {
   return /^[1-9][0-9]{8}$/.test(value);
-};
+}
 
-export const isOtp = (value: string): boolean => {
+export function isOtp(value: string): boolean {
   return /^\+[0-9]{6}$/.test(value);
-};
+}
 
 /**
  * Builds an object containing validation errors for the given array of `ValidationError` objects,
@@ -21,7 +21,7 @@ export const isOtp = (value: string): boolean => {
  * @returns {IValidateError} - An object containing validation errors, where each key is a property with a
  * value that is an array of error messages.
  */
-export const buildError = (errors: ValidationError[], parentKey: string = ''): IValidateError => {
+export function buildError(errors: ValidationError[], parentKey: string = ''): IValidateError {
   const result: IValidateError = {};
   for (const error of errors) {
     const key = parentKey ? `${parentKey}.${error.property}` : error.property;
@@ -37,4 +37,4 @@ export const buildError = (errors: ValidationError[], parentKey: string = ''): I
     }
   }
   return result;
-};
+}

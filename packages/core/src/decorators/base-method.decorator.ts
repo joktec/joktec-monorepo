@@ -57,7 +57,7 @@ export const BaseMethodDecorator = (
   };
 };
 
-export const computeOriginalArguments = (originalFunc: Function): string[] => {
+function computeOriginalArguments(originalFunc: Function): string[] {
   const stringify: string = originalFunc.toString();
 
   const startBracket = stringify.indexOf('(');
@@ -68,4 +68,4 @@ export const computeOriginalArguments = (originalFunc: Function): string[] => {
 
   const paramsString = stringify.substring(startBracket + 1, endBracket);
   return !paramsString.length ? [] : paramsString.split(',').map(e => e.trim());
-};
+}

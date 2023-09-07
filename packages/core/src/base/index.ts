@@ -12,6 +12,7 @@ export {
   AbstractHttpAdapter,
   REQUEST,
   Reflector,
+  repl,
 } from '@nestjs/core';
 export {
   ClientsModule,

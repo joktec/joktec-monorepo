@@ -14,7 +14,7 @@ export const FilePipe = (options?: {
   return pipe.build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY });
 };
 
-export const isAllowedMimeType = (mimeType: string, allowedMimeTypes: string[] = []) => {
+export function isAllowedMimeType(mimeType: string, allowedMimeTypes: string[] = []) {
   if (!allowedMimeTypes.length) return true;
   for (let i = 0; i < allowedMimeTypes.length; i++) {
     const allowedType = allowedMimeTypes[i];
@@ -25,7 +25,7 @@ export const isAllowedMimeType = (mimeType: string, allowedMimeTypes: string[] =
     if (mimeType === allowedType) return true;
   }
   return false;
-};
+}
 
 export const FileFilter = (options?: { fileTypes?: string[]; maxSize?: number }) => {
   return (req: Request, file: Express.Multer.File, callback: (error: Error | null, acceptFile: boolean) => void) => {

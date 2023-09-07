@@ -26,6 +26,7 @@
   "scripts": {
     "postinstall": "husky install",
     "ls": "lerna ls -la && nx print-affected",
+    "relp": "lerna run relp",
     "dev": "lerna run dev",
     "build": "lerna run build",
     "serve": "lerna run serve",

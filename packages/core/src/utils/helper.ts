@@ -12,9 +12,9 @@
  *   console.log('Done!');
  * }
  */
-export const sleep = async (n: number) => {
+export async function sleep(n: number): Promise<void> {
   return n ? new Promise<void>(resolve => setTimeout(resolve, n)) : undefined;
-};
+}
 
 /**
  * Returns true if all the specified values are included in the given array.
@@ -26,10 +26,10 @@ export const sleep = async (n: number) => {
  * includes([1, 2, 3], 2, 3); // true
  * includes(['apple', 'banana', 'cherry'], 'banana', 'kiwi'); // false
  */
-export const includes = <T>(array: Array<T>, ...values: T[]): boolean => {
+export function includes<T>(array: Array<T>, ...values: T[]): boolean {
   if (!array.length || !values.length) return false;
   return values.every(value => array.includes(value));
-};
+}
 
 /**
  * Returns true if any of the specified values are included in the given array.
@@ -41,7 +41,7 @@ export const includes = <T>(array: Array<T>, ...values: T[]): boolean => {
  * someIncludes([1, 2, 3], 2, 5); // true
  * someIncludes(['apple', 'banana', 'cherry'], 'orange', 'kiwi'); // false
  */
-export const someIncludes = <T>(array: Array<T>, ...values: T[]): boolean => {
+export function someIncludes<T>(array: Array<T>, ...values: T[]): boolean {
   if (!array.length || !values.length) return false;
   return values.some(value => array.includes(value));
-};
+}

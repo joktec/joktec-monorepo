@@ -6,10 +6,13 @@ import { InternalServerException } from '../exceptions';
 
 /**
  * Create a random number between min and max
- * @param min
- * @param max
+ * @param {number} min
+ * @param {number} max
+ * @returns {number} Random number
  */
-export const rand = (min: number, max: number): number => Math.floor(Math.random() * (max - min + 1) + min);
+export function rand(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
 
 /**
  * Generate a random OTP Code with specific length
@@ -24,16 +27,17 @@ export const generateOTP = (otpLength: number = 6): string => {
 
 /**
  * Generate a UUID with prefix
- * @param opts
+ * @param {object} opts
+ * @returns {string} UUID
  */
-export const generateUUID = (opts?: { prefix?: string }): string => {
+export function generateUUID(opts?: { prefix?: string }): string {
   let result: string = uuidv4();
   if (opts?.prefix) {
     const prefix = snakeCase(opts.prefix).toUpperCase();
     result = `${prefix}-${result}`;
   }
   return result;
-};
+}
 
 export const cloneInstance = <T extends object>(origin: Partial<T>, addition: Partial<T> = {}): T => {
   return Object.assign(Object.create(Object.getPrototypeOf(origin)), origin, addition);
@@ -41,10 +45,11 @@ export const cloneInstance = <T extends object>(origin: Partial<T>, addition: Pa
 
 /**
  * Hash a string (with scope)
- * @param target
- * @param scope
+ * @param {string | number} target
+ * @param {string} scope
+ * @returns {string} A hash string
  */
-export const hashString = (target: string | number = uuidv4(), scope: string = 'DEFAULT'): string => {
+export function hashString(target: string | number = uuidv4(), scope: string = 'DEFAULT'): string {
   const upperScope: string = snakeCase(scope).toUpperCase();
   const content = `${target}@${upperScope}`;
   const hashStatus: string = crypto.createHash('md5').update(content, 'utf8').digest('hex');
@@ -55,7 +60,7 @@ export const hashString = (target: string | number = uuidv4(), scope: string = '
     hashStatus.substring(19, 23),
     hashStatus.substring(24, 36),
   ].join('-');
-};
+}
 
 /**
  * Hash a password (with salt)
