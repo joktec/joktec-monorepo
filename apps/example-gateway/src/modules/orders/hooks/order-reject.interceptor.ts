@@ -1,17 +1,9 @@
-import {
-  BadRequestException,
-  CallHandler,
-  ExecutionContext,
-  ExpressRequest,
-  Injectable,
-  isEmpty,
-  NestInterceptor,
-} from '@joktec/core';
-import { Observable } from 'rxjs';
+import { BadRequestException, CallHandler, ExecutionContext, Injectable, isEmpty, NestInterceptor } from '@joktec/core';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { Request } from '../../../base';
 import { RoomService } from '../../rooms';
-import { User } from '../../users';
-import { OrderStatus } from '../models';
+import { Order, OrderStatus } from '../models';
 import { OrderService } from '../order.service';
 
 @Injectable()
@@ -27,7 +19,7 @@ export class OrderRejectInterceptor implements NestInterceptor {
    * @param next
    */
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const req = context.switchToHttp().getRequest<ExpressRequest<any, User>>();
+    const req = context.switchToHttp().getRequest<Request<Order>>();
 
     const reason = req.body.reason;
     if (isEmpty(reason)) throw new BadRequestException('REASON_REQUIRED');
@@ -50,9 +42,7 @@ export class OrderRejectInterceptor implements NestInterceptor {
     };
 
     return next.handle().pipe(
-      catchError(err => {
-        throw err;
-      }),
+      catchError(err => throwError(() => err)),
       map(data => {
         this.roomService.removeSchedule(req.params.id);
         return data;

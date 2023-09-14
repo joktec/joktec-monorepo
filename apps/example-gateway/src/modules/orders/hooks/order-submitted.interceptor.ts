@@ -2,7 +2,6 @@ import {
   BadRequestException,
   CallHandler,
   ExecutionContext,
-  ExpressRequest,
   ForbiddenException,
   Injectable,
   InjectQueue,
@@ -10,14 +9,16 @@ import {
   Queue,
 } from '@joktec/core';
 import { Observable } from 'rxjs';
+import { Request } from '../../../base';
 import { User, UserRole } from '../../users';
+import { Order } from '../models';
 
 @Injectable()
 export class OrderSubmittedInterceptor implements NestInterceptor {
   constructor(@InjectQueue('order') private orderQueue: Queue) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const req = context.switchToHttp().getRequest<ExpressRequest<any, User>>();
+    const req = context.switchToHttp().getRequest<Request<Order>>();
     const loggedUser = req['loggedUser'] as User;
     if (loggedUser.role !== UserRole.USER) {
       throw new ForbiddenException();

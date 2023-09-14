@@ -1,15 +1,8 @@
-import {
-  BadRequestException,
-  CallHandler,
-  ExecutionContext,
-  ExpressRequest,
-  Injectable,
-  NestInterceptor,
-} from '@joktec/core';
-import { Observable } from 'rxjs';
+import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@joktec/core';
+import { Observable, throwError } from 'rxjs';
 import { catchError, mergeMap } from 'rxjs/operators';
+import { Request } from '../../../base';
 import { RoomService } from '../../rooms';
-import { User } from '../../users';
 import { Order, OrderStatus } from '../models';
 import { OrderService } from '../order.service';
 
@@ -26,7 +19,7 @@ export class OrderConfirmInterceptor implements NestInterceptor {
    * @param next
    */
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const req = context.switchToHttp().getRequest<ExpressRequest<any, User>>();
+    const req = context.switchToHttp().getRequest<Request<Order>>();
 
     const order = await this.orderService.findOne(req.params.id);
     if (!order) return next.handle();
@@ -45,9 +38,7 @@ export class OrderConfirmInterceptor implements NestInterceptor {
     };
 
     return next.handle().pipe(
-      catchError(err => {
-        throw err;
-      }),
+      catchError(err => throwError(() => err)),
       mergeMap(async (newOrder: Order) => {
         const [fromDate, toDate] = newOrder.bookingTime;
         const roomUpdate: any = {

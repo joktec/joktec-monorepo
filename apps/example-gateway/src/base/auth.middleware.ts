@@ -1,6 +1,4 @@
 import {
-  ExpressRequest,
-  ExpressResponse,
   ForbiddenException,
   Injectable,
   JwtService,
@@ -10,17 +8,18 @@ import {
 } from '@joktec/core';
 import moment from 'moment';
 import { SessionService, SessionStatus } from '../modules/sessions';
-import { User, UserService, UserStatus } from '../modules/users';
+import { UserService, UserStatus } from '../modules/users';
+import { Request, Response } from './models';
 
 @Injectable()
-export class AuthMiddleware implements NestMiddleware<ExpressRequest, ExpressResponse> {
+export class AuthMiddleware implements NestMiddleware<Request, Response> {
   constructor(
     private jwtService: JwtService,
     private sessionService: SessionService,
     private userService: UserService,
   ) {}
 
-  async use(req: ExpressRequest<any, User>, res: ExpressResponse, next: NextFunction) {
+  async use(req: Request, res: Response, next: NextFunction) {
     const token = await this.jwtService.extractToken(req);
     req.payload = await this.jwtService.verify(token);
 

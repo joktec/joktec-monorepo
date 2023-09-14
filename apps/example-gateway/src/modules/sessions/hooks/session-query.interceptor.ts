@@ -1,11 +1,12 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler, ExpressRequest } from '@joktec/core';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@joktec/core';
 import { Observable } from 'rxjs';
-import { User } from '../../users';
+import { Request } from '../../../base';
+import { Session } from '../models';
 
 @Injectable()
 export class SessionQueryInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const req = context.switchToHttp().getRequest<ExpressRequest<any, User>>();
+    const req = context.switchToHttp().getRequest<Request<Session>>();
     req.query.condition = {
       ...req.query.condition,
       userId: req.loggedUser._id,
