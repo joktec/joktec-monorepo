@@ -1,8 +1,8 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
-import { Request, Response } from 'express';
 import { GraphQLError } from 'graphql/index';
 import { isEmpty, isString } from 'lodash';
+import { ExpressRequest, ExpressResponse } from '../../base';
 import { ConfigService, ENV } from '../../config';
 import { LogService } from '../../log';
 import { IResponseDto } from '../../models';
@@ -11,29 +11,29 @@ import { ExceptionMessage } from '../exception-message';
 
 @Catch()
 export class GatewayExceptionsFilter implements ExceptionFilter {
-  constructor(private cfg: ConfigService, private logger: LogService) {
+  constructor(
+    private cfg: ConfigService,
+    private logger: LogService,
+  ) {
     this.logger.setContext(GatewayExceptionsFilter.name);
   }
 
   catch(exception: any, host: ArgumentsHost): any {
     const type: string = host.getType();
-
-    if (type === 'http') {
-      this.handleHttpException(exception, host);
-      return;
+    switch (type) {
+      case 'http':
+        return this.handleHttpException(exception, host);
+      case 'graphql':
+        throw this.handleGqlException(exception);
+      default:
+        this.logger.error(exception, 'Something when wrong');
+        break;
     }
-
-    if (type === 'graphql') {
-      throw this.handleGqlException(exception);
-    }
-
-    this.logger.error(exception, 'Something when wrong');
   }
 
   private handleHttpException(exception: any, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const request = ctx.getRequest<Request>();
-    const response = ctx.getResponse<Response>();
+    const req = host.switchToHttp().getRequest<ExpressRequest>();
+    const res = host.switchToHttp().getResponse<ExpressResponse>();
 
     let status: number = exception?.status || HttpStatus.INTERNAL_SERVER_ERROR;
     let message: string = exception?.message || ExceptionMessage.INTERNAL_SERVER_ERROR;
@@ -71,13 +71,12 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
 
     const isProd: boolean = this.cfg.get<ENV>('env') === ENV.PROD;
     if (!isProd) {
-      Object.assign(errorBody, { path: request.url, method: request.method });
-      if (!isEmpty(request.body)) errorBody.body = request.body;
-      if (!isEmpty(request.query)) errorBody.query = request.query;
-      if (!isEmpty(request['originQuery'])) errorBody.query = request['originQuery'];
-      if (!isEmpty(request.params)) errorBody.params = request.params;
+      Object.assign(errorBody, { path: req.url, method: req.method });
+      if (!isEmpty(res.locals.body)) errorBody.body = res.locals.body;
+      if (!isEmpty(res.locals.query)) errorBody.query = res.locals.query;
+      if (!isEmpty(res.locals.params)) errorBody.params = res.locals.params;
     }
-    response.status(status).json({ ...errorBody });
+    res.status(status).json({ ...errorBody });
   }
 
   private handleGqlException(exception: any): GraphQLError {

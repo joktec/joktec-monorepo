@@ -18,7 +18,7 @@ export class BullConfig {
   host?: string;
   port?: number;
   password?: string;
-  bullBoard?: BullBoardConfig;
+  board?: BullBoardConfig;
 
   constructor(props: BullConfig) {
     Object.assign(this, {
@@ -26,7 +26,7 @@ export class BullConfig {
       queue: toArray<string>(props?.queue, { split: ',' }),
       host: props?.host || 'localhost',
       port: toInt(props?.port, 6379),
-      bullBoard: props?.bullBoard && new BullBoardConfig(props.bullBoard),
+      board: props?.board && new BullBoardConfig(props.board),
     });
   }
 }

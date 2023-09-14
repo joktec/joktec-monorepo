@@ -51,6 +51,14 @@ export const createPinoHttp = async (configService: ConfigService): Promise<Logg
         name: appName,
         enabled: true,
         autoLogging: false,
+        serializers: {
+          req(req) {
+            console.log('createPinoHttp');
+            req.body = req.raw.body;
+            const userAgent = req.headers['user-agent'] || '';
+            return req;
+          },
+        },
         formatters: {
           log: (object: Record<string, any>): Record<string, any> => {
             const args = omit(object, ['context', 'err']);

@@ -8,7 +8,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   SetMetadata,
   UseGuards,
   UseInterceptors,
@@ -24,10 +23,9 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { Request } from 'express';
 import { isArray, startCase } from 'lodash';
 import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../exceptions';
-import { JwtPayload } from '../guards';
+import { JwtPayload, JwtPayloadData } from '../guards';
 import { GatewayMetric } from '../infras';
 import { QueryInterceptor } from '../interceptors';
 import { BaseListResponse, Constructor, IBaseRequest } from '../models';
@@ -120,9 +118,9 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @UseGuards(...toArray(props?.guards?.create))
     @UsePipes(new BaseValidationPipe())
     @UseInterceptors(...toArray(props?.hooks?.create))
-    async create(@Body() entity: Partial<T>, @Req() req: Request): Promise<T> {
+    async create(@Body() entity: Partial<T>, @JwtPayloadData() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
-      return this.service.create(entity, req['payload'] as JwtPayload);
+      return this.service.create(entity, payload);
     }
 
     @Put('/:id')
@@ -134,9 +132,9 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @UseGuards(...toArray(props?.guards?.update))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }))
     @UseInterceptors(...toArray(props?.hooks?.update))
-    async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Req() req: Request): Promise<T> {
+    async update(@Param('id') id: ID, @Body() entity: Partial<T>, @JwtPayloadData() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.UPDATE);
-      return this.service.update(id, entity, req['payload'] as JwtPayload);
+      return this.service.update(id, entity, payload);
     }
 
     @Delete('/:id')
@@ -146,9 +144,9 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.DELETE))
     @UseGuards(...toArray(props?.guards?.delete))
     @UseInterceptors(...toArray(props?.hooks?.delete))
-    async delete(@Param('id') id: ID, @Req() req: Request): Promise<T> {
+    async delete(@Param('id') id: ID, @JwtPayloadData() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.DELETE);
-      return this.service.delete(id, req['payload'] as JwtPayload);
+      return this.service.delete(id, payload);
     }
   }
 
@@ -162,7 +160,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     if (useBearer) ApiBearerAuth()(Controller);
   }
 
-  const metric = toBool(props.metric, true);
+  const metric = toBool(props?.metric, true);
   if (metric) {
     UseInterceptors(GatewayMetric)(Controller);
   }

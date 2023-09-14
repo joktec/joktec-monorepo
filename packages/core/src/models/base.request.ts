@@ -1,3 +1,7 @@
+export type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
 /** A union of primitive data types that are allowed in a MongoDB query. */
 export type IDataType = string | number | boolean | Date | object;
 export type IBindingType = IDataType | IDataType[];
@@ -36,4 +40,6 @@ export interface IBaseRequest<T extends object = {}> {
   sort?: ISort<T>;
   near?: INear;
   populate?: IPopulate<T>;
+
+  [key: string]: any;
 }

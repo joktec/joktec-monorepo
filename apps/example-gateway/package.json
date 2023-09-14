@@ -26,7 +26,7 @@
     "dev": "nest start --watch -p tsconfig.json",
     "build": "nest build -p tsconfig.json",
     "start": "node dist/main",
-    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
+    "dep:upgrade": "ncu -p yarn -u",
     "deploy": "publish-helm --chart-dir ./k8s/chart",
     "test": "echo 'Test done.'",
     "test:watch": "jest --watch",
@@ -54,8 +54,8 @@
     "@faker-js/faker": "^8.0.2",
     "@types/dot-object": "^2.1.2",
     "@types/gravatar": "^1.8.3",
-    "@types/lodash": "^4.14.194",
-    "nestjs-seeder": "^0.3.1"
+    "@types/lodash": "^4.14.198",
+    "nestjs-seeder": "^0.3.2"
   },
   "lint-staged": {
     "*.ts": [

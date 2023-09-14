@@ -2,7 +2,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { startCase } from 'lodash';
 import { firstValueFrom } from 'rxjs';
 import { JwtPayload } from '../guards';
-import { Constructor, IBaseRequest, ICondition, IListResponseDto } from '../models';
+import { Constructor, DeepPartial, IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { cloneInstance, toSingular } from '../utils';
 
 export interface IMicroserviceClientProps<T> {
@@ -10,7 +10,7 @@ export interface IMicroserviceClientProps<T> {
   dtoName?: string;
 }
 
-export const MicroserviceClient = <T extends Record<string, any>, ID>(props?: IMicroserviceClientProps<T>): any => {
+export const MicroserviceClient = <T extends object, ID>(props?: IMicroserviceClientProps<T>): any => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
 
@@ -32,8 +32,8 @@ export const MicroserviceClient = <T extends Record<string, any>, ID>(props?: IM
       return await firstValueFrom(result);
     }
 
-    async create(entity: Partial<T>, jwtPayload?: JwtPayload): Promise<T> {
-      const processEntity: Partial<T> = cloneInstance(entity);
+    async create(entity: DeepPartial<T>, jwtPayload?: JwtPayload): Promise<T> {
+      const processEntity: DeepPartial<T> = cloneInstance(entity);
       if (jwtPayload) {
         Object.assign(processEntity, { createdBy: jwtPayload.userId, updatedBy: jwtPayload.userId });
       }
@@ -41,9 +41,9 @@ export const MicroserviceClient = <T extends Record<string, any>, ID>(props?: IM
       return await firstValueFrom(result);
     }
 
-    async update(id: ID, entity: Partial<T>, jwtPayload?: JwtPayload): Promise<T> {
-      const condition: ICondition<T> = { id };
-      const processEntity: Partial<T> = cloneInstance(entity);
+    async update(id: ID, entity: DeepPartial<T>, jwtPayload?: JwtPayload): Promise<T> {
+      const condition: ICondition<T> = { id } as object;
+      const processEntity: DeepPartial<T> = cloneInstance(entity);
       if (jwtPayload) {
         Object.assign(processEntity, { updatedBy: jwtPayload.userId });
       }
@@ -55,7 +55,7 @@ export const MicroserviceClient = <T extends Record<string, any>, ID>(props?: IM
     }
 
     async delete(id: ID, jwtPayload?: JwtPayload): Promise<T> {
-      const condition: ICondition<T> = { id };
+      const condition: ICondition<T> = { id } as object;
       const result = this.client.send<T>({ cmd: `${nameSingular}.delete` }, { condition, jwtPayload });
       return await firstValueFrom(result);
     }

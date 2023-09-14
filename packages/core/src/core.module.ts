@@ -13,7 +13,7 @@ import { MetricModule } from './metric';
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (cfg: ConfigService) => createPinoHttp(cfg),
+      useFactory: (cfg: ConfigService) => createPinoHttp(cfg),
     }),
     ServeStaticModule.forRootAsync({
       imports: [ConfigModule],
@@ -21,7 +21,7 @@ import { MetricModule } from './metric';
       useFactory: (cfg: ConfigService) => {
         const gatewayConfig = cfg.get<GatewayConfig>('gateway');
         const { staticPath = './public', excludePath = [] } = gatewayConfig?.static || {};
-        return [{ rootPath: path.resolve(staticPath), exclude: ['swagger', 'bulls', 'metrics', ...excludePath] }];
+        return [{ rootPath: path.resolve(staticPath), exclude: ['/swagger', '/bulls', '/metrics', ...excludePath] }];
       },
     }),
     MetricModule,

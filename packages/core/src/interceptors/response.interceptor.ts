@@ -2,10 +2,10 @@ import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor 
 import { RENDER_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
 import { instanceToPlain } from 'class-transformer';
-import { Request, Response } from 'express';
 import { isNil } from 'lodash';
 import { catchError, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ExpressRequest, ExpressResponse } from '../base';
 import { RESPONSE_MESSAGE_KEY } from '../decorators';
 import { NotFoundException } from '../exceptions';
 import { LogService } from '../log';
@@ -16,13 +16,16 @@ const ExcludePaths = ['/swagger', '/bulls', '/metrics'];
 
 @Injectable()
 export class ResponseInterceptor<T = any> implements NestInterceptor<T, ResponseType<T>> {
-  constructor(private reflector: Reflector, private logger: LogService) {
+  constructor(
+    private reflector: Reflector,
+    private logger: LogService,
+  ) {
     this.logger.setContext(ResponseInterceptor.name);
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<ResponseType<T>> {
-    const request = context.switchToHttp().getRequest<Request>();
-    const response = context.switchToHttp().getResponse<Response>();
+    const request = context.switchToHttp().getRequest<ExpressRequest>();
+    const response = context.switchToHttp().getResponse<ExpressResponse>();
 
     const renderMetadata = this.reflector.get<string>(RENDER_METADATA, context.getHandler());
     if (!!renderMetadata || ExcludePaths.includes(request.path)) {

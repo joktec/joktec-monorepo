@@ -3,7 +3,7 @@ import { Ctx, MessagePattern, Payload, Transport } from '@nestjs/microservices';
 import { startCase } from 'lodash';
 import { JwtPayload } from '../guards';
 import { MicroMetric } from '../infras';
-import { Constructor, IBaseRequest, IListResponseDto } from '../models';
+import { Constructor, DeepPartial, IBaseRequest, IListResponseDto } from '../models';
 import { toBool, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
 import { BaseService } from './base.service';
@@ -47,7 +47,7 @@ export const MicroserviceController = <T extends object, ID>(props: IMicroservic
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }))
     async update(
       @Payload('id') id: ID,
-      @Payload('entity') entity: Partial<T>,
+      @Payload('entity') entity: DeepPartial<T>,
       @Payload('jwt') jwtPayload: JwtPayload,
       @Ctx() context: any,
     ): Promise<T> {

@@ -1,4 +1,4 @@
-import { IBaseRequest, ICondition } from '../models';
+import { DeepPartial, IBaseRequest, ICondition } from '../models';
 
 export interface BaseReadRepository<T extends object, ID> {
   find(query: IBaseRequest<T>): Promise<T[]>;
@@ -9,9 +9,9 @@ export interface BaseReadRepository<T extends object, ID> {
 }
 
 export interface BaseRepository<T extends object, ID> extends BaseReadRepository<T, ID> {
-  create(body: Partial<T>): Promise<T>;
+  create(body: DeepPartial<T>): Promise<T>;
 
-  update(condition: ICondition<T>, body: Partial<T>): Promise<T>;
+  update(condition: ICondition<T>, body: DeepPartial<T>): Promise<T>;
 
   delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: any }): Promise<T>;
 }

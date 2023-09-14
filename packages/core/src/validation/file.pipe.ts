@@ -1,5 +1,6 @@
 import { FileValidator, HttpStatus, ParseFilePipe, ParseFilePipeBuilder } from '@nestjs/common';
-import { Express, Request } from 'express';
+import { Express } from 'express';
+import { ExpressRequest } from '../base';
 import { BadRequestException, ExceptionMessage } from '../exceptions';
 
 export const FilePipe = (options?: {
@@ -28,7 +29,11 @@ export function isAllowedMimeType(mimeType: string, allowedMimeTypes: string[] =
 }
 
 export const FileFilter = (options?: { fileTypes?: string[]; maxSize?: number }) => {
-  return (req: Request, file: Express.Multer.File, callback: (error: Error | null, acceptFile: boolean) => void) => {
+  return (
+    req: ExpressRequest,
+    file: Express.Multer.File,
+    callback: (error: Error | null, acceptFile: boolean) => void,
+  ) => {
     const { fileTypes, maxSize } = options || {};
     if (fileTypes && !isAllowedMimeType(file.mimetype, fileTypes)) {
       return callback(new BadRequestException(ExceptionMessage.INVALID_FILE_TYPE), false);

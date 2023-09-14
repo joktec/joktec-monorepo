@@ -22,7 +22,7 @@ export class GatewayController {
   @Get('/health')
   @ApiResponse({ type: Object })
   @UseInterceptors(GatewayMetric)
-  healthCheck() {
+  async healthCheck() {
     return { status: 'ok' };
   }
 }

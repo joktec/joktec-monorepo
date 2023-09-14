@@ -25,7 +25,7 @@
     "dev": "nest start --watch -p tsconfig.json",
     "build": "nest build -p tsconfig.json",
     "start": "node dist/main",
-    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
+    "dep:upgrade": "ncu -p yarn -u",
     "deploy": "publish-helm --chart-dir ./k8s/chart",
     "test": "echo 'Test done.'",
     "test:watch": "jest --watch",
@@ -34,10 +34,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.8.14",
-    "@grpc/proto-loader": "^0.7.6",
-    "@joktec/core": "0.0.85",
-    "@joktec/mysql": "0.0.86"
+    "@grpc/grpc-js": "^1.9.3",
+    "@grpc/proto-loader": "^0.7.9",
+    "@joktec/core": "0.0.88",
+    "@joktec/mysql": "0.0.89"
   },
   "lint-staged": {
     "*.ts": [

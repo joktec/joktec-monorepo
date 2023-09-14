@@ -1,7 +1,7 @@
-import { DEFAULT_CON_ID, ICondition, OnModuleInit, toBool } from '@joktec/core';
+import { DeepPartial, DEFAULT_CON_ID, ICondition, OnModuleInit, toBool } from '@joktec/core';
 import { FindOptions } from 'sequelize';
-import { Model, ModelCtor } from 'sequelize-typescript';
 import { DestroyOptions } from 'sequelize/types/model';
+import { Model, ModelCtor } from 'sequelize-typescript';
 import { IMysqlRequest, MysqlId } from './models';
 import { IMysqlRepository } from './mysql.client';
 import { MysqlCatch } from './mysql.exception';
@@ -50,12 +50,12 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async update(condition: ICondition<T>, body: Partial<T>): Promise<T> {
+  async update(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
     const options: FindOptions = preHandleQuery<T>({ condition });
     const model: T = await this.model.findOne(options);
     if (!model) return null;
     const fields: any[] = Object.keys(body);
-    return model.update(body, { fields });
+    return model.update(body as T, { fields });
   }
 
   @MysqlCatch
@@ -70,7 +70,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async upsert(condition: ICondition<T>, body: Partial<T>): Promise<T> {
+  async upsert(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
     const fields: any[] = Object.keys(body);
     const pk: any = this.model.primaryKeyAttribute;
     const [row, result] = await this.model.upsert(body as any, { returning: true, fields, conflictFields: [pk] });

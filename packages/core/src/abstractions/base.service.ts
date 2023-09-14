@@ -1,5 +1,5 @@
 import { JwtPayload } from '../guards';
-import { IBaseRequest, ICondition, IListResponseDto } from '../models';
+import { DeepPartial, IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { cloneInstance } from '../utils';
 import { BaseRepository } from './base.repository';
 
@@ -18,7 +18,7 @@ export abstract class BaseService<T extends Record<string, any>, ID> {
   }
 
   async findById(id: ID, query?: IBaseRequest<T>): Promise<T> {
-    const processQuery: IBaseRequest<T> = { ...query, condition: { id } };
+    const processQuery: IBaseRequest<T> = { ...query, condition: { id } as object };
     return this.repository.findOne(processQuery);
   }
 
@@ -27,17 +27,17 @@ export abstract class BaseService<T extends Record<string, any>, ID> {
     return this.repository.findOne(processQuery);
   }
 
-  async create(entity: Partial<T>, payload?: JwtPayload): Promise<T> {
-    const processEntity: Partial<T> = cloneInstance(entity);
+  async create(entity: DeepPartial<T>, payload?: JwtPayload): Promise<T> {
+    const processEntity: DeepPartial<T> = cloneInstance(entity);
     if (payload) {
       Object.assign(processEntity, { createdBy: payload.sub, updatedBy: payload.sub });
     }
     return this.repository.create(processEntity);
   }
 
-  async update(id: ID, entity: Partial<T>, payload?: JwtPayload): Promise<T> {
-    const condition: ICondition<T> = { id };
-    const processEntity: Partial<T> = cloneInstance(entity);
+  async update(id: ID, entity: DeepPartial<T>, payload?: JwtPayload): Promise<T> {
+    const condition: ICondition<T> = { id } as object;
+    const processEntity: DeepPartial<T> = cloneInstance(entity);
     if (payload) {
       Object.assign(processEntity, { updatedBy: payload.sub });
     }
@@ -45,7 +45,7 @@ export abstract class BaseService<T extends Record<string, any>, ID> {
   }
 
   async delete(id: ID, payload?: JwtPayload): Promise<T> {
-    const condition: ICondition<T> = { id };
+    const condition: ICondition<T> = { id } as object;
     return this.repository.delete(condition, { userId: payload?.sub });
   }
 }

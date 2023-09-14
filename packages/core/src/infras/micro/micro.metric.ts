@@ -1,10 +1,10 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { InjectMetric, makeCounterProvider, makeGaugeProvider } from '@willsoto/nestjs-prometheus';
-import { Request } from 'express';
 import { Counter, Gauge } from 'prom-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { ExpressRequest } from '../../base';
 import { LogService } from '../../log';
 import { getTimeString } from '../../utils';
 
@@ -40,7 +40,7 @@ export class MicroMetric implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest<ExpressRequest>();
     if (ExcludePaths.includes(request.path)) {
       return next.handle();
     }
@@ -67,7 +67,7 @@ export class MicroMetric implements NestInterceptor {
         const timeString = getTimeString(duration);
         this.logger.warn('micro: %s (%s) %s', serviceName, timeString, err.status);
 
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   }

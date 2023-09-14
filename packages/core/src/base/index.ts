@@ -1,7 +1,3 @@
-import { Express } from 'express';
-// eslint-disable-next-line unused-imports/no-unused-imports
-import { Multer } from 'multer';
-
 export {
   APP_PIPE,
   APP_FILTER,
@@ -80,7 +76,6 @@ export {
 } from '@nestjs/common';
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
 export { Queue, QueueOptions, Job, JobOptions } from 'bull';
-export { Express, Request, Response, NextFunction } from 'express';
-export * from './app';
 export { FileInterceptor, FilesInterceptor, FileFieldsInterceptor, MulterModule } from '@nestjs/platform-express';
-export type MulterFile = Express.Multer.File;
+export * from './app';
+export * from './express';

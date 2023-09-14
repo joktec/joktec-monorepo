@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import moment from 'moment';
 import ms from 'ms';
+import { ExpressRequest } from '../base';
 import { ConfigService } from '../config';
 import { ExceptionMessage, UnauthorizedException } from '../exceptions';
 import { JwtConfig } from './jwt.config';
@@ -13,10 +13,10 @@ export class JwtService {
   private readonly config: JwtConfig;
 
   constructor(private configService: ConfigService) {
-    this.config = new JwtConfig(this.configService.get('guard'));
+    this.config = this.configService.parse(JwtConfig, 'guard');
   }
 
-  async extractToken(req: Request): Promise<string> {
+  async extractToken(req: ExpressRequest): Promise<string> {
     const authHeader = req.headers.authorization;
     if (!authHeader) throw new UnauthorizedException(ExceptionMessage.AUTHORIZATION_HEADER_NOT_FOUND);
 

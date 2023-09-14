@@ -1,5 +1,6 @@
 import {
   Constructor,
+  DeepPartial,
   DEFAULT_CON_ID,
   ICondition,
   Injectable,
@@ -102,17 +103,17 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async create(body: Partial<T>): Promise<T> {
+  async create(body: DeepPartial<T>): Promise<T> {
     const transformBody: T = this.transform(body) as T;
-    const processBody: Partial<T> = preHandleBody<T>(transformBody);
+    const processBody: DeepPartial<T> = preHandleBody<T>(transformBody);
     const doc = await this.model.create(processBody);
     return this.findOne({ condition: { _id: doc._id } });
   }
 
   @MongoCatch
-  async update(condition: ICondition<T>, body: Partial<T>): Promise<T> {
+  async update(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
     const transformBody: T = this.transform(body) as T;
-    const processBody: Partial<T> = preHandleUpdateBody<T>(transformBody);
+    const processBody: DeepPartial<T> = preHandleUpdateBody<T>(transformBody);
     const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
     const qb = this.model.findOneAndUpdate(overrideCondition, processBody, UPDATE_OPTIONS);
     const doc = await qb.lean().exec();
@@ -146,10 +147,10 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async upsert(condition: ICondition<T>, body: Partial<T>): Promise<T> {
+  async upsert(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
     const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
     const transformBody: T = this.transform(body) as T;
-    const processBody: Partial<T> = preHandleBody<T>(transformBody);
+    const processBody: DeepPartial<T> = preHandleBody<T>(transformBody);
 
     const res = await this.model.updateOne(overrideCondition, processBody, UPSERT_OPTIONS);
     const doc = await this.model.findById(res.upsertedId).lean().exec();

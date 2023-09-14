@@ -1,10 +1,9 @@
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { InjectMetric, makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
-import { Request } from 'express';
 import { Counter, Histogram } from 'prom-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { ExpressRequest } from '../../base';
 import { Exception } from '../../exceptions';
 import { LogService } from '../../log';
 import { getTimeString } from '../../utils';
@@ -33,7 +32,6 @@ export const gatewayTotal = makeCounterProvider({
 @Injectable()
 export class GatewayMetric implements NestInterceptor {
   constructor(
-    private reflector: Reflector,
     private logger: LogService,
     @InjectMetric(GATEWAY_DURATION_SECONDS_METRIC) private gatewayDurationSecondsMetric: Histogram<string>,
     @InjectMetric(GATEWAY_TOTAL_METRIC) private gatewayTotalMetric: Counter<string>,
@@ -42,7 +40,7 @@ export class GatewayMetric implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest<ExpressRequest>();
     if (ExcludePaths.includes(request.path)) {
       return next.handle();
     }
@@ -81,7 +79,7 @@ export class GatewayMetric implements NestInterceptor {
           this.logger.error('http: %s (%s) %s', path, timeString, statusCode);
         }
 
-        return throwError(err);
+        return throwError(() => err);
       }),
     );
   }

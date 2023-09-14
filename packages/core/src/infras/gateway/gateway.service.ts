@@ -56,7 +56,7 @@ export class GatewayService {
         const bull = config.parse(BullConfig, 'bull');
         logger.info(
           `🎯 Access bull dashboard at %s. Make sure Redis is running by default`,
-          joinUrl(baseUrl, { paths: [contextPath, bull.bullBoard.path] }),
+          joinUrl(baseUrl, { paths: [contextPath, bull.board.path] }),
         );
       }
     });
@@ -107,8 +107,8 @@ export class GatewayService {
       return new BullMQAdapter(new Queue(q, { redis: { host, port, password } }));
     });
 
-    if (bull.bullBoard && queues?.length) {
-      const { path, username, password } = bull.bullBoard;
+    if (bull.board && queues?.length) {
+      const { path, username, password } = bull.board;
       if (username && password) {
         app.use(`/${path}`, basicAuth({ challenge: true, users: { [username]: password } }));
       }
@@ -131,6 +131,7 @@ export class GatewayService {
     app.useStaticAssets(path.resolve(staticPath), { prefix: 'public' });
     app.setBaseViewsDir(path.resolve(viewPath));
     app.setViewEngine('hbs');
+    return true;
   }
 
   /**
@@ -145,5 +146,6 @@ export class GatewayService {
     if (gatewayConfig.csrf) app.use(csurf());
     if (gatewayConfig.cors) app.enableCors(gatewayConfig.cors);
     if (gatewayConfig.helmet) app.use(helmet(gatewayConfig.helmet));
+    return true;
   }
 }

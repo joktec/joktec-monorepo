@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { isAllowedMimeType, FileFilter } from '../file.pipe';
-import { Request } from 'express';
+import { ExpressRequest } from '../../base';
 
 describe('isAllowedMimeType function', () => {
   it('should return true for empty allowedMimeTypes array', () => {
@@ -32,7 +32,7 @@ describe('isAllowedMimeType function', () => {
 describe('FileFilter function', () => {
   it('should call the callback with an error if the file type is not allowed', () => {
     const options = { fileTypes: ['image/jpeg', 'image/png'] };
-    const req = {} as Request;
+    const req = {} as ExpressRequest;
     const file = { mimetype: 'image/gif', size: 1024 } as Express.Multer.File;
     const callback = jest.fn();
 
@@ -43,7 +43,7 @@ describe('FileFilter function', () => {
 
   it('should call the callback with an error if the file size exceeds the maximum allowed', () => {
     const options = { maxSize: 1024 };
-    const req = {} as Request;
+    const req = {} as ExpressRequest;
     const file = { mimetype: 'image/jpeg', size: 2048 } as Express.Multer.File;
     const callback = jest.fn();
 
@@ -54,7 +54,7 @@ describe('FileFilter function', () => {
 
   it('should call the callback with no error if the file type and size are allowed', () => {
     const options = { fileTypes: ['image/jpeg', 'image/png'], maxSize: 1024 };
-    const req = {} as Request;
+    const req = {} as ExpressRequest;
     const file = { mimetype: 'image/jpeg', size: 512 } as Express.Multer.File;
     const callback = jest.fn();
 
@@ -64,7 +64,7 @@ describe('FileFilter function', () => {
   });
 
   it('should call the callback with no error if options are not provided', () => {
-    const req = {} as Request;
+    const req = {} as ExpressRequest;
     const file = { mimetype: 'image/jpeg', size: 1024 } as Express.Multer.File;
     const callback = jest.fn();
 

@@ -1,4 +1,4 @@
-import { ICondition, IPopulate, IPopulateOption, ISort, toInt } from '@joktec/core';
+import { DeepPartial, ICondition, IPopulate, IPopulateOption, ISort, toInt } from '@joktec/core';
 import dot from 'dot-object';
 import { isDate, isNil, omit, pick } from 'lodash';
 import { isMoment } from 'moment';
@@ -73,9 +73,9 @@ export const preHandleQuery = <T extends MongoSchema>(
   return overrideCondition;
 };
 
-export const preHandleBody = <T extends object>(body: object): Partial<T> => {
+export const preHandleBody = <T extends object>(body: object): DeepPartial<T> => {
   const processBody = omit(body, ['_id', 'createdAt', 'updatedAt', 'deletedAt', '__v', '__t']);
-  const result: Partial<T> = {};
+  const result: DeepPartial<T> = {};
 
   for (const key in processBody) {
     if (Object.prototype.hasOwnProperty.call(processBody, key)) {
@@ -97,7 +97,7 @@ export const preHandleBody = <T extends object>(body: object): Partial<T> => {
   return result;
 };
 
-export const preHandleUpdateBody = <T extends object>(body: object): Partial<T> => {
+export const preHandleUpdateBody = <T extends object>(body: object): DeepPartial<T> => {
   const fields = Object.keys(body).filter(key => !key.startsWith('$'));
   const operatorFields = Object.keys(body).filter(key => key.startsWith('$'));
 

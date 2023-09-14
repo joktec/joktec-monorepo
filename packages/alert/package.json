@@ -46,8 +46,8 @@
     "@joktec/core": "0.0.88",
     "@slack/webhook": "^6.1.0",
     "lodash": "^4.17.21",
-    "node-telegram-bot-api": "^0.61.0",
-    "telegraf": "^4.12.2"
+    "node-telegram-bot-api": "^0.63.0",
+    "telegraf": "^4.13.1"
   },
   "devDependencies": {
     "@types/node-telegram-bot-api": "^0.61.7"

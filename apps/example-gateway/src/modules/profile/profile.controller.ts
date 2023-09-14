@@ -10,11 +10,9 @@ import {
   Delete,
   GatewayMetric,
   Get,
-  JwtGuard,
   Put,
   Req,
   Request,
-  UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@joktec/core';
@@ -23,7 +21,6 @@ import { ProfileService } from './profile.service';
 
 @Controller('profile')
 @ApiTags('profile')
-@UseGuards(JwtGuard)
 @ApiBearerAuth()
 @UseInterceptors(GatewayMetric)
 export class ProfileController {

@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { range, snakeCase } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { InternalServerException } from '../exceptions';
+import { DeepPartial } from '../models';
 
 /**
  * Create a random number between min and max
@@ -39,7 +40,7 @@ export function generateUUID(opts?: { prefix?: string }): string {
   return result;
 }
 
-export const cloneInstance = <T extends object>(origin: Partial<T>, addition: Partial<T> = {}): T => {
+export const cloneInstance = <T extends object>(origin: DeepPartial<T>, addition: DeepPartial<T> = {}): T => {
   return Object.assign(Object.create(Object.getPrototypeOf(origin)), origin, addition);
 };
 
