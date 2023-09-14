@@ -1,6 +1,14 @@
-import { BadRequestException, CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@joktec/core';
+import {
+  BadRequestException,
+  CallHandler,
+  ExecutionContext,
+  ExpressRequest,
+  Injectable,
+  NestInterceptor,
+} from '@joktec/core';
 import moment from 'moment';
 import { Observable } from 'rxjs';
+import { User } from '../../users';
 import { OrderStatus } from '../models';
 import { OrderService } from '../order.service';
 
@@ -9,7 +17,7 @@ export class OrderEditableInterceptor implements NestInterceptor {
   constructor(private orderService: OrderService) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const req = context.switchToHttp().getRequest();
+    const req = context.switchToHttp().getRequest<ExpressRequest<any, User>>();
 
     const order = await this.orderService.findOne(req.params.id);
     if (!order) return next.handle();

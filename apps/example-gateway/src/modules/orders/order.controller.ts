@@ -6,12 +6,11 @@ import {
   BaseController,
   Controller,
   ControllerExclude,
+  ExpressRequest,
   IBaseControllerProps,
-  JwtPayload,
   Param,
   Patch,
   Req,
-  Request,
   UseInterceptors,
 } from '@joktec/core';
 import { Roles } from '../../base';
@@ -50,8 +49,8 @@ export class OrderController extends BaseController<Order, string>(props) {
   @ApiBody({ type: OrderRejectDto })
   @Roles(UserRole.USER)
   @UseInterceptors(OrderEditableInterceptor, OrderCancelInterceptor)
-  async cancel(@Param('id') id: string, @Req() req: Request): Promise<Order> {
-    return this.orderService.update(id, req['body'], req['payload'] as JwtPayload);
+  async cancel(@Param('id') id: string, @Req() req: ExpressRequest): Promise<Order> {
+    return this.orderService.update(id, req.body, req.payload);
   }
 
   @Patch('/:id/checkin')
@@ -60,8 +59,8 @@ export class OrderController extends BaseController<Order, string>(props) {
   @ApiParam({ name: 'id', description: 'Order ID' })
   @Roles(UserRole.USER)
   @UseInterceptors(OrderCheckinInterceptor)
-  async checkin(@Param('id') id: string, @Req() req: Request): Promise<Order> {
-    return this.orderService.update(id, req['body'], req['payload'] as JwtPayload);
+  async checkin(@Param('id') id: string, @Req() req: ExpressRequest): Promise<Order> {
+    return this.orderService.update(id, req.body, req.payload);
   }
 
   @Patch('/:id/checkout')
@@ -70,8 +69,8 @@ export class OrderController extends BaseController<Order, string>(props) {
   @ApiParam({ name: 'id', description: 'Order ID' })
   @Roles(UserRole.USER)
   @UseInterceptors(OrderCheckoutInterceptor)
-  async checkout(@Param('id') id: string, @Req() req: Request): Promise<Order> {
-    return this.orderService.update(id, req['body'], req['payload'] as JwtPayload);
+  async checkout(@Param('id') id: string, @Req() req: ExpressRequest): Promise<Order> {
+    return this.orderService.update(id, req.body, req.payload);
   }
 
   @Patch('/:id/confirm')
@@ -80,8 +79,8 @@ export class OrderController extends BaseController<Order, string>(props) {
   @ApiParam({ name: 'id', description: 'Order ID' })
   @Roles(UserRole.ADMIN)
   @UseInterceptors(OrderConfirmInterceptor)
-  async confirm(@Param('id') id: string, @Req() req: Request): Promise<Order> {
-    return this.orderService.update(id, req['body'], req['payload'] as JwtPayload);
+  async confirm(@Param('id') id: string, @Req() req: ExpressRequest): Promise<Order> {
+    return this.orderService.update(id, req.body, req.payload);
   }
 
   @Patch('/:id/reject')
@@ -91,7 +90,7 @@ export class OrderController extends BaseController<Order, string>(props) {
   @ApiBody({ type: OrderRejectDto })
   @Roles(UserRole.ADMIN)
   @UseInterceptors(OrderRejectInterceptor)
-  async reject(@Param('id') id: string, @Req() req: Request): Promise<Order> {
-    return this.orderService.update(id, req['body'], req['payload'] as JwtPayload);
+  async reject(@Param('id') id: string, @Req() req: ExpressRequest): Promise<Order> {
+    return this.orderService.update(id, req.body, req.payload);
   }
 }

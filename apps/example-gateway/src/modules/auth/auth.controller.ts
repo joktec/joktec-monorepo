@@ -8,12 +8,9 @@ import {
   GatewayMetric,
   LogService,
   Post,
-  Req,
-  Request,
   UseInterceptors,
   UsePipes,
 } from '@joktec/core';
-import { ClientInfo } from '../../base';
 import { Otp, OTPStatus } from '../otpLogs';
 import { AuthService } from './auth.service';
 import {
@@ -67,40 +64,35 @@ export class AuthController {
   @Post('/register')
   @ApiBody({ type: RegisterDto })
   @ApiOkResponse({ type: TokeResponseDto })
-  async register(@Body() input: RegisterDto, @Req() req: Request): Promise<TokeResponseDto> {
-    const clientInfo: ClientInfo = req['clientInfo'];
-    return this.authService.register(input, clientInfo);
+  async register(@Body() input: RegisterDto): Promise<TokeResponseDto> {
+    return this.authService.register(input);
   }
 
   @Post('/login')
   @ApiBody({ type: LoginDto })
   @ApiOkResponse({ type: TokeResponseDto })
-  async login(@Body() input: LoginDto, @Req() req: Request): Promise<TokeResponseDto> {
-    const clientInfo: ClientInfo = req['clientInfo'];
-    return this.authService.login(input, clientInfo);
+  async login(@Body() input: LoginDto): Promise<TokeResponseDto> {
+    return this.authService.login(input);
   }
 
   @Post('/login-sso')
   @ApiBody({ type: LoginSsoDto })
   @ApiOkResponse({ type: TokeResponseDto })
-  async loginSSO(@Body() input: LoginSsoDto, @Req() req: Request): Promise<TokeResponseDto> {
-    const clientInfo: ClientInfo = req['clientInfo'];
-    return this.authService.loginSSO(input, clientInfo);
+  async loginSSO(@Body() input: LoginSsoDto): Promise<TokeResponseDto> {
+    return this.authService.loginSSO(input);
   }
 
   @Post('/reset')
   @ApiBody({ type: ResetDto })
   @ApiOkResponse({ type: TokeResponseDto })
-  async reset(@Body() input: ResetDto, @Req() req: Request): Promise<TokeResponseDto> {
-    const clientInfo: ClientInfo = req['clientInfo'];
-    return this.authService.reset(input, clientInfo);
+  async reset(@Body() input: ResetDto): Promise<TokeResponseDto> {
+    return this.authService.reset(input);
   }
 
   @Post('/refresh')
   @ApiBody({ type: RefreshTokenDto })
   @ApiOkResponse({ type: TokeResponseDto })
-  async refresh(@Body() input: RefreshTokenDto, @Req() req: Request): Promise<TokeResponseDto> {
-    const clientInfo: ClientInfo = req['clientInfo'];
-    return this.authService.refresh(input, clientInfo);
+  async refresh(@Body() input: RefreshTokenDto): Promise<TokeResponseDto> {
+    return this.authService.refresh(input);
   }
 }

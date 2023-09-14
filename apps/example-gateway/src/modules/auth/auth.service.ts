@@ -1,16 +1,19 @@
 import {
   BadRequestException,
   ConfigService,
+  ExpressRequest,
   ForbiddenException,
   generateOTP,
   generateUUID,
   hashPassword,
+  Inject,
   Injectable,
   isStrongPassword,
   JwtPayload,
   JwtService,
   matchPassword,
   NotFoundException,
+  REQUEST,
   ValidateBuilder,
   ValidateException,
 } from '@joktec/core';
@@ -38,6 +41,7 @@ export class AuthService {
   private readonly authCfg: AuthConfig;
 
   constructor(
+    @Inject(REQUEST) private request: ExpressRequest,
     private config: ConfigService,
     private jwtService: JwtService,
     private otpService: OtpService,
@@ -130,7 +134,7 @@ export class AuthService {
     });
   }
 
-  async register(input: RegisterDto, clientInfo: ClientInfo): Promise<TokeResponseDto> {
+  async register(input: RegisterDto): Promise<TokeResponseDto> {
     const otp = await this.otpService.findByActiveCode(input.activeCode);
     if (!otp || otp?.status !== OTPStatus.VERIFIED) throw new BadRequestException('SESSION_INVALID');
     if (otp.phone !== input.phone) throw new ValidateException({ phone: ['PHONE_NOT_MATCH'] });
@@ -177,47 +181,40 @@ export class AuthService {
         phone: user.phone,
         email: user.email,
       },
-      clientInfo,
       { createdBy: user._id, updatedBy: user._id },
     );
   }
 
-  async login(input: LoginDto, clientInfo: ClientInfo): Promise<TokeResponseDto> {
+  async login(input: LoginDto): Promise<TokeResponseDto> {
     const user = await this.userService.findByPhone(input.phone);
     if (!user) throw new NotFoundException('USER_NOT_FOUND');
     if (user.status === UserStatus.DISABLED) throw new ForbiddenException('USER_DISABLED');
     if (!user.hashPassword) throw new ValidateException({ password: ['PASSWORD_NOT_SETUP'] });
     if (!matchPassword(input.password, user.hashPassword))
       throw new ValidateException({ password: ['PASSWORD_INVALID'] });
-    return this.createTokenAndUpdate(
-      {
-        sub: user._id,
-        jti: generateUUID({ prefix: 'PASSWORD' }),
-        userId: user._id,
-        phone: user.phone,
-        email: user.email,
-      },
-      clientInfo,
-    );
+    return this.createTokenAndUpdate({
+      sub: user._id,
+      jti: generateUUID({ prefix: 'PASSWORD' }),
+      userId: user._id,
+      phone: user.phone,
+      email: user.email,
+    });
   }
 
-  async loginSSO(input: LoginSsoDto, clientInfo: ClientInfo): Promise<TokeResponseDto> {
+  async loginSSO(input: LoginSsoDto): Promise<TokeResponseDto> {
     const user = await this.userService.findByUId(input.ssoId, input.platform);
     if (!user) throw new NotFoundException('USER_NOT_FOUND');
     if (user.status === UserStatus.DISABLED) throw new ForbiddenException('USER_DISABLED');
-    return this.createTokenAndUpdate(
-      {
-        sub: user._id,
-        jti: generateUUID({ prefix: 'SSO' }),
-        userId: user._id,
-        phone: user.phone,
-        email: user.email,
-      },
-      clientInfo,
-    );
+    return this.createTokenAndUpdate({
+      sub: user._id,
+      jti: generateUUID({ prefix: 'SSO' }),
+      userId: user._id,
+      phone: user.phone,
+      email: user.email,
+    });
   }
 
-  async reset(input: ResetDto, clientInfo: ClientInfo): Promise<TokeResponseDto> {
+  async reset(input: ResetDto): Promise<TokeResponseDto> {
     const [otp, user] = await Promise.all([
       this.otpService.findByActiveCode(input.activeCode),
       this.userService.findByPhone(input.phone),
@@ -245,12 +242,11 @@ export class AuthService {
         phone: user.phone,
         email: user.email,
       },
-      { ...clientInfo },
       { hashPassword: hashPassword(input.password) },
     );
   }
 
-  async refresh(input: RefreshTokenDto, clientInfo: ClientInfo): Promise<TokeResponseDto> {
+  async refresh(input: RefreshTokenDto): Promise<TokeResponseDto> {
     const [acTokenDecode, rfTokenDecode] = await Promise.all([
       this.jwtService.decode(input.accessToken),
       this.jwtService.verifyRefreshToken(input.refreshToken),
@@ -269,23 +265,17 @@ export class AuthService {
     if (user._id.toString() !== session.userId.toString()) throw new BadRequestException('TOKEN_OWNER_INVALID');
 
     await this.sessionService.update(session._id, { status: SessionStatus.DISABLED, revokedAt: new Date() });
-    return this.createTokenAndUpdate(
-      {
-        sub: rfTokenDecode.sub,
-        jti: generateUUID({ prefix: 'REFRESH' }),
-        userId: rfTokenDecode.userId,
-        phone: rfTokenDecode.phone,
-        email: rfTokenDecode.email,
-      },
-      clientInfo,
-    );
+    return this.createTokenAndUpdate({
+      sub: rfTokenDecode.sub,
+      jti: generateUUID({ prefix: 'REFRESH' }),
+      userId: rfTokenDecode.userId,
+      phone: rfTokenDecode.phone,
+      email: rfTokenDecode.email,
+    });
   }
 
-  private async createTokenAndUpdate(
-    payload: JwtPayload,
-    clientInfo: ClientInfo,
-    userBody: Partial<User> = {},
-  ): Promise<TokeResponseDto> {
+  private async createTokenAndUpdate(payload: JwtPayload, userBody: Partial<User> = {}): Promise<TokeResponseDto> {
+    const clientInfo: ClientInfo = this.request.clientInfo;
     const token = await this.jwtService.sign(payload);
     await this.sessionService.create({
       ...clientInfo,

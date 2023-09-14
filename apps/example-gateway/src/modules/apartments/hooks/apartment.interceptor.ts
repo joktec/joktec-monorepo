@@ -1,6 +1,7 @@
 import {
   CallHandler,
   ExecutionContext,
+  ExpressRequest,
   ICondition,
   Injectable,
   NestInterceptor,
@@ -15,8 +16,8 @@ export class ApartmentInterceptor implements NestInterceptor {
   constructor(private apartmentRepo: ApartmentRepo) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const req = context.switchToHttp().getRequest();
-    const { code, parentId } = req.body;
+    const req = context.switchToHttp().getRequest<ExpressRequest>();
+    const { code } = req.body;
 
     if (req.method === 'POST' && code) {
       const condition: ICondition<Apartment> = { code };
@@ -28,8 +29,6 @@ export class ApartmentInterceptor implements NestInterceptor {
 
     if (req.method === 'PUT' && code) {
       const condition: ICondition<Apartment> = { code, _id: { $ne: req.params.id } };
-      if (code === 'OTHER') condition['parentId'] = parentId;
-
       const apartment = await this.apartmentRepo.findOne({ condition });
       if (apartment) {
         throw new ValidateException({ code: ['APARTMENT_CODE_EXISTS'] });

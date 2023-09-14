@@ -11,9 +11,9 @@ log:
   useFilter: false
   format: pretty
   logStash:
+    enable: false
     host: 51.222.44.17
     port: 31658
-    enable: false
   loki:
     enable: false
     host: https://logs-prod-011222.grafana.net
@@ -23,14 +23,14 @@ log:
     database: sample_db
     collection: logs
   logtail:
-    enable: true
+    enable: false
     token: v9YTJSReTAyV6cSRff3SJ4UE
 
 bull:
   queue: [ order ]
   host: localhost
   port: 6379
-  bullBoard:
+  board:
     path: bulls
     username: admin
     password: p4ssw0rd

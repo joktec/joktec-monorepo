@@ -1,34 +1,32 @@
 import {
+  ExpressRequest,
+  ExpressResponse,
   ForbiddenException,
   Injectable,
-  JwtPayload,
   JwtService,
   NestMiddleware,
   NextFunction,
-  Request,
-  Response,
   UnauthorizedException,
 } from '@joktec/core';
 import moment from 'moment';
 import { SessionService, SessionStatus } from '../modules/sessions';
-import { UserService, UserStatus } from '../modules/users';
+import { User, UserService, UserStatus } from '../modules/users';
 
 @Injectable()
-export class AuthMiddleware implements NestMiddleware {
+export class AuthMiddleware implements NestMiddleware<ExpressRequest, ExpressResponse> {
   constructor(
     private jwtService: JwtService,
     private sessionService: SessionService,
     private userService: UserService,
   ) {}
 
-  async use(req: Request, res: Response, next: NextFunction) {
+  async use(req: ExpressRequest<any, User>, res: ExpressResponse, next: NextFunction) {
     const token = await this.jwtService.extractToken(req);
-    const payload: JwtPayload = await this.jwtService.verify(token);
-    req['payload'] = payload;
+    req.payload = await this.jwtService.verify(token);
 
     const [session, loggedUser] = await Promise.all([
-      this.sessionService.findByTokenId(payload.jti),
-      this.userService.findById(payload.sub),
+      this.sessionService.findByTokenId(req.payload.jti),
+      this.userService.findById(req.payload.sub),
     ]);
 
     if (!session || moment().isSameOrAfter(session?.expiresAt) || session.status === SessionStatus.DISABLED) {
@@ -38,7 +36,7 @@ export class AuthMiddleware implements NestMiddleware {
     if (loggedUser.status === UserStatus.PENDING) throw new ForbiddenException('USER_NOT_ACTIVE');
     if (loggedUser.status === UserStatus.DISABLED) throw new ForbiddenException('USER_IS_DISABLED');
 
-    req['loggedUser'] = loggedUser;
+    req.loggedUser = loggedUser;
     next();
   }
 }

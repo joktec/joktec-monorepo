@@ -11,16 +11,16 @@ import {
   NestModule,
   ResponseInterceptor,
 } from '@joktec/core';
+import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
 import { MailerModule } from '@joktec/mailer';
 import { MongoModule } from '@joktec/mongo';
 import { StorageModule } from '@joktec/storage';
-import { AppController } from './app.controller';
 import { AuthMiddleware, RoleGuard } from './base';
-import { CategoryModule } from './modules';
 import { ApartmentController, ApartmentModule } from './modules/apartments';
 import { AssetController, AssetModule } from './modules/assets';
 import { AuthModule } from './modules/auth';
+import { CategoryModule } from './modules/categories';
 import { OrderController, OrderModule } from './modules/orders';
 import { OtpModule } from './modules/otpLogs';
 import { ProductModule } from './modules/products';
@@ -31,7 +31,6 @@ import { SettingController, SettingModule } from './modules/settings';
 import { UserController, UserModule } from './modules/users';
 
 @Module({
-  controllers: [AppController],
   imports: [
     // Libs
     CoreModule,
@@ -41,11 +40,10 @@ import { UserController, UserModule } from './modules/users';
     JwtModule,
     MailerModule,
     BullModule,
-    // FirebaseModule,
+    FirebaseModule,
     // Module
     CategoryModule,
     ProductModule, // Microservice
-    // FirebaseExampleModule,
     OtpModule,
     SessionModule,
     UserModule,
@@ -68,7 +66,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .exclude(ApartmentController.excludeRoute(), RoomController.excludeRoute(), SettingController.excludeRoute())
       .forRoutes(
         UserController,
         ProfileController,

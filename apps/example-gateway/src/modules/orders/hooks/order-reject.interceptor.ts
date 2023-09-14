@@ -1,7 +1,16 @@
-import { BadRequestException, CallHandler, ExecutionContext, Injectable, isEmpty, NestInterceptor } from '@joktec/core';
+import {
+  BadRequestException,
+  CallHandler,
+  ExecutionContext,
+  ExpressRequest,
+  Injectable,
+  isEmpty,
+  NestInterceptor,
+} from '@joktec/core';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { RoomService } from '../../rooms';
+import { User } from '../../users';
 import { OrderStatus } from '../models';
 import { OrderService } from '../order.service';
 
@@ -18,8 +27,7 @@ export class OrderRejectInterceptor implements NestInterceptor {
    * @param next
    */
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const req = context.switchToHttp().getRequest();
-    const loggedUser = req.loggedUser;
+    const req = context.switchToHttp().getRequest<ExpressRequest<any, User>>();
 
     const reason = req.body.reason;
     if (isEmpty(reason)) throw new BadRequestException('REASON_REQUIRED');
@@ -35,7 +43,7 @@ export class OrderRejectInterceptor implements NestInterceptor {
       status: OrderStatus.REJECT,
       $push: {
         timelines: {
-          $each: [{ title: `The booking has been rejected by ${loggedUser.fullName} with reason: ${reason}` }],
+          $each: [{ title: `The booking has been rejected by ${req.loggedUser.fullName} with reason: ${reason}` }],
           $position: 0,
         },
       },

@@ -10,9 +10,9 @@ import {
   Delete,
   GatewayMetric,
   Get,
+  JwtPayload,
+  JwtPayloadData,
   Put,
-  Req,
-  Request,
   UseInterceptors,
   UsePipes,
 } from '@joktec/core';
@@ -29,8 +29,8 @@ export class ProfileController {
   @Get('/')
   @ApiOperation({ summary: `Get Profile` })
   @ApiOkResponse({ type: UserProfile })
-  async getProfile(@Req() req: Request): Promise<any> {
-    return this.profileService.getProfile(req['payload']);
+  async getProfile(@JwtPayloadData() payload: JwtPayload): Promise<any> {
+    return this.profileService.getProfile(payload);
   }
 
   @Put('/')
@@ -38,8 +38,8 @@ export class ProfileController {
   @ApiBody({ type: UserProfileDto })
   @ApiOkResponse({ type: UserProfile })
   @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }))
-  async updateProfile(@Body() input: UserProfileDto, @Req() req: Request): Promise<UserProfile> {
-    return this.profileService.updateProfile(input, req['payload']);
+  async updateProfile(@Body() input: UserProfileDto, @JwtPayloadData() payload: JwtPayload): Promise<UserProfile> {
+    return this.profileService.updateProfile(input, payload);
   }
 
   @Put('/password')
@@ -47,8 +47,8 @@ export class ProfileController {
   @ApiBody({ type: UserPasswordDto })
   @ApiOkResponse({ type: UserProfile })
   @UsePipes(new BaseValidationPipe())
-  async changePassword(@Body() input: UserPasswordDto, @Req() req: Request): Promise<UserProfile> {
-    return this.profileService.changePassword(input, req['payload']);
+  async changePassword(@Body() input: UserPasswordDto, @JwtPayloadData() payload: JwtPayload): Promise<UserProfile> {
+    return this.profileService.changePassword(input, payload);
   }
 
   @Put('/fcm')
@@ -56,15 +56,15 @@ export class ProfileController {
   @ApiBody({ type: UserFcmDto })
   @ApiOkResponse({ type: UserProfile })
   @UsePipes(new BaseValidationPipe())
-  async updateRegistrationID(@Body() input: UserFcmDto, @Req() req: Request): Promise<UserProfile> {
-    return this.profileService.updateRegistrationID(input, req['payload']);
+  async updateRegistrationID(@Body() input: UserFcmDto, @JwtPayloadData() payload: JwtPayload): Promise<UserProfile> {
+    return this.profileService.updateRegistrationID(input, payload);
   }
 
   @Delete('/')
   @ApiOperation({ summary: `Logout` })
   @ApiOkResponse({ type: UserLogoutDto })
-  async logout(@Req() req: Request): Promise<UserLogoutDto> {
-    return this.profileService.revokedMe(req['payload']);
+  async logout(@JwtPayloadData() payload: JwtPayload): Promise<UserLogoutDto> {
+    return this.profileService.revokedMe(payload);
   }
 
   @Delete('/revoke')
@@ -72,7 +72,7 @@ export class ProfileController {
   @ApiBody({ type: UserRevokeDto })
   @ApiOkResponse({ type: UserLogoutDto })
   @UsePipes(new BaseValidationPipe())
-  async revoke(@Body() input: UserRevokeDto, @Req() req: Request): Promise<UserLogoutDto> {
-    return this.profileService.revokedOther(input.tokenIds, req['payload']);
+  async revoke(@Body() input: UserRevokeDto, @JwtPayloadData() payload: JwtPayload): Promise<UserLogoutDto> {
+    return this.profileService.revokedOther(input.tokenIds, payload);
   }
 }

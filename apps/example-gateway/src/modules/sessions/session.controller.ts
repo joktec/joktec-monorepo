@@ -8,6 +8,7 @@ const props: IBaseControllerProps<Session> = {
   excludes: [ControllerExclude.WRITE],
   hooks: {
     findAll: [SessionQueryInterceptor],
+    findOne: [SessionQueryInterceptor],
   },
 };
 

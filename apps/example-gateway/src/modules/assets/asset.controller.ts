@@ -11,14 +11,14 @@ import {
   FilesInterceptor,
   IBaseControllerProps,
   JwtPayload,
+  JwtPayloadData,
   MulterFile,
   Post,
-  Req,
-  Request,
   UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from '@joktec/core';
+import { head } from 'lodash';
 import { AssetService } from './asset.service';
 import { Asset, AssetResponseDto } from './models';
 
@@ -43,8 +43,9 @@ export class AssetController extends BaseController<Asset, string>(props) {
   @ApiFile('file')
   @ApiOkResponse({ description: 'File successfully uploaded', type: Asset })
   @UseInterceptors(FileInterceptor('file', { fileFilter }))
-  async create(@UploadedFile() file: MulterFile, @Req() req: Request): Promise<Asset> {
-    return this.assetService.singleUpload(file, req['payload'] as JwtPayload);
+  async create(@UploadedFile() file: MulterFile, @JwtPayloadData() payload: JwtPayload): Promise<Asset> {
+    const { success } = await this.assetService.bulkUpload(file, payload);
+    return head(success);
   }
 
   @Post('/multiple')
@@ -53,8 +54,11 @@ export class AssetController extends BaseController<Asset, string>(props) {
   @ApiFiles('files')
   @ApiOkResponse({ description: 'Assets successfully uploaded', type: [AssetResponseDto] })
   @UseInterceptors(FilesInterceptor('files', MAX_TOTAL_FILE, { fileFilter }))
-  async uploadMultiple(@UploadedFiles() files: MulterFile[], @Req() req: Request): Promise<AssetResponseDto> {
-    const { success, failed } = await this.assetService.bulkUpload(files, req['payload'] as JwtPayload);
+  async uploadMultiple(
+    @UploadedFiles() files: MulterFile[],
+    @JwtPayloadData() payload: JwtPayload,
+  ): Promise<AssetResponseDto> {
+    const { success, failed } = await this.assetService.bulkUpload(files, payload);
     return { success, failed };
   }
 }
