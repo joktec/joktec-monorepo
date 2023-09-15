@@ -5,7 +5,3 @@ export * from './location';
 
 export type Request<T extends object = any> = ExpressRequest<T, User>;
 export type Response = ExpressResponse;
-
-export interface ClientInfo {
-  [key: string]: any;
-}

@@ -13,6 +13,10 @@ import { createLogstashStream } from './logstash/logstash';
 import { createLogtailStream } from './logtail/logtail';
 import { createLokiStream } from './loki/loki';
 import { createMongoLoggingStream } from './mongodb/pino-mongo';
+import { ExpressRequest } from '../base';
+import { parseUA } from '../utils';
+import { lookup } from 'geoip-lite';
+import requestIp from 'request-ip';
 
 export const createPinoHttp = async (configService: ConfigService): Promise<LoggerParam> => {
   const config: LogConfig = configService.parse(LogConfig, 'log');
@@ -52,10 +56,11 @@ export const createPinoHttp = async (configService: ConfigService): Promise<Logg
         enabled: true,
         autoLogging: false,
         serializers: {
-          req(req) {
-            console.log('createPinoHttp');
+          req(req: ExpressRequest) {
+            const ipAddress = requestIp.getClientIp(req);
             req.body = req.raw.body;
-            const userAgent = req.headers['user-agent'] || '';
+            req.userAgent = parseUA(req.headers['user-agent'] || '');
+            req.geoIp = { ipAddress, ...lookup(ipAddress) };
             return req;
           },
         },

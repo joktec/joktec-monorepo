@@ -18,7 +18,7 @@ log:
     enable: false
     host: https://logs-prod-011222.grafana.net
   mongo:
-    enable: false
+    enable: true
     uri: mongodb://joktec:joktec123@localhost:27017/?authSource=sample_db
     database: sample_db
     collection: logs

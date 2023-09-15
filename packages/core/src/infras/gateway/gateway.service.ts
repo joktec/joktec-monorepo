@@ -9,13 +9,16 @@ import Queue from 'bull';
 import csurf from 'csurf';
 import basicAuth from 'express-basic-auth';
 import helmet from 'helmet';
-import { GlobalOptions } from '../../base';
+import { ExpressRequest, ExpressResponse, GlobalOptions } from '../../base';
 import { BullConfig } from '../../bull';
 import { ConfigService } from '../../config';
 import { LogService } from '../../log';
 import { SwaggerConfig } from '../../swagger';
-import { joinUrl, toArray, toInt } from '../../utils';
+import { joinUrl, parseUA, toArray, toInt } from '../../utils';
 import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
+import { NextFunction } from 'express';
+import { lookup } from 'geoip-lite';
+import requestIp from 'request-ip';
 
 export class GatewayService {
   static async bootstrap(app: NestExpressApplication, opts?: GlobalOptions) {
@@ -30,6 +33,12 @@ export class GatewayService {
     app.setGlobalPrefix(contextPath);
     app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+    app.use((req: ExpressRequest, res: ExpressResponse, next: NextFunction) => {
+      const ipAddress = requestIp.getClientIp(req);
+      req.userAgent = parseUA(req.headers['user-agent'] || '');
+      req.geoIp = { ipAddress, ...lookup(ipAddress) };
+      next();
+    });
 
     app.useGlobalGuards(...toArray(opts?.guards));
     app.useGlobalPipes(...toArray(opts?.pipes));

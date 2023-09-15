@@ -1,6 +1,8 @@
 import { isArray, isBoolean, isNaN, isNil, isPlainObject, isString } from 'lodash';
 import pluralize from 'pluralize';
 import slug from 'slug';
+import UAParser from 'ua-parser-js';
+import { ExpressRequest, IUserAgent } from '../base';
 
 /**
  * Recursively flattens the keys of an object and returns an array of strings
@@ -171,4 +173,13 @@ export function nullKeysToObject(obj: { [key: string]: any }): object {
   }
 
   return result;
+}
+
+export function parseUA(userAgent: string): IUserAgent {
+  // lostnfound/1.0.0 (com.vn.lostnfound.android; Android 13; build 23; Galaxy Z Fold4 - SM-F936B) Chrome/4.9.3 Mobile
+  // lostnfound/1.0.0 (com.vn.lostnfound.ios; iOS 16; build 23; iPhone 11) Alamofire/4.9.3 Mobile
+  const extensions = {
+    browser: [[/(okhttp|alamofire)\/([\w.]+)/i], [UAParser.BROWSER.NAME, UAParser.BROWSER.VERSION]],
+  };
+  return new UAParser(userAgent, extensions).getResult();
 }

@@ -1,7 +1,8 @@
-import { IsEnum, IsNotEmpty } from '@joktec/core';
+import { IBrowser, ICPU, IDevice, IEngine, IOS, IsEnum, IsNotEmpty } from '@joktec/core';
 import { modelOptions, MongoSchema, prop, Ref } from '@joktec/mongo';
 import { User } from '../../users';
 import { SessionStatus } from './session.enum';
+import { PropType, Severity } from '@typegoose/typegoose';
 
 @modelOptions({ schemaOptions: { collection: 'sessions' } })
 export class Session extends MongoSchema {
@@ -23,14 +24,20 @@ export class Session extends MongoSchema {
   @prop({})
   ipAddress?: string;
 
-  @prop({})
-  os?: string;
+  @prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
+  os?: IOS;
 
-  @prop({})
-  browser?: string;
+  @prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
+  browser?: IBrowser;
 
-  @prop({})
-  platform?: string;
+  @prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
+  device?: IDevice;
+
+  @prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
+  cpu?: ICPU;
+
+  @prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
+  engine?: IEngine;
 
   @prop({ default: null })
   registrationId?: string;

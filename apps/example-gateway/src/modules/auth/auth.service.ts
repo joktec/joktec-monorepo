@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConfigService,
+  DeepPartial,
   ExpressRequest,
   ForbiddenException,
   generateOTP,
@@ -14,12 +15,12 @@ import {
   matchPassword,
   NotFoundException,
   REQUEST,
+  IUserAgent,
   ValidateBuilder,
   ValidateException,
 } from '@joktec/core';
 import { isEmpty } from 'lodash';
 import moment from 'moment';
-import { ClientInfo } from '../../base';
 import { PASSWORD_OPTIONS } from '../../utils';
 import { Otp, OtpService, OTPStatus, OTPType } from '../otpLogs';
 import { SessionService, SessionStatus } from '../sessions';
@@ -274,20 +275,26 @@ export class AuthService {
     });
   }
 
-  private async createTokenAndUpdate(payload: JwtPayload, userBody: Partial<User> = {}): Promise<TokeResponseDto> {
-    const clientInfo: ClientInfo = this.request.clientInfo;
+  private async createTokenAndUpdate(payload: JwtPayload, userBody: DeepPartial<User> = {}): Promise<TokeResponseDto> {
+    const ua: IUserAgent = this.request.userAgent;
     const token = await this.jwtService.sign(payload);
     await this.sessionService.create({
-      ...clientInfo,
       tokenId: payload.jti,
       expiresAt: token.expiredAt,
       status: SessionStatus.ACTIVATED,
       userId: payload.sub,
       createdBy: payload.sub,
       updatedBy: payload.sub,
+      ipAddress: this.request.geoIp?.ipAddress,
+      userAgent: ua.ua,
+      os: ua.os,
+      browser: ua.browser,
+      device: ua.device,
+      cpu: ua.cpu,
+      engine: ua.engine,
     });
 
-    const body: Partial<User> = { ...userBody };
+    const body: DeepPartial<User> = { ...userBody };
     if (payload.jti.startsWith('REGISTER')) {
       Object.assign(userBody, { createdBy: payload.sub, updatedBy: payload.sub });
     }
