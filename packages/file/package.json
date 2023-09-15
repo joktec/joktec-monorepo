@@ -1,7 +1,7 @@
 {
   "name": "@joktec/file",
   "description": "JokTec - Local File Service",
-  "version": "0.0.87",
+  "version": "0.0.88",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -41,7 +41,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.89",
+    "@joktec/core": "0.0.90",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.1.1",
     "lodash": "^4.17.21",
