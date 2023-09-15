@@ -46,7 +46,7 @@
     "lodash": "^4.17.21",
     "merge-deep": "^3.0.3",
     "node-pushnotifications": "^2.1.0",
-    "web-push": "^3.6.5"
+    "web-push": "^3.6.6"
   },
   "devDependencies": {
     "@types/merge-deep": "^3.0.0",

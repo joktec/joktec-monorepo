@@ -43,7 +43,7 @@
     "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -u",
+    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
