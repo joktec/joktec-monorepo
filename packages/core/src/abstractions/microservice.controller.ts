@@ -4,7 +4,7 @@ import { startCase } from 'lodash';
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { MicroMetric } from '../infras';
-import { LogService } from '../log';
+import { LogService } from '../logger';
 import { Constructor, DeepPartial, IBaseRequest, IListResponseDto } from '../models';
 import { toBool, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';

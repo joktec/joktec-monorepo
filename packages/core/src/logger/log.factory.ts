@@ -1,9 +1,13 @@
+import { lookup } from 'geoip-lite';
 import { isEmpty, omit, trim } from 'lodash';
 import { Params as LoggerParam } from 'nestjs-pino';
 import pino, { DestinationStream, StreamEntry } from 'pino';
 import { Options as PinoHttpOptions } from 'pino-http';
 import { PrettyOptions } from 'pino-pretty';
+import requestIp from 'request-ip';
+import { ExpressRequest } from '../base';
 import { ConfigService, ENV } from '../config';
+import { parseUA } from '../utils';
 import { createCloudWatchStream } from './cloudwatch/cloudwatch';
 import { createConsoleStream } from './console/console';
 import { createFluentdStream } from './fluentd/fluentd';
@@ -13,10 +17,6 @@ import { createLogstashStream } from './logstash/logstash';
 import { createLogtailStream } from './logtail/logtail';
 import { createLokiStream } from './loki/loki';
 import { createMongoLoggingStream } from './mongodb/pino-mongo';
-import { ExpressRequest } from '../base';
-import { parseUA } from '../utils';
-import { lookup } from 'geoip-lite';
-import requestIp from 'request-ip';
 
 export const createPinoHttp = async (configService: ConfigService): Promise<LoggerParam> => {
   const config: LogConfig = configService.parse(LogConfig, 'log');

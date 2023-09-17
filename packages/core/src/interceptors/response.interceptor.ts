@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { ExpressRequest, ExpressResponse } from '../base';
 import { RESPONSE_MESSAGE_KEY } from '../decorators';
 import { NotFoundException } from '../exceptions';
-import { LogService } from '../log';
+import { LogService } from '../logger';
 import { IResponseDto } from '../models';
 
 type ResponseType<T> = string | T | IResponseDto<T>;

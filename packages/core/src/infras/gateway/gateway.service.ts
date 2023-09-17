@@ -7,18 +7,18 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as bodyParser from 'body-parser';
 import Queue from 'bull';
 import csurf from 'csurf';
+import { NextFunction } from 'express';
 import basicAuth from 'express-basic-auth';
+import { lookup } from 'geoip-lite';
 import helmet from 'helmet';
+import requestIp from 'request-ip';
 import { ExpressRequest, ExpressResponse, GlobalOptions } from '../../base';
 import { BullConfig } from '../../bull';
 import { ConfigService } from '../../config';
-import { LogService } from '../../log';
+import { LogService } from '../../logger';
 import { SwaggerConfig } from '../../swagger';
 import { joinUrl, parseUA, toArray, toInt } from '../../utils';
 import { DEFAULT_GATEWAY_PORT, GatewayConfig } from './gateway.config';
-import { NextFunction } from 'express';
-import { lookup } from 'geoip-lite';
-import requestIp from 'request-ip';
 
 export class GatewayService {
   static async bootstrap(app: NestExpressApplication, opts?: GlobalOptions) {

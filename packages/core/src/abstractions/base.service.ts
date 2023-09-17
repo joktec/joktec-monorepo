@@ -1,7 +1,7 @@
 import { Inject, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
-import { LogService } from '../log';
+import { LogService } from '../logger';
 import { DeepPartial, IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { cloneInstance } from '../utils';
 import { BaseRepository } from './base.repository';

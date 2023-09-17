@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import mergeDeep from 'merge-deep';
 import { ConfigService } from '../config';
 import { ExceptionMessage } from '../exceptions';
-import { LogService } from '../log';
+import { LogService } from '../logger';
 import { Constructor } from '../models';
 import { sleep, toArray } from '../utils';
 import { Client } from './client';

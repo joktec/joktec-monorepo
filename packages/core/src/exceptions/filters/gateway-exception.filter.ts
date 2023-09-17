@@ -4,7 +4,7 @@ import { GraphQLError } from 'graphql/index';
 import { isEmpty, isString } from 'lodash';
 import { ExpressRequest, ExpressResponse } from '../../base';
 import { ConfigService, ENV } from '../../config';
-import { LogService } from '../../log';
+import { LogService } from '../../logger';
 import { IResponseDto } from '../../models';
 import { IValidateError, ValidateException } from '../../validation';
 import { ExceptionMessage } from '../exception-message';

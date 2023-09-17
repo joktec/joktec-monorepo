@@ -3,7 +3,7 @@ import { Global, Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule, ConfigService, initConfig } from './config';
 import { CqrsModule, GatewayConfig, GatewayModule, MicroModule } from './infras';
-import { createPinoHttp, LoggerModule } from './log';
+import { createPinoHttp, LoggerModule } from './logger';
 import { MetricModule } from './metric';
 
 @Global()

@@ -1,7 +1,7 @@
-import { DestinationStream } from 'pino';
 import { getWritableStream } from '@burakbey/pino-mongodb';
-import { PinoMongoConfig } from './pino-mongo.config';
 import { snakeCase } from 'lodash';
+import { DestinationStream } from 'pino';
+import { PinoMongoConfig } from './pino-mongo.config';
 
 export const createMongoLoggingStream = async (appName: string, cfg: PinoMongoConfig): Promise<DestinationStream> => {
   return await getWritableStream({

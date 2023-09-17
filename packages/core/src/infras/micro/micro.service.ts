@@ -4,7 +4,7 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import glob from 'glob';
 import { GlobalOptions } from '../../base';
 import { ConfigService, ENV } from '../../config';
-import { LogService } from '../../log';
+import { LogService } from '../../logger';
 import { toArray, toBool } from '../../utils';
 import { DEFAULT_MICRO_PORT, MicroConfig, MicroTransport } from './micro.config';
 

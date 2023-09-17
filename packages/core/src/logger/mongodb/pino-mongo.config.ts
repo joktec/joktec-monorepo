@@ -1,5 +1,5 @@
-import { toBool } from '../../utils';
 import { FormatFunction } from '@burakbey/pino-mongodb';
+import { toBool } from '../../utils';
 
 export class PinoMongoConfig {
   enable!: boolean;

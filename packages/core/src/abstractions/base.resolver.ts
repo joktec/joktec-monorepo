@@ -2,7 +2,7 @@ import { Inject, OnModuleInit } from '@nestjs/common';
 import { Args, Mutation, ObjectType, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
 import { ConfigService } from '../config';
-import { LogService } from '../log';
+import { LogService } from '../logger';
 import { BaseListResponse, Constructor, IBaseRequest } from '../models';
 import { toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';

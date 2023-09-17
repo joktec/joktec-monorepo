@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { isEmpty, isObject } from 'lodash';
 import CircuitBreaker from 'opossum';
 import { ConfigService } from '../config';
-import { LogService } from '../log';
+import { LogService } from '../logger';
 import { BreakerConfig } from './breaker.config';
 
 export const Breaker = (

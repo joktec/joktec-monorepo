@@ -4,7 +4,7 @@ import { startCase } from 'lodash';
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
-import { LogService } from '../log';
+import { LogService } from '../logger';
 import { Constructor, DeepPartial, IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { cloneInstance, toSingular } from '../utils';
 

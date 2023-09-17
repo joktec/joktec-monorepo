@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ExpressRequest } from '../../base';
 import { Exception } from '../../exceptions';
-import { LogService } from '../../log';
+import { LogService } from '../../logger';
 import { getTimeString } from '../../utils';
 
 const ExcludePaths = ['/swagger', '/bulls', '/metrics'];

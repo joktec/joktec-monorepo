@@ -31,7 +31,7 @@ import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableExceptio
 import { Jwt, JwtPayload } from '../guards';
 import { GatewayMetric } from '../infras';
 import { QueryInterceptor } from '../interceptors';
-import { LogService } from '../log';
+import { LogService } from '../logger';
 import { BaseListResponse, Constructor, IBaseRequest } from '../models';
 import { ApiSchema } from '../swagger';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
