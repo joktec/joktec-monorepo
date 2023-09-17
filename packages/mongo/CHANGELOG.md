@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.115](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.114...@joktec/mongo@0.0.115) (2023-09-17)
+
+
+### Bug Fixes
+
+* jwt decorator ([75560ad](https://github.com/joktec/joktec-monorepo/commit/75560ad4232cdc1eb6838c43ad9f8d80d2147f80))
+
+
+
+
+
 ## [0.0.114](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.113...@joktec/mongo@0.0.114) (2023-09-15)
 
 **Note:** Version bump only for package @joktec/mongo
