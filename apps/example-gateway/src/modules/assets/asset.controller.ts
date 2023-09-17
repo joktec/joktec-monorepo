@@ -11,7 +11,7 @@ import {
   FilesInterceptor,
   IBaseControllerProps,
   JwtPayload,
-  JwtPayloadData,
+  Jwt,
   MulterFile,
   Post,
   UploadedFile,
@@ -43,7 +43,7 @@ export class AssetController extends BaseController<Asset, string>(props) {
   @ApiFile('file')
   @ApiOkResponse({ description: 'File successfully uploaded', type: Asset })
   @UseInterceptors(FileInterceptor('file', { fileFilter }))
-  async create(@UploadedFile() file: MulterFile, @JwtPayloadData() payload: JwtPayload): Promise<Asset> {
+  async create(@UploadedFile() file: MulterFile, @Jwt() payload: JwtPayload): Promise<Asset> {
     const { success } = await this.assetService.bulkUpload(file, payload);
     return head(success);
   }
@@ -54,10 +54,7 @@ export class AssetController extends BaseController<Asset, string>(props) {
   @ApiFiles('files')
   @ApiOkResponse({ description: 'Assets successfully uploaded', type: [AssetResponseDto] })
   @UseInterceptors(FilesInterceptor('files', MAX_TOTAL_FILE, { fileFilter }))
-  async uploadMultiple(
-    @UploadedFiles() files: MulterFile[],
-    @JwtPayloadData() payload: JwtPayload,
-  ): Promise<AssetResponseDto> {
+  async uploadMultiple(@UploadedFiles() files: MulterFile[], @Jwt() payload: JwtPayload): Promise<AssetResponseDto> {
     const { success, failed } = await this.assetService.bulkUpload(files, payload);
     return { success, failed };
   }

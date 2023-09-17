@@ -16,6 +16,7 @@ import { MetricModule } from './metric';
       useFactory: (cfg: ConfigService) => createPinoHttp(cfg),
     }),
     ServeStaticModule.forRootAsync({
+      isGlobal: true,
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => {

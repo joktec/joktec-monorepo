@@ -25,7 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { isArray, startCase } from 'lodash';
 import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../exceptions';
-import { JwtPayload, JwtPayloadData } from '../guards';
+import { JwtPayload, Jwt } from '../guards';
 import { GatewayMetric } from '../infras';
 import { QueryInterceptor } from '../interceptors';
 import { BaseListResponse, Constructor, IBaseRequest } from '../models';
@@ -118,7 +118,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @UseGuards(...toArray(props?.guards?.create))
     @UsePipes(new BaseValidationPipe())
     @UseInterceptors(...toArray(props?.hooks?.create))
-    async create(@Body() entity: Partial<T>, @JwtPayloadData() payload?: JwtPayload): Promise<T> {
+    async create(@Body() entity: Partial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
       return this.service.create(entity, payload);
     }
@@ -132,7 +132,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @UseGuards(...toArray(props?.guards?.update))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }))
     @UseInterceptors(...toArray(props?.hooks?.update))
-    async update(@Param('id') id: ID, @Body() entity: Partial<T>, @JwtPayloadData() payload?: JwtPayload): Promise<T> {
+    async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.UPDATE);
       return this.service.update(id, entity, payload);
     }
@@ -144,7 +144,7 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.DELETE))
     @UseGuards(...toArray(props?.guards?.delete))
     @UseInterceptors(...toArray(props?.hooks?.delete))
-    async delete(@Param('id') id: ID, @JwtPayloadData() payload?: JwtPayload): Promise<T> {
+    async delete(@Param('id') id: ID, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.DELETE);
       return this.service.delete(id, payload);
     }
