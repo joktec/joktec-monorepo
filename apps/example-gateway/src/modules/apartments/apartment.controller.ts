@@ -1,9 +1,9 @@
-import { BaseController, Controller, IBaseControllerProps } from '@joktec/core';
+import { BaseController, Controller, IControllerProps } from '@joktec/core';
 import { ApartmentService } from './apartment.service';
 import { ApartmentInterceptor } from './hooks';
 import { Apartment } from './models';
 
-const props: IBaseControllerProps<Apartment> = {
+const props: IControllerProps<Apartment> = {
   dto: Apartment,
   hooks: {
     create: [ApartmentInterceptor],

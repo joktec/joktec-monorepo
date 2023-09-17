@@ -1,13 +1,16 @@
 import {
+  ConfigService,
   Constructor,
   DeepPartial,
   DEFAULT_CON_ID,
   ICondition,
   Injectable,
+  LogService,
   OnModuleInit,
   plainToInstance,
   toBool,
 } from '@joktec/core';
+import { Inject } from '@nestjs/common';
 import { ModelType } from '@typegoose/typegoose/lib/types';
 import { isNil, pick } from 'lodash';
 import { IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema } from './models';
@@ -29,6 +32,8 @@ import {
 
 @Injectable()
 export abstract class MongoRepo<T extends MongoSchema, ID = string> implements IMongoRepository<T, ID>, OnModuleInit {
+  @Inject() protected configService: ConfigService;
+  @Inject() protected logService: LogService;
   protected model: ModelType<T> = null;
 
   protected constructor(
@@ -38,6 +43,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   ) {}
 
   onModuleInit() {
+    this.logService.setContext(this.constructor.name);
     this.lazyRegister();
   }
 

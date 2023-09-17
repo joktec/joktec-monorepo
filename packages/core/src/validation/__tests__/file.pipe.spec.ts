@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals';
-import { isAllowedMimeType, FileFilter } from '../file.pipe';
+import { FileFilter, isAllowedMimeType } from '../file.pipe';
 import { ExpressRequest } from '../../base';
 
 describe('isAllowedMimeType function', () => {

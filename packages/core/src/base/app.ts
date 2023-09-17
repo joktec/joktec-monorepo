@@ -1,10 +1,10 @@
 import {
-  NestApplicationOptions,
-  NestModule,
-  NestInterceptor,
-  PipeTransform,
   CanActivate,
   ExceptionFilter,
+  NestApplicationOptions,
+  NestInterceptor,
+  NestModule,
+  PipeTransform,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';

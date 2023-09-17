@@ -1,4 +1,4 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@joktec/core';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@joktec/core';
 import { Observable } from 'rxjs';
 import { Request } from '../../../base';
 import { Session } from '../models';

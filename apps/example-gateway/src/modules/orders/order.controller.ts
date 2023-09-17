@@ -7,7 +7,7 @@ import {
   Controller,
   ControllerExclude,
   ExpressRequest,
-  IBaseControllerProps,
+  IControllerProps,
   Param,
   Patch,
   Req,
@@ -27,7 +27,7 @@ import {
 import { Order, OrderRejectDto } from './models';
 import { OrderService } from './order.service';
 
-const props: IBaseControllerProps<Order> = {
+const props: IControllerProps<Order> = {
   dto: Order,
   excludes: [ControllerExclude.DELETE],
   hooks: {

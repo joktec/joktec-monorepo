@@ -2,7 +2,7 @@ import { isArray, isBoolean, isNaN, isNil, isPlainObject, isString } from 'lodas
 import pluralize from 'pluralize';
 import slug from 'slug';
 import UAParser from 'ua-parser-js';
-import { ExpressRequest, IUserAgent } from '../base';
+import { IUserAgent } from '../base';
 
 /**
  * Recursively flattens the keys of an object and returns an array of strings

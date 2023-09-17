@@ -10,12 +10,12 @@ import {
   Inject,
   Injectable,
   isStrongPassword,
+  IUserAgent,
   JwtPayload,
   JwtService,
   matchPassword,
   NotFoundException,
   REQUEST,
-  IUserAgent,
   ValidateBuilder,
   ValidateException,
 } from '@joktec/core';

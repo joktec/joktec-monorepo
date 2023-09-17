@@ -1,8 +1,8 @@
-import { BaseController, Controller, IBaseControllerProps } from '@joktec/core';
+import { BaseController, Controller, IControllerProps } from '@joktec/core';
 import { Room } from './models';
 import { RoomService } from './room.service';
 
-const props: IBaseControllerProps<Room> = {
+const props: IControllerProps<Room> = {
   dto: Room,
 };
 

@@ -1,4 +1,4 @@
-export { LoggerModule, Logger, PinoLogger as LogService } from 'nestjs-pino';
+export { LoggerModule, Logger, PinoLogger as LogService, InjectPinoLogger as InjectLogger } from 'nestjs-pino';
 export * from './log.config';
 export * from './log.level';
 export * from './log.factory';

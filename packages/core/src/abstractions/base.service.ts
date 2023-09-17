@@ -1,10 +1,20 @@
+import { Inject, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
+import { LogService } from '../log';
 import { DeepPartial, IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { cloneInstance } from '../utils';
 import { BaseRepository } from './base.repository';
 
-export abstract class BaseService<T extends Record<string, any>, ID> {
+export abstract class BaseService<T extends Record<string, any>, ID> implements OnModuleInit {
+  @Inject() protected configService: ConfigService;
+  @Inject() protected logService: LogService;
+
   protected constructor(protected repository: BaseRepository<T, ID>) {}
+
+  onModuleInit() {
+    this.logService.setContext(this.constructor.name);
+  }
 
   async findAll(query: IBaseRequest<T>): Promise<IListResponseDto<T>> {
     const [items, totalItems] = await Promise.all([this.repository.find(query), this.repository.count(query)]);

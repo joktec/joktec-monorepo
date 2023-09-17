@@ -1,5 +1,8 @@
+import { Inject, OnModuleInit } from '@nestjs/common';
 import { Args, Mutation, ObjectType, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
+import { ConfigService } from '../config';
+import { LogService } from '../log';
 import { BaseListResponse, Constructor, IBaseRequest } from '../models';
 import { toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';
@@ -17,8 +20,15 @@ export const BaseResolver = <T extends object, ID>(props: IBaseResolverProps<T>)
   @ObjectType(`${nameSingular}Pagination`)
   class PaginationDto extends BaseListResponse<T>(props.dto) {}
 
-  abstract class Resolver {
+  abstract class Resolver implements OnModuleInit {
+    @Inject() protected configService: ConfigService;
+    @Inject() protected logService: LogService;
+
     protected constructor(protected service: BaseService<T, ID>) {}
+
+    onModuleInit() {
+      this.logService.setContext(this.constructor.name);
+    }
 
     @Query(() => PaginationDto, { name: `list${namePlural}` })
     async findAll(

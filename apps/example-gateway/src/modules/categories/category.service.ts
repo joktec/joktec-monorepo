@@ -4,7 +4,10 @@ import { Category, CategoryDto } from './models';
 
 @Injectable()
 export class CategoryService extends BaseService<Category, string> {
-  constructor(protected categoryRepo: CategoryRepo, private logger: LogService) {
+  constructor(
+    protected categoryRepo: CategoryRepo,
+    private logger: LogService,
+  ) {
     super(categoryRepo);
     this.logger.setContext(CategoryService.name);
   }

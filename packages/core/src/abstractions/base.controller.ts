@@ -3,7 +3,9 @@ import {
   CanActivate,
   Delete,
   Get,
+  Inject,
   NestInterceptor,
+  OnModuleInit,
   Param,
   Post,
   Put,
@@ -24,10 +26,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { isArray, startCase } from 'lodash';
+import { ConfigService } from '../config';
 import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../exceptions';
-import { JwtPayload, Jwt } from '../guards';
+import { Jwt, JwtPayload } from '../guards';
 import { GatewayMetric } from '../infras';
 import { QueryInterceptor } from '../interceptors';
+import { LogService } from '../log';
 import { BaseListResponse, Constructor, IBaseRequest } from '../models';
 import { ApiSchema } from '../swagger';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
@@ -47,7 +51,7 @@ export enum ControllerExclude {
   WRITE,
 }
 
-export interface IBaseControllerProps<T> {
+export interface IControllerProps<T> {
   dto: Constructor<T>;
   dtoName?: string;
   customDto?: {
@@ -63,7 +67,7 @@ export interface IBaseControllerProps<T> {
   metric?: boolean;
 }
 
-export const BaseController = <T extends object, ID>(props: IBaseControllerProps<T>): any => {
+export const BaseController = <T extends object, ID>(props: IControllerProps<T>): any => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
@@ -78,8 +82,15 @@ export const BaseController = <T extends object, ID>(props: IBaseControllerProps
 
   @ApiTags(apiTag.toLowerCase())
   @ApiExcludeController(includes(excludes, ControllerExclude.ALL))
-  abstract class Controller {
+  abstract class Controller implements OnModuleInit {
+    @Inject() protected configService: ConfigService;
+    @Inject() protected logService: LogService;
+
     protected constructor(protected service: BaseService<T, ID>) {}
+
+    onModuleInit() {
+      this.logService.setContext(this.constructor.name);
+    }
 
     protected checkMethod(...methodExcludes: ControllerExclude[]) {
       if (excludes.includes(ControllerExclude.ALL))

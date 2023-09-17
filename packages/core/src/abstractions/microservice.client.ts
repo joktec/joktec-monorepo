@@ -1,7 +1,10 @@
+import { Inject, OnModuleInit } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { startCase } from 'lodash';
 import { firstValueFrom } from 'rxjs';
+import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
+import { LogService } from '../log';
 import { Constructor, DeepPartial, IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { cloneInstance, toSingular } from '../utils';
 
@@ -14,8 +17,15 @@ export const MicroserviceClient = <T extends object, ID>(props?: IMicroserviceCl
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
 
-  abstract class Service {
+  abstract class Service implements OnModuleInit {
+    @Inject() protected configService: ConfigService;
+    @Inject() protected logService: LogService;
+
     protected constructor(protected client: ClientProxy) {}
+
+    onModuleInit() {
+      this.logService.setContext(this.constructor.name);
+    }
 
     async findAll(req: IBaseRequest<T>, jwtPayload?: JwtPayload): Promise<IListResponseDto<T>> {
       const result = this.client.send<IListResponseDto<T>>({ cmd: `${nameSingular}.findAll` }, { req, jwtPayload });

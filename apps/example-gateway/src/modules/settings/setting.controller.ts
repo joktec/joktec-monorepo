@@ -1,8 +1,8 @@
-import { BaseController, Controller, IBaseControllerProps } from '@joktec/core';
+import { BaseController, Controller, IControllerProps } from '@joktec/core';
 import { Setting } from './models';
 import { SettingService } from './setting.service';
 
-const props: IBaseControllerProps<Setting> = {
+const props: IControllerProps<Setting> = {
   dto: Setting,
 };
 

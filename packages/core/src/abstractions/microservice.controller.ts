@@ -1,8 +1,10 @@
-import { UseInterceptors, UsePipes } from '@nestjs/common';
+import { Inject, OnModuleInit, UseInterceptors, UsePipes } from '@nestjs/common';
 import { Ctx, MessagePattern, Payload, Transport } from '@nestjs/microservices';
 import { startCase } from 'lodash';
+import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { MicroMetric } from '../infras';
+import { LogService } from '../log';
 import { Constructor, DeepPartial, IBaseRequest, IListResponseDto } from '../models';
 import { toBool, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
@@ -20,8 +22,15 @@ export const MicroserviceController = <T extends object, ID>(props: IMicroservic
   const nameSingular = startCase(toSingular(dtoName));
   const transport: Transport = props.transport || Transport.TCP;
 
-  abstract class Controller {
+  abstract class Controller implements OnModuleInit {
+    @Inject() protected configService: ConfigService;
+    @Inject() protected logService: LogService;
+
     protected constructor(protected service: BaseService<T, ID>) {}
+
+    onModuleInit() {
+      this.logService.setContext(this.constructor.name);
+    }
 
     @MessagePattern({ cmd: `${nameSingular}.findAll` }, transport)
     async findAll(@Payload('req') req: IBaseRequest<T>, @Ctx() context: any): Promise<IListResponseDto<T>> {

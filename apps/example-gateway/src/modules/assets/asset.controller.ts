@@ -9,9 +9,9 @@ import {
   FileFilter,
   FileInterceptor,
   FilesInterceptor,
-  IBaseControllerProps,
-  JwtPayload,
+  IControllerProps,
   Jwt,
+  JwtPayload,
   MulterFile,
   Post,
   UploadedFile,
@@ -27,7 +27,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const fileFilter = FileFilter({ fileTypes: ['image/*'], maxSize: MAX_FILE_SIZE });
 
-const props: IBaseControllerProps<Asset> = {
+const props: IControllerProps<Asset> = {
   dto: Asset,
 };
 

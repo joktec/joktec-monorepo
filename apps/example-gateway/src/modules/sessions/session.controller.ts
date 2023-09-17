@@ -1,9 +1,9 @@
-import { BaseController, Controller, ControllerExclude, IBaseControllerProps } from '@joktec/core';
+import { BaseController, Controller, ControllerExclude, IControllerProps } from '@joktec/core';
 import { SessionQueryInterceptor } from './hooks';
 import { Session } from './models';
 import { SessionService } from './session.service';
 
-const props: IBaseControllerProps<Session> = {
+const props: IControllerProps<Session> = {
   dto: Session,
   excludes: [ControllerExclude.WRITE],
   hooks: {
