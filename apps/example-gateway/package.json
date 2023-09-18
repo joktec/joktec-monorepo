@@ -37,12 +37,12 @@
     "seed:refresh": "node dist/app.seeder --refresh"
   },
   "dependencies": {
-    "@joktec/core": "^0.0.91",
-    "@joktec/http": "^0.0.93",
-    "@joktec/mailer": "^0.0.89",
-    "@joktec/mongo": "^0.0.115",
-    "@joktec/firebase": "^0.0.9",
-    "@joktec/storage": "^0.0.91",
+    "@joktec/core": "^0.0.92",
+    "@joktec/http": "^0.0.94",
+    "@joktec/mailer": "^0.0.90",
+    "@joktec/mongo": "^0.0.116",
+    "@joktec/firebase": "^0.0.10",
+    "@joktec/storage": "^0.0.92",
     "byte-length": "^1.0.2",
     "dot-object": "^2.1.4",
     "gravatar": "^1.8.2",
