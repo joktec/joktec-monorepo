@@ -1,7 +1,7 @@
 {
   "name": "@joktec/mailer",
   "description": "JokTec - Mailer Service",
-  "version": "0.0.90",
+  "version": "0.0.91",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
