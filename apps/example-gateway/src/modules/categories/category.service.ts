@@ -1,19 +1,15 @@
-import { BaseService, Injectable, JwtPayload, LogService } from '@joktec/core';
+import { BaseService, Injectable, JwtPayload } from '@joktec/core';
 import { CategoryRepo } from './category.repo';
 import { Category, CategoryDto } from './models';
 
 @Injectable()
 export class CategoryService extends BaseService<Category, string> {
-  constructor(
-    protected categoryRepo: CategoryRepo,
-    private logger: LogService,
-  ) {
+  constructor(protected categoryRepo: CategoryRepo) {
     super(categoryRepo);
-    this.logger.setContext(CategoryService.name);
   }
 
   async create(entity: CategoryDto, payload?: JwtPayload): Promise<Category> {
-    this.logger.info('CategoryDto: %j', entity);
+    this.logService.info('CategoryDto: %j', entity);
     return super.create(entity, payload);
   }
 }

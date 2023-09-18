@@ -5,19 +5,25 @@ import glob from 'glob';
 import { GlobalOptions } from '../../base';
 import { ConfigService, ENV } from '../../config';
 import { LogService } from '../../logger';
-import { toArray, toBool } from '../../utils';
-import { DEFAULT_MICRO_PORT, MicroConfig, MicroTransport } from './micro.config';
+import { toArray, toInt } from '../../utils';
+import { buildError, validateSync } from '../../validation';
+import { MicroConfig, MicroTransport } from './micro.config';
 
 export class MicroService {
   static async bootstrap(app: INestApplication, opts?: GlobalOptions) {
     const config = app.get(ConfigService);
-    const microConfig: MicroConfig = config.get<MicroConfig>('micro' as any);
-    if (!microConfig) return;
-
     const logger = await app.resolve(LogService);
     logger.setContext(MicroService.name);
 
-    const port = microConfig.port ?? DEFAULT_MICRO_PORT;
+    const microConfig = config.parse(MicroConfig, 'micro');
+    const configErrors = validateSync(microConfig);
+    if (configErrors.length) {
+      const formatError = buildError(configErrors);
+      logger.error(Object.values(formatError).flat(), 'Microservice config errors');
+      return;
+    }
+
+    const { port, microservices } = microConfig;
 
     app.useGlobalGuards(...toArray(opts?.guards));
     app.useGlobalPipes(...toArray(opts?.pipes));
@@ -25,10 +31,9 @@ export class MicroService {
     app.useGlobalFilters(...toArray(opts?.filters));
 
     await Promise.all(
-      Object.keys(microConfig.microservices).map(async (transport: MicroTransport) => {
-        const options = microConfig.microservices[transport];
-        await this.connectMicroservice(app, transport, options);
-      }),
+      Object.keys(microservices).map((trans: MicroTransport) =>
+        this.connectMicroservice(app, trans, microservices[trans]),
+      ),
     );
 
     await app.startAllMicroservices();
@@ -46,14 +51,14 @@ export class MicroService {
     options: Record<string, any>,
   ): Promise<INestMicroservice> {
     const config = app.get(ConfigService);
-    const microConfig: MicroConfig = config.get<MicroConfig>('micro' as any);
-    const hybridOptions = { inheritAppConfig: toBool(microConfig.inheritAppConfig, true) };
+    const microConfig = config.parse(MicroConfig, 'micro');
+    const { port, inheritAppConfig } = microConfig;
     const buildOptions: any = Object.assign({}, options);
 
     if (transport === MicroTransport.TCP) {
       Object.assign(buildOptions, {
         host: buildOptions.host || '0.0.0.0',
-        port: buildOptions.port || microConfig.port || DEFAULT_MICRO_PORT,
+        port: toInt(buildOptions.port, port),
       });
     } else if (transport === MicroTransport.GRPC) {
       const filePattern = options?.filePattern ?? `${config.get('env') == ENV.DEV ? 'src' : 'dist'}/**/*.proto`;
@@ -65,14 +70,14 @@ export class MicroService {
             .toString()
             .match(/package (.*);/)[1],
       );
-      Object.assign(buildOptions, { package: packages, url: `0.0.0.0:${microConfig.port}`, protoPath: files });
+      Object.assign(buildOptions, { package: packages, url: `0.0.0.0:${port}`, protoPath: files });
     }
 
     const microOptions: any = {
       transport: this.convertTransport(transport) as Transport,
       options: { ...buildOptions },
     };
-    return app.connectMicroservice<MicroserviceOptions>(microOptions, hybridOptions);
+    return app.connectMicroservice<MicroserviceOptions>(microOptions, { inheritAppConfig });
   }
 
   private static convertTransport(transport: MicroTransport): Transport {

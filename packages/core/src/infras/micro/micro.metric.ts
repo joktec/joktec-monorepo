@@ -1,14 +1,12 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { InjectMetric, makeCounterProvider, makeGaugeProvider } from '@willsoto/nestjs-prometheus';
 import { Counter, Gauge } from 'prom-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ExpressRequest } from '../../base';
-import { LogService } from '../../logger';
+import { InjectLogger, LogService } from '../../logger';
 import { getTimeString } from '../../utils';
 
-const ExcludePaths = ['/swagger', '/bulls', '/metrics'];
 const MICRO_LATENCY_METRIC = 'micro_call_latency';
 const TOTAL_MICRO_METRIC = 'total_micro_call';
 
@@ -31,17 +29,14 @@ export const totalMicroCounter = makeCounterProvider({
 @Injectable()
 export class MicroMetric implements NestInterceptor {
   constructor(
-    private reflector: Reflector,
-    private logger: LogService,
+    @InjectLogger(MicroMetric.name) private logger: LogService,
     @InjectMetric(MICRO_LATENCY_METRIC) private latencyMetric: Gauge<string>,
     @InjectMetric(TOTAL_MICRO_METRIC) private totalCallLatency: Counter<string>,
-  ) {
-    this.logger.setContext(MicroMetric.name);
-  }
+  ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<ExpressRequest>();
-    if (ExcludePaths.includes(request.path)) {
+    if (request.path === '/metrics') {
       return next.handle();
     }
 

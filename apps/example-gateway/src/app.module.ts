@@ -1,10 +1,8 @@
 import {
-  APP_FILTER,
   APP_GUARD,
   APP_INTERCEPTOR,
   BullModule,
   CoreModule,
-  GatewayExceptionsFilter,
   JwtModule,
   MiddlewareConsumer,
   Module,
@@ -57,7 +55,7 @@ import { UserController, UserModule } from './modules/users';
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
-    { provide: APP_FILTER, useClass: GatewayExceptionsFilter },
+    // { provide: APP_FILTER, useClass: GatewayExceptionsFilter },
     { provide: APP_GUARD, useClass: RoleGuard },
     AuthMiddleware,
   ],

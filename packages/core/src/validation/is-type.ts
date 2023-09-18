@@ -25,10 +25,10 @@ const primitiveTypeValidator = {
   },
 };
 
-export function IsTypes(
+export const IsTypes = (
   types: ReadonlyArray<'int' | 'string' | 'boolean' | 'string[]' | Clazz>,
   validationOptions?: ValidationOptions,
-) {
+) => {
   return function (object: Object, propertyName: string) {
     registerDecorator({
       name: 'wrongType',
@@ -43,10 +43,10 @@ export function IsTypes(
               : !validateSync(new (type as Clazz)(value)).length;
           });
         },
-        defaultMessage(validationArguments?: ValidationArguments) {
+        defaultMessage(args?: ValidationArguments) {
           return `${propertyName} in one of [${types.map(type => type['name'] ?? type).join(', ')}] types`;
         },
       },
     });
   };
-}
+};

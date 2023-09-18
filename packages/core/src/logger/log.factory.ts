@@ -14,11 +14,13 @@ import { createFluentdStream } from './fluentd/fluentd';
 import { createGoogleLoggingStream } from './googleLog/googleLog';
 import { LogConfig } from './log.config';
 import { createLogstashStream } from './logstash/logstash';
-import { createLogtailStream } from './logtail/logtail';
 import { createLokiStream } from './loki/loki';
 import { createMongoLoggingStream } from './mongodb/pino-mongo';
 
-export const createPinoHttp = async (configService: ConfigService): Promise<LoggerParam> => {
+export const createPinoHttp = async (
+  configService: ConfigService,
+  customStreams: DestinationStream[] = [],
+): Promise<LoggerParam> => {
   const config: LogConfig = configService.parse(LogConfig, 'log');
   const appName = configService.get('name').replace('@', '').replace('/', '-');
 
@@ -38,13 +40,12 @@ export const createPinoHttp = async (configService: ConfigService): Promise<Logg
   const useJson = configService.get<string>('env') === ENV.PROD || config.format === 'json';
   const pinoConfig: PinoHttpOptions = useJson ? basePino : prettyPino;
 
-  const streams: DestinationStream[] = [createConsoleStream()];
+  const streams: DestinationStream[] = [createConsoleStream(), ...customStreams];
   if (config?.logStash?.enable) streams.push(createLogstashStream(appName, config.logStash));
   if (config?.fluentd?.enable) streams.push(createFluentdStream(appName, config.fluentd));
   if (config?.cloudWatch?.enable) streams.push(createCloudWatchStream(appName, config.cloudWatch));
   if (config?.googleLog?.enable) streams.push(createGoogleLoggingStream(appName, config.googleLog));
   if (config?.loki?.enable) streams.push(createLokiStream(appName, config.loki));
-  if (config?.logtail?.enable) streams.push(createLogtailStream(appName, config.logtail));
   if (config?.mongo?.enable && useJson) streams.push(await createMongoLoggingStream(appName, config.mongo));
 
   return {

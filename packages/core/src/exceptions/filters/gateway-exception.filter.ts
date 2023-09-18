@@ -4,7 +4,7 @@ import { GraphQLError } from 'graphql/index';
 import { isEmpty, isString } from 'lodash';
 import { ExpressRequest, ExpressResponse } from '../../base';
 import { ConfigService, ENV } from '../../config';
-import { LogService } from '../../logger';
+import { InjectLogger, LogService } from '../../logger';
 import { IResponseDto } from '../../models';
 import { IValidateError, ValidateException } from '../../validation';
 import { ExceptionMessage } from '../exception-message';
@@ -13,10 +13,8 @@ import { ExceptionMessage } from '../exception-message';
 export class GatewayExceptionsFilter implements ExceptionFilter {
   constructor(
     private cfg: ConfigService,
-    private logger: LogService,
-  ) {
-    this.logger.setContext(GatewayExceptionsFilter.name);
-  }
+    @InjectLogger(GatewayExceptionsFilter.name) private logger: LogService,
+  ) {}
 
   catch(exception: any, host: ArgumentsHost): any {
     const type: string = host.getType();

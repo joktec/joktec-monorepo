@@ -1,6 +1,7 @@
-import { toArray, toInt } from '../utils';
+import { toArray, toBool, toInt, toRoute } from '../utils';
 
 export class BullBoardConfig {
+  enable!: boolean;
   path!: string;
   username?: string;
   password?: string;
@@ -8,7 +9,8 @@ export class BullBoardConfig {
   constructor(props: Partial<BullBoardConfig>) {
     Object.assign(this, {
       ...props,
-      path: props?.path || 'bulls',
+      enable: toBool(props?.enable, true),
+      path: toRoute(props?.path || 'bulls'),
     });
   }
 }

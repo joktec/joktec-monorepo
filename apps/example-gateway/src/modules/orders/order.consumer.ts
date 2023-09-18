@@ -1,4 +1,4 @@
-import { Job, JwtPayload, LogService, plainToInstance, Process, Processor, toInt } from '@joktec/core';
+import { Job, JwtPayload, plainToInstance, Process, Processor, toInt } from '@joktec/core';
 import { head } from 'lodash';
 import moment from 'moment';
 import { Apartment } from '../apartments';
@@ -11,7 +11,6 @@ const LIMIT_ORDER = 10;
 @Processor('order')
 export class OrderConsumer {
   constructor(
-    private logger: LogService,
     private roomService: RoomService,
     private orderService: OrderService,
   ) {}

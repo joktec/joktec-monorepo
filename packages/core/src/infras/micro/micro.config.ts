@@ -1,4 +1,4 @@
-export const DEFAULT_MICRO_PORT = 8010;
+import { toBool, toInt } from '../../utils';
 
 export enum MicroTransport {
   TCP = 'tcp',
@@ -14,8 +14,16 @@ export type IMicroserviceOptions = {
   [transport in MicroTransport]: Record<string, any>;
 };
 
-export interface MicroConfig {
-  port: number;
+export class MicroConfig {
+  port!: number;
   inheritAppConfig?: boolean;
   microservices?: IMicroserviceOptions;
+
+  constructor(props: Partial<MicroConfig>) {
+    Object.assign(this, {
+      ...props,
+      port: toInt(props.port, 8010),
+      inheritAppConfig: toBool(props.inheritAppConfig, true),
+    });
+  }
 }

@@ -76,7 +76,7 @@ export function toArray<T>(data: T | Array<T>, opts?: { split: string | RegExp }
  * Transforms a link based on a specified host and type.
  * @param {string} link - The link to transform.
  * @param {string} host - The host to use for the transformation.
- * @param {'relative' | 'absolute'} type - The type of transformation to perform ('relative' or 'absolute').
+ * @param {"relative" | "absolute"} type - The type of transformation to perform ('relative' or 'absolute').
  * @returns {string} The transformed link.
  */
 export function linkTransform(link: string, host: string, type: 'relative' | 'absolute' = 'relative'): string {
@@ -182,4 +182,10 @@ export function parseUA(userAgent: string): IUserAgent {
     browser: [[/(okhttp|alamofire)\/([\w.]+)/i], [UAParser.BROWSER.NAME, UAParser.BROWSER.VERSION]],
   };
   return new UAParser(userAgent, extensions).getResult();
+}
+
+export function toRoute(path: string): string {
+  if (!path) return '/';
+  if (path.startsWith('/') || path.startsWith('http')) return path;
+  return `/${path}`;
 }

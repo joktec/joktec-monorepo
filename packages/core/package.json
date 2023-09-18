@@ -57,7 +57,6 @@
     "@bull-board/ui": "^5.8.2",
     "@burakbey/pino-mongodb": "^1.0.1",
     "@grpc/proto-loader": "^0.7.9",
-    "@logtail/pino": "^0.4.10",
     "@nestjs/bull": "^10.0.1",
     "@nestjs/common": "^10.2.5",
     "@nestjs/config": "^3.1.1",
