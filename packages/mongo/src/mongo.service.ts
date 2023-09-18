@@ -45,11 +45,10 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
       this.logService.debug(`Mongoose: %s.%s(%s)`, collectionName, methodName, args);
     });
 
-    this.logService.info('Start connecting to mongo database %s', uri);
     const client = mongoose.createConnection(uri, connectOptions);
-    this.logService.info('`%s` Connection to MongoDB established', config.conId);
+    this.logService.info('`%s` Connection to MongoDB established', config.conId, uri);
 
-    client.on('open', () => this.logService.info('`%s` Connected to mongo database successfully', config.conId));
+    client.on('open', () => this.logService.info('`%s` Connected to MongoDB successfully', config.conId));
     client.on('error', async err => {
       this.logService.error(err, '`%s` Error when connecting to MongoDB. Reconnecting...', config.conId);
       await this.clientInit(config, false);

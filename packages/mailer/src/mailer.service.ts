@@ -23,10 +23,7 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
       host: config.host,
       port: config.port,
       secure: config.secure,
-      auth: {
-        user: config.auth.user,
-        pass: config.auth.pass,
-      },
+      auth: { ...config.auth },
       logger: config.bindingLogger(this.logService),
     });
   }
@@ -34,16 +31,16 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
   async start(client: Mailer, conId: string = DEFAULT_CON_ID): Promise<void> {
     try {
       await client.verify();
-      this.logService.info('Mailer client `%s` is ready', conId);
+      this.logService.info('`%s` Mailer client is ready', conId);
     } catch (err) {
-      this.logService.error(err, 'Mailer client `%s` is not ready', conId);
+      this.logService.error(err, '`%s` Mailer client is not ready', conId);
       await this.clientInit(this.getConfig(conId), false);
     }
   }
 
   async stop(client: Mailer, conId: string = DEFAULT_CON_ID): Promise<void> {
     client.close();
-    this.logService.info(`Mailer client ${conId} is closed`);
+    this.logService.info('`%s` Mailer client is closed', conId);
   }
 
   async buildHtml(

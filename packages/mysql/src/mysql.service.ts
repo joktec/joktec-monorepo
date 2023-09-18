@@ -29,27 +29,25 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
       options.replication = { write: { ...connection }, read: config.slaves };
     }
     const sequelize = new Sequelize(options);
-    this.logService.info('MySQL Service is configured in `%s` connection', config.conId);
+    this.logService.info('`%s` Connection to MySQL established on host %s', config.conId, config.host);
     return sequelize;
   }
 
   async start(client: Sequelize, conId: string = DEFAULT_CON_ID): Promise<void> {
-    const config = this.getConfig(conId);
     try {
       await client.authenticate();
-      this.logService.info('MySQL Service have been start on host %s', config.host);
+      this.logService.info('`%s` Connected to MySQL successfully', conId);
     } catch (err) {
-      this.logService.error(err, 'MySQL Service failed to start on host %s', config.host);
+      this.logService.error(err, '`%s` Error when connecting to MySQL', conId);
     }
   }
 
   async stop(client: Sequelize, conId: string = DEFAULT_CON_ID): Promise<void> {
-    const config = this.getConfig(conId);
     try {
       await client.close();
-      this.logService.warn('MySQL Service have been stop on host %s', config.host);
+      this.logService.warn('`%s` Close connection to MySQL successfully', conId);
     } catch (err) {
-      this.logService.error(err, 'MySQL Service failed to stop on host %s', config.host);
+      this.logService.error(err, '`%s` Error when close connection to MySQL', conId);
     }
   }
 
