@@ -32,7 +32,7 @@ import { Jwt, JwtPayload } from '../guards';
 import { GatewayMetric } from '../infras';
 import { QueryInterceptor } from '../interceptors';
 import { LogService } from '../logger';
-import { BaseListResponse, Constructor, IBaseRequest } from '../models';
+import { BaseListResponse, Constructor, Entity, IBaseRequest } from '../models';
 import { ApiSchema } from '../swagger';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
@@ -51,7 +51,7 @@ export enum ControllerExclude {
   WRITE,
 }
 
-export interface IControllerProps<T> {
+export interface IControllerProps<T extends Entity> {
   dto: Constructor<T>;
   dtoName?: string;
   customDto?: {
@@ -67,7 +67,7 @@ export interface IControllerProps<T> {
   metric?: boolean;
 }
 
-export const BaseController = <T extends object, ID>(props: IControllerProps<T>): any => {
+export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>): any => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);

@@ -5,15 +5,15 @@ import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { LogService } from '../logger';
-import { Constructor, DeepPartial, IBaseRequest, ICondition, IListResponseDto } from '../models';
+import { Constructor, DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { cloneInstance, toSingular } from '../utils';
 
-export interface IMicroserviceClientProps<T> {
+export interface IMicroserviceClientProps<T extends Entity> {
   dto: Constructor<T>;
   dtoName?: string;
 }
 
-export const MicroserviceClient = <T extends object, ID>(props?: IMicroserviceClientProps<T>): any => {
+export const MicroserviceClient = <T extends Entity, ID>(props?: IMicroserviceClientProps<T>): any => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
 

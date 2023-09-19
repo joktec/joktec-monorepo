@@ -2,11 +2,11 @@ import { Inject, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { LogService } from '../logger';
-import { DeepPartial, IBaseRequest, ICondition, IListResponseDto } from '../models';
+import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { cloneInstance } from '../utils';
 import { BaseRepository } from './base.repository';
 
-export abstract class BaseService<T extends Record<string, any>, ID> implements OnModuleInit {
+export abstract class BaseService<T extends Entity, ID> implements OnModuleInit {
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
 

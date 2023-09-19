@@ -5,19 +5,19 @@ import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { MicroMetric } from '../infras';
 import { LogService } from '../logger';
-import { Constructor, DeepPartial, IBaseRequest, IListResponseDto } from '../models';
+import { Constructor, DeepPartial, Entity, IBaseRequest, IListResponseDto } from '../models';
 import { toBool, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
 import { BaseService } from './base.service';
 
-export interface IMicroserviceControllerProps<T> {
+export interface IMicroserviceControllerProps<T extends Entity> {
   dto: Constructor<T>;
   dtoName?: string;
   metric?: boolean;
   transport?: Transport;
 }
 
-export const MicroserviceController = <T extends object, ID>(props: IMicroserviceControllerProps<T>): any => {
+export const MicroserviceController = <T extends Entity, ID>(props: IMicroserviceControllerProps<T>): any => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const transport: Transport = props.transport || Transport.TCP;

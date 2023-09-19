@@ -4,15 +4,15 @@ import { Lookup } from 'geoip-lite';
 import { Multer } from 'multer';
 import { IResult } from 'ua-parser-js';
 import { JwtPayload } from '../guards';
-import { DeepPartial, Dictionary, IBaseRequest } from '../models';
+import { DeepPartial, Dictionary, Entity, IBaseRequest } from '../models';
 
 export type GeoIp = { ipAddress: string } & Lookup;
 export type IUserAgent = IResult;
 export { IBrowser, IDevice, IEngine, IOS, ICPU } from 'ua-parser-js';
 
-export interface ExpressResponse<T extends object = any> extends Response<DeepPartial<T> | Dictionary, Dictionary> {}
+export interface ExpressResponse<T extends Entity = any> extends Response<DeepPartial<T> | Dictionary, Dictionary> {}
 
-export interface ExpressRequest<T extends object = any, U = any>
+export interface ExpressRequest<T extends Entity = any, U = any>
   extends Request<Dictionary, ExpressResponse<T>, DeepPartial<T> & Dictionary, IBaseRequest<T>, Dictionary> {
   payload?: JwtPayload;
   loggedUser?: U;

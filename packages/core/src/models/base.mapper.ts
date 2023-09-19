@@ -1,9 +1,9 @@
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { ClassTransformOptions } from 'class-transformer/types/interfaces';
 import { validateSync, ValidationError } from 'class-validator';
-import { Constructor } from './base.dto';
+import { Constructor, Entity } from './base.dto';
 
-export abstract class BaseMapper<D, P extends Record<string, any> = any> {
+export abstract class BaseMapper<D, P extends Entity = any> {
   protected constructor(protected domainModel: Constructor<D>) {}
 
   /**

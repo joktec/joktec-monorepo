@@ -3,16 +3,16 @@ import { Args, Mutation, ObjectType, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
 import { ConfigService } from '../config';
 import { LogService } from '../logger';
-import { BaseListResponse, Constructor, IBaseRequest } from '../models';
+import { BaseListResponse, Constructor, Entity, IBaseRequest } from '../models';
 import { toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';
 
-export interface IBaseResolverProps<T> {
+export interface IBaseResolverProps<T extends Entity> {
   dto: Constructor<T>;
   dtoName?: string;
 }
 
-export const BaseResolver = <T extends object, ID>(props: IBaseResolverProps<T>): any => {
+export const BaseResolver = <T extends Entity, ID>(props: IBaseResolverProps<T>): any => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
