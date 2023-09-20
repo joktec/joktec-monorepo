@@ -70,7 +70,11 @@ export class MicroService {
             .toString()
             .match(/package (.*);/)[1],
       );
-      Object.assign(buildOptions, { package: packages, url: `0.0.0.0:${port}`, protoPath: files });
+      Object.assign(buildOptions, {
+        package: packages,
+        url: `0.0.0.0:${port}`,
+        protoPath: files,
+      });
     }
 
     const microOptions: any = {

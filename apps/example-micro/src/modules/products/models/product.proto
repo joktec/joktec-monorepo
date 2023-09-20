@@ -3,8 +3,11 @@ syntax = "proto3";
 package product;
 
 service ProductService {
+  rpc FindAll (GetAllProductParams) returns (ProductResponse) {}
   rpc FindOne (ProductById) returns (Product) {}
 }
+
+message GetAllProductParams {}
 
 message ProductById {
   string id = 1;
@@ -14,4 +17,8 @@ message Product {
   string id = 1;
   string name = 2;
   string description = 3;
+}
+
+message ProductResponse {
+  repeated Product data = 1;
 }
