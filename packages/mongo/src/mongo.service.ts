@@ -1,5 +1,5 @@
 import { AbstractClientService, Constructor, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
-import { getModelForClass, setGlobalOptions, Severity } from '@typegoose/typegoose';
+import { getModelForClass } from '@typegoose/typegoose';
 import { ModelType } from '@typegoose/typegoose/lib/types';
 import mongoose, { Connection as Mongoose } from 'mongoose';
 import { MongoClient } from './mongo.client';
@@ -11,21 +11,6 @@ const RETRY_OPTS = 'mongo.retry';
 export class MongoService extends AbstractClientService<MongoConfig, Mongoose> implements MongoClient {
   constructor() {
     super('mongo', MongoConfig);
-  }
-
-  async onModuleInit(): Promise<void> {
-    setGlobalOptions({
-      options: { allowMixed: Severity.ALLOW },
-      schemaOptions: {
-        strict: true,
-        strictQuery: true,
-        id: true,
-        minimize: true,
-        toObject: { virtuals: true },
-        toJSON: { virtuals: true },
-      },
-    });
-    await super.onModuleInit();
   }
 
   @Retry(RETRY_OPTS)

@@ -1,6 +1,14 @@
 import { IBaseRequest } from '@joktec/core';
 import { PipelineStage } from 'mongoose';
 import { MongoSchema } from './mongo.schema';
+import { mongoose } from '@typegoose/typegoose';
+
+export class ObjectId extends mongoose.Types.ObjectId {
+  public static compare(first: string | ObjectId, second: string | ObjectId): boolean {
+    if (!ObjectId.isValid(first) || !ObjectId.isValid(second)) return false;
+    return new ObjectId(first).equals(second);
+  }
+}
 
 export type MongoBulkRequest = { conditions?: string[]; operator?: string; selectedFields?: string[] };
 

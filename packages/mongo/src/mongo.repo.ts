@@ -29,9 +29,12 @@ import {
   UPDATE_OPTIONS,
   UPSERT_OPTIONS,
 } from './mongo.utils';
+import { Reflector } from '@nestjs/core';
+import { ISchemaOptions } from './decorators';
 
 @Injectable()
 export abstract class MongoRepo<T extends MongoSchema, ID = string> implements IMongoRepository<T, ID>, OnModuleInit {
+  @Inject() protected reflector: Reflector;
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
   protected model: ModelType<T> = null;
@@ -55,36 +58,40 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     setTimeout(this.lazyRegister.bind(this), 1000);
   }
 
-  protected get isSoftDelete(): boolean {
-    return this.model.schema.paths.hasOwnProperty('deletedAt');
-  }
-
   protected transform(docs: any | any[]): T | T[] {
     if (isNil(docs)) return null;
     return plainToInstance(this.schema, docs);
   }
 
+  private get schemeOptions(): ISchemaOptions {
+    return this.reflector.get<ISchemaOptions>(this.schema.name, this.schema);
+  }
+
+  private get paranoid(): boolean {
+    return toBool(this.schemeOptions.paranoid, true);
+  }
+
   @MongoCatch
   async find(query: IMongoRequest<T>): Promise<T[]> {
     if (query.aggregations?.length) {
-      const aggregations = buildAggregation(query, this.isSoftDelete);
+      const aggregations = buildAggregation(query, this.paranoid);
       const docs = await this.model.aggregate(aggregations).exec();
       return this.transform(docs) as T[];
     }
 
-    const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
+    const condition: ICondition<T> = preHandleQuery(query, this.paranoid);
     const qb = this.model.find(condition);
     if (query.select) qb.select(buildProjection(query.select));
     if (query.sort) qb.sort(buildSorter(query.sort));
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
-    if (query.populate) qb.populate(convertPopulate(query.populate, this.isSoftDelete));
+    if (query.populate) qb.populate(convertPopulate(query.populate, this.paranoid));
     const docs: any[] = await qb.lean().exec();
     return this.transform(docs) as T[];
   }
 
   @MongoCatch
   async count(query: IMongoRequest<T>): Promise<number> {
-    const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
+    const condition: ICondition<T> = preHandleQuery(query, this.paranoid);
     if (query.near && query.condition.hasOwnProperty(query.near.field || 'location')) {
       return this.model.estimatedDocumentCount(condition);
     }
@@ -93,11 +100,11 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async findOne(query: IMongoRequest<T>): Promise<T> {
-    const condition: ICondition<T> = preHandleQuery(query, this.isSoftDelete);
+    const condition: ICondition<T> = preHandleQuery(query, this.paranoid);
     const qb = this.model.findOne(condition);
     if (query.select) qb.select(buildProjection(query.select));
     if (query.sort) qb.sort(buildSorter(query.sort));
-    if (query.populate) qb.populate(convertPopulate(query.populate, this.isSoftDelete));
+    if (query.populate) qb.populate(convertPopulate(query.populate, this.paranoid));
     const doc = await qb.lean().exec();
     return this.transform(doc) as T;
   }
@@ -120,7 +127,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   async update(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
     const transformBody: T = this.transform(body) as T;
     const processBody: DeepPartial<T> = preHandleUpdateBody<T>(transformBody);
-    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
+    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.paranoid);
     const qb = this.model.findOneAndUpdate(overrideCondition, processBody, UPDATE_OPTIONS);
     const doc = await qb.lean().exec();
     return this.transform(doc) as T;
@@ -129,8 +136,8 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   @MongoCatch
   async delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T> {
     const force: boolean = toBool(opts?.force, false);
-    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
-    if (!force && this.isSoftDelete) {
+    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.paranoid);
+    if (!force && this.paranoid) {
       const bodyDeleted = { deletedAt: new Date(), deletedBy: opts?.userId ?? null };
       const doc = await this.model.findOneAndUpdate(overrideCondition, bodyDeleted, UPDATE_OPTIONS).lean().exec();
       return this.transform(doc) as T;
@@ -142,8 +149,8 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   @MongoCatch
   async deleteMany(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T[]> {
     const force: boolean = toBool(opts?.force, false);
-    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
-    if (!force && this.isSoftDelete) {
+    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.paranoid);
+    if (!force && this.paranoid) {
       const bodyDeleted = { deletedAt: new Date(), deletedBy: opts?.userId ?? null };
       const docs = await this.model.updateMany(overrideCondition, bodyDeleted, UPDATE_OPTIONS).lean().exec();
       return this.transform(docs) as T[];
@@ -154,7 +161,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async upsert(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
-    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.isSoftDelete);
+    const overrideCondition: ICondition<T> = preHandleQuery({ condition }, this.paranoid);
     const transformBody: T = this.transform(body) as T;
     const processBody: DeepPartial<T> = preHandleBody<T>(transformBody);
 

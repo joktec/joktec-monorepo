@@ -15,15 +15,14 @@ import {
   Type,
   ValidateNested,
 } from '@joktec/core';
-import { index, modelOptions, MongoSchema, prop } from '@joktec/mongo';
+import { MongoSchema, prop, Schema } from '@joktec/mongo';
 import moment from 'moment';
 import { Factory } from 'nestjs-seeder';
 import { IsCdnUrl } from '../../../utils';
 import { Address } from './address';
 import { UserGender, UserRole, UserStatus } from './user.enum';
 
-@index({ fullName: 'text', phone: 'text', email: 'text' })
-@modelOptions({ schemaOptions: { collection: 'users' } })
+@Schema({ collection: 'users', textSearch: ['fullName', 'phone', 'email'] })
 export class User extends MongoSchema {
   @prop({ required: true })
   @IsNotEmpty({ message: 'FULL_NAME_REQUIRED' })

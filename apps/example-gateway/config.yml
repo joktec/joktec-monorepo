@@ -8,7 +8,7 @@ gateway:
       password: p4ssw0rd
 
 log:
-  level: info
+  level: debug
   useFilter: false
   format: pretty
   logStash:

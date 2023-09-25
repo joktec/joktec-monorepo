@@ -52,12 +52,12 @@ export const preHandleCondition = <T extends MongoSchema>(condition: ICondition<
 
 export const preHandleQuery = <T extends MongoSchema>(
   query: IMongoRequest<T>,
-  isSoftDelete: boolean = true,
+  paranoid: boolean = true,
 ): ICondition<T> => {
   const { condition = {}, keyword, near } = query;
   const overrideCondition: ICondition<T> = preHandleCondition(condition);
   if (keyword) overrideCondition['$text'] = { $search: keyword };
-  if (isSoftDelete) overrideCondition['deletedAt'] = { $eq: null };
+  if (paranoid) overrideCondition['deletedAt'] = { $eq: null };
   if (near) {
     const { lat, lng, distance, field = 'location' } = near;
     overrideCondition[field] = {
@@ -133,11 +133,11 @@ export const buildSorter = (sort: ISort<any>): IMongoSorter => {
 /**
  * Convert populate object to mongoose populate options
  * @param populate
- * @param isSoftDelete
+ * @param paranoid
  */
 export const convertPopulate = <T extends MongoSchema>(
   populate: IPopulate<T> = {},
-  isSoftDelete: boolean = true,
+  paranoid: boolean = true,
 ): PopulateOptions[] => {
   return Object.keys(populate).map<PopulateOptions>(path => {
     const populateOptions: PopulateOptions = { path };
@@ -149,18 +149,18 @@ export const convertPopulate = <T extends MongoSchema>(
       if (options.populate) populateOptions.populate = convertPopulate(options.populate);
       if (options.match) Object.assign(populateMatch, populateOptions.match);
     }
-    populateOptions.match = preHandleQuery({ condition: populateMatch }, isSoftDelete);
+    populateOptions.match = preHandleQuery({ condition: populateMatch }, paranoid);
     return populateOptions;
   });
 };
 
 export const buildAggregation = <T extends MongoSchema>(
   query: IMongoRequest<T>,
-  isSoftDelete: boolean = true,
+  paranoid: boolean = true,
 ): IMongoAggregation[] => {
   const aggregations: IMongoAggregation[] = [];
 
-  if (query.condition) aggregations.push({ $match: preHandleQuery(query, isSoftDelete) });
+  if (query.condition) aggregations.push({ $match: preHandleQuery(query, paranoid) });
   if (query.sort) aggregations.push({ $sort: buildSorter(query.sort) });
   if (query.limit && query.page) {
     aggregations.push({ $skip: (query.page - 1) * query.limit });

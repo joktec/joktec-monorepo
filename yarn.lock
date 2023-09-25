@@ -4892,6 +4892,13 @@
   dependencies:
     moment "*"
 
+"@types/mongoose-delete@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@types/mongoose-delete/-/mongoose-delete-1.0.0.tgz#53b3e007f7723513122182e933b4aaa5cf5dd920"
+  integrity sha512-L+nyjS91LunM+2QdCrgtp71RUzA90oHqhusDKEaJe8haFefTCA5QAT9AGkDekTV24I7anBUeqV9n2FfVZrfmrQ==
+  dependencies:
+    mongoose "^5.11 || ^6 || ^7"
+
 "@types/mongoose@^5.11.97":
   version "5.11.97"
   resolved "https://registry.yarnpkg.com/@types/mongoose/-/mongoose-5.11.97.tgz#80b0357f3de6807eb597262f52e49c3e13ee14d8"
@@ -12636,6 +12643,11 @@ mongoose-beautiful-unique-validation@^7.1.1:
   resolved "https://registry.yarnpkg.com/mongoose-beautiful-unique-validation/-/mongoose-beautiful-unique-validation-7.1.1.tgz#50eaf88e395f9b194cd29ad76913cd9ebd515653"
   integrity sha512-fprzp8nY9Qjg0+RZFMl7gVmbINRt2H53fpqyjJWwPO7nxJ9RZZB/Lo3y+mXaMP4nNMOeoJb2v3dNou6h+iLh8w==
 
+mongoose-delete@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/mongoose-delete/-/mongoose-delete-1.0.1.tgz#8db2f5b1a1d487351c1af18634c2c4e99d4cd1f2"
+  integrity sha512-vm24uep4UJOW3Ac8H/gDxURcwvl+1Cc2H7tIJ0O8ejDEFJIUoksKS9HzTOM4SvEJusAVQ0JpjhbttHpevUz71A==
+
 mongoose@*:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.0.0.tgz#4b1394fdd56fcf0d6e78c7be9768edcc3254cc26"
@@ -12649,7 +12661,7 @@ mongoose@*:
     ms "2.1.3"
     sift "16.0.1"
 
-mongoose@^7.5.2:
+"mongoose@^5.11 || ^6 || ^7", mongoose@^7.5.2:
   version "7.5.2"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.5.2.tgz#1561cd1fe93c8453e65cea73203ce7eadc5deb7b"
   integrity sha512-yEkmI1jfiog7QUvMWz3eB/XoA3/5DrVvSz+z3V5hnq8VtZIHC7ujEV0RKzRXwr8QNMOs+OTB7+aK7R/N/V3yXA==

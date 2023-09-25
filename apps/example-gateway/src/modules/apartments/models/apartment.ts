@@ -10,7 +10,7 @@ import {
   Type,
   ValidateNested,
 } from '@joktec/core';
-import { index, modelOptions, MongoSchema, prop, PropType, Ref } from '@joktec/mongo';
+import { MongoSchema, prop, PropType, Ref, Schema } from '@joktec/mongo';
 import { orderBy } from 'lodash';
 import { Location } from '../../../base';
 import { IsCdnUrl } from '../../../utils';
@@ -18,9 +18,7 @@ import { Room } from '../../rooms';
 import { Setting } from '../../settings';
 import { ApartmentStatus, ApartmentType } from './apartment.enum';
 
-@index({ title: 'text', subhead: 'text' })
-@index({ location: '2dsphere' })
-@modelOptions({ schemaOptions: { collection: 'apartments' } })
+@Schema({ collection: 'apartments', textSearch: ['title', 'subhead'], geoSearch: 'location' })
 export class Apartment extends MongoSchema {
   @prop({ required: true, trim: true, uppercase: true, immutable: true })
   @IsNotEmpty({ message: 'CODE_REQUIRED' })

@@ -16,13 +16,13 @@ export class OrderConsumer {
   ) {}
 
   @Process('validate')
-  async orderTransaction(job: Job) {
+  async orderTransaction(job: Job<JwtPayload>) {
     const { data } = job;
 
-    const payload = data.payload as JwtPayload;
+    const payload = data.payload;
     const orderInput = plainToInstance(Order, data.body);
     const rooms = await this.roomService.find({
-      condition: { id: orderInput.roomId },
+      condition: { _id: orderInput.roomId },
       populate: { apartment: '*' },
     });
 

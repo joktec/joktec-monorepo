@@ -1,23 +1,20 @@
 import { ApiHideProperty, ApiProperty, Exclude, Field, Type } from '@joktec/core';
-import { mongoose, prop } from '@typegoose/typegoose';
+import { prop } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { ObjectId } from './mongo.request';
 
-export abstract class MongoSchema extends TimeStamps implements Base<string> {
+export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> {
   @ApiProperty()
   @Field(() => String, { nullable: true })
   @Type(() => String)
   _id!: string;
-
-  @Exclude()
-  @ApiHideProperty()
-  id: string;
 
   @prop({ type: Date, default: new Date(), immutable: true })
   @ApiProperty()
   @Field(() => Date, { nullable: true })
   createdAt?: Date;
 
-  @prop({ type: mongoose.Types.ObjectId, default: null, immutable: true })
+  @prop({ type: ObjectId, default: null, immutable: true })
   @ApiProperty({ type: String, example: '507f1f77bcf86cd799439011' })
   @Field(() => String, { nullable: true })
   @Type(() => String)
@@ -28,7 +25,7 @@ export abstract class MongoSchema extends TimeStamps implements Base<string> {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date;
 
-  @prop({ type: mongoose.Types.ObjectId, default: null })
+  @prop({ type: ObjectId, default: null })
   @ApiProperty({ type: String, example: '507f1f77bcf86cd799439011' })
   @Field(() => String, { nullable: true })
   @Type(() => String)
@@ -39,7 +36,7 @@ export abstract class MongoSchema extends TimeStamps implements Base<string> {
   @ApiHideProperty()
   deletedAt?: Date;
 
-  @prop({ type: mongoose.Types.ObjectId, default: null })
+  @prop({ type: ObjectId, default: null })
   @Exclude({ toPlainOnly: true })
   @ApiHideProperty()
   @Type(() => String)

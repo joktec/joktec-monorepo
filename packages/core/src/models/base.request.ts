@@ -1,3 +1,5 @@
+import { Entity } from './base.dto';
+
 /** A union of primitive data types that are allowed in a MongoDB query. */
 export type IDataType = string | number | boolean | Date | object;
 export type IBindingType = IDataType | IDataType[];
@@ -7,7 +9,7 @@ export type IOperation = '$eq' | '$gt' | '$gte' | '$in' | '$lt' | '$lte' | '$ne'
 
 /** An object that maps string keys to values that can be of type */
 export type IOpField = { [op in IOperation]?: IBindingType };
-export type ICondition<T extends object = {}> = {
+export type ICondition<T extends Entity = {}> = {
   [key in keyof T]?: IBindingType | IOpField | ICondition<T>[];
 } & {
   $or?: ICondition<T>[];
@@ -15,18 +17,18 @@ export type ICondition<T extends object = {}> = {
 };
 
 export type ILanguage = '*' | 'vi' | 'en';
-export type ISort<T extends object = {}> = { [key in keyof T]?: 'asc' | 'desc' };
+export type ISort<T extends Entity = {}> = { [key in keyof T]?: 'asc' | 'desc' };
 export type INear = { lat: number; lng: number; distance?: number; field?: string };
 
-export type IPopulate<T extends object = {}> = { [key in keyof T]?: '*' | IPopulateOption };
+export type IPopulate<T extends Entity = {}> = { [key in keyof T]?: '*' | IPopulateOption };
 export type IPopulateOption = {
   select?: string;
   model?: string;
-  populate?: IPopulate<object>;
-  match?: ICondition<object>;
+  populate?: IPopulate<Entity>;
+  match?: ICondition<Entity>;
 };
 
-export interface IBaseRequest<T extends object = {}> {
+export interface IBaseRequest<T extends Entity = {}> {
   select?: string;
   keyword?: string;
   condition?: ICondition<T>;
