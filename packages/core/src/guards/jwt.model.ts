@@ -14,6 +14,6 @@ export interface JwtPayload extends jwt.JwtPayload {
 
 export interface JwtToken {
   accessToken: string;
-  refreshToken: string;
   expiredAt: Date;
+  refreshToken?: string;
 }

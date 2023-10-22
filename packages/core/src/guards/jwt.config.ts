@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export enum JwtContext {
   HTTP,
@@ -11,8 +11,8 @@ export class JwtConfig {
   secretKey!: string;
 
   @IsString()
-  @IsNotEmpty()
-  refreshKey: string;
+  @IsOptional()
+  refreshKey?: string;
 
   @IsString()
   @IsNotEmpty()

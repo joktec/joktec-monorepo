@@ -4,7 +4,7 @@ import moment from 'moment';
 import ms from 'ms';
 import { ExpressRequest } from '../base';
 import { ConfigService } from '../config';
-import { ExceptionMessage, UnauthorizedException } from '../exceptions';
+import { ExceptionMessage, InternalServerException, UnauthorizedException } from '../exceptions';
 import { JwtConfig } from './jwt.config';
 import { JwtPayload, JwtToken } from './jwt.model';
 
@@ -13,7 +13,7 @@ export class JwtService {
   private readonly config: JwtConfig;
 
   constructor(private configService: ConfigService) {
-    this.config = this.configService.parse(JwtConfig, 'guard');
+    this.config = this.configService.parseOrThrow(JwtConfig, 'guard');
   }
 
   async extractToken(req: ExpressRequest): Promise<string> {
@@ -26,12 +26,19 @@ export class JwtService {
   }
 
   async sign(payload: JwtPayload): Promise<JwtToken> {
-    const expiresIn: number = ms(this.config.expired) / 1000;
-    return {
-      accessToken: jwt.sign(payload, this.config.secretKey, { expiresIn }),
-      refreshToken: jwt.sign(payload, this.config.refreshKey, { expiresIn: expiresIn * 2 }),
+    const { secretKey, refreshKey, expired } = this.config;
+    const expiresIn: number = ms(expired) / 1000;
+
+    const jwtToken: JwtToken = {
+      accessToken: jwt.sign(payload, secretKey, { expiresIn }),
       expiredAt: moment().add(expiresIn, 'seconds').toDate(),
     };
+
+    if (refreshKey) {
+      jwtToken.refreshToken = jwt.sign(payload, refreshKey, { expiresIn: expiresIn * 2 });
+    }
+
+    return jwtToken;
   }
 
   async verify(token: string): Promise<JwtPayload> {
@@ -47,6 +54,10 @@ export class JwtService {
   }
 
   async verifyRefreshToken(token: string): Promise<JwtPayload> {
+    if (!this.config.refreshKey) {
+      throw new InternalServerException(ExceptionMessage.REFRESH_TOKEN_NOT_SETUP);
+    }
+
     try {
       const res = jwt.verify(token, this.config.refreshKey, { ignoreExpiration: true, complete: true });
       const payload = res.payload as JwtPayload;
