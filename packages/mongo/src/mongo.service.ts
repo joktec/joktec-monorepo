@@ -25,15 +25,19 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     };
 
     mongoose.set('strictQuery', config.strictQuery);
-    mongoose.set('debug', (collectionName: string, methodName: string, ...methodArgs: any[]) => {
-      const args = methodArgs.map(arg => JSON.stringify(arg)).join(', ');
-      this.logService.debug(`Mongoose: %s.%s(%s)`, collectionName, methodName, args);
-    });
+    if (config.debug) {
+      mongoose.set('debug', (collectionName: string, methodName: string, ...methodArgs: any[]) => {
+        const args = methodArgs.map(arg => JSON.stringify(arg)).join(', ');
+        this.logService.info(`Mongoose: db.getCollection("%s").%s(%s)`, collectionName, methodName, args);
+      });
+    }
 
     const client = mongoose.createConnection(uri, connectOptions);
     this.logService.info('`%s` Connection to MongoDB established', config.conId, uri);
 
-    client.on('open', () => this.logService.info('`%s` Connected to MongoDB successfully', config.conId));
+    client.on('open', () => {
+      this.logService.info('`%s` Connected to MongoDB successfully', config.conId);
+    });
     client.on('error', async err => {
       this.logService.error(err, '`%s` Error when connecting to MongoDB. Reconnecting...', config.conId);
       await this.clientInit(config, false);
@@ -68,7 +72,12 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   public getModel<T>(schemaClass: Constructor<T>, conId: string = DEFAULT_CON_ID): ModelType<T> {
     if (!this.isConnected(conId)) return null;
     const model = getModelForClass(schemaClass, { existingConnection: this.getClient(conId) });
-    this.logService.debug('Schema `%s` registered', schemaClass.name);
+
+    const config = this.getConfig(conId);
+    if (config.debug) {
+      this.logService.info('`%s` Schema `%s` registered', conId, schemaClass.name);
+    }
+
     return model;
   }
 }

@@ -1,5 +1,5 @@
 import { ApiPropertyOptional, IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional } from '@joktec/core';
-import { modelOptions, prop, PropType } from '@joktec/mongo';
+import { prop, PropType, Schema } from '@joktec/mongo';
 
 export enum CoordinateType {
   POINT = 'Point',
@@ -7,7 +7,7 @@ export enum CoordinateType {
 
 export type Coordinates = [number, number];
 
-@modelOptions({ schemaOptions: { _id: false, timestamps: false } })
+@Schema({ schemaOptions: { _id: false, timestamps: false } })
 export class Location {
   @prop()
   @IsOptional()

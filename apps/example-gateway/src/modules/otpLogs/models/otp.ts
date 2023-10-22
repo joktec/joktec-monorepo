@@ -1,10 +1,9 @@
 import { isEmail, isMobilePhone } from '@joktec/core';
-import { index, modelOptions, MongoSchema, prop } from '@joktec/mongo';
+import { MongoSchema, prop, Schema } from '@joktec/mongo';
 import moment from 'moment';
 import { OTPStatus, OTPType } from './otp.enum';
 
-@index({ fullName: 'text', phone: 'text', email: 'text' })
-@modelOptions({ schemaOptions: { collection: 'otpLogs' } })
+@Schema({ collection: 'otpLogs', textSearch: 'fullName,phone,email', paranoid: true })
 export class Otp extends MongoSchema {
   @prop({ required: true, validate: (v: string) => !v || isMobilePhone(v, 'vi-VN') })
   phone?: string;

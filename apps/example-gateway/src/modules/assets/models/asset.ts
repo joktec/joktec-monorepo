@@ -1,10 +1,9 @@
 import { ApiProperty, ApiPropertyOptional, IsArray, IsEnum, IsNotEmpty, IsOptional } from '@joktec/core';
-import { index, modelOptions, MongoSchema, prop, PropType } from '@joktec/mongo';
+import { MongoSchema, prop, PropType, Schema } from '@joktec/mongo';
 import { IsCdnUrl } from '../../../utils';
 import { AssetStatus } from './asset.enum';
 
-@index({ title: 'text', subhead: 'text' })
-@modelOptions({ schemaOptions: { collection: 'assets' } })
+@Schema({ collection: 'assets', textSearch: 'title,subhead', paranoid: true })
 export class Asset extends MongoSchema {
   @prop({ required: true })
   @IsNotEmpty({ message: 'FILENAME_REQUIRED' })

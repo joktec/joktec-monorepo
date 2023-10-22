@@ -8,10 +8,10 @@ import {
   Type,
   ValidateNested,
 } from '@joktec/core';
-import { modelOptions, prop } from '@joktec/mongo';
+import { prop, Schema } from '@joktec/mongo';
 import { Address } from '../../users';
 
-@modelOptions({ schemaOptions: { _id: false, timestamps: false } })
+@Schema({ schemaOptions: { _id: false, timestamps: false } })
 export class OrderContact {
   @prop({ required: true })
   @IsNotEmpty({ message: 'FULL_NAME_REQUIRED' })

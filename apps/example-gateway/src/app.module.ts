@@ -18,7 +18,7 @@ import { AuthMiddleware, RoleGuard } from './base';
 import { ApartmentController, ApartmentModule } from './modules/apartments';
 import { AssetController, AssetModule } from './modules/assets';
 import { AuthModule } from './modules/auth';
-import { CategoryModule } from './modules/categories';
+import { CategoryController, CategoryModule } from './modules/categories';
 import { OrderController, OrderModule } from './modules/orders';
 import { OtpModule } from './modules/otpLogs';
 import { ProductModule } from './modules/products';
@@ -67,6 +67,7 @@ export class AppModule implements NestModule {
       .forRoutes(
         UserController,
         ProfileController,
+        CategoryController,
         ApartmentController,
         RoomController,
         AssetController,

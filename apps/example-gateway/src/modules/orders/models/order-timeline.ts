@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional, IsOptional } from '@joktec/core';
-import { modelOptions, prop } from '@joktec/mongo';
+import { prop, Schema } from '@joktec/mongo';
 import { IsCdnUrl } from '../../../utils';
 
-@modelOptions({ schemaOptions: { _id: false, timestamps: true } })
+@Schema({ schemaOptions: { _id: false, timestamps: false } })
 export class OrderTimeline {
   @prop({ required: true, trim: true })
   @IsOptional()

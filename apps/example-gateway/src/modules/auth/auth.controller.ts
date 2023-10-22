@@ -32,9 +32,11 @@ import {
 @UseInterceptors(GatewayMetric)
 export class AuthController {
   constructor(
-    private authService: AuthService,
     private logger: LogService,
-  ) {}
+    private authService: AuthService,
+  ) {
+    this.logger.setContext(AuthController.name);
+  }
 
   @Post('/send')
   @ApiBody({ type: SendOtpDto })
@@ -72,6 +74,7 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   @ApiOkResponse({ type: TokeResponseDto })
   async login(@Body() input: LoginDto): Promise<TokeResponseDto> {
+    this.logger.info('XXXXXX: %j', input);
     return this.authService.login(input);
   }
 

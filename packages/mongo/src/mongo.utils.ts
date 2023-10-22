@@ -11,7 +11,7 @@ export const UPDATE_OPTIONS: QueryOptions = {
 };
 
 export const DELETE_OPTIONS: QueryOptions = {
-  rawResult: false,
+  includeResultMetadata: false,
 };
 
 export const UPSERT_OPTIONS: QueryOptions = {
@@ -50,14 +50,10 @@ export const preHandleCondition = <T extends MongoSchema>(condition: ICondition<
   return condition;
 };
 
-export const preHandleQuery = <T extends MongoSchema>(
-  query: IMongoRequest<T>,
-  paranoid: boolean = true,
-): ICondition<T> => {
+export const preHandleQuery = <T extends MongoSchema>(query: IMongoRequest<T>): ICondition<T> => {
   const { condition = {}, keyword, near } = query;
   const overrideCondition: ICondition<T> = preHandleCondition(condition);
   if (keyword) overrideCondition['$text'] = { $search: keyword };
-  if (paranoid) overrideCondition['deletedAt'] = { $eq: null };
   if (near) {
     const { lat, lng, distance, field = 'location' } = near;
     overrideCondition[field] = {
@@ -74,7 +70,7 @@ export const preHandleQuery = <T extends MongoSchema>(
 };
 
 export const preHandleBody = <T extends object>(body: object): DeepPartial<T> => {
-  const processBody = omit(body, ['_id', 'createdAt', 'updatedAt', 'deletedAt', '__v', '__t']);
+  const processBody = omit(body, ['_id', 'createdAt', 'updatedAt', '__v', '__t']);
   const result: DeepPartial<T> = {};
 
   for (const key in processBody) {
@@ -131,14 +127,10 @@ export const buildSorter = (sort: ISort<any>): IMongoSorter => {
 };
 
 /**
- * Convert populate object to mongoose populate options
+ * Convert a populate object to mongoose populate options
  * @param populate
- * @param paranoid
  */
-export const convertPopulate = <T extends MongoSchema>(
-  populate: IPopulate<T> = {},
-  paranoid: boolean = true,
-): PopulateOptions[] => {
+export const convertPopulate = <T extends MongoSchema>(populate: IPopulate<T> = {}): PopulateOptions[] => {
   return Object.keys(populate).map<PopulateOptions>(path => {
     const populateOptions: PopulateOptions = { path };
     const populateMatch = {};
@@ -149,18 +141,15 @@ export const convertPopulate = <T extends MongoSchema>(
       if (options.populate) populateOptions.populate = convertPopulate(options.populate);
       if (options.match) Object.assign(populateMatch, populateOptions.match);
     }
-    populateOptions.match = preHandleQuery({ condition: populateMatch }, paranoid);
+    populateOptions.match = preHandleQuery({ condition: populateMatch });
     return populateOptions;
   });
 };
 
-export const buildAggregation = <T extends MongoSchema>(
-  query: IMongoRequest<T>,
-  paranoid: boolean = true,
-): IMongoAggregation[] => {
+export const buildAggregation = <T extends MongoSchema>(query: IMongoRequest<T>): IMongoAggregation[] => {
   const aggregations: IMongoAggregation[] = [];
 
-  if (query.condition) aggregations.push({ $match: preHandleQuery(query, paranoid) });
+  if (query.condition) aggregations.push({ $match: preHandleQuery(query) });
   if (query.sort) aggregations.push({ $sort: buildSorter(query.sort) });
   if (query.limit && query.page) {
     aggregations.push({ $skip: (query.page - 1) * query.limit });

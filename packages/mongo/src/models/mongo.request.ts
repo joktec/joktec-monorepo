@@ -1,7 +1,7 @@
 import { IBaseRequest } from '@joktec/core';
+import { mongoose } from '@typegoose/typegoose';
 import { PipelineStage } from 'mongoose';
 import { MongoSchema } from './mongo.schema';
-import { mongoose } from '@typegoose/typegoose';
 
 export class ObjectId extends mongoose.Types.ObjectId {
   public static compare(first: string | ObjectId, second: string | ObjectId): boolean {
@@ -10,7 +10,7 @@ export class ObjectId extends mongoose.Types.ObjectId {
   }
 }
 
-export type MongoBulkRequest = { conditions?: string[]; operator?: string; selectedFields?: string[] };
+export type MongoBulkRequest = { conditions?: string[]; operator?: string; fields?: string[] };
 
 export type IMongoAggregation = PipelineStage;
 

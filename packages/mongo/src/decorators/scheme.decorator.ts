@@ -1,8 +1,10 @@
-import { applyDecorators, Constructor, Entity, SetMetadata, toArray, toBool, toPlural } from '@joktec/core';
+import { applyDecorators, Clazz, SetMetadata, toArray, toPlural } from '@joktec/core';
 import { index, modelOptions, plugin, Severity } from '@typegoose/typegoose';
 import { Func, ICustomOptions, IndexOptions } from '@typegoose/typegoose/lib/types';
-import mongoose, { SchemaOptions } from 'mongoose';
 import { snakeCase } from 'lodash';
+import mongoose, { SchemaOptions } from 'mongoose';
+import { ObjectId } from '../models';
+import { ParanoidPlugin } from '../plugins/paranoid.plugin';
 
 export interface IPlugin<TFunc extends Func = any, TParams = Parameters<TFunc>[1]> {
   mongoosePlugin: TFunc;
@@ -20,14 +22,24 @@ export interface ISchemaOptions {
   customOptions?: ICustomOptions;
   indexes?: IIndexOptions[];
   plugins?: IPlugin[];
-  paranoid?: boolean;
-  textSearch?: string[];
+  paranoid?: boolean | { deletedAt?: { name?: string; type?: Clazz }; deletedBy?: { name?: string; type?: Clazz } };
+  textSearch?: string | string[];
   geoSearch?: string;
 }
 
 export const Schema = (options: ISchemaOptions = {}): ClassDecorator => {
   return (target: any) => {
     const className = target.name;
+
+    const useParanoid: boolean = !!options?.paranoid;
+    const paranoidOpts = {
+      deletedAt: { name: 'deletedAt', type: Date },
+      deletedBy: { name: 'deletedBy', type: ObjectId },
+    };
+    if (typeof options?.paranoid === 'object') {
+      Object.assign(paranoidOpts, options.paranoid);
+    }
+
     const opts: ISchemaOptions = {
       collection: options?.collection || snakeCase(toPlural(className)),
       schemaOptions: {
@@ -42,8 +54,8 @@ export const Schema = (options: ISchemaOptions = {}): ClassDecorator => {
       customOptions: { allowMixed: Severity.ALLOW, ...options?.customOptions },
       indexes: toArray(options?.indexes),
       plugins: toArray(options?.plugins),
-      paranoid: toBool(options?.paranoid, false),
-      textSearch: toArray(options?.textSearch),
+      paranoid: useParanoid && paranoidOpts,
+      textSearch: toArray(options?.textSearch, { split: ',' }),
       geoSearch: options?.geoSearch,
     };
 
@@ -55,8 +67,8 @@ export const Schema = (options: ISchemaOptions = {}): ClassDecorator => {
       }),
     ];
 
-    if (options?.textSearch?.length) {
-      const fields = options.textSearch.reduce<mongoose.IndexDefinition>((idxObj, field) => {
+    if (opts?.textSearch?.length) {
+      const fields = toArray(opts.textSearch).reduce<mongoose.IndexDefinition>((idxObj, field) => {
         idxObj[field] = 'text';
         return idxObj;
       }, {});
@@ -69,6 +81,8 @@ export const Schema = (options: ISchemaOptions = {}): ClassDecorator => {
 
     opts.indexes.map(idx => decorators.push(index(idx.fields, idx.options)));
     opts.plugins.map(p => decorators.push(plugin(p.mongoosePlugin, p.options)));
+    if (opts.paranoid) decorators.push(plugin(ParanoidPlugin, opts.paranoid));
+
     applyDecorators(...decorators)(target);
   };
 };

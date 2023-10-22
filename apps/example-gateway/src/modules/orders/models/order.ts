@@ -9,7 +9,7 @@ import {
   Type,
   ValidateNested,
 } from '@joktec/core';
-import { index, modelOptions, MongoSchema, prop, PropType, Ref } from '@joktec/mongo';
+import { MongoSchema, prop, PropType, Ref, Schema } from '@joktec/mongo';
 import { IsCdnUrl, ValidateGroup } from '../../../utils';
 import { Room } from '../../rooms';
 import { User } from '../../users';
@@ -17,8 +17,7 @@ import { OrderContact } from './order-contact';
 import { OrderTimeline } from './order-timeline';
 import { OrderStatus, OrderType, PaymentMethod } from './order.enum';
 
-@index({ title: 'text', subhead: 'text' })
-@modelOptions({ schemaOptions: { collection: 'orders' } })
+@Schema({ collection: 'orders', textSearch: 'title,subhead', paranoid: true })
 export class Order extends MongoSchema {
   @prop({ required: true, trim: true, uppercase: true, immutable: true })
   @IsOptional()

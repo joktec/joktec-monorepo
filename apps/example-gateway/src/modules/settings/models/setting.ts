@@ -1,10 +1,9 @@
 import { ApiProperty, ApiPropertyOptional, IsEnum, IsNotEmpty, IsOptional, IsPositive, Type } from '@joktec/core';
-import { index, modelOptions, MongoSchema, prop, Ref } from '@joktec/mongo';
+import { MongoSchema, prop, Ref, Schema } from '@joktec/mongo';
 import { IsCdnUrl } from '../../../utils';
 import { SettingStatus, SettingType } from './setting.enum';
 
-@index({ title: 'text', subhead: 'text' })
-@modelOptions({ schemaOptions: { collection: 'settings' } })
+@Schema({ collection: 'settings', textSearch: 'title,subhead', paranoid: true })
 export class Setting extends MongoSchema {
   @prop({ required: true, trim: true, uppercase: true, immutable: true })
   @IsNotEmpty({ message: 'CODE_REQUIRED' })

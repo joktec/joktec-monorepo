@@ -1,10 +1,10 @@
 import { IBrowser, ICPU, IDevice, IEngine, IOS, IsEnum, IsNotEmpty } from '@joktec/core';
-import { modelOptions, MongoSchema, prop, Ref } from '@joktec/mongo';
+import { MongoSchema, prop, Ref, Schema } from '@joktec/mongo';
+import { PropType, Severity } from '@typegoose/typegoose';
 import { User } from '../../users';
 import { SessionStatus } from './session.enum';
-import { PropType, Severity } from '@typegoose/typegoose';
 
-@modelOptions({ schemaOptions: { collection: 'sessions' } })
+@Schema({ collection: 'sessions', paranoid: true })
 export class Session extends MongoSchema {
   @prop({ required: true })
   tokenId!: string;

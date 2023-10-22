@@ -1,35 +1,35 @@
-import { ApiProperty } from '@joktec/core';
+import { ApiProperty, ApiPropertyOptional } from '@joktec/core';
 import { UserProfile } from '../../profile';
 
 export class SendOtpResponse {
-  @ApiProperty({ type: String, required: false })
+  @ApiPropertyOptional({ type: String })
   privateCode?: string;
 
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({ type: String })
   activeCode?: string;
 
-  @ApiProperty({ type: String, required: false, example: 1 })
+  @ApiPropertyOptional({ type: String, example: 1 })
   retry?: number;
 
-  @ApiProperty({ type: String, required: false, example: 30 })
+  @ApiPropertyOptional({ type: String, example: 30 })
   expiredInSeconds?: number;
 }
 
 export class VerifyOtpResponse {
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({ type: String })
   activeCode!: string;
 }
 
 export class TokeResponseDto {
-  @ApiProperty({ type: String, required: true })
+  @ApiProperty({ type: String })
   accessToken!: string;
 
-  @ApiProperty({ type: String, required: true })
-  refreshToken!: string;
+  @ApiPropertyOptional({ type: String })
+  refreshToken?: string;
 
-  @ApiProperty({ type: Date, required: true })
+  @ApiProperty({ type: Date })
   expiredAt!: Date;
 
-  @ApiProperty({ type: UserProfile, required: true })
-  profile: UserProfile;
+  @ApiProperty({ type: UserProfile })
+  profile!: UserProfile;
 }

@@ -11,7 +11,7 @@ import {
   Type,
   ValidateNested,
 } from '@joktec/core';
-import { index, modelOptions, MongoSchema, prop, PropType, Ref } from '@joktec/mongo';
+import { MongoSchema, prop, PropType, Ref, Schema } from '@joktec/mongo';
 import { orderBy } from 'lodash';
 import { IsCdnUrl } from '../../../utils';
 import { Apartment } from '../../apartments';
@@ -19,8 +19,7 @@ import { Setting } from '../../settings';
 import { RoomSchedule } from './room-schedule';
 import { RoomStatus, RoomType } from './room.enum';
 
-@index({ title: 'text', subhead: 'text' })
-@modelOptions({ schemaOptions: { collection: 'rooms' } })
+@Schema({ collection: 'rooms', textSearch: 'title,subhead', paranoid: true })
 export class Room extends MongoSchema {
   @prop({ required: true, trim: true, uppercase: true, immutable: true })
   @IsNotEmpty({ message: 'CODE_REQUIRED' })

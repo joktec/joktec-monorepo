@@ -8,7 +8,7 @@ gateway:
       password: p4ssw0rd
 
 log:
-  level: debug
+  level: info
   useFilter: false
   format: pretty
   logStash:
@@ -42,6 +42,7 @@ misc:
 
 guard:
   secretKey: $ecr3tK4y
+  refreshKey: refreshKey
   expired: 1 year
   pending: 30
   limit: 5
@@ -54,6 +55,7 @@ mongo:
   database: sample_db
   connectTimeout: 20000
   directConnection: true
+  debug: true
 
 storage:
   region: ap-southeast-1

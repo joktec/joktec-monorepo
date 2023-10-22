@@ -49,6 +49,10 @@ export class MongoConfig extends ClientConfig {
   @IsOptional()
   autoCreate?: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  debug?: boolean;
+
   constructor(props: MongoConfig) {
     super(props);
     Object.assign(this, {
@@ -60,6 +64,7 @@ export class MongoConfig extends ClientConfig {
       strictQuery: toBool(props.strictQuery, true),
       directConnection: toBool(props.directConnection, false),
       autoCreate: toBool(props.autoCreate, true),
+      debug: toBool(props.debug, false),
     });
   }
 }
