@@ -1,8 +1,7 @@
-import { Clazz, toArray, toBool } from '@joktec/core';
-import { has } from 'lodash';
-import { Schema, Model, Document, PopulateOptions, QueryOptions, FilterQuery } from 'mongoose';
+import { Clazz, toArray } from '@joktec/core';
+import { isEmpty } from 'lodash';
+import { Schema, Document, PopulateOptions, QueryOptions } from 'mongoose';
 import { ObjectId } from '../models';
-import { DELETE_OPTIONS, UPDATE_OPTIONS } from '../mongo.utils';
 
 export interface ParanoidPluginOptions {
   deletedAt?: { name?: string; type?: Clazz };
@@ -55,8 +54,16 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidPluginOptions) => 
 
   // Add deletedAt and deletedBy
   schema.add({
-    [deletedAtKey]: opts?.deletedAt?.type || Date,
-    [deletedByKey]: opts?.deletedBy?.type || ObjectId,
+    [deletedAtKey]: {
+      type: opts?.deletedAt?.type || Date,
+      default: null,
+      deletedAt: deletedAtKey,
+    },
+    [deletedByKey]: {
+      type: opts?.deletedBy?.type || ObjectId,
+      default: null,
+      deletedBy: deletedByKey,
+    },
   });
 
   // JSON transform
@@ -78,6 +85,10 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidPluginOptions) => 
       'estimatedDocumentCount',
       'updateMany',
       'updateOne',
+      'deleteOne',
+      'findOneAndDelete',
+      'findOneAndRemove',
+      'deleteMany',
     ],
     function (next) {
       const options = this.getOptions();
@@ -109,38 +120,12 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidPluginOptions) => 
     },
   );
 
-  // Override all method delete
-  ['deleteOne', 'findOneAndDelete', 'findOneAndRemove', 'deleteMany'].forEach(method => {
-    const original = schema.statics[method];
-    schema.statics[method] = async function (condition: FilterQuery<Document>, options?: ParanoidOptions) {
-      injectFilter(condition, deletedAtKey, options);
-
-      if (toBool(options?.force, false)) {
-        Object.assign(options, DELETE_OPTIONS);
-        return original.apply(this, [condition, options]);
-      }
-
-      Object.assign(options, UPDATE_OPTIONS, { lean: true });
-      const body = {
-        [deletedAtKey]: new Date(),
-        [deletedByKey]: options.deletedBy,
-      };
-
-      const originMethod = method === 'deleteMany' ? (Model as any).updateMany : (Model as any).findOneAndUpdate;
-      return originMethod.apply(this, [condition, body, options]);
-    };
-  });
-
   // Aggregate
   schema.pre('aggregate', function (next, opts: ParanoidOptions) {
-    const includePipeline = (key: string): boolean => {
-      return this.pipeline().some(p => has(p, key));
-    };
-
-    if (!includePipeline(`$match`)) {
-      this.pipeline().unshift({ $match: injectFilter({}, deletedAtKey, opts) });
+    const match = injectFilter({}, deletedAtKey, opts);
+    if (!isEmpty(match)) {
+      this.pipeline().unshift({ $match: match });
     }
-
     next();
   });
 };

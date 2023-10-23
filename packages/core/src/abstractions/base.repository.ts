@@ -14,4 +14,6 @@ export interface BaseRepository<T extends Entity, ID> extends BaseReadRepository
   update(condition: ICondition<T>, body: DeepPartial<T>): Promise<T>;
 
   delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: any }): Promise<T>;
+
+  restore(condition: ICondition<T>, opts?: { userId: any }): Promise<T>;
 }

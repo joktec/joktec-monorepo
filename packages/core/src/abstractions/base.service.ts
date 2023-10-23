@@ -58,4 +58,9 @@ export abstract class BaseService<T extends Entity, ID> implements OnModuleInit 
     const condition: ICondition<T> = { id } as object;
     return this.repository.delete(condition, { userId: payload?.sub });
   }
+
+  async restore(id: ID, payload?: JwtPayload): Promise<T> {
+    const condition: ICondition<T> = { id } as object;
+    return this.repository.restore(condition, { userId: payload?.sub });
+  }
 }

@@ -1,6 +1,6 @@
 import { ConfigService, DeepPartial, DEFAULT_CON_ID, ICondition, LogService, OnModuleInit, toBool } from '@joktec/core';
 import { Inject } from '@nestjs/common';
-import { FindOptions } from 'sequelize';
+import { FindOptions, RestoreOptions } from 'sequelize';
 import { DestroyOptions } from 'sequelize/types/model';
 import { Model, ModelCtor } from 'sequelize-typescript';
 import { IMysqlRequest, MysqlId } from './models';
@@ -72,6 +72,16 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
     options.force = toBool(opts?.force, false);
     await this.model.destroy(options);
     return existModel;
+  }
+
+  @MysqlCatch
+  async restore(condition: ICondition<T>, opts?: { userId?: ID }): Promise<T> {
+    const options: RestoreOptions<T> = preHandleQuery<T>({ condition });
+    await this.model.restore(options);
+    if (!opts?.userId) {
+      return this.findOne({ condition });
+    }
+    return this.update(condition, { updatedAt: opts?.userId });
   }
 
   @MysqlCatch

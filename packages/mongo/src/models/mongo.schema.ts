@@ -1,6 +1,7 @@
-import { ApiProperty, Field, Type } from '@joktec/core';
-import { prop } from '@typegoose/typegoose';
+import { ApiProperty, DeepPartial, Field, ICondition, Type } from '@joktec/core';
+import { prop, ReturnModelType } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
+import { QueryOptions } from 'mongoose';
 import { ObjectId } from './mongo.request';
 
 export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> {
@@ -30,4 +31,60 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
   @Field(() => String, { nullable: true })
   @Type(() => String)
   updatedBy?: string;
+
+  public static async destroy(
+    this: ReturnModelType<typeof MongoSchema>,
+    filter: ICondition<any>,
+    options?: QueryOptions<any> & { force?: boolean; deletedBy?: string | ObjectId },
+  ): Promise<MongoSchema> {
+    const isParanoid = Object.values(this.schema.paths).some(schema => !!schema.options.deletedAt);
+    if (!isParanoid || options?.force) {
+      return this.findOneAndDelete(filter, options).lean().exec();
+    }
+
+    const bodyUpdate = Object.values(this.schema.paths).reduce((body, schema) => {
+      if (schema.options.deletedAt) body[schema.options.deletedAt] = new Date();
+      if (schema.options.deletedBy) body[schema.options.deletedBy] = options?.deletedBy;
+      return body;
+    }, {});
+    return this.findOneAndUpdate(filter, bodyUpdate, options).lean().exec();
+  }
+
+  public static async destroyMany(
+    this: ReturnModelType<typeof MongoSchema>,
+    filter: ICondition<any>,
+    options?: QueryOptions<any> & { force?: boolean; deletedBy?: string | ObjectId },
+  ): Promise<MongoSchema[]> {
+    const docs = await this.find(filter, null, options).lean().exec();
+
+    const isParanoid = Object.values(this.schema.paths).some(schema => !!schema.options.deletedAt);
+    if (!isParanoid || options?.force) {
+      await this.deleteMany(filter, options).lean().exec();
+    } else {
+      const bodyUpdate = Object.values(this.schema.paths).reduce((body, schema) => {
+        if (schema.options.deletedAt) body[schema.options.deletedAt] = new Date();
+        if (schema.options.deletedBy) body[schema.options.deletedBy] = options?.deletedBy;
+        return body;
+      }, {});
+      await this.findOneAndUpdate(filter, bodyUpdate, options).lean().exec();
+    }
+
+    return docs;
+  }
+
+  public static async restore(
+    this: ReturnModelType<typeof MongoSchema>,
+    filter: ICondition<any>,
+    options?: QueryOptions<any> & { restoredBy?: string | ObjectId },
+  ): Promise<MongoSchema> {
+    const bodyUpdate: DeepPartial<MongoSchema> = Object.values(this.schema.paths).reduce((body, schema) => {
+      if (schema.options.deletedAt) body[schema.options.deletedAt] = null;
+      if (schema.options.deletedBy) body[schema.options.deletedBy] = null;
+      return body;
+    }, {});
+    if (options?.restoredBy) bodyUpdate.updatedBy = options.restoredBy.toString();
+    return this.findOneAndUpdate(filter, bodyUpdate, { ...options, onlyDeleted: true })
+      .lean()
+      .exec();
+  }
 }

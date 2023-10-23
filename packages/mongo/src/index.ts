@@ -8,7 +8,7 @@ export * from './mongo.exception';
 export * from './decorators';
 export * from './models';
 export * from './plugins';
-export * from '@typegoose/typegoose';
+export { prop, pre, post, Ref, mongoose } from '@typegoose/typegoose';
 
 export {
   BasePropOptions,

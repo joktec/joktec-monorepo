@@ -127,7 +127,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   @MongoCatch
   async delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T> {
     const overrideCondition: ICondition<T> = preHandleQuery({ condition });
-    const doc = await this.model.findOneAndDelete(overrideCondition, {
+    const doc = await (this.model as any).destroy(overrideCondition, {
       force: toBool(opts?.force, false),
       deletedBy: opts?.userId,
     });
@@ -135,9 +135,16 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
+  async restore(condition: ICondition<T>, opts?: { userId: ID }): Promise<T> {
+    const overrideCondition: ICondition<T> = preHandleQuery({ condition });
+    const doc = await (this.model as any).restore(overrideCondition, { restoredBy: opts?.userId });
+    return this.transform(doc) as T;
+  }
+
+  @MongoCatch
   async deleteMany(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T[]> {
     const overrideCondition: ICondition<T> = preHandleQuery({ condition });
-    const docs = await this.model.deleteMany(overrideCondition, {
+    const docs = await (this.model as any).destroyMany(overrideCondition, {
       force: toBool(opts?.force, false),
       deletedBy: opts?.userId,
     });
