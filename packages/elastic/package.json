@@ -40,14 +40,14 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.9.0",
+    "@elastic/elasticsearch": "^8.10.0",
     "@joktec/core": "0.0.92",
     "@joktec/http": "0.0.94",
     "lodash": "^4.17.21",
     "merge-deep": "^3.0.3"
   },
   "devDependencies": {
-    "@types/merge-deep": "^3.0.0"
+    "@types/merge-deep": "^3.0.2"
   },
   "lint-staged": {
     "*.ts": [

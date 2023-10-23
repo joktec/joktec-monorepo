@@ -74,6 +74,6 @@
   },
   "gitHead": "25fef554d74349f4b06e8da1628fd3dd73069196",
   "devDependencies": {
-    "@types/fs-extra": "^11.0.2"
+    "@types/fs-extra": "^11.0.3"
   }
 }

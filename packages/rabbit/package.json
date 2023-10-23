@@ -47,7 +47,7 @@
     "object-hash": "^3.0.0"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.10.1"
+    "@types/amqplib": "^0.10.3"
   },
   "lint-staged": {
     "*.ts": [

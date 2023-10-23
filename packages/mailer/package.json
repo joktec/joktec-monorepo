@@ -47,10 +47,10 @@
     "@joktec/core": "0.0.92",
     "handlebars": "^4.7.8",
     "lodash": "^4.17.21",
-    "nodemailer": "^6.9.5"
+    "nodemailer": "^6.9.7"
   },
   "devDependencies": {
-    "@types/nodemailer": "^6.4.10"
+    "@types/nodemailer": "^6.4.13"
   },
   "lint-staged": {
     "*.ts": [

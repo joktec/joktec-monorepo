@@ -53,10 +53,10 @@
     "url-parse": "^1.5.10"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.0.2",
-    "@types/dot-object": "^2.1.2",
-    "@types/gravatar": "^1.8.3",
-    "@types/lodash": "^4.14.198",
+    "@faker-js/faker": "^8.2.0",
+    "@types/dot-object": "^2.1.4",
+    "@types/gravatar": "^1.8.5",
+    "@types/lodash": "^4.14.200",
     "nestjs-seeder": "^0.3.2"
   },
   "lint-staged": {
