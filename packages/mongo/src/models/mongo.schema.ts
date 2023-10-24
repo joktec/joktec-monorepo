@@ -2,6 +2,7 @@ import { ApiProperty, DeepPartial, Field, ICondition, Type } from '@joktec/core'
 import { prop, ReturnModelType } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { QueryOptions } from 'mongoose';
+import { DELETE_OPTIONS, UPDATE_OPTIONS } from '../mongo.utils';
 import { ObjectId } from './mongo.request';
 
 export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> {
@@ -39,9 +40,11 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
   ): Promise<MongoSchema> {
     const isParanoid = Object.values(this.schema.paths).some(schema => !!schema.options.deletedAt);
     if (!isParanoid || options?.force) {
+      Object.assign(options, DELETE_OPTIONS);
       return this.findOneAndDelete(filter, options).lean().exec();
     }
 
+    Object.assign(options, UPDATE_OPTIONS);
     const bodyUpdate = Object.values(this.schema.paths).reduce((body, schema) => {
       if (schema.options.deletedAt) body[schema.options.deletedAt] = new Date();
       if (schema.options.deletedBy) body[schema.options.deletedBy] = options?.deletedBy;
@@ -59,6 +62,7 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
 
     const isParanoid = Object.values(this.schema.paths).some(schema => !!schema.options.deletedAt);
     if (!isParanoid || options?.force) {
+      Object.assign(options, DELETE_OPTIONS);
       await this.deleteMany(filter, options).lean().exec();
     } else {
       const bodyUpdate = Object.values(this.schema.paths).reduce((body, schema) => {
@@ -66,6 +70,7 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
         if (schema.options.deletedBy) body[schema.options.deletedBy] = options?.deletedBy;
         return body;
       }, {});
+      Object.assign(options, UPDATE_OPTIONS);
       await this.findOneAndUpdate(filter, bodyUpdate, options).lean().exec();
     }
 
@@ -77,14 +82,13 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
     filter: ICondition<any>,
     options?: QueryOptions<any> & { restoredBy?: string | ObjectId },
   ): Promise<MongoSchema> {
+    Object.assign(options, UPDATE_OPTIONS, { onlyDeleted: true });
     const bodyUpdate: DeepPartial<MongoSchema> = Object.values(this.schema.paths).reduce((body, schema) => {
       if (schema.options.deletedAt) body[schema.options.deletedAt] = null;
       if (schema.options.deletedBy) body[schema.options.deletedBy] = null;
       return body;
     }, {});
     if (options?.restoredBy) bodyUpdate.updatedBy = options.restoredBy.toString();
-    return this.findOneAndUpdate(filter, bodyUpdate, { ...options, onlyDeleted: true })
-      .lean()
-      .exec();
+    return this.findOneAndUpdate(filter, bodyUpdate, options).lean().exec();
   }
 }

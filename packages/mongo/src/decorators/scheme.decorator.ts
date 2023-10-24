@@ -1,10 +1,10 @@
-import { applyDecorators, Clazz, SetMetadata, toArray, toPlural } from '@joktec/core';
+import { applyDecorators, SetMetadata, toArray, toPlural } from '@joktec/core';
 import { index, modelOptions, plugin, Severity } from '@typegoose/typegoose';
 import { Func, ICustomOptions, IndexOptions } from '@typegoose/typegoose/lib/types';
 import { snakeCase } from 'lodash';
 import mongoose, { SchemaOptions } from 'mongoose';
 import { ObjectId } from '../models';
-import { ParanoidPlugin } from '../plugins/paranoid.plugin';
+import { ParanoidPlugin, ParanoidOptions } from '../plugins/paranoid.plugin';
 
 export interface IPlugin<TFunc extends Func = any, TParams = Parameters<TFunc>[1]> {
   mongoosePlugin: TFunc;
@@ -22,7 +22,7 @@ export interface ISchemaOptions {
   customOptions?: ICustomOptions;
   indexes?: IIndexOptions[];
   plugins?: IPlugin[];
-  paranoid?: boolean | { deletedAt?: { name?: string; type?: Clazz }; deletedBy?: { name?: string; type?: Clazz } };
+  paranoid?: boolean | ParanoidOptions;
   textSearch?: string | string[];
   geoSearch?: string;
 }
@@ -32,7 +32,7 @@ export const Schema = (options: ISchemaOptions = {}): ClassDecorator => {
     const className = target.name;
 
     const useParanoid: boolean = !!options?.paranoid;
-    const paranoidOpts = {
+    const paranoidOpts: ParanoidOptions = {
       deletedAt: { name: 'deletedAt', type: Date },
       deletedBy: { name: 'deletedBy', type: ObjectId },
     };
@@ -81,7 +81,7 @@ export const Schema = (options: ISchemaOptions = {}): ClassDecorator => {
 
     opts.indexes.map(idx => decorators.push(index(idx.fields, idx.options)));
     opts.plugins.map(p => decorators.push(plugin(p.mongoosePlugin, p.options)));
-    if (opts.paranoid) decorators.push(plugin(ParanoidPlugin, opts.paranoid));
+    if (useParanoid) decorators.push(plugin(ParanoidPlugin, paranoidOpts));
 
     applyDecorators(...decorators)(target);
   };

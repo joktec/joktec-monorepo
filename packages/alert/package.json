@@ -47,7 +47,7 @@
     "@slack/webhook": "^7.0.0",
     "lodash": "^4.17.21",
     "node-telegram-bot-api": "^0.63.0",
-    "telegraf": "^4.14.0"
+    "telegraf": "^4.15.0"
   },
   "devDependencies": {
     "@types/node-telegram-bot-api": "^0.61.11"

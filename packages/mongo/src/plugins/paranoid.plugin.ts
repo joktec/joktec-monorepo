@@ -1,16 +1,14 @@
 import { Clazz, toArray } from '@joktec/core';
 import { isEmpty } from 'lodash';
-import { Schema, Document, PopulateOptions, QueryOptions } from 'mongoose';
+import { Schema, PopulateOptions, QueryOptions } from 'mongoose';
 import { ObjectId } from '../models';
 
-export interface ParanoidPluginOptions {
+export interface ParanoidOptions {
   deletedAt?: { name?: string; type?: Clazz };
   deletedBy?: { name?: string; type?: Clazz };
 }
 
-interface ParanoidOptions extends QueryOptions<any> {
-  field?: string;
-
+export interface ParanoidQueryOptions extends QueryOptions<any> {
   // Use for filter
   withDeleted?: boolean;
   onlyDeleted?: boolean;
@@ -20,7 +18,7 @@ interface ParanoidOptions extends QueryOptions<any> {
   deletedBy?: string | ObjectId;
 }
 
-function injectFilter(filter: Record<string, any>, key: string, options: ParanoidOptions) {
+function injectFilter(filter: Record<string, any>, key: string, options: ParanoidQueryOptions) {
   if (options?.onlyDeleted) return Object.assign(filter, { [key]: { $ne: null } });
   if (options?.withDeleted) return filter;
   return Object.assign(filter, { [key]: null });
@@ -38,7 +36,7 @@ function convertPopulate(populates: string | PopulateOptions | (string | Populat
 function injectPopulateFilter(
   populates: string | PopulateOptions | (string | PopulateOptions)[],
   key: string,
-  options?: ParanoidOptions,
+  options?: ParanoidQueryOptions,
 ): PopulateOptions[] {
   return convertPopulate(populates).map(populate => {
     if (!populate.match) populate.match = {};
@@ -48,7 +46,7 @@ function injectPopulateFilter(
   });
 }
 
-export const ParanoidPlugin = (schema: Schema, opts?: ParanoidPluginOptions) => {
+export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
   const deletedAtKey = opts?.deletedAt?.name || 'deletedAt';
   const deletedByKey = opts?.deletedBy?.name || 'deletedBy';
 
@@ -63,15 +61,6 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidPluginOptions) => 
       type: opts?.deletedBy?.type || ObjectId,
       default: null,
       deletedBy: deletedByKey,
-    },
-  });
-
-  // JSON transform
-  schema.set('toJSON', {
-    transform: (doc: Document, ret: Record<string, any>) => {
-      delete ret[deletedAtKey];
-      delete ret[deletedByKey];
-      return ret;
     },
   });
 
@@ -121,7 +110,7 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidPluginOptions) => 
   );
 
   // Aggregate
-  schema.pre('aggregate', function (next, opts: ParanoidOptions) {
+  schema.pre('aggregate', function (next, opts: ParanoidQueryOptions) {
     const match = injectFilter({}, deletedAtKey, opts);
     if (!isEmpty(match)) {
       this.pipeline().unshift({ $match: match });

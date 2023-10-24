@@ -8,12 +8,13 @@ import {
   LogService,
   OnModuleInit,
   plainToInstance,
+  toArray,
   toBool,
 } from '@joktec/core';
 import { Inject } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ModelType } from '@typegoose/typegoose/lib/types';
-import { isNil, pick } from 'lodash';
+import { isArray, isNil, omit, pick } from 'lodash';
 import { IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema } from './models';
 import { IMongoRepository } from './mongo.client';
 import { MongoCatch } from './mongo.exception';
@@ -58,7 +59,20 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   protected transform(docs: any | any[]): T | T[] {
     if (isNil(docs)) return null;
-    return plainToInstance(this.schema, docs);
+
+    const paths = this.model.schema.paths;
+    const omitKey: string[] = Object.values(paths).reduce((body, schema) => {
+      if (schema.options.deletedAt) body.push(schema.options.deletedAt);
+      if (schema.options.deletedBy) body.push(schema.options.deletedBy);
+      return body;
+    }, []);
+
+    const transformDocs = plainToInstance(
+      this.schema,
+      toArray<T>(docs).map(d => omit(d, omitKey)),
+    );
+
+    return isArray(docs) ? transformDocs : transformDocs[0];
   }
 
   @MongoCatch
@@ -76,7 +90,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
     if (query.populate) qb.populate(convertPopulate(query.populate));
 
-    const docs: any[] = await qb.lean().exec();
+    const docs = await qb.lean().exec();
     return this.transform(docs) as T[];
   }
 
@@ -102,8 +116,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async aggregate<U = T>(aggregations: IMongoAggregation[]): Promise<U[]> {
-    const qb = this.model.aggregate(aggregations);
-    return qb.exec();
+    return this.model.aggregate(aggregations).exec();
   }
 
   @MongoCatch
