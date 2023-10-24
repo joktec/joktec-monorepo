@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.92](https://github.com/joktec/joktec-monorepo/compare/@joktec/alert@0.0.91...@joktec/alert@0.0.92) (2023-10-24)
+
+**Note:** Version bump only for package @joktec/alert
+
+
+
+
+
 ## [0.0.91](https://github.com/joktec/joktec-monorepo/compare/@joktec/alert@0.0.90...@joktec/alert@0.0.91) (2023-10-23)
 
 **Note:** Version bump only for package @joktec/alert
