@@ -7,8 +7,8 @@ import { nullKeysToObject, toInt } from '../utils';
 @Injectable()
 export class QueryInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const req: ExpressRequest = context.switchToHttp().getRequest();
-    const res: ExpressResponse = context.switchToHttp().getResponse();
+    const req = context.switchToHttp().getRequest<ExpressRequest>();
+    const res = context.switchToHttp().getResponse<ExpressResponse>();
 
     res.locals.query = req.query;
     res.locals.body = req.body;

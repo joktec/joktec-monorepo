@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@types/merge-deep": "^3.0.2",
-    "@types/node-pushnotifications": "^1.0.6",
+    "@types/node-pushnotifications": "^1.0.7",
     "@types/web-push": "^3.6.2"
   },
   "lint-staged": {
