@@ -1,6 +1,5 @@
 import {
   ConfigService,
-  Constructor,
   DeepPartial,
   DEFAULT_CON_ID,
   ICondition,
@@ -13,34 +12,25 @@ import {
 } from '@joktec/core';
 import { Inject } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ModelType } from '@typegoose/typegoose/lib/types';
+import { ReturnModelType } from '@typegoose/typegoose';
 import { isArray, isNil, omit, pick } from 'lodash';
-import { IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema } from './models';
+import { AggregateOptions, QueryOptions, UpdateQuery, Aggregate } from 'mongoose';
+import { MongoPipeline, UPDATE_OPTIONS, UPSERT_OPTIONS, MongoHelper } from './helpers';
+import { IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema, QueryHelper } from './models';
 import { IMongoRepository } from './mongo.client';
 import { MongoCatch } from './mongo.exception';
 import { MongoService } from './mongo.service';
-import {
-  buildAggregation,
-  buildProjection,
-  buildSorter,
-  convertPopulate,
-  preHandleBody,
-  preHandleQuery,
-  preHandleUpdateBody,
-  UPDATE_OPTIONS,
-  UPSERT_OPTIONS,
-} from './mongo.utils';
 
 @Injectable()
 export abstract class MongoRepo<T extends MongoSchema, ID = string> implements IMongoRepository<T, ID>, OnModuleInit {
   @Inject() protected reflector: Reflector;
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
-  protected model: ModelType<T> = null;
+  private _model: ReturnModelType<typeof MongoSchema, QueryHelper<T>> = null;
 
   protected constructor(
     protected mongoService: MongoService,
-    protected schema: Constructor<T>,
+    protected schema: typeof MongoSchema,
     protected conId: string = DEFAULT_CON_ID,
   ) {}
 
@@ -51,14 +41,19 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   private lazyRegister() {
     if (this.mongoService.isConnected(this.conId)) {
-      this.model = this.mongoService.getModel(this.schema, this.conId);
+      this._model = this.mongoService.getModel(this.schema, this.conId);
       return;
     }
     setTimeout(this.lazyRegister.bind(this), 1000);
   }
 
+  protected get model() {
+    return this._model;
+  }
+
   protected transform(docs: any | any[]): T | T[] {
     if (isNil(docs)) return null;
+    if (isArray(docs) && !docs.length) return [];
 
     const paths = this.model.schema.paths;
     const omitKey: string[] = Object.values(paths).reduce((body, schema) => {
@@ -67,111 +62,114 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
       return body;
     }, []);
 
-    const transformDocs = plainToInstance(
-      this.schema,
-      toArray<T>(docs).map(d => omit(d, omitKey)),
-    );
+    const omitDocs = toArray<T>(docs).map(d => omit(d, omitKey));
+    const transformDocs = plainToInstance(this.schema, omitDocs);
+    return (isArray(docs) ? transformDocs : transformDocs[0]) as any;
+  }
 
-    return isArray(docs) ? transformDocs : transformDocs[0];
+  protected qb(query?: IMongoRequest<T>, options?: QueryOptions<T>) {
+    if (!query?.condition) return this.model.find<T>().lean();
+
+    const qb = this.model.find<T>();
+    if (options) qb.setOptions(options);
+    if (query?.near) qb.center(query.near);
+    if (query?.keyword) qb.search(query.keyword);
+    if (query?.condition) qb.where(query.condition);
+    if (query?.select) qb.select(query.select);
+    if (query?.sort) qb.sort(query.sort as any);
+    if (query?.limit) qb.limit(query.limit);
+    if (query?.limit && query?.page) qb.skip((query.page - 1) * query.limit).limit(query.limit);
+    if (query?.populate) qb.populate(MongoHelper.parsePopulate(query.populate));
+
+    return qb.lean();
+  }
+
+  protected pipeline(query?: IMongoRequest<T>, options?: AggregateOptions): Aggregate<Array<any>> {
+    const aggregations = this.model.aggregate();
+
+    if (options) aggregations.option(options);
+    if (query?.near) MongoPipeline.near(query.near).map(near => aggregations.near(near));
+    if (query?.keyword) aggregations.match(MongoPipeline.search(query.keyword));
+    if (query?.condition) aggregations.match(MongoPipeline.match(query.condition));
+    if (query?.select) aggregations.project(MongoPipeline.projection(query.select));
+    if (query?.sort) aggregations.sort(MongoPipeline.sort(query.sort));
+    if (query?.limit) aggregations.limit(query.limit);
+    if (query?.limit && query.page) aggregations.skip((query.page - 1) * query.limit).limit(query.limit);
+    if (query?.populate) MongoPipeline.lookup(query.populate, this.model).map(p => aggregations.append(p));
+    if (query?.aggregations?.length) aggregations.append(...query.aggregations);
+
+    return aggregations;
   }
 
   @MongoCatch
   async find(query: IMongoRequest<T>): Promise<T[]> {
     if (query.aggregations?.length) {
-      const aggregations = buildAggregation(query);
-      const docs = await this.model.aggregate(aggregations).exec();
+      const docs = await this.pipeline(query).exec();
       return this.transform(docs) as T[];
     }
-
-    const condition: ICondition<T> = preHandleQuery(query);
-    const qb = this.model.find(condition);
-    if (query.select) qb.select(buildProjection(query.select));
-    if (query.sort) qb.sort(buildSorter(query.sort));
-    if (query.limit && query.page) qb.limit(query.limit).skip((query.page - 1) * query.limit);
-    if (query.populate) qb.populate(convertPopulate(query.populate));
-
-    const docs = await qb.lean().exec();
+    const docs = await this.qb(query).find().exec();
     return this.transform(docs) as T[];
   }
 
   @MongoCatch
   async count(query: IMongoRequest<T>): Promise<number> {
-    const condition: ICondition<T> = preHandleQuery(query);
-    if (query.near && query.condition.hasOwnProperty(query.near.field || 'location')) {
-      return this.model.estimatedDocumentCount(condition);
+    if (query.near) {
+      return this.qb(query).estimatedDocumentCount();
     }
-    return this.model.countDocuments(condition);
+    return this.qb(query).countDocuments();
   }
 
   @MongoCatch
   async findOne(query: IMongoRequest<T>): Promise<T> {
-    const condition: ICondition<T> = preHandleQuery(query);
-    const qb = this.model.findOne(condition);
-    if (query.select) qb.select(buildProjection(query.select));
-    if (query.sort) qb.sort(buildSorter(query.sort));
-    if (query.populate) qb.populate(convertPopulate(query.populate));
-    const doc = await qb.lean().exec();
+    const doc = await this.qb(query).findOne().exec();
     return this.transform(doc) as T;
   }
 
   @MongoCatch
   async aggregate<U = T>(aggregations: IMongoAggregation[]): Promise<U[]> {
-    return this.model.aggregate(aggregations).exec();
+    return this.pipeline({ aggregations }).exec();
   }
 
   @MongoCatch
   async create(body: DeepPartial<T>): Promise<T> {
     const transformBody: T = this.transform(body) as T;
-    const processBody: DeepPartial<T> = preHandleBody<T>(transformBody);
-    const doc = await this.model.create(processBody);
-    return this.findOne({ condition: { _id: doc._id } });
+    const doc = await this.model.create(transformBody);
+    return this.findOne({ condition: { _id: String(doc._id) } as any });
   }
 
   @MongoCatch
-  async update(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
+  async update(condition: ICondition<T>, body: DeepPartial<T> & UpdateQuery<T>): Promise<T> {
     const transformBody: T = this.transform(body) as T;
-    const processBody: DeepPartial<T> = preHandleUpdateBody<T>(transformBody);
-    const overrideCondition: ICondition<T> = preHandleQuery({ condition });
-    const qb = this.model.findOneAndUpdate(overrideCondition, processBody, UPDATE_OPTIONS);
-    const doc = await qb.lean().exec();
+    const doc = await this.qb({ condition }, UPDATE_OPTIONS).findOneAndUpdate(transformBody).exec();
     return this.transform(doc) as T;
   }
 
   @MongoCatch
   async delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T> {
-    const overrideCondition: ICondition<T> = preHandleQuery({ condition });
-    const doc = await (this.model as any).destroy(overrideCondition, {
-      force: toBool(opts?.force, false),
-      deletedBy: opts?.userId,
-    });
+    const options = { force: toBool(opts?.force, false), deletedBy: opts?.userId };
+    const doc = await this.qb().destroyOne(condition, options).exec();
     return this.transform(doc) as T;
   }
 
   @MongoCatch
   async restore(condition: ICondition<T>, opts?: { userId: ID }): Promise<T> {
-    const overrideCondition: ICondition<T> = preHandleQuery({ condition });
-    const doc = await (this.model as any).restore(overrideCondition, { restoredBy: opts?.userId });
+    const options = { restoredBy: opts?.userId };
+    const doc = await this.qb().restore(condition, options).exec();
     return this.transform(doc) as T;
   }
 
   @MongoCatch
   async deleteMany(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T[]> {
-    const overrideCondition: ICondition<T> = preHandleQuery({ condition });
-    const docs = await (this.model as any).destroyMany(overrideCondition, {
-      force: toBool(opts?.force, false),
-      deletedBy: opts?.userId,
-    });
+    const options = { force: toBool(opts?.force, false), deletedBy: opts?.userId };
+    const docs = await this.qb({ condition }).exec();
+    await this.model.destroyMany(condition, options).exec();
     return this.transform(docs) as T[];
   }
 
   @MongoCatch
   async upsert(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
-    const overrideCondition: ICondition<T> = preHandleQuery({ condition });
     const transformBody: T = this.transform(body) as T;
-    const processBody: DeepPartial<T> = preHandleBody<T>(transformBody);
-
-    const res = await this.model.updateOne(overrideCondition, processBody, UPSERT_OPTIONS);
-    const doc = await this.model.findById(res.upsertedId).lean().exec();
+    const doc = await this.qb({ condition }, UPSERT_OPTIONS).findOneAndUpdate(transformBody).exec();
     return this.transform(doc) as T;
   }
 

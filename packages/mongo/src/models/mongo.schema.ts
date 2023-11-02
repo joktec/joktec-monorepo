@@ -1,8 +1,9 @@
-import { ApiProperty, DeepPartial, Field, ICondition, Type } from '@joktec/core';
+import { ApiProperty, Field, ICondition, Type } from '@joktec/core';
 import { prop, ReturnModelType } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
-import { QueryOptions } from 'mongoose';
-import { DELETE_OPTIONS, UPDATE_OPTIONS } from '../mongo.utils';
+import { QueryWithHelpers, UpdateWriteOpResult } from 'mongoose';
+import { ParanoidQueryOptions } from '../plugins/paranoid.plugin';
+import { QueryHelper } from './mongo.method';
 import { ObjectId } from './mongo.request';
 
 export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> {
@@ -33,62 +34,27 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
   @Type(() => String)
   updatedBy?: string;
 
-  public static async destroy(
-    this: ReturnModelType<typeof MongoSchema>,
-    filter: ICondition<any>,
-    options?: QueryOptions<any> & { force?: boolean; deletedBy?: string | ObjectId },
-  ): Promise<MongoSchema> {
-    const isParanoid = Object.values(this.schema.paths).some(schema => !!schema.options.deletedAt);
-    if (!isParanoid || options?.force) {
-      Object.assign(options, DELETE_OPTIONS);
-      return this.findOneAndDelete(filter, options).lean().exec();
-    }
-
-    Object.assign(options, UPDATE_OPTIONS);
-    const bodyUpdate = Object.values(this.schema.paths).reduce((body, schema) => {
-      if (schema.options.deletedAt) body[schema.options.deletedAt] = new Date();
-      if (schema.options.deletedBy) body[schema.options.deletedBy] = options?.deletedBy;
-      return body;
-    }, {});
-    return this.findOneAndUpdate(filter, bodyUpdate, options).lean().exec();
+  public static destroyOne<T>(
+    this: ReturnModelType<typeof MongoSchema, QueryHelper<T>>,
+    filter?: ICondition<T>,
+    options?: ParanoidQueryOptions<T>,
+  ): QueryWithHelpers<T, T> {
+    return this.findOne().destroyOne(filter, options);
   }
 
-  public static async destroyMany(
+  public static restore<T>(
     this: ReturnModelType<typeof MongoSchema>,
-    filter: ICondition<any>,
-    options?: QueryOptions<any> & { force?: boolean; deletedBy?: string | ObjectId },
-  ): Promise<MongoSchema[]> {
-    const docs = await this.find(filter, null, options).lean().exec();
-
-    const isParanoid = Object.values(this.schema.paths).some(schema => !!schema.options.deletedAt);
-    if (!isParanoid || options?.force) {
-      Object.assign(options, DELETE_OPTIONS);
-      await this.deleteMany(filter, options).lean().exec();
-    } else {
-      const bodyUpdate = Object.values(this.schema.paths).reduce((body, schema) => {
-        if (schema.options.deletedAt) body[schema.options.deletedAt] = new Date();
-        if (schema.options.deletedBy) body[schema.options.deletedBy] = options?.deletedBy;
-        return body;
-      }, {});
-      Object.assign(options, UPDATE_OPTIONS);
-      await this.findOneAndUpdate(filter, bodyUpdate, options).lean().exec();
-    }
-
-    return docs;
+    filter: ICondition<T>,
+    options?: ParanoidQueryOptions<T> & { restoredBy?: string | ObjectId | any },
+  ): QueryWithHelpers<T, T> {
+    return this.findOne().restore(filter, options);
   }
 
-  public static async restore(
+  public static destroyMany<T>(
     this: ReturnModelType<typeof MongoSchema>,
-    filter: ICondition<any>,
-    options?: QueryOptions<any> & { restoredBy?: string | ObjectId },
-  ): Promise<MongoSchema> {
-    Object.assign(options, UPDATE_OPTIONS, { onlyDeleted: true });
-    const bodyUpdate: DeepPartial<MongoSchema> = Object.values(this.schema.paths).reduce((body, schema) => {
-      if (schema.options.deletedAt) body[schema.options.deletedAt] = null;
-      if (schema.options.deletedBy) body[schema.options.deletedBy] = null;
-      return body;
-    }, {});
-    if (options?.restoredBy) bodyUpdate.updatedBy = options.restoredBy.toString();
-    return this.findOneAndUpdate(filter, bodyUpdate, options).lean().exec();
+    filter?: ICondition<T>,
+    options?: ParanoidQueryOptions<T>,
+  ): QueryWithHelpers<{ acknowledged: boolean; deletedCount: number } | UpdateWriteOpResult, any> {
+    return this.find().destroyMany(filter, options);
   }
 }

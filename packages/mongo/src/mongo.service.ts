@@ -1,7 +1,7 @@
-import { AbstractClientService, Constructor, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
-import { getModelForClass } from '@typegoose/typegoose';
-import { ModelType } from '@typegoose/typegoose/lib/types';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
+import { getModelForClass, ReturnModelType } from '@typegoose/typegoose';
 import mongoose, { Connection as Mongoose } from 'mongoose';
+import { MongoSchema, QueryHelper } from './models';
 import { MongoClient } from './mongo.client';
 import { MongoConfig } from './mongo.config';
 
@@ -69,9 +69,14 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     return this.getClient(conId).readyState === 1;
   }
 
-  public getModel<T>(schemaClass: Constructor<T>, conId: string = DEFAULT_CON_ID): ModelType<T> {
+  public getModel<T extends MongoSchema>(
+    schemaClass: typeof MongoSchema,
+    conId: string = DEFAULT_CON_ID,
+  ): ReturnModelType<typeof MongoSchema, QueryHelper<T>> {
     if (!this.isConnected(conId)) return null;
-    const model = getModelForClass(schemaClass, { existingConnection: this.getClient(conId) });
+    const model = getModelForClass<typeof MongoSchema, QueryHelper<T>>(schemaClass, {
+      existingConnection: this.getClient(conId),
+    });
 
     const config = this.getConfig(conId);
     if (config.debug) {

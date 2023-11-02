@@ -1,6 +1,6 @@
-import { Clazz, toArray } from '@joktec/core';
-import { isEmpty } from 'lodash';
-import { Schema, PopulateOptions, QueryOptions } from 'mongoose';
+import { Clazz, toArray, toBool } from '@joktec/core';
+import { isEmpty, isString } from 'lodash';
+import { Schema, PopulateOptions, QueryOptions, PipelineStage } from 'mongoose';
 import { ObjectId } from '../models';
 
 export interface ParanoidOptions {
@@ -8,19 +8,15 @@ export interface ParanoidOptions {
   deletedBy?: { name?: string; type?: Clazz };
 }
 
-export interface ParanoidQueryOptions extends QueryOptions<any> {
-  // Use for filter
-  withDeleted?: boolean;
-  onlyDeleted?: boolean;
-
-  // Use for deleted
+export interface ParanoidQueryOptions<T = any> extends QueryOptions<T> {
+  paranoid?: boolean;
   force?: boolean;
-  deletedBy?: string | ObjectId;
+  deletedBy?: string | ObjectId | any;
+  restoredBy?: string | ObjectId | any;
 }
 
-function injectFilter(filter: Record<string, any>, key: string, options: ParanoidQueryOptions) {
-  if (options?.onlyDeleted) return Object.assign(filter, { [key]: { $ne: null } });
-  if (options?.withDeleted) return filter;
+function injectFilter(filter: Record<string, any>, key: string, paranoid: boolean = true) {
+  if (!paranoid) return filter;
   return Object.assign(filter, { [key]: null });
 }
 
@@ -36,14 +32,59 @@ function convertPopulate(populates: string | PopulateOptions | (string | Populat
 function injectPopulateFilter(
   populates: string | PopulateOptions | (string | PopulateOptions)[],
   key: string,
-  options?: ParanoidQueryOptions,
+  paranoid: boolean = true,
 ): PopulateOptions[] {
   return convertPopulate(populates).map(populate => {
     if (!populate.match) populate.match = {};
-    injectFilter(populate.match, key, options);
-    if (populate.populate) injectPopulateFilter(populate.populate, key, options);
+    injectFilter(populate.match, key, paranoid);
+    if (populate.populate) injectPopulateFilter(populate.populate, key, paranoid);
     return populate;
   });
+}
+
+function rejectPipeline(pipelines: PipelineStage[]): Exclude<PipelineStage, PipelineStage.Merge | PipelineStage.Out>[] {
+  const result: Exclude<PipelineStage, PipelineStage.Merge | PipelineStage.Out>[] = [];
+  pipelines.map(p => {
+    if ('$merge' in p) return;
+    if ('$out' in p) return;
+    result.push(p);
+  });
+  return result;
+}
+
+function injectMatchPipeline(pipelines: PipelineStage[], key: string, paranoid: boolean = true): PipelineStage[] {
+  if (!pipelines?.length) return [];
+  const newPipelines: PipelineStage[] = [];
+  for (const pipeline of pipelines) {
+    if ('$match' in pipeline) {
+      injectFilter(pipeline.$match, key, paranoid);
+    }
+
+    if ('$lookup' in pipeline) {
+      const lookupPipelines = injectMatchPipeline(pipeline.$lookup.pipeline, key, paranoid);
+      if (lookupPipelines.length) {
+        pipeline.$lookup.pipeline = rejectPipeline(lookupPipelines);
+      }
+    }
+
+    if ('$unionWith' in pipeline) {
+      const unionWith = isString(pipeline.$unionWith) ? { coll: pipeline.$unionWith } : pipeline.$unionWith;
+      const unionWithPipes = injectMatchPipeline(unionWith.pipeline, key, paranoid);
+      if (unionWithPipes.length) {
+        unionWith.pipeline = rejectPipeline(unionWithPipes);
+        pipeline.$unionWith = unionWith;
+      }
+    }
+
+    newPipelines.push(pipeline);
+  }
+
+  const match = injectFilter({}, key, paranoid);
+  if (!pipelines.some(p => '$match' in p) && !isEmpty(match)) {
+    pipelines.unshift({ $match: match });
+  }
+
+  return newPipelines;
 }
 
 export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
@@ -76,7 +117,6 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
       'updateOne',
       'deleteOne',
       'findOneAndDelete',
-      'findOneAndRemove',
       'deleteMany',
     ],
     function (next) {
@@ -84,7 +124,7 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
 
       // Intercept filter
       const filter = this.getFilter();
-      injectFilter(filter, deletedAtKey, options);
+      injectFilter(filter, deletedAtKey, options?.paranoid);
       this.setQuery(filter);
 
       // Intercept populate
@@ -92,17 +132,9 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
       if (populatedPaths.length) {
         const populates = populatedPaths.flatMap(path => {
           const populateOptions = this.mongooseOptions().populate[path] as PopulateOptions;
-          return injectPopulateFilter(populateOptions, deletedAtKey, options);
+          return injectPopulateFilter(populateOptions, deletedAtKey, options?.paranoid);
         });
         this.populate(populates);
-      }
-
-      // Intercept update data
-      const data = this.getUpdate();
-      if (data) {
-        delete data['$set'][deletedAtKey];
-        delete data['$set'][deletedByKey];
-        this.setUpdate(data);
       }
 
       next();
@@ -110,11 +142,11 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
   );
 
   // Aggregate
-  schema.pre('aggregate', function (next, opts: ParanoidQueryOptions) {
-    const match = injectFilter({}, deletedAtKey, opts);
-    if (!isEmpty(match)) {
-      this.pipeline().unshift({ $match: match });
-    }
+  schema.pre('aggregate', function (next, options: ParanoidQueryOptions) {
+    const paranoid = toBool(options?.paranoid, true);
+    const pipelines: PipelineStage[] = injectMatchPipeline(this.pipeline(), deletedAtKey, paranoid);
+    while (this.pipeline().length) this.pipeline().shift();
+    while (pipelines.length) this.pipeline().push(pipelines.shift());
     next();
   });
 };

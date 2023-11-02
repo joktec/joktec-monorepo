@@ -2,13 +2,12 @@ export * from './mongo.service';
 export * from './mongo.module';
 export * from './mongo.client';
 export * from './mongo.config';
-export * from './mongo.utils';
 export * from './mongo.repo';
 export * from './mongo.exception';
 export * from './decorators';
 export * from './models';
 export * from './plugins';
-export { prop, pre, post, Ref, mongoose } from '@typegoose/typegoose';
+export * from '@typegoose/typegoose';
 
 export {
   BasePropOptions,
