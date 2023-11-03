@@ -34,7 +34,7 @@ export const BaseResolver = <T extends Entity, ID>(props: IBaseResolverProps<T>)
     async findAll(
       @Args('query', { type: () => PaginationDto, nullable: true, defaultValue: {} }) req: IBaseRequest<T>,
     ): Promise<PaginationDto> {
-      return this.service.findAll(req);
+      return this.service.paginate(req);
     }
 
     @Query(() => props.dto, { name: `get${nameSingular}` })

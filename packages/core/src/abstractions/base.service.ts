@@ -6,7 +6,25 @@ import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto } from 
 import { cloneInstance } from '../utils';
 import { BaseRepository } from './base.repository';
 
-export abstract class BaseService<T extends Entity, ID> implements OnModuleInit {
+interface IBaseService<T, ID, REQ> {
+  paginate(query: REQ): Promise<IListResponseDto<T>>;
+
+  find(query: REQ): Promise<T[]>;
+
+  findOne(query: REQ): Promise<T>;
+
+  create(entity: DeepPartial<T>, payload?: JwtPayload): Promise<T>;
+
+  update(id: ID, entity: DeepPartial<T>, payload?: JwtPayload): Promise<T>;
+
+  delete(id: ID, payload?: JwtPayload): Promise<T>;
+
+  restore(id: ID, payload?: JwtPayload): Promise<T>;
+}
+
+export abstract class BaseService<T extends Entity, ID = string, REQ extends IBaseRequest<T> = IBaseRequest<T>>
+  implements OnModuleInit, IBaseService<T, ID, REQ>
+{
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
 
@@ -16,25 +34,24 @@ export abstract class BaseService<T extends Entity, ID> implements OnModuleInit 
     this.logService.setContext(this.constructor.name);
   }
 
-  async findAll(query: IBaseRequest<T>): Promise<IListResponseDto<T>> {
+  async paginate(query: REQ): Promise<IListResponseDto<T>> {
     const [items, totalItems] = await Promise.all([this.repository.find(query), this.repository.count(query)]);
     const totalPage = Math.ceil(totalItems / query.limit);
     const isLastPage = items.length < query.limit;
     return { items, totalItems, totalPage, isLastPage };
   }
 
-  async find(query: IBaseRequest<T>): Promise<T[]> {
+  async find(query: REQ): Promise<T[]> {
     return this.repository.find(query);
   }
 
-  async findById(id: ID, query?: IBaseRequest<T>): Promise<T> {
-    const processQuery: IBaseRequest<T> = { ...query, condition: { id } as object };
+  async findById(id: ID, query?: REQ): Promise<T> {
+    const processQuery: REQ = { ...query, condition: { id } };
     return this.repository.findOne(processQuery);
   }
 
-  async findOne(condition: ICondition<T>, query?: IBaseRequest<T>): Promise<T> {
-    const processQuery: IBaseRequest<T> = { ...query, condition: { ...query?.condition, ...condition } };
-    return this.repository.findOne(processQuery);
+  async findOne(query: REQ): Promise<T> {
+    return this.repository.findOne(query);
   }
 
   async create(entity: DeepPartial<T>, payload?: JwtPayload): Promise<T> {

@@ -34,7 +34,7 @@ export const MicroserviceController = <T extends Entity, ID>(props: IMicroservic
 
     @MessagePattern({ cmd: `${nameSingular}.findAll` }, transport)
     async findAll(@Payload('req') req: IBaseRequest<T>, @Ctx() context: any): Promise<IListResponseDto<T>> {
-      return this.service.findAll(req);
+      return this.service.paginate(req);
     }
 
     @MessagePattern({ cmd: `${nameSingular}.findOne` }, transport)
@@ -70,9 +70,7 @@ export const MicroserviceController = <T extends Entity, ID>(props: IMicroservic
   }
 
   const metric = toBool(props.metric, true);
-  if (metric) {
-    UseInterceptors(MicroMetric)(Controller);
-  }
+  if (metric) UseInterceptors(MicroMetric)(Controller);
 
   return Controller;
 };

@@ -7,10 +7,10 @@ import {
   NestInterceptor,
   OnModuleInit,
   Param,
+  PipeTransform,
   Post,
   Put,
   Query,
-  SetMetadata,
   UseGuards,
   UseInterceptors,
   UsePipes,
@@ -30,9 +30,9 @@ import { ConfigService } from '../config';
 import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../exceptions';
 import { Jwt, JwtPayload } from '../guards';
 import { GatewayMetric } from '../infras';
-import { QueryInterceptor } from '../interceptors';
+import { QueryInterceptor, ResponseInterceptor } from '../interceptors';
 import { LogService } from '../logger';
-import { BaseListResponse, Constructor, Entity, IBaseRequest } from '../models';
+import { BaseListResponse, Clazz, Constructor, DeepPartial, Entity, IBaseRequest } from '../models';
 import { ApiSchema } from '../swagger';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
@@ -54,24 +54,22 @@ export enum ControllerExclude {
 export interface IControllerProps<T extends Entity> {
   dto: Constructor<T>;
   dtoName?: string;
-  customDto?: {
-    createDto?: Constructor<T | any>;
-    updatedDto?: Constructor<T | any>;
-  };
-  apiTag?: string;
+  customDto?: { createDto?: Constructor<DeepPartial<T>> | Clazz; updatedDto?: Constructor<DeepPartial<T>> | Clazz };
+  tag?: string;
   excludes?: ControllerExclude[];
-  useBearer?: boolean | ControllerMethod[];
-  hooks?: { [key in ControllerMethod]?: (NestInterceptor | Function)[] };
-  guards?: { [key in ControllerMethod]?: (CanActivate | Function)[] };
-  metadata?: { [key in ControllerMethod]?: { key: string; value: any }[] };
   metric?: boolean;
+  useBearer?: boolean | ControllerMethod[];
+  guards?: { [key in ControllerMethod]?: (CanActivate | Function)[] };
+  pipes?: { [key in ControllerMethod]?: (PipeTransform | Function)[] };
+  hooks?: { [key in ControllerMethod]?: (NestInterceptor | Function)[] };
+  decorators?: { [key in ControllerMethod]?: MethodDecorator[] };
 }
 
 export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>): any => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
-  const apiTag = props.apiTag || toPlural(dtoName);
+  const tag = props.tag || toPlural(dtoName);
   const excludes = toArray<ControllerExclude>(props.excludes);
 
   const createDto: Constructor<T | any> = props.customDto?.createDto || props.dto;
@@ -80,7 +78,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
   @ApiSchema({ name: `${nameSingular}Pagination` })
   class PaginationDto extends BaseListResponse<T>(props.dto) {}
 
-  @ApiTags(apiTag.toLowerCase())
+  @ApiTags(tag.toLowerCase())
   @ApiExcludeController(includes(excludes, ControllerExclude.ALL))
   abstract class Controller implements OnModuleInit {
     @Inject() protected configService: ConfigService;
@@ -102,11 +100,12 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
-    @UseGuards(...toArray(props?.guards?.findAll))
-    @UseInterceptors(QueryInterceptor, ...toArray(props?.hooks?.findAll))
+    @UseGuards(...toArray(props.guards?.findAll))
+    @UsePipes(...toArray(props.pipes?.findAll))
+    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.findAll), ResponseInterceptor)
     async findAll(@Query() query: IBaseRequest<T>): Promise<PaginationDto> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.LIST);
-      return this.service.findAll(query);
+      return this.service.paginate(query);
     }
 
     @Get('/:id')
@@ -114,8 +113,9 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
-    @UseGuards(...toArray(props?.guards?.findOne))
-    @UseInterceptors(QueryInterceptor, ...toArray(props?.hooks?.findOne))
+    @UseGuards(...toArray(props.guards?.findOne))
+    @UsePipes(...toArray(props.pipes?.findOne))
+    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.findOne), ResponseInterceptor)
     async findOne(@Param('id') id: ID, @Query() query: IBaseRequest<T>): Promise<T> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.GET);
       return this.service.findById(id, query);
@@ -126,9 +126,9 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiBody({ type: createDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
-    @UseGuards(...toArray(props?.guards?.create))
-    @UsePipes(new BaseValidationPipe())
-    @UseInterceptors(...toArray(props?.hooks?.create))
+    @UseGuards(...toArray(props.guards?.create))
+    @UsePipes(new BaseValidationPipe(), ...toArray(props.pipes?.create))
+    @UseInterceptors(...toArray(props.hooks?.create), ResponseInterceptor)
     async create(@Body() entity: Partial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
       return this.service.create(entity, payload);
@@ -140,9 +140,9 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiParam({ name: 'id' })
     @ApiBody({ type: updatedDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
-    @UseGuards(...toArray(props?.guards?.update))
-    @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }))
-    @UseInterceptors(...toArray(props?.hooks?.update))
+    @UseGuards(...toArray(props.guards?.update))
+    @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.pipes?.update))
+    @UseInterceptors(...toArray(props.hooks?.update), ResponseInterceptor)
     async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.UPDATE);
       return this.service.update(id, entity, payload);
@@ -153,34 +153,36 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.DELETE))
-    @UseGuards(...toArray(props?.guards?.delete))
-    @UseInterceptors(...toArray(props?.hooks?.delete))
+    @UseGuards(...toArray(props.guards?.delete))
+    @UsePipes(...toArray(props.pipes?.delete))
+    @UseInterceptors(...toArray(props.hooks?.delete), ResponseInterceptor)
     async delete(@Param('id') id: ID, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.DELETE);
       return this.service.delete(id, payload);
     }
   }
 
-  if (isArray(props?.useBearer)) {
+  if (isArray(props.useBearer)) {
     props.useBearer.map(method => {
       const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
       ApiBearerAuth()(Controller.prototype, method, descriptor);
     });
   } else {
-    const useBearer = toBool(props?.useBearer, true);
+    const useBearer = toBool(props.useBearer, true);
     if (useBearer) ApiBearerAuth()(Controller);
   }
 
-  const metric = toBool(props?.metric, true);
-  if (metric) {
-    UseInterceptors(GatewayMetric)(Controller);
-  }
+  // Apply Metric
+  const metric = toBool(props.metric, true);
+  if (metric) UseInterceptors(GatewayMetric)(Controller);
 
-  Object.keys(props?.metadata || {}).map(method => {
-    const metaArr: { key: string; value: any }[] = toArray(props.metadata[method]);
-    const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
-    metaArr.map(({ key, value }) => SetMetadata(key, value)(Controller.prototype, method, descriptor));
-  });
+  // Apply Decorators
+  if (props.decorators) {
+    Object.entries(props.decorators).map(([method, decorators]) => {
+      const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
+      decorators.map(decorator => decorator(Controller.prototype, method, descriptor));
+    });
+  }
 
   return Controller;
 };
