@@ -1,7 +1,7 @@
 import { IncomingWebhookDefaultArguments } from '@slack/webhook';
 
 export enum AlertColor {
-  INFO = '#339900',
+  INFO = '#339901',
   SUCCESS = '#339900',
   WARN = '#FFCC00',
   ERROR = '#CC3300',

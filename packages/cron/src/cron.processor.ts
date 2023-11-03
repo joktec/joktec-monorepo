@@ -8,7 +8,10 @@ export abstract class CronProcessor<I, O> {
 
   private config: CronProcessorConfig;
 
-  protected constructor(protected context: string, protected configKey: string) {}
+  protected constructor(
+    protected context: string,
+    protected configKey: string,
+  ) {}
 
   getConfig(): CronProcessorConfig {
     const def = new CronProcessorConfig(this.configService.get<CronProcessorConfig>(this.configKey as any));

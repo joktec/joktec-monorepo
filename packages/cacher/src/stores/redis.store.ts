@@ -6,7 +6,10 @@ import { CacheConfig } from '../cache.config';
 export class RedisStore implements ICacheStore {
   private readonly client: Redis;
 
-  constructor(config: CacheConfig, private logger: LogService) {
+  constructor(
+    config: CacheConfig,
+    private logger: LogService,
+  ) {
     this.client = new Redis({
       ...config,
       host: config.host || 'localhost',

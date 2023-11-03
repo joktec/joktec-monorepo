@@ -28,7 +28,10 @@ export class CronQueue<T> {
   private readonly logger = new Logger(CronQueue.name);
   private config: QueueConfig<T>;
 
-  constructor(config: Partial<QueueConfig<T>>, private context?: string) {
+  constructor(
+    config: Partial<QueueConfig<T>>,
+    private context?: string,
+  ) {
     this.config = new QueueConfig<T>(config);
     this.init();
   }

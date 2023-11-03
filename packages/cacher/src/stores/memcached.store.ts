@@ -6,7 +6,10 @@ import { CacheConfig } from '../cache.config';
 export class MemcachedStore implements ICacheStore {
   private readonly client: MemcacheClient;
 
-  constructor(config: CacheConfig, private logger: LogService) {
+  constructor(
+    config: CacheConfig,
+    private logger: LogService,
+  ) {
     this.client = new MemcacheClient({
       server: {
         server: `${config.host}:${config.port}`,

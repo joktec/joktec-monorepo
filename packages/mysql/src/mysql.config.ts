@@ -1,7 +1,7 @@
 import { ClientConfig, IsArray, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toInt } from '@joktec/core';
 import { pick } from 'lodash';
-import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
 import { ConnectionOptions } from 'sequelize/types/sequelize';
+import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
 
 export class MysqlSlaveConfig implements ConnectionOptions {
   @IsString()

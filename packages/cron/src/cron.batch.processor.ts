@@ -3,7 +3,10 @@ import { CronQueue } from './cron.queue';
 import { CronModel } from './models';
 
 export abstract class CronBatchProcessor<I, O> extends CronProcessor<I, O> {
-  protected constructor(protected context: string, protected configKey: string) {
+  protected constructor(
+    protected context: string,
+    protected configKey: string,
+  ) {
     super(context, configKey);
   }
 
