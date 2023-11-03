@@ -1,14 +1,25 @@
-import { ConfigService, DeepPartial, DEFAULT_CON_ID, ICondition, LogService, OnModuleInit, toBool } from '@joktec/core';
-import { Inject } from '@nestjs/common';
+import {
+  ConfigService,
+  DeepPartial,
+  DEFAULT_CON_ID,
+  ICondition,
+  Injectable,
+  LogService,
+  OnModuleInit,
+  toArray,
+  toBool,
+  Inject,
+} from '@joktec/core';
 import { FindOptions, RestoreOptions } from 'sequelize';
 import { DestroyOptions } from 'sequelize/types/model';
 import { Model, ModelCtor } from 'sequelize-typescript';
+import { MysqlHelper } from './helpers';
 import { IMysqlRequest, MysqlId } from './models';
 import { IMysqlRepository } from './mysql.client';
 import { MysqlCatch } from './mysql.exception';
 import { MysqlService } from './mysql.service';
-import { preHandleQuery } from './mysql.utils';
 
+@Injectable()
 export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMysqlRepository<T, ID>, OnModuleInit {
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
@@ -26,9 +37,10 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   @MysqlCatch
   async find(query: IMysqlRequest<T>): Promise<T[]> {
-    const options: FindOptions<T> = preHandleQuery<T>(query);
-    if (query.select) options.attributes = query.select.split(',');
+    const options: FindOptions<T> = MysqlHelper.parseFilter(query);
+    if (query.select) options.attributes = toArray(query.select, { split: ',' });
     if (query.sort) options.order = Object.entries(query.sort);
+    if (query.limit) options.limit = query.limit;
     if (query.limit && query.page) {
       options.limit = query.limit;
       options.offset = (query.page - 1) * query.limit;
@@ -38,25 +50,25 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   @MysqlCatch
   async count(query: IMysqlRequest<T>): Promise<number> {
-    const options: FindOptions = preHandleQuery<T>(query);
+    const options: FindOptions = MysqlHelper.parseFilter(query);
     return this.model.count(options);
   }
 
   @MysqlCatch
   async findOne(query: IMysqlRequest<T>): Promise<T> {
-    const options: FindOptions = preHandleQuery<T>(query);
-    if (query.select) options.attributes = query.select.split(',');
+    const options: FindOptions = MysqlHelper.parseFilter(query);
+    if (query.select) options.attributes = toArray(query.select, { split: ',' });
     return this.model.findOne(options);
   }
 
   @MysqlCatch
-  async create(body: T): Promise<T> {
+  async create(body: Model<T>): Promise<T> {
     return this.model.create(body as any);
   }
 
   @MysqlCatch
   async update(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
-    const options: FindOptions = preHandleQuery<T>({ condition });
+    const options: FindOptions = MysqlHelper.parseFilter({ condition });
     const model: T = await this.model.findOne(options);
     if (!model) return null;
     const fields: any[] = Object.keys(body);
@@ -68,7 +80,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
     const existModel = await this.findOne({ condition });
     if (!existModel) return null;
 
-    const options: DestroyOptions<T> = preHandleQuery<T>({ condition });
+    const options: DestroyOptions<T> = MysqlHelper.parseFilter({ condition });
     options.force = toBool(opts?.force, false);
     await this.model.destroy(options);
     return existModel;
@@ -76,7 +88,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   @MysqlCatch
   async restore(condition: ICondition<T>, opts?: { userId?: ID }): Promise<T> {
-    const options: RestoreOptions<T> = preHandleQuery<T>({ condition });
+    const options: RestoreOptions<T> = MysqlHelper.parseFilter({ condition });
     await this.model.restore(options);
     if (!opts?.userId) {
       return this.findOne({ condition });
