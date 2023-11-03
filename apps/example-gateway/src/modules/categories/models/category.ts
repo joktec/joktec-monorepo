@@ -14,7 +14,7 @@ import { IsCdnUrl } from '../../../utils';
 import { CategoryWhiteLabel } from './category-white-label';
 import { CategoryStatus, CategoryType } from './category.enum';
 
-@Schema({ collection: 'categories', paranoid: true })
+@Schema<Category>({ collection: 'categories', textSearch: ['title', 'subhead'], paranoid: true })
 export class Category extends MongoSchema {
   @prop({ required: true, trim: true, uppercase: true, immutable: true })
   @IsNotEmpty({ message: 'CODE_REQUIRED' })

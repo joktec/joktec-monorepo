@@ -1,5 +1,5 @@
 import { ExpressRequest, ExpressResponse } from '@joktec/core';
-import { User } from '../../modules/users';
+import { User } from '../../modules/users/models';
 
 export * from './location';
 

@@ -1,25 +1,34 @@
 import {
+  CanActivate,
+  ExecutionContext,
   ForbiddenException,
   Injectable,
   JwtService,
-  NestMiddleware,
-  NextFunction,
+  Reflector,
   UnauthorizedException,
 } from '@joktec/core';
 import moment from 'moment';
-import { SessionService, SessionStatus } from '../modules/sessions';
-import { UserService, UserStatus } from '../modules/users';
-import { Request, Response } from './models';
+import { SessionService } from '../../modules/sessions';
+import { SessionStatus } from '../../modules/sessions/models';
+import { UserService } from '../../modules/users';
+import { UserStatus } from '../../modules/users/models';
+import { Request } from '../models';
 
 @Injectable()
-export class AuthMiddleware implements NestMiddleware<Request, Response> {
+export class AuthGuard implements CanActivate {
+  public static SKIP_KEY = 'SKIP_AUTH_GUARD';
+
   constructor(
+    private reflector: Reflector,
     private jwtService: JwtService,
     private sessionService: SessionService,
     private userService: UserService,
   ) {}
 
-  async use(req: Request, res: Response, next: NextFunction) {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    this.reflector.getAllAndOverride<boolean>(AuthGuard.SKIP_KEY, [context.getHandler(), context.getClass()]);
+
+    const req = context.switchToHttp().getRequest<Request>();
     const token = await this.jwtService.extractToken(req);
     req.payload = await this.jwtService.verify(token);
 
@@ -36,6 +45,8 @@ export class AuthMiddleware implements NestMiddleware<Request, Response> {
     if (loggedUser.status === UserStatus.DISABLED) throw new ForbiddenException('USER_IS_DISABLED');
 
     req.loggedUser = loggedUser;
-    next();
+    return true;
   }
 }
+
+// export const Roles = () => SetMetadata(RoleGuard.ROLES_KEY, roles);

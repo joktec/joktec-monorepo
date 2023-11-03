@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from '@joktec/core';
 import { prop, Schema } from '@joktec/mongo';
-import { Address } from '../../users';
+import { Address } from '../../users/models';
 
 @Schema({ schemaOptions: { _id: false, timestamps: false } })
 export class OrderContact {

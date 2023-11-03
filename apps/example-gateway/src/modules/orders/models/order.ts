@@ -12,7 +12,7 @@ import {
 import { MongoSchema, prop, PropType, Ref, Schema } from '@joktec/mongo';
 import { IsCdnUrl, ValidateGroup } from '../../../utils';
 import { Room } from '../../rooms';
-import { User } from '../../users';
+import { User } from '../../users/models';
 import { OrderContact } from './order-contact';
 import { OrderTimeline } from './order-timeline';
 import { OrderStatus, OrderType, PaymentMethod } from './order.enum';

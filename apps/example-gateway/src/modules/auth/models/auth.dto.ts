@@ -9,7 +9,7 @@ import {
 } from '@joktec/core';
 import { PASSWORD_OPTIONS } from '../../../utils';
 import { OTPType } from '../../otpLogs';
-import { AuthPlatform, User } from '../../users';
+import { AuthPlatform, User } from '../../users/models';
 
 export class SendOtpDto extends PickType(User, ['phone'] as const) {
   @IsNotEmpty({ message: 'OTP_TYPE_REQUIRED' })

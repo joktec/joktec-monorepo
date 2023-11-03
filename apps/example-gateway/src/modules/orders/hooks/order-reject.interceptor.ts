@@ -24,7 +24,7 @@ export class OrderRejectInterceptor implements NestInterceptor {
     const reason = req.body.reason;
     if (isEmpty(reason)) throw new BadRequestException('REASON_REQUIRED');
 
-    const order = await this.orderService.findOne(req.params.id);
+    const order = await this.orderService.findById(req.params.id);
     if (!order) throw new BadRequestException('ORDER_NOT_FOUND');
     if (![OrderStatus.PENDING, OrderStatus.CONFIRMED, OrderStatus.PROCESSING].includes(order.status)) {
       throw new BadRequestException('ORDER_CANNOT_BE_REJECT');

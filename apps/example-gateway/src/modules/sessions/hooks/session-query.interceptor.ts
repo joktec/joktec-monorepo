@@ -1,4 +1,4 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@joktec/core';
+import { CallHandler, ExecutionContext, ICondition, Injectable, NestInterceptor } from '@joktec/core';
 import { Observable } from 'rxjs';
 import { Request } from '../../../base';
 import { Session } from '../models';
@@ -11,7 +11,7 @@ export class SessionQueryInterceptor implements NestInterceptor {
       ...req.query.condition,
       userId: req.loggedUser._id,
       tokenId: { $ne: req.payload.jti },
-    };
+    } as ICondition<Session>;
     return next.handle();
   }
 }

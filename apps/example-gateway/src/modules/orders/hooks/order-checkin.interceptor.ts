@@ -12,7 +12,7 @@ export class OrderCheckinInterceptor implements NestInterceptor {
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const req = context.switchToHttp().getRequest<Request<Order>>();
 
-    const order = await this.orderService.findOne(req.params.id);
+    const order = await this.orderService.findById(req.params.id);
     if (!order) return next.handle();
     if (order.status !== OrderStatus.CONFIRMED) {
       throw new BadRequestException('ORDER_HAVE_NOT_CONFIRMED');

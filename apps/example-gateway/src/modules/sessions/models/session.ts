@@ -1,7 +1,7 @@
 import { IBrowser, ICPU, IDevice, IEngine, IOS, IsEnum, IsNotEmpty } from '@joktec/core';
 import { MongoSchema, prop, Ref, Schema } from '@joktec/mongo';
 import { PropType, Severity } from '@typegoose/typegoose';
-import { User } from '../../users';
+import { User } from '../../users/models';
 import { SessionStatus } from './session.enum';
 
 @Schema({ collection: 'sessions', paranoid: true })

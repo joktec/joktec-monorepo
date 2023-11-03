@@ -23,8 +23,10 @@ import { isEmpty } from 'lodash';
 import moment from 'moment';
 import { PASSWORD_OPTIONS } from '../../utils';
 import { Otp, OtpService, OTPStatus, OTPType } from '../otpLogs';
-import { SessionService, SessionStatus } from '../sessions';
-import { getGravatar, Gravatar, User, UserService, UserStatus } from '../users';
+import { SessionService } from '../sessions';
+import { SessionStatus } from '../sessions/models';
+import { UserService } from '../users';
+import { getGravatar, Gravatar, User, UserStatus } from '../users/models';
 import { AuthConfig } from './auth.config';
 import {
   LoginDto,

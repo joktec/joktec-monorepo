@@ -10,7 +10,7 @@ import {
 } from '@joktec/core';
 import { Observable } from 'rxjs';
 import { Request } from '../../../base';
-import { User, UserRole } from '../../users';
+import { User, UserRole } from '../../users/models';
 import { Order } from '../models';
 
 @Injectable()

@@ -9,7 +9,8 @@ import {
 } from '@joktec/core';
 import { isEmpty } from 'lodash';
 import { PASSWORD_OPTIONS } from '../../utils';
-import { SessionService, SessionStatus } from '../sessions';
+import { SessionService } from '../sessions';
+import { SessionStatus } from '../sessions/models';
 import { UserService } from '../users';
 import { UserFcmDto, UserLogoutDto, UserPasswordDto, UserProfile, UserProfileDto } from './models';
 

@@ -9,7 +9,7 @@ import {
   PickType,
 } from '@joktec/core';
 import { PASSWORD_OPTIONS } from '../../../utils';
-import { User } from '../../users';
+import { User } from '../../users/models';
 
 export class UserProfile extends OmitType(User, ['hashPassword'] as const) {}
 

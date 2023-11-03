@@ -14,7 +14,7 @@ import {
   UseInterceptors,
 } from '@joktec/core';
 import { Roles } from '../../base';
-import { UserRole } from '../users';
+import { UserRole } from '../users/models';
 import {
   OrderCancelInterceptor,
   OrderCheckinInterceptor,

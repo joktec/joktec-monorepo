@@ -22,8 +22,10 @@ export class OrderConsumer {
     const payload = data.payload;
     const orderInput = plainToInstance(Order, data.body);
     const rooms = await this.roomService.find({
-      condition: { _id: orderInput.roomId },
-      populate: { apartment: '*' },
+      condition: { _id: orderInput.roomId.toString() },
+      populate: {
+        apartment: '*',
+      },
     });
 
     const room: Room = head(rooms);

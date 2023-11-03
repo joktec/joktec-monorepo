@@ -13,7 +13,7 @@ export class Product extends MysqlModel<Product> {
   @Column(DataType.STRING)
   name!: string;
 
-  @Length({ min: 5, max: 255, msg: 'description_LENGTH_INVALID' })
+  @Length({ min: 5, max: 255, msg: 'DESCRIPTION_LENGTH_INVALID' })
   @Column(DataType.STRING)
   description!: string;
 }
