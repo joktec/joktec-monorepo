@@ -1,10 +1,11 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { RpcException } from '@nestjs/microservices';
 import { GraphQLError } from 'graphql/index';
 import { isEmpty, isString } from 'lodash';
+import { PinoLogger } from 'nestjs-pino';
 import { ExpressRequest, ExpressResponse } from '../../base';
-import { ConfigService, ENV } from '../../config';
-import { InjectLogger, LogService } from '../../logger';
+import { ENV } from '../../config';
 import { IResponseDto } from '../../models';
 import { IValidateError, ValidateException } from '../../validation';
 import { ExceptionMessage } from '../exception-message';
@@ -13,10 +14,12 @@ import { ExceptionMessage } from '../exception-message';
 export class GatewayExceptionsFilter implements ExceptionFilter {
   constructor(
     private cfg: ConfigService,
-    @InjectLogger(GatewayExceptionsFilter.name) private logger: LogService,
-  ) {}
+    private logger: PinoLogger,
+  ) {
+    this.logger.setContext(GatewayExceptionsFilter.name);
+  }
 
-  catch(exception: any, host: ArgumentsHost): any {
+  catch(exception: any, host: ArgumentsHost) {
     const type: string = host.getType();
     switch (type) {
       case 'http':
@@ -95,7 +98,7 @@ export class GatewayExceptionsFilter implements ExceptionFilter {
       data = exception.getResponse();
     }
 
-    // If exception status is gte 500, it will be print in log console
+    // If the exception status is gte 500, it will be print in log console
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(exception, exception.message);
     }

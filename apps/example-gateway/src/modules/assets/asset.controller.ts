@@ -19,6 +19,7 @@ import {
   UseInterceptors,
 } from '@joktec/core';
 import { head } from 'lodash';
+import { AuthGuard, RoleGuard } from '../../base';
 import { AssetService } from './asset.service';
 import { Asset, AssetResponseDto } from './models';
 
@@ -29,6 +30,8 @@ const fileFilter = FileFilter({ fileTypes: ['image/*'], maxSize: MAX_FILE_SIZE }
 
 const props: IControllerProps<Asset> = {
   dto: Asset,
+  bearer: AuthGuard,
+  guards: RoleGuard,
 };
 
 @Controller('assets')

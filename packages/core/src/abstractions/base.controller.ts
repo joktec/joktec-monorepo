@@ -2,6 +2,7 @@ import {
   Body,
   CanActivate,
   Delete,
+  ExceptionFilter,
   Get,
   Inject,
   NestInterceptor,
@@ -15,6 +16,7 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
+import { UseFilters } from '@nestjs/common/decorators/core';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -25,9 +27,14 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { isArray, startCase } from 'lodash';
+import { isFunction, startCase } from 'lodash';
 import { ConfigService } from '../config';
-import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../exceptions';
+import {
+  ExceptionMessage,
+  GatewayExceptionsFilter,
+  MethodNotAllowedException,
+  ServiceUnavailableException,
+} from '../exceptions';
 import { Jwt, JwtPayload } from '../guards';
 import { GatewayMetric } from '../infras';
 import { QueryInterceptor, ResponseInterceptor } from '../interceptors';
@@ -58,10 +65,13 @@ export interface IControllerProps<T extends Entity> {
   tag?: string;
   excludes?: ControllerExclude[];
   metric?: boolean;
-  useBearer?: boolean | ControllerMethod[];
-  guards?: { [key in ControllerMethod]?: (CanActivate | Function)[] };
+
+  bearer?: (CanActivate | Function) | { [key in ControllerMethod]?: CanActivate | Function };
+  guards?: (CanActivate | Function) | { [key in ControllerMethod]?: (CanActivate | Function)[] };
+
   pipes?: { [key in ControllerMethod]?: (PipeTransform | Function)[] };
   hooks?: { [key in ControllerMethod]?: (NestInterceptor | Function)[] };
+  filter?: ExceptionFilter | Function;
   decorators?: { [key in ControllerMethod]?: MethodDecorator[] };
 }
 
@@ -100,7 +110,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
-    @UseGuards(...toArray(props.guards?.findAll))
     @UsePipes(...toArray(props.pipes?.findAll))
     @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.findAll), ResponseInterceptor)
     async findAll(@Query() query: IBaseRequest<T>): Promise<PaginationDto> {
@@ -113,7 +122,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
-    @UseGuards(...toArray(props.guards?.findOne))
     @UsePipes(...toArray(props.pipes?.findOne))
     @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.findOne), ResponseInterceptor)
     async findOne(@Param('id') id: ID, @Query() query: IBaseRequest<T>): Promise<T> {
@@ -126,7 +134,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiBody({ type: createDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
-    @UseGuards(...toArray(props.guards?.create))
     @UsePipes(new BaseValidationPipe(), ...toArray(props.pipes?.create))
     @UseInterceptors(...toArray(props.hooks?.create), ResponseInterceptor)
     async create(@Body() entity: Partial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
@@ -140,7 +147,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiParam({ name: 'id' })
     @ApiBody({ type: updatedDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
-    @UseGuards(...toArray(props.guards?.update))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.pipes?.update))
     @UseInterceptors(...toArray(props.hooks?.update), ResponseInterceptor)
     async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
@@ -153,7 +159,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.DELETE))
-    @UseGuards(...toArray(props.guards?.delete))
     @UsePipes(...toArray(props.pipes?.delete))
     @UseInterceptors(...toArray(props.hooks?.delete), ResponseInterceptor)
     async delete(@Param('id') id: ID, @Jwt() payload?: JwtPayload): Promise<T> {
@@ -162,15 +167,37 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     }
   }
 
-  if (isArray(props.useBearer)) {
-    props.useBearer.map(method => {
-      const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
-      ApiBearerAuth()(Controller.prototype, method, descriptor);
-    });
-  } else {
-    const useBearer = toBool(props.useBearer, true);
-    if (useBearer) ApiBearerAuth()(Controller);
+  if (props.bearer) {
+    const bearer = props.bearer;
+    if (isFunction(bearer) || 'canActivate' in bearer) {
+      UseGuards(bearer)(Controller);
+      ApiBearerAuth()(Controller);
+    } else {
+      Object.entries(bearer).map(([method, decorator]) => {
+        const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
+        UseGuards(decorator)(Controller.prototype, method, descriptor);
+        ApiBearerAuth()(Controller.prototype, method, descriptor);
+      });
+    }
   }
+
+  if (props.guards) {
+    const guards = props.guards;
+    if (isFunction(guards) || 'canActivate' in guards) {
+      UseGuards(guards)(Controller);
+      ApiBearerAuth()(Controller);
+    } else {
+      Object.entries(guards).map(([method, decorators]) => {
+        const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
+        UseGuards(...decorators)(Controller.prototype, method, descriptor);
+        ApiBearerAuth()(Controller.prototype, method, descriptor);
+      });
+    }
+  }
+
+  // Apply filter
+  if (!props.filter) props.filter = GatewayExceptionsFilter;
+  UseFilters(props.filter)(Controller);
 
   // Apply Metric
   const metric = toBool(props.metric, true);

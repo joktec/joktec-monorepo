@@ -8,11 +8,8 @@ import { Category, CategoryDto } from './models';
 export class CategoryController extends BaseController<Category, string>({
   dto: Category,
   customDto: { createDto: CategoryDto },
-  useBearer: false,
-  metric: false,
-  guards: {
-    findAll: [AuthGuard, RoleGuard],
-  },
+  bearer: AuthGuard,
+  guards: RoleGuard,
   hooks: {
     findAll: [CategoryInterceptor],
     findOne: [CategoryInterceptor],

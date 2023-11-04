@@ -4,7 +4,6 @@ import {
   ForbiddenException,
   Injectable,
   JwtService,
-  Reflector,
   UnauthorizedException,
 } from '@joktec/core';
 import moment from 'moment';
@@ -16,18 +15,13 @@ import { Request } from '../models';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  public static SKIP_KEY = 'SKIP_AUTH_GUARD';
-
   constructor(
-    private reflector: Reflector,
     private jwtService: JwtService,
     private sessionService: SessionService,
     private userService: UserService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    this.reflector.getAllAndOverride<boolean>(AuthGuard.SKIP_KEY, [context.getHandler(), context.getClass()]);
-
     const req = context.switchToHttp().getRequest<Request>();
     const token = await this.jwtService.extractToken(req);
     req.payload = await this.jwtService.verify(token);
@@ -48,5 +42,3 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 }
-
-// export const Roles = () => SetMetadata(RoleGuard.ROLES_KEY, roles);

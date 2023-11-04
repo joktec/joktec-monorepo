@@ -13,9 +13,11 @@ import {
   Jwt,
   JwtPayload,
   Put,
+  UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@joktec/core';
+import { AuthGuard, RoleGuard } from '../../base';
 import { UserFcmDto, UserLogoutDto, UserPasswordDto, UserProfile, UserProfileDto, UserRevokeDto } from './models';
 import { ProfileService } from './profile.service';
 
@@ -23,6 +25,7 @@ import { ProfileService } from './profile.service';
 @ApiTags('profile')
 @ApiBearerAuth()
 @UseInterceptors(GatewayMetric)
+@UseGuards(AuthGuard, RoleGuard)
 export class ProfileController {
   constructor(private profileService: ProfileService) {}
 

@@ -13,7 +13,7 @@ import {
   Req,
   UseInterceptors,
 } from '@joktec/core';
-import { Roles } from '../../base';
+import { AuthGuard, RoleGuard, Roles } from '../../base';
 import { UserRole } from '../users/models';
 import {
   OrderCancelInterceptor,
@@ -30,6 +30,8 @@ import { OrderService } from './order.service';
 const props: IControllerProps<Order> = {
   dto: Order,
   excludes: [ControllerExclude.DELETE],
+  bearer: AuthGuard,
+  guards: RoleGuard,
   hooks: {
     create: [OrderSubmittedInterceptor],
     update: [OrderEditableInterceptor],

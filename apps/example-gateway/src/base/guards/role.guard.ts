@@ -10,6 +10,8 @@ export class RoleGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest<Request>();
+    if (!req.loggedUser) throw new ForbiddenException('PERMISSION_DENIED');
+
     const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(RoleGuard.ROLES_KEY, [
       context.getHandler(),
       context.getClass(),

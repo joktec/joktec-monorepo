@@ -19,7 +19,7 @@ import { UserModule } from './modules/users';
 
 @Module({
   imports: [
-    // Libs
+    // Lib Modules
     CoreModule,
     MongoModule,
     StorageModule,
@@ -28,9 +28,10 @@ import { UserModule } from './modules/users';
     MailerModule,
     BullModule,
     FirebaseModule,
-    // Module
+    // Global Modules
     UserModule,
     SessionModule,
+    // Internal Modules
     CategoryModule,
     ProductModule, // Microservice
     OtpModule,
@@ -41,9 +42,6 @@ import { UserModule } from './modules/users';
     SettingModule,
     AssetModule,
     OrderModule,
-  ],
-  providers: [
-    // { provide: APP_FILTER, useClass: GatewayExceptionsFilter },
   ],
 })
 export class AppModule {}
