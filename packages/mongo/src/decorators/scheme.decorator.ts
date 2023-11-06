@@ -2,7 +2,7 @@ import { applyDecorators, Entity, KeyOf, SetMetadata, toArray, toPlural } from '
 import { index, modelOptions, plugin, pre, queryMethod, Severity } from '@typegoose/typegoose';
 import { Func, ICustomOptions, IndexOptions } from '@typegoose/typegoose/lib/types';
 import { snakeCase } from 'lodash';
-import mongoose, { PipelineStage, SchemaOptions } from 'mongoose';
+import mongoose, { Aggregate, PipelineStage, SchemaOptions } from 'mongoose';
 import { MongoHelper } from '../helpers';
 import { ObjectId, QueryMethods } from '../models';
 import { ParanoidPlugin, ParanoidOptions } from '../plugins/paranoid.plugin';
@@ -81,13 +81,13 @@ export const Schema = <T extends Entity = {}>(options: ISchemaOptions<T> = {}): 
     }
 
     const middlewares = [
-      pre('save', function (next) {
+      pre<T>('save', function (next) {
         ['_id', '__v', 'createdAt', 'updatedAt', '__t'].map(path => {
           if (this[path]) delete this[path];
         });
         next();
       }),
-      pre(
+      pre<T>(
         [
           'find',
           'findOne',
@@ -125,8 +125,9 @@ export const Schema = <T extends Entity = {}>(options: ISchemaOptions<T> = {}): 
 
           next();
         },
+        { document: false, query: true },
       ),
-      pre('aggregate', function (next) {
+      pre<Aggregate<T>>('aggregate', function (next) {
         const pipelines: PipelineStage[] = [];
         while (this.pipeline().length) pipelines.push(this.pipeline().shift());
         pipelines.map(pipeline => {

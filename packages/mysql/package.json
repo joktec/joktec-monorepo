@@ -51,9 +51,9 @@
     "@joktec/core": "0.0.94",
     "lodash": "^4.17.21",
     "mysql": "2.18.1",
-    "mysql2": "^3.6.2",
+    "mysql2": "^3.6.3",
     "reflect-metadata": "*",
-    "sequelize": "^6.33.0",
+    "sequelize": "^6.34.0",
     "sequelize-typescript": "^2.1.5"
   },
   "devDependencies": {
