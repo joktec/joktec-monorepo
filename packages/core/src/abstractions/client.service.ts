@@ -32,7 +32,6 @@ export const ClientService = <T extends Entity, ID = string, REQ extends IBaseRe
     }
 
     async paginate(req: REQ): Promise<IListResponseDto<T>> {
-      this.logService.info('Paginate: %j', req);
       const result = this.client.send<IListResponseDto<T>>({ cmd: `${nameSingular}.findAll` }, { req });
       return await firstValueFrom(result);
     }

@@ -63,14 +63,15 @@ export enum ControllerExclude {
 export interface IControllerProps<T extends Entity> {
   dto: Constructor<T>;
   dtoName?: string;
-  customDto?: { createDto?: Constructor<DeepPartial<T>> | Clazz; updatedDto?: Constructor<DeepPartial<T>> | Clazz };
+  customDto?: {
+    createDto?: Constructor<DeepPartial<T>> | Clazz;
+    updatedDto?: Constructor<DeepPartial<T>> | Clazz;
+  };
   tag?: string;
   excludes?: ControllerExclude[];
   metric?: boolean;
-
   bearer?: (CanActivate | Function) | { [key in ControllerMethod]?: CanActivate | Function };
   guards?: (CanActivate | Function) | { [key in ControllerMethod]?: (CanActivate | Function)[] };
-
   pipes?: { [key in ControllerMethod]?: (PipeTransform | Function)[] };
   hooks?: { [key in ControllerMethod]?: (NestInterceptor | Function)[] };
   filter?: ExceptionFilter | Function;

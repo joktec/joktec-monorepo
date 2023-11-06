@@ -20,6 +20,10 @@ export interface IBaseController<T, ID> {
 }
 
 export interface IBaseService<T, ID, REQ> {
+  configService?: ConfigService;
+
+  logService?: LogService;
+
   paginate(req: REQ): Promise<IListResponseDto<T>>;
 
   find(req: REQ): Promise<T[]>;

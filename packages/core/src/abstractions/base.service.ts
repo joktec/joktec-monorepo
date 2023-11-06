@@ -10,8 +10,8 @@ import { BaseRepository } from './base.repository';
 export abstract class BaseService<T extends Entity, ID = string, REQ extends IBaseRequest<T> = IBaseRequest<T>>
   implements OnModuleInit, IBaseService<T, ID, REQ>
 {
-  @Inject() protected configService: ConfigService;
-  @Inject() protected logService: LogService;
+  @Inject() public readonly configService: ConfigService;
+  @Inject() public readonly logService: LogService;
 
   protected constructor(protected repository: BaseRepository<T, ID>) {}
 

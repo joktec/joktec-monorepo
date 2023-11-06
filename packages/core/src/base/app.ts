@@ -6,10 +6,10 @@ import {
   NestModule,
   PipeTransform,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger } from 'nestjs-pino';
+import { ConfigService } from '../config';
 import { GatewayConfig, GatewayService, MicroConfig, MicroService } from '../infras';
 
 export type GlobalOptions = {
