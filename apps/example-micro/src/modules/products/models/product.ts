@@ -5,7 +5,7 @@ import { AllowNull, Column, DataType, Default, Length, MysqlModel, PrimaryKey, T
 export class Product extends MysqlModel<Product> {
   @PrimaryKey
   @Default(generateUUID)
-  @Column(DataType.UUIDV4)
+  @Column(DataType.STRING)
   id?: string;
 
   @Length({ min: 1, max: 255, msg: 'NAME_LENGTH_INVALID' })

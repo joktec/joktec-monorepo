@@ -4,23 +4,8 @@ import { JwtPayload } from '../guards';
 import { LogService } from '../logger';
 import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto } from '../models';
 import { cloneInstance } from '../utils';
+import { IBaseService } from './base.interface';
 import { BaseRepository } from './base.repository';
-
-interface IBaseService<T, ID, REQ> {
-  paginate(query: REQ): Promise<IListResponseDto<T>>;
-
-  find(query: REQ): Promise<T[]>;
-
-  findOne(query: REQ): Promise<T>;
-
-  create(entity: DeepPartial<T>, payload?: JwtPayload): Promise<T>;
-
-  update(id: ID, entity: DeepPartial<T>, payload?: JwtPayload): Promise<T>;
-
-  delete(id: ID, payload?: JwtPayload): Promise<T>;
-
-  restore(id: ID, payload?: JwtPayload): Promise<T>;
-}
 
 export abstract class BaseService<T extends Entity, ID = string, REQ extends IBaseRequest<T> = IBaseRequest<T>>
   implements OnModuleInit, IBaseService<T, ID, REQ>

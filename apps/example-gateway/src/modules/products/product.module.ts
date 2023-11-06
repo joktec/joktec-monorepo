@@ -10,7 +10,7 @@ import { ProductService } from './product.service';
       provide: 'PRODUCT_SERVICE',
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => {
-        const microservices: any[] = cfg.get('microservices');
+        // const microservices: any[] = cfg.get('microservices');
         return ClientProxyFactory.create({
           transport: Transport.TCP,
           options: { host: 'localhost', port: 8010 },

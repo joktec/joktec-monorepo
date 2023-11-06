@@ -15,6 +15,7 @@ import {
   UseGuards,
   UseInterceptors,
   UsePipes,
+  Type,
 } from '@nestjs/common';
 import { UseFilters } from '@nestjs/common/decorators/core';
 import {
@@ -43,6 +44,7 @@ import { BaseListResponse, Clazz, Constructor, DeepPartial, Entity, IBaseRequest
 import { ApiSchema } from '../swagger';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
+import { IBaseController } from './base.interface';
 import { BaseService } from './base.service';
 
 export type ControllerMethod = 'findAll' | 'findOne' | 'create' | 'update' | 'delete';
@@ -75,7 +77,7 @@ export interface IControllerProps<T extends Entity> {
   decorators?: { [key in ControllerMethod]?: MethodDecorator[] };
 }
 
-export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>): any => {
+export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>): Type<IBaseController<T, ID>> => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
@@ -90,17 +92,17 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
   @ApiTags(tag.toLowerCase())
   @ApiExcludeController(includes(excludes, ControllerExclude.ALL))
-  abstract class Controller implements OnModuleInit {
-    @Inject() protected configService: ConfigService;
-    @Inject() protected logService: LogService;
+  class Controller implements IBaseController<T, ID>, OnModuleInit {
+    @Inject() public readonly configService: ConfigService;
+    @Inject() public readonly logService: LogService;
 
-    protected constructor(protected service: BaseService<T, ID>) {}
+    constructor(protected service: BaseService<T, ID>) {}
 
     onModuleInit() {
       this.logService.setContext(this.constructor.name);
     }
 
-    protected checkMethod(...methodExcludes: ControllerExclude[]) {
+    private checkMethod(...methodExcludes: ControllerExclude[]) {
       if (excludes.includes(ControllerExclude.ALL))
         throw new ServiceUnavailableException(ExceptionMessage.UNDERGOING_MAINTENANCE);
       if (someIncludes(excludes, ...methodExcludes)) throw new MethodNotAllowedException();
@@ -136,7 +138,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
     @UsePipes(new BaseValidationPipe(), ...toArray(props.pipes?.create))
     @UseInterceptors(...toArray(props.hooks?.create), ResponseInterceptor)
-    async create(@Body() entity: Partial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
+    async create(@Body() entity: DeepPartial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
       return this.service.create(entity, payload);
     }
@@ -149,7 +151,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.pipes?.update))
     @UseInterceptors(...toArray(props.hooks?.update), ResponseInterceptor)
-    async update(@Param('id') id: ID, @Body() entity: Partial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
+    async update(@Param('id') id: ID, @Body() entity: DeepPartial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.UPDATE);
       return this.service.update(id, entity, payload);
     }

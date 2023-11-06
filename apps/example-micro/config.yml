@@ -15,12 +15,9 @@ log:
 mysql:
   host: localhost
   port: 3306
-  username: joktec
-  password: joktec123
+  username: root
+  password: root
   database: sample_db
-
-guard:
-  secret: XXXX
 
 http:
   timeout: 18000000

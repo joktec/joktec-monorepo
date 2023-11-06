@@ -1,10 +1,12 @@
-import { Inject, OnModuleInit } from '@nestjs/common';
+import { Inject, OnModuleInit, Type } from '@nestjs/common';
 import { Args, Mutation, ObjectType, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
 import { ConfigService } from '../config';
+import { Jwt, JwtPayload } from '../guards';
 import { LogService } from '../logger';
 import { BaseListResponse, Constructor, Entity, IBaseRequest } from '../models';
 import { toPlural, toSingular } from '../utils';
+import { IBaseController } from './base.interface';
 import { BaseService } from './base.service';
 
 export interface IBaseResolverProps<T extends Entity> {
@@ -12,7 +14,7 @@ export interface IBaseResolverProps<T extends Entity> {
   dtoName?: string;
 }
 
-export const BaseResolver = <T extends Entity, ID>(props: IBaseResolverProps<T>): any => {
+export const BaseResolver = <T extends Entity, ID>(props: IBaseResolverProps<T>): Type<IBaseController<T, ID>> => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
@@ -20,11 +22,11 @@ export const BaseResolver = <T extends Entity, ID>(props: IBaseResolverProps<T>)
   @ObjectType(`${nameSingular}Pagination`)
   class PaginationDto extends BaseListResponse<T>(props.dto) {}
 
-  abstract class Resolver implements OnModuleInit {
-    @Inject() protected configService: ConfigService;
-    @Inject() protected logService: LogService;
+  class Resolver implements IBaseController<T, ID>, OnModuleInit {
+    @Inject() public readonly configService: ConfigService;
+    @Inject() public readonly logService: LogService;
 
-    protected constructor(protected service: BaseService<T, ID>) {}
+    constructor(protected service: BaseService<T, ID>) {}
 
     onModuleInit() {
       this.logService.setContext(this.constructor.name);
@@ -46,21 +48,22 @@ export const BaseResolver = <T extends Entity, ID>(props: IBaseResolverProps<T>)
     }
 
     @Mutation(() => props.dto, { name: `create${nameSingular}` })
-    async create(@Args('input', { type: () => props.dto }) entity: T): Promise<T> {
-      return this.service.create(entity);
+    async create(@Args('input', { type: () => props.dto }) entity: T, @Jwt() payload?: JwtPayload): Promise<T> {
+      return this.service.create(entity, payload);
     }
 
     @Mutation(() => props.dto, { name: `update${nameSingular}` })
     async update(
       @Args('id', { type: () => String }) id: ID,
       @Args('input', { type: () => props.dto }) entity: T,
+      @Jwt() payload?: JwtPayload,
     ): Promise<T> {
-      return this.service.update(id, entity);
+      return this.service.update(id, entity, payload);
     }
 
     @Mutation(() => props.dto, { name: `delete${nameSingular}` })
-    async delete(@Args('id', { type: () => String }) id: ID): Promise<T> {
-      return this.service.delete(id);
+    async delete(@Args('id', { type: () => String }) id: ID, @Jwt() payload?: JwtPayload): Promise<T> {
+      return this.service.delete(id, payload);
     }
   }
 

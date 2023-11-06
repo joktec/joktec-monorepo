@@ -9,7 +9,7 @@ export interface IListResponseDto<T extends Entity> {
   isLastPage?: boolean;
 }
 
-export const BaseListResponse = <T extends Entity>(dto: Constructor<T>): any => {
+export const BaseListResponse = <T extends Entity>(dto: Constructor<T>) => {
   class BaseListResponse implements IListResponseDto<T> {
     @Field(() => [dto], { defaultValue: [] })
     @ApiProperty({ type: [dto], default: [] })
