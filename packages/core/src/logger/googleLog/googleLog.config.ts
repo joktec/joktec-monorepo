@@ -5,11 +5,11 @@ import { IsTypes } from '../../validation';
 class Credential {
   @IsNotEmpty()
   @IsString()
-  clientEmail: string;
+  clientEmail!: string;
 
   @IsNotEmpty()
   @IsString()
-  privateKey: string;
+  privateKey!: string;
 }
 
 export class GoogleLogConfig {

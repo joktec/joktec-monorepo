@@ -9,10 +9,10 @@ import { LokiConfig } from './loki/loki.config';
 import { PinoMongoConfig } from './mongodb/pino-mongo.config';
 
 export class LogConfig {
-  level: LogLevel;
-  format: 'pretty' | 'json';
-  contexts: string | string[];
-  customStreams: DestinationStream[];
+  level!: LogLevel;
+  format!: 'pretty' | 'json';
+  contexts?: string | string[];
+  customStreams?: DestinationStream[];
   fluentd?: FluentdConfig;
   logStash?: LogStashConfig;
   cloudWatch?: CloudWatchConfig;

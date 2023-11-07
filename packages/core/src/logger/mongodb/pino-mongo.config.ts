@@ -3,9 +3,9 @@ import { toBool } from '../../utils';
 
 export class PinoMongoConfig {
   enable!: boolean;
-  uri: string;
-  database: string;
-  collection: string;
+  uri!: string;
+  database!: string;
+  collection?: string;
   format?: FormatFunction;
 
   constructor(props: PinoMongoConfig) {

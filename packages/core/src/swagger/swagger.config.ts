@@ -36,8 +36,8 @@ export class SwaggerAuth {
 
 export class SwaggerConfig {
   @IsBoolean()
-  @IsNotEmpty()
-  enable!: boolean;
+  @IsOptional()
+  enable?: boolean;
 
   @IsString()
   @IsOptional()
@@ -56,8 +56,8 @@ export class SwaggerConfig {
   server?: string;
 
   @IsString()
-  @IsNotEmpty()
-  path!: string;
+  @IsOptional()
+  path?: string;
 
   @IsOptional()
   options?: SwaggerUiOptions;

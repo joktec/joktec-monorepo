@@ -1,12 +1,12 @@
 import { toBool, toInt } from '../../utils';
 
 export class CloudWatchConfig {
-  host: string;
-  port: number;
-  enable: boolean;
-  accessKeyId: string;
-  secretAccessKey: string;
-  region: string;
+  host!: string;
+  port!: number;
+  enable!: boolean;
+  accessKeyId!: string;
+  secretAccessKey!: string;
+  region?: string;
 
   constructor(props: CloudWatchConfig) {
     this.host = props.host;

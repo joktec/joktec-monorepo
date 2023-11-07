@@ -15,7 +15,7 @@ export class MongoConfig extends ClientConfig {
 
   @IsString()
   @IsNotEmpty()
-  username?: string;
+  username!: string;
 
   @IsString()
   @IsOptional()
@@ -31,11 +31,11 @@ export class MongoConfig extends ClientConfig {
 
   @IsInt()
   @IsOptional()
-  retryTimeout: number;
+  retryTimeout?: number;
 
   @IsInt()
   @IsOptional()
-  connectTimeout: number;
+  connectTimeout?: number;
 
   @IsBoolean()
   @IsOptional()

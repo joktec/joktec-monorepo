@@ -1,0 +1,88 @@
+$schema: config.schema.json
+
+gateway:
+  port: 9010
+  swagger:
+    enable: true
+    server: http://localhost:9010
+    auth:
+      username: admin
+      password: p4ssw0rd
+
+log:
+  level: info
+  useFilter: false
+  format: pretty
+  logStash:
+    enable: false
+    host: 51.222.44.17
+    port: 31658
+  loki:
+    enable: false
+    host: https://logs-prod-011222.grafana.net
+    username: ABC
+    password: XYZ
+  mongo:
+    enable: true
+    uri: mongodb://joktec:joktec123@localhost:27017/?authSource=sample_db
+    database: sample_db
+    collection: logs
+  logtail:
+    enable: false
+    token: v9YTJSReTAyV6cSRff3SJ4UE
+
+bull:
+  queue: [ order ]
+  host: localhost
+  port: 6379
+  board:
+    enable: true
+    path: bulls
+    username: admin
+    password: p4ssw0rd
+
+misc:
+  cdnUrl: http://127.0.0.1:9000/apartment
+
+guard:
+  secretKey: $ecr3tK4y
+  refreshKey: refreshKey
+  expired: 1 year
+  pending: 30
+  limit: 5
+
+mongo:
+  host: localhost
+  port: 27017
+  username: joktec
+  password: joktec123
+  database: sample_db
+  connectTimeout: 20000
+  directConnection: true
+  debug: true
+
+storage:
+  region: ap-southeast-1
+  accessKey: accesskey
+  secretKey: secretkey
+  bucket: joktec
+  endpoint: http://127.0.0.1:9000
+  useSSL: false
+  s3ForcePathStyle: true
+  linkFormat: http://127.0.0.1:9000/joktec/<key>
+
+http:
+  timeout: 30000
+
+mailer:
+  host: smtppro.zoho.com
+  port: 465
+  secure: true
+  auth:
+    user: test@joktec.com
+    pass: joktec123
+  sender: 'JokTec <support@joktec.com>'
+  templateDir: ./public/templates
+
+firebase:
+  credential: './credentials/joktec-firebase-adminsdk-s49hk-1e6cd820c7.json'

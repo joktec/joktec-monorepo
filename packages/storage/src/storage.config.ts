@@ -66,10 +66,10 @@ export class StorageConfig extends ClientConfig {
 
   @IsInt()
   @IsOptional()
-  partSize: number;
+  partSize?: number;
 
   @IsOptional()
-  transport: object;
+  transport?: object;
 
   constructor(props: StorageConfig) {
     super(props);

@@ -1,12 +1,12 @@
 import { toBool, toInt } from '../../utils';
 
 export class FluentdConfig {
-  enable: boolean;
-  host: string;
-  port: number;
-  timeout: number;
-  reconnectInterval: number;
-  flushInterval: number;
+  enable!: boolean;
+  host!: string;
+  port!: number;
+  timeout?: number;
+  reconnectInterval?: number;
+  flushInterval?: number;
 
   constructor(props: FluentdConfig) {
     this.host = props.host;
