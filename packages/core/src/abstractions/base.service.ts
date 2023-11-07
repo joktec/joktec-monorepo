@@ -2,10 +2,16 @@ import { Inject, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { LogService } from '../logger';
-import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto } from '../models';
+import {
+  DeepPartial,
+  Entity,
+  IBaseRepository,
+  IBaseRequest,
+  IBaseService,
+  ICondition,
+  IListResponseDto,
+} from '../models';
 import { cloneInstance } from '../utils';
-import { IBaseService } from './base.interface';
-import { BaseRepository } from './base.repository';
 
 export abstract class BaseService<T extends Entity, ID = string, REQ extends IBaseRequest<T> = IBaseRequest<T>>
   implements OnModuleInit, IBaseService<T, ID, REQ>
@@ -13,7 +19,7 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   @Inject() public readonly configService: ConfigService;
   @Inject() public readonly logService: LogService;
 
-  protected constructor(protected repository: BaseRepository<T, ID>) {}
+  protected constructor(protected repository: IBaseRepository<T, ID>) {}
 
   onModuleInit() {
     this.logService.setContext(this.constructor.name);

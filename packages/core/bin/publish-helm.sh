@@ -8,7 +8,7 @@ const program = new Command();
 program
   .version('0.0.1')
   .option('--ns <ns>', 'K8s Namespace')
-  .option('--chart-dir <token>', 'Chart Dir')
+  .option('--chart-dir <dir>', 'Chart Dir')
   .option('--helm <token>', 'Helm Command')
   .option('--force', 'Force deploy');
 

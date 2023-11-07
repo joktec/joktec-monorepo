@@ -1,7 +1,7 @@
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { LogService } from '../logger';
-import { DeepPartial, IBaseRequest, IListResponseDto } from '../models';
+import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto } from '../models';
 
 export interface IBaseController<T, ID> {
   configService?: ConfigService;
@@ -37,4 +37,20 @@ export interface IBaseService<T, ID, REQ> {
   delete(id: ID, payload?: JwtPayload): Promise<T>;
 
   restore(id: ID, payload?: JwtPayload): Promise<T>;
+}
+
+export interface IBaseRepository<T extends Entity, ID> {
+  find(query: IBaseRequest<T>): Promise<T[]>;
+
+  count(query: IBaseRequest<T>): Promise<number>;
+
+  findOne(query: IBaseRequest<T>): Promise<T>;
+
+  create(body: DeepPartial<T>): Promise<T>;
+
+  update(condition: ICondition<T>, body: DeepPartial<T>): Promise<T>;
+
+  delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: any }): Promise<T>;
+
+  restore(condition: ICondition<T>, opts?: { userId?: any }): Promise<T>;
 }

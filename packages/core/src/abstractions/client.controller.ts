@@ -16,10 +16,9 @@ import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { MicroMetric } from '../infras';
 import { LogService } from '../logger';
-import { Constructor, DeepPartial, Entity, IBaseRequest, IListResponseDto } from '../models';
+import { Constructor, DeepPartial, Entity, IBaseController, IBaseRequest, IListResponseDto } from '../models';
 import { toBool, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
-import { IBaseController } from './base.interface';
 import { BaseService } from './base.service';
 
 export type MicroContext = TcpContext | RedisContext | NatsContext | MqttContext | RmqContext | KafkaContext;

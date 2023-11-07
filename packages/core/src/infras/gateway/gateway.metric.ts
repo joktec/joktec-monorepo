@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ExpressRequest } from '../../base';
 import { Exception } from '../../exceptions';
-import { InjectLogger, LogService } from '../../logger';
+import { LogService } from '../../logger';
 import { getTimeString } from '../../utils';
 
 const ExcludePaths = ['/swagger', '/bulls', '/metrics'];
@@ -32,10 +32,12 @@ export const gatewayTotal = makeCounterProvider({
 @Injectable()
 export class GatewayMetric implements NestInterceptor {
   constructor(
-    @InjectLogger(GatewayMetric.name) private logger: LogService,
+    private logger: LogService,
     @InjectMetric(GATEWAY_DURATION_SECONDS_METRIC) private gatewayDurationSecondsMetric: Histogram<string>,
     @InjectMetric(GATEWAY_TOTAL_METRIC) private gatewayTotalMetric: Counter<string>,
-  ) {}
+  ) {
+    this.logger.setContext(GatewayMetric.name);
+  }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<ExpressRequest>();

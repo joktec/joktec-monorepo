@@ -6,9 +6,8 @@ import { ConfigService } from '../config';
 import { MethodNotAllowedException } from '../exceptions';
 import { JwtPayload } from '../guards';
 import { LogService } from '../logger';
-import { Constructor, DeepPartial, Entity, IBaseRequest, IListResponseDto } from '../models';
+import { Constructor, DeepPartial, Entity, IBaseRequest, IBaseService, IListResponseDto } from '../models';
 import { toSingular } from '../utils';
-import { IBaseService } from './base.interface';
 
 export interface IMicroClientProps<T extends Entity> {
   dto: Constructor<T>;

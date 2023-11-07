@@ -6,7 +6,7 @@ const program = new Command();
 program
     .version('0.0.1')
     .option('--npm-token <token>', 'NPM Token')
-    .option('--docker-dir <token>', 'Docker File Dir');
+    .option('--docker-dir <dir>', 'Docker File Dir');
 
 program.parse(process.argv);
 const options = program.opts();

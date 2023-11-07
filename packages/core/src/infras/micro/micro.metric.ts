@@ -4,7 +4,7 @@ import { Counter, Gauge } from 'prom-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ExpressRequest } from '../../base';
-import { InjectLogger, LogService } from '../../logger';
+import { LogService } from '../../logger';
 import { getTimeString } from '../../utils';
 
 const MICRO_LATENCY_METRIC = 'micro_call_latency';
@@ -29,10 +29,12 @@ export const totalMicroCounter = makeCounterProvider({
 @Injectable()
 export class MicroMetric implements NestInterceptor {
   constructor(
-    @InjectLogger(MicroMetric.name) private logger: LogService,
+    private logger: LogService,
     @InjectMetric(MICRO_LATENCY_METRIC) private latencyMetric: Gauge<string>,
     @InjectMetric(TOTAL_MICRO_METRIC) private totalCallLatency: Counter<string>,
-  ) {}
+  ) {
+    this.logger.setContext(MicroMetric.name);
+  }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<ExpressRequest>();

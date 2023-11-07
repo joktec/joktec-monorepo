@@ -3,6 +3,7 @@ import { Global, Module } from '@nestjs/common';
 import { ServeStaticModule, ServeStaticModuleOptions } from '@nestjs/serve-static';
 import { BullConfig } from '../../bull';
 import { ConfigModule, ConfigService } from '../../config';
+import { MetricModule } from '../../metric';
 import { toRoute } from '../../utils';
 import { GatewayConfig } from './gateway.config';
 import { GatewayController } from './gateway.controller';
@@ -11,6 +12,7 @@ import { gatewayDurationSeconds, GatewayMetric, gatewayTotal } from './gateway.m
 @Global()
 @Module({
   imports: [
+    MetricModule,
     ServeStaticModule.forRootAsync({
       isGlobal: true,
       imports: [ConfigModule],

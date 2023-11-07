@@ -40,11 +40,10 @@ import { Jwt, JwtPayload } from '../guards';
 import { GatewayMetric } from '../infras';
 import { QueryInterceptor, ResponseInterceptor } from '../interceptors';
 import { LogService } from '../logger';
-import { BaseListResponse, Clazz, Constructor, DeepPartial, Entity, IBaseRequest } from '../models';
+import { BaseListResponse, Clazz, Constructor, DeepPartial, Entity, IBaseController, IBaseRequest } from '../models';
 import { ApiSchema } from '../swagger';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
-import { IBaseController } from './base.interface';
 import { BaseService } from './base.service';
 
 export type ControllerMethod = 'findAll' | 'findOne' | 'create' | 'update' | 'delete';

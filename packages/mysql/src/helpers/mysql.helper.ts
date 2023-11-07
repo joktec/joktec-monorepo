@@ -24,7 +24,7 @@ export class MysqlHelper {
   };
 
   static parseFilter(query: IMysqlRequest<any>): FindOptions {
-    const { condition = {}, keyword, near } = query;
+    const { condition = {}, keyword } = query;
     const where: Record<string | symbol, any> = {};
     for (const [key, value] of Object.entries(condition)) {
       if (key === '$and') {
@@ -47,9 +47,9 @@ export class MysqlHelper {
         continue;
       }
 
-      const op: symbol = this.opMapping[key];
-      if (!op) throw new MysqlException(`Operator not support`, { key, condition });
-      where[op] = isObject(value) ? this.parseFilter(value) : value;
+      const keyOrSymbol: string | symbol = key.startsWith('$') ? this.opMapping[key] : key;
+      if (!keyOrSymbol) throw new MysqlException(`Operator not support`, { key, condition });
+      where[keyOrSymbol] = isObject(value) ? this.parseFilter(value) : value;
     }
 
     // Add keyword search

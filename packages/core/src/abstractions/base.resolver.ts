@@ -4,9 +4,8 @@ import { startCase } from 'lodash';
 import { ConfigService } from '../config';
 import { Jwt, JwtPayload } from '../guards';
 import { LogService } from '../logger';
-import { BaseListResponse, Constructor, Entity, IBaseRequest } from '../models';
+import { BaseListResponse, Constructor, Entity, IBaseController, IBaseRequest } from '../models';
 import { toPlural, toSingular } from '../utils';
-import { IBaseController } from './base.interface';
 import { BaseService } from './base.service';
 
 export interface IBaseResolverProps<T extends Entity> {

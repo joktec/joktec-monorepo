@@ -1,11 +1,11 @@
-import { BaseRepository, Client, DeepPartial, ICondition } from '@joktec/core';
+import { IBaseRepository, Client, DeepPartial, ICondition } from '@joktec/core';
 import { Connection, UpdateQuery } from 'mongoose';
 import { IMongoAggregation, MongoBulkRequest, MongoSchema } from './models';
 import { MongoConfig } from './mongo.config';
 
 export interface MongoClient extends Client<MongoConfig, Connection> {}
 
-export interface IMongoRepository<T extends MongoSchema, ID = string> extends BaseRepository<T, ID> {
+export interface IMongoRepository<T extends MongoSchema, ID = string> extends IBaseRepository<T, ID> {
   update(condition: ICondition<T>, body: DeepPartial<T> & UpdateQuery<T>): Promise<T>;
 
   aggregate<U = T>(aggregations: IMongoAggregation[]): Promise<U[]>;
