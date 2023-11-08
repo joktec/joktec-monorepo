@@ -6,19 +6,19 @@ const DEFAULT_MAX_RETRIES = 5;
 export class BigQueryConfig extends ClientConfig {
   @IsString()
   @IsNotEmpty()
-  keyFilename: string;
+  keyFilename!: string;
 
   @IsString()
   @IsNotEmpty()
-  projectId: string;
+  projectId!: string;
 
   @IsString()
   @IsNotEmpty()
-  datasetId: string;
+  datasetId!: string;
 
   @IsString()
   @IsNotEmpty()
-  location: string;
+  location!: string;
 
   @IsBoolean()
   @IsOptional()

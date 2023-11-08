@@ -1,13 +1,12 @@
 import fs from 'fs';
-import { INestApplication, INestMicroservice } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import glob from 'glob';
 import { GlobalOptions } from '../../base';
 import { ConfigService, ENV } from '../../config';
 import { LogService } from '../../logger';
 import { toArray, toInt } from '../../utils';
-import { buildError, validateSync } from '../../validation';
-import { MicroConfig, MicroTransport } from './micro.config';
+import { MicroConfig, MicroOptions, MicroTransport } from './micro.config';
 
 export class MicroService {
   static async bootstrap(app: INestApplication, opts?: GlobalOptions) {
@@ -15,26 +14,18 @@ export class MicroService {
     const logger = await app.resolve(LogService);
     logger.setContext(MicroService.name);
 
-    const microConfig = config.parse(MicroConfig, 'micro');
-    const configErrors = validateSync(microConfig);
-    if (configErrors.length) {
-      const formatError = buildError(configErrors);
-      logger.error(Object.values(formatError).flat(), 'Microservice config errors');
-      return;
-    }
-
-    const { port, microservices } = microConfig;
+    const microConfig = config.parseOrThrow(MicroConfig, 'micro');
+    const { port, inheritAppConfig, microservices } = microConfig;
 
     app.useGlobalGuards(...toArray(opts?.guards));
     app.useGlobalPipes(...toArray(opts?.pipes));
     app.useGlobalInterceptors(...toArray(opts?.interceptors));
     app.useGlobalFilters(...toArray(opts?.filters));
 
-    await Promise.all(
-      Object.keys(microservices).map((trans: MicroTransport) =>
-        this.connectMicroservice(app, trans, microservices[trans]),
-      ),
-    );
+    this.connectMicroservice(app, microservices).flatMap(opts => {
+      logger.info('Transport %s: %j', Transport[opts['transport']], opts);
+      app.connectMicroservice(opts, { inheritAppConfig });
+    });
 
     await app.startAllMicroservices();
     await app.listen(port, () => {
@@ -45,55 +36,62 @@ export class MicroService {
     });
   }
 
-  static async connectMicroservice(
-    app: INestApplication,
-    transport: MicroTransport,
-    options: Record<string, any>,
-  ): Promise<INestMicroservice> {
+  static connectMicroservice(app: INestApplication, opts: MicroOptions): MicroserviceOptions[] {
     const config = app.get(ConfigService);
     const microConfig = config.parse(MicroConfig, 'micro');
-    const { port, inheritAppConfig } = microConfig;
-    const buildOptions: any = Object.assign({}, options);
+    const { port } = microConfig;
 
-    if (transport === MicroTransport.TCP) {
-      Object.assign(buildOptions, {
-        host: buildOptions.host || '0.0.0.0',
-        port: toInt(buildOptions.port, port),
-      });
-    } else if (transport === MicroTransport.GRPC) {
-      const filePattern = options?.filePattern ?? `${config.get('env') == ENV.DEV ? 'src' : 'dist'}/**/*.proto`;
-      const files = glob.sync(filePattern);
-      const packages = files.map(
-        file =>
-          fs
-            .readFileSync(file)
-            .toString()
-            .match(/package (.*);/)[1],
-      );
-      Object.assign(buildOptions, {
-        package: packages,
-        url: `0.0.0.0:${port}`,
-        protoPath: files,
+    if (opts?.[MicroTransport.GRPC]) {
+      return toArray(opts?.[MicroTransport.GRPC]).map(options => {
+        const filePattern = options?.filePattern ?? `${config.get('env') == ENV.DEV ? 'src' : 'dist'}/**/*.proto`;
+        const protoPath = glob.sync(filePattern);
+        const packages = protoPath.map(
+          file =>
+            fs
+              .readFileSync(file)
+              .toString()
+              .match(/package (.*);/)[1],
+        );
+        return {
+          transport: Transport.GRPC,
+          options: { package: packages, url: `0.0.0.0:${port}`, protoPath, ...options },
+        };
       });
     }
 
-    const microOptions: any = {
-      transport: this.convertTransport(transport) as Transport,
-      options: { ...buildOptions },
-    };
-    return app.connectMicroservice<MicroserviceOptions>(microOptions, { inheritAppConfig });
-  }
+    if (opts?.[MicroTransport.TCP]) {
+      return toArray(opts?.[MicroTransport.TCP]).map(options => {
+        return {
+          transport: Transport.TCP,
+          options: { host: options?.host || '0.0.0.0', port: toInt(options?.port, port), ...options },
+        };
+      });
+    }
 
-  private static convertTransport(transport: MicroTransport): Transport {
-    const transportMapping: { [key: string]: Transport } = {
-      [MicroTransport.TCP]: Transport.TCP,
-      [MicroTransport.RMQ]: Transport.RMQ,
-      [MicroTransport.NATS]: Transport.NATS,
-      [MicroTransport.REDIS]: Transport.REDIS,
-      [MicroTransport.GRPC]: Transport.GRPC,
-      [MicroTransport.MQTT]: Transport.MQTT,
-      [MicroTransport.KAFKA]: Transport.KAFKA,
-    };
-    return transportMapping[transport] || Transport.TCP;
+    if (opts?.[MicroTransport.RMQ]) {
+      return toArray(opts?.[MicroTransport.RMQ]).map(options => {
+        return { transport: Transport.RMQ, options: { ...options } };
+      });
+    }
+
+    if (opts?.[MicroTransport.NATS]) {
+      return toArray(opts?.[MicroTransport.NATS]).map(options => {
+        return { transport: Transport.NATS, options: { ...options } };
+      });
+    }
+
+    if (opts?.[MicroTransport.MQTT]) {
+      return toArray(opts?.[MicroTransport.MQTT]).map(options => {
+        return { transport: Transport.MQTT, options: { ...options } };
+      });
+    }
+
+    if (opts?.[MicroTransport.KAFKA]) {
+      return toArray(opts?.[MicroTransport.KAFKA]).map(options => {
+        return { transport: Transport.KAFKA, options: { ...options } };
+      });
+    }
+
+    return [];
   }
 }

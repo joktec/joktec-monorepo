@@ -7,7 +7,7 @@ import { MetricModule } from '../../metric';
 import { toRoute } from '../../utils';
 import { GatewayConfig } from './gateway.config';
 import { GatewayController } from './gateway.controller';
-import { gatewayDurationSeconds, GatewayMetric, gatewayTotal } from './gateway.metric';
+import { gatewayDuration, GatewayMetric, gatewayTotal } from './gateway.metric';
 
 @Global()
 @Module({
@@ -35,7 +35,7 @@ import { gatewayDurationSeconds, GatewayMetric, gatewayTotal } from './gateway.m
     }),
   ],
   controllers: [GatewayController],
-  providers: [GatewayMetric, gatewayDurationSeconds, gatewayTotal],
-  exports: [GatewayMetric, gatewayDurationSeconds, gatewayTotal],
+  providers: [GatewayMetric, gatewayDuration, gatewayTotal],
+  exports: [GatewayMetric, gatewayDuration, gatewayTotal],
 })
 export class GatewayModule {}

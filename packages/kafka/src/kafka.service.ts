@@ -4,21 +4,21 @@ import { KafkaClient, KafkaProp } from './kafka.client';
 import {
   ConsumerBatchRunConfig,
   ConsumerMessageRunConfig,
-  KafkaClientConfig,
+  KafkaConfig,
   ProducerManyTopic,
   ProducerTopic,
 } from './kafka.config';
 import { PublishKafkaMetric } from './kafka.metric';
 
 @Injectable()
-export class KafkaService extends AbstractClientService<KafkaClientConfig, Kafka> implements KafkaClient {
+export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> implements KafkaClient {
   private props: { [conId: string]: KafkaProp } = {};
 
   constructor() {
-    super('kafka', KafkaClientConfig);
+    super('kafka', KafkaConfig);
   }
 
-  async init(config: KafkaClientConfig): Promise<Kafka> {
+  async init(config: KafkaConfig): Promise<Kafka> {
     config.log(this.logService);
     this.props[config.conId] = { producers: {}, consumers: {} };
     return new Kafka(config);

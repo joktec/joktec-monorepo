@@ -1,5 +1,15 @@
+import { RetryOptions } from '../retry';
 import { toBool, toInt } from '../utils';
-import { buildError, IsBoolean, IsNumber, IsOptional, IsString, validateSync, ValidationError } from '../validation';
+import {
+  buildError,
+  IsBoolean,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  validateSync,
+  ValidationError,
+} from '../validation';
 
 export const DEFAULT_CON_ID: string = 'default';
 
@@ -19,6 +29,10 @@ export class ClientConfig {
   @IsNumber()
   @IsOptional()
   initTimeout?: number;
+
+  @IsOptional()
+  @IsObject()
+  retry?: RetryOptions;
 
   constructor(props: ClientConfig) {
     Object.assign(this, {

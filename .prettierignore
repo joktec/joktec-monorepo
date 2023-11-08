@@ -7,6 +7,9 @@ packages/**/*.js
 libs/**/*.d.ts
 libs/**/*.js
 
+tools/**/*.d.ts
+tools/**/*.js
+
 src/**/*.d.ts
 build/
 dist/

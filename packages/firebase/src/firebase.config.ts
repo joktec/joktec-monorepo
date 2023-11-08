@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { AgentOptions } from 'http';
 import {
   ClientConfig,
   InternalServerException,
@@ -11,12 +10,6 @@ import {
 } from '@joktec/core';
 import { ServiceAccount } from 'firebase-admin/lib/app/credential';
 import { isString } from 'lodash';
-
-export class FirebaseAgent implements AgentOptions {
-  constructor(props: FirebaseAgent) {
-    Object.assign(this, props);
-  }
-}
 
 export class FirebaseCredential implements ServiceAccount {
   @IsOptional()
@@ -61,13 +54,9 @@ export class FirebaseConfig extends ClientConfig {
   @IsString()
   projectId?: string;
 
-  @IsOptional()
-  @IsTypes([FirebaseAgent])
-  httpAgent?: FirebaseAgent;
-
   constructor(props: FirebaseConfig) {
     super(props);
-    const { credential, httpAgent } = props;
+    const { credential } = props;
     if (isString(credential) && !fs.existsSync(credential)) {
       throw new InternalServerException('Firebase credential file not found!');
     }
@@ -75,7 +64,6 @@ export class FirebaseConfig extends ClientConfig {
     Object.assign(this, {
       ...props,
       credential: isString(credential) ? credential : new FirebaseCredential(credential),
-      httpAgent: httpAgent && new FirebaseAgent(httpAgent),
     });
   }
 }

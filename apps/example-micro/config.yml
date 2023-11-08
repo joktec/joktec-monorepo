@@ -1,12 +1,16 @@
+$schema: ../../tools/types/config.schema.json
+
 micro:
   port: 8010
   microservices:
     tcp:
-      retryAttempts: 5
-      retryDelay: 1500
+      host: 0.0.0.0
+      port: 8010
 
 log:
   level: info
+  useFilter: false
+  format: pretty
   logStash:
     host: 51.222.44.17
     port: 31658

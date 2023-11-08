@@ -1,8 +1,8 @@
-import { ClientConfig, IsNotEmpty, IsOptional, IsString, IsTypes, toBool, toInt } from '@joktec/core';
+import { ClientConfig, IsNotEmpty, IsObject, IsOptional, IsString, IsTypes, toBool, toInt } from '@joktec/core';
 import { CollectionImportOptions } from 'arangojs/collection';
-import { AgentOptions, Config, Headers, LoadBalancingStrategy, RequestInterceptors } from 'arangojs/connection';
+import { Headers, LoadBalancingStrategy } from 'arangojs/connection';
 
-class BasicAuthCredentials {
+export class BasicCredentials {
   @IsString()
   @IsNotEmpty()
   username: string;
@@ -11,18 +11,18 @@ class BasicAuthCredentials {
   @IsOptional()
   password?: string;
 
-  constructor(props) {
+  constructor(props: BasicCredentials) {
     this.username = props.username;
     this.password = props.password;
   }
 }
 
-class BearerAuthCredentials {
+export class BearerCredentials {
   @IsString()
   @IsNotEmpty()
-  token: string;
+  token!: string;
 
-  constructor(props) {
+  constructor(props: BearerCredentials) {
     this.token = props.token;
   }
 }
@@ -31,7 +31,7 @@ export type CollectionImportOpts = CollectionImportOptions & {
   type?: 'documents' | 'list' | 'auto';
 };
 
-export class ArangoConfig extends ClientConfig implements Config {
+export class ArangoConfig extends ClientConfig {
   @IsTypes(['string', 'string[]'])
   url: string | string[];
 
@@ -40,8 +40,8 @@ export class ArangoConfig extends ClientConfig implements Config {
   databaseName?: string;
 
   @IsOptional()
-  @IsTypes([BasicAuthCredentials, BearerAuthCredentials])
-  auth?: BasicAuthCredentials | BearerAuthCredentials;
+  @IsTypes([BasicCredentials, BearerCredentials])
+  auth?: BasicCredentials | BearerCredentials;
 
   @IsOptional()
   arangoVersion?: number;
@@ -56,7 +56,8 @@ export class ArangoConfig extends ClientConfig implements Config {
   agent?: any;
 
   @IsOptional()
-  agentOptions?: AgentOptions & RequestInterceptors;
+  @IsObject()
+  agentOptions?: object;
 
   @IsOptional()
   headers?: Headers;

@@ -2,31 +2,26 @@ import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.int
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { HelmetOptions } from 'helmet';
 import { SwaggerConfig } from '../../swagger';
-import { toArray, toBool, toInt } from '../../utils';
 import { IsTypes } from '../../validation';
 
 export class StaticConfig {
-  staticPath?: string;
-  excludePath?: string[];
-  viewPath?: string;
+  staticPath?: string = './public';
+  excludePath?: string[] = [];
+  viewPath?: string = './views';
 
   constructor(props?: Partial<StaticConfig>) {
-    Object.assign(this, {
-      staticPath: props?.staticPath || './public',
-      excludePath: toArray(props?.excludePath),
-      viewPath: props?.viewPath || './views',
-    });
+    Object.assign(this, props);
   }
 }
 
 export class GatewayConfig {
   @IsNumber()
   @IsNotEmpty()
-  port!: number;
+  port?: number = 9010;
 
   @IsString()
   @IsOptional()
-  contextPath?: string;
+  contextPath?: string = '';
 
   @IsTypes([StaticConfig])
   @IsOptional()
@@ -38,7 +33,7 @@ export class GatewayConfig {
 
   @IsBoolean()
   @IsOptional()
-  csrf?: boolean;
+  csrf?: boolean = false;
 
   @IsOptional()
   cors?: CorsOptions;
@@ -47,13 +42,8 @@ export class GatewayConfig {
   helmet?: HelmetOptions;
 
   constructor(props?: Partial<GatewayConfig>) {
-    Object.assign(this, {
-      ...props,
-      port: toInt(props?.port, 9010),
-      csrf: toBool(props?.csrf, false),
-      contextPath: props?.contextPath || '',
-      swagger: props?.swagger && new SwaggerConfig(props.swagger),
-      static: props?.static && new StaticConfig(props.static),
-    });
+    Object.assign(this, props);
+    if (props?.swagger) this.swagger = new SwaggerConfig(props.swagger);
+    if (props?.static) this.static = new StaticConfig(props.static);
   }
 }

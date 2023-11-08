@@ -1,22 +1,18 @@
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { SwaggerUiOptions } from 'swagger-ui-express';
-import { toBool } from '../utils';
 import { IsTypes } from '../validation';
 
 export class SwaggerLicense {
   @IsString()
   @IsNotEmpty()
-  name!: string;
+  name?: string = 'MIT';
 
   @IsString()
   @IsNotEmpty()
-  url!: string;
+  url: string = 'https://opensource.org/licenses/MIT';
 
   constructor(props: Partial<SwaggerLicense>) {
-    Object.assign(this, {
-      name: props?.name || 'MIT',
-      url: props?.url || 'https://opensource.org/licenses/MIT',
-    });
+    Object.assign(this, props);
   }
 }
 
@@ -37,7 +33,7 @@ export class SwaggerAuth {
 export class SwaggerConfig {
   @IsBoolean()
   @IsOptional()
-  enable?: boolean;
+  enable?: boolean = true;
 
   @IsString()
   @IsOptional()
@@ -57,7 +53,7 @@ export class SwaggerConfig {
 
   @IsString()
   @IsOptional()
-  path?: string;
+  path?: string = 'swagger';
 
   @IsOptional()
   options?: SwaggerUiOptions;
@@ -71,12 +67,8 @@ export class SwaggerConfig {
   license?: SwaggerLicense;
 
   constructor(props: Partial<SwaggerConfig>) {
-    Object.assign(this, {
-      ...props,
-      enable: toBool(props?.enable, true),
-      auth: props?.auth && new SwaggerAuth(props.auth),
-      license: props?.license && new SwaggerLicense(props.license),
-      path: props?.path || 'swagger',
-    });
+    Object.assign(this, props);
+    if (props?.auth) this.auth = new SwaggerAuth(props.auth);
+    if (props?.license) this.license = new SwaggerLicense(props.license);
   }
 }

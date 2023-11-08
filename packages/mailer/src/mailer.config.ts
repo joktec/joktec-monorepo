@@ -37,7 +37,7 @@ export class MailerAuth {
 export class MailerConfig extends ClientConfig {
   @IsNotEmpty()
   @IsNotEmpty()
-  service: MailerServiceType = MailerServiceType.SELF;
+  service?: MailerServiceType;
 
   @IsString()
   @IsNotEmpty()
@@ -68,6 +68,7 @@ export class MailerConfig extends ClientConfig {
     const transport = MailerTransport[props?.service];
     Object.assign(this, {
       ...props,
+      service: props?.service || MailerServiceType.SELF,
       host: props?.host || transport?.host,
       port: toInt(props?.port || transport?.port, 587),
       secure: toBool(props?.secure, false),

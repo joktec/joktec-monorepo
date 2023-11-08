@@ -11,8 +11,8 @@ import { parseUA } from '../utils';
 import { createCloudWatchStream } from './cloudwatch/cloudwatch';
 import { createConsoleStream } from './console/console';
 import { createFluentdStream } from './fluentd/fluentd';
-import { createGoogleLoggingStream } from './googleLog/googleLog';
 import { LogConfig } from './log.config';
+import { LogFormat } from './log.enum';
 import { createLogstashStream } from './logstash/logstash';
 import { createLokiStream } from './loki/loki';
 import { createMongoLoggingStream } from './mongodb/pino-mongo';
@@ -21,7 +21,7 @@ export const createPinoHttp = async (
   configService: ConfigService,
   customStreams: DestinationStream[] = [],
 ): Promise<LoggerParam> => {
-  const config: LogConfig = configService.parse(LogConfig, 'log');
+  const config: LogConfig = configService.parseOrThrow(LogConfig, 'log');
   const appName = configService.get('name').replace('@', '').replace('/', '-');
 
   const basePino: PinoHttpOptions = { base: { version: configService.get('version') } };
@@ -37,14 +37,13 @@ export const createPinoHttp = async (
     },
   };
 
-  const useJson = configService.get<string>('env') === ENV.PROD || config.format === 'json';
+  const useJson = configService.get<string>('env') === ENV.PROD || config.format === LogFormat.JSON;
   const pinoConfig: PinoHttpOptions = useJson ? basePino : prettyPino;
 
   const streams: DestinationStream[] = [createConsoleStream(), ...customStreams];
   if (config?.logStash?.enable) streams.push(createLogstashStream(appName, config.logStash));
   if (config?.fluentd?.enable) streams.push(createFluentdStream(appName, config.fluentd));
   if (config?.cloudWatch?.enable) streams.push(createCloudWatchStream(appName, config.cloudWatch));
-  if (config?.googleLog?.enable) streams.push(createGoogleLoggingStream(appName, config.googleLog));
   if (config?.loki?.enable) streams.push(createLokiStream(appName, config.loki));
   if (config?.mongo?.enable && useJson) streams.push(await createMongoLoggingStream(appName, config.mongo));
 

@@ -1,4 +1,7 @@
-export interface RetryOptions extends TimeoutsOptions {
+/**
+ * Configuration for the Client retry when failed
+ */
+export interface RetryOptions extends TimeoutOptions {
   /**
    * Whether to retry forever.
    * @default false
@@ -16,9 +19,9 @@ export interface RetryOptions extends TimeoutsOptions {
   maxRetryTime?: number;
 }
 
-export interface TimeoutsOptions extends CreateTimeoutOptions {
+export interface TimeoutOptions extends CreateTimeoutOptions {
   /**
-   * The maximum amount of times to retry the operation.
+   * The maximum number of times to retry the operation.
    * @default 10
    */
   retries?: number;

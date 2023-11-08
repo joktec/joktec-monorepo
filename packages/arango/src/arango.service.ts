@@ -22,7 +22,8 @@ export class ArangoService extends AbstractClientService<ArangoConfig, Database>
   }
 
   async stop(client: Database, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // Nothing
+    client.close();
+    await client.shutdown();
   }
 
   getCollection(col: string, conId: string = DEFAULT_CON_ID) {
@@ -30,18 +31,12 @@ export class ArangoService extends AbstractClientService<ArangoConfig, Database>
   }
 
   private getUpsertKey(doc: any, upsertFields: Array<string>): string {
-    if (doc?._key) {
-      return doc?._key;
-    }
-    return values(pick(doc, upsertFields)).join('_');
+    return doc?._key ? doc._key : values(pick(doc, upsertFields)).join('_');
   }
 
   async bulkUpsert(
     col: string,
-    data: {
-      docs: any[];
-      upsertFields: Array<string>;
-    },
+    data: { docs: any[]; upsertFields: Array<string> },
     opts: CollectionImportOpts = { onDuplicate: 'update' },
     conId: string = DEFAULT_CON_ID,
   ): Promise<void> {

@@ -13,12 +13,10 @@ import {
   EachBatchPayload,
   EachMessagePayload,
   ISocketFactory,
-  KafkaConfig,
   logCreator,
   logLevel,
   ProducerBatch,
   ProducerRecord,
-  RetryOptions,
   SASLOptions,
 } from 'kafkajs';
 
@@ -46,7 +44,7 @@ export type ConsumerMessageRunConfig = ConsumerRunCfg & {
   eachMessage: (payload: EachMessagePayload) => Promise<void>;
 };
 
-export class KafkaClientConfig extends ClientConfig implements KafkaConfig {
+export class KafkaConfig extends ClientConfig {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
@@ -54,17 +52,18 @@ export class KafkaClientConfig extends ClientConfig implements KafkaConfig {
 
   @IsOptional()
   @IsBoolean()
-  ssl?: boolean;
+  ssl?: boolean = false;
 
+  @IsOptional()
   sasl?: SASLOptions;
 
   @IsOptional()
   @IsString()
-  clientId?: string;
+  clientId?: string = 'kafkajs';
 
   @IsOptional()
   @IsPositive()
-  connectionTimeout?: number;
+  connectionTimeout?: number = 1000;
 
   @IsOptional()
   @IsPositive()
@@ -76,35 +75,23 @@ export class KafkaClientConfig extends ClientConfig implements KafkaConfig {
 
   @IsOptional()
   @IsPositive()
-  requestTimeout?: number;
+  requestTimeout?: number = 30000;
 
   @IsOptional()
   @IsBoolean()
   enforceRequestTimeout?: boolean;
 
-  retry?: RetryOptions;
-  socketFactory?: ISocketFactory;
-
   @IsOptional()
   @IsEnum(logLevel)
-  logLevel?: logLevel;
+  logLevel?: logLevel = logLevel.INFO;
 
+  socketFactory?: ISocketFactory;
   logCreator?: logCreator;
 
-  constructor(props: KafkaClientConfig) {
+  constructor(props: KafkaConfig) {
     super(props);
-    this.brokers = props.brokers;
-    this.ssl = props.ssl ?? false;
-    this.sasl = props.sasl;
-    this.clientId = props.clientId ?? 'kafkajs';
-    this.connectionTimeout = props.connectionTimeout ?? 1000;
-    this.authenticationTimeout = props.authenticationTimeout;
-    this.reauthenticationThreshold = props.reauthenticationThreshold;
-    this.enforceRequestTimeout = props.enforceRequestTimeout;
-    this.requestTimeout = props.requestTimeout ?? 30000;
-    this.retry = props.retry;
-    this.socketFactory = props.socketFactory;
-    this.logLevel = props.logLevel ?? logLevel.INFO;
+    Object.assign(this, props);
+    this.socketFactory = props?.socketFactory;
   }
 
   log(logService: LogService) {

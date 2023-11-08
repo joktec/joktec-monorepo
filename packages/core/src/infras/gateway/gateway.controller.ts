@@ -1,10 +1,11 @@
 import { Controller, Get, UseInterceptors } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppConfig, initConfig } from '../../config';
 import { toBool } from '../../utils';
 import { GatewayMetric } from './gateway.metric';
 
-@Controller()
+@ApiTags('Default')
+@Controller('/')
 export class GatewayController {
   @Get('/')
   @ApiResponse({ type: Object })

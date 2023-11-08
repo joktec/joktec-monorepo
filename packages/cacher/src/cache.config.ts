@@ -33,7 +33,7 @@ export enum CacheType {
 export class CacheConfig extends ClientConfig {
   @IsEnum(CacheType)
   @IsNotEmpty()
-  type: CacheType = CacheType.LOCAL;
+  type?: CacheType = CacheType.LOCAL;
 
   @IsString({ groups: [CacheType.LOCAL] })
   @IsNotEmpty({ groups: [CacheType.LOCAL] })
@@ -79,7 +79,6 @@ export class CacheConfig extends ClientConfig {
     super(props);
     Object.assign(this, {
       ...props,
-      type: props.type || CacheType.LOCAL,
       retryTimeout: toInt(props?.retryTimeout, 20000),
       connectTimeout: toInt(props?.connectTimeout, 20000),
     });

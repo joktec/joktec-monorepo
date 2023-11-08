@@ -9,23 +9,23 @@ import { LogService } from '../../logger';
 import { getTimeString } from '../../utils';
 
 const ExcludePaths = ['/swagger', '/bulls', '/metrics'];
-const GATEWAY_DURATION_SECONDS_METRIC = 'gateway_duration_seconds';
-const GATEWAY_TOTAL_METRIC = 'gateway_total';
+const GATEWAY_DURATION_METRIC = 'http_call_duration';
+const GATEWAY_TOTAL_METRIC = 'http_call_total';
 
 export enum GatewayStatus {
   SUCCESS = 'SUCCESS',
   FAILED = 'FAILED',
 }
 
-export const gatewayDurationSeconds = makeHistogramProvider({
-  name: GATEWAY_DURATION_SECONDS_METRIC,
-  help: 'Gateway duration by path',
+export const gatewayDuration = makeHistogramProvider({
+  name: GATEWAY_DURATION_METRIC,
+  help: 'Gateway Duration By Path',
   labelNames: ['path'],
 });
 
 export const gatewayTotal = makeCounterProvider({
   name: GATEWAY_TOTAL_METRIC,
-  help: `Gateway call total`,
+  help: `Gateway Call Total`,
   labelNames: ['path', 'status', 'statusCode', 'className'],
 });
 
@@ -33,7 +33,7 @@ export const gatewayTotal = makeCounterProvider({
 export class GatewayMetric implements NestInterceptor {
   constructor(
     private logger: LogService,
-    @InjectMetric(GATEWAY_DURATION_SECONDS_METRIC) private gatewayDurationSecondsMetric: Histogram<string>,
+    @InjectMetric(GATEWAY_DURATION_METRIC) private gatewayDurationMetric: Histogram<string>,
     @InjectMetric(GATEWAY_TOTAL_METRIC) private gatewayTotalMetric: Counter<string>,
   ) {
     this.logger.setContext(GatewayMetric.name);
@@ -41,12 +41,10 @@ export class GatewayMetric implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<ExpressRequest>();
-    if (ExcludePaths.includes(request.path)) {
-      return next.handle();
-    }
+    if (ExcludePaths.includes(request.path)) return next.handle();
 
     const path = `${request.method} ${request.route?.path ?? request.path}`;
-    const duration = this.gatewayDurationSecondsMetric.startTimer({ path });
+    const duration = this.gatewayDurationMetric.startTimer({ path });
 
     return next.handle().pipe(
       tap(_ => {

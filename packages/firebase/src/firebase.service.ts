@@ -1,4 +1,3 @@
-import { Agent } from 'http';
 import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
 import admin from 'firebase-admin';
 import { omit } from 'lodash';
@@ -13,11 +12,10 @@ export class FirebaseService extends AbstractClientService<FirebaseConfig, Fireb
   }
 
   async init(config: FirebaseConfig): Promise<FirebaseInstance> {
-    const opts = omit(config, ['credential', 'httpAgent']);
+    const opts = omit(config, ['credential']);
     return admin.initializeApp({
       ...opts,
       credential: admin.credential.cert(config.credential),
-      httpAgent: config.httpAgent && new Agent(config.httpAgent),
     });
   }
 

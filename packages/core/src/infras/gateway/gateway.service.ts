@@ -18,7 +18,6 @@ import { ConfigService } from '../../config';
 import { LogService } from '../../logger';
 import { SwaggerConfig } from '../../swagger';
 import { joinUrl, parseUA, toArray } from '../../utils';
-import { buildError, validateSync } from '../../validation';
 import { GatewayConfig } from './gateway.config';
 
 export class GatewayService {
@@ -27,14 +26,7 @@ export class GatewayService {
     const logger = await app.resolve(LogService);
     logger.setContext(GatewayService.name);
 
-    const gatewayConfig = config.parse(GatewayConfig, 'gateway');
-    const configErrors = validateSync(gatewayConfig);
-    if (configErrors.length) {
-      const formatError = buildError(configErrors);
-      logger.error(Object.values(formatError).flat(), 'Gateway config errors');
-      return;
-    }
-
+    const gatewayConfig = config.parseOrThrow(GatewayConfig, 'gateway');
     const { port, contextPath } = gatewayConfig;
 
     app.setGlobalPrefix(contextPath);

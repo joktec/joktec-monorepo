@@ -1,60 +1,36 @@
 import {
   ClientConfig,
   HttpMethod,
-  IsArray,
   IsBoolean,
   IsEnum,
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsObject,
   IsOptional,
   IsPositive,
   IsString,
   IsTypes,
   LogService,
-  toBool,
 } from '@joktec/core';
-import { AxiosBasicCredentials, AxiosError, AxiosProxyConfig, AxiosRequestConfig } from 'axios';
+import { AxiosBasicCredentials, AxiosError, AxiosProxyConfig } from 'axios';
 import mergeDeep from 'merge-deep';
 import { RetryConfig } from 'retry-axios';
 
-const defaultRetryConfig = {
+const defaultRetryConfig: RetryConfig = {
   retry: 0,
   retryDelay: 1000,
   httpMethodsToRetry: [HttpMethod.GET, HttpMethod.POST],
 };
 
-export enum ApiKeyType {
-  HEADER = 'header',
-  PARAM = 'param',
-}
-
-export class ApiKeyCredentials {
-  @IsEnum(ApiKeyType)
+class BasicCredentials implements AxiosBasicCredentials {
+  @IsString()
   @IsNotEmpty()
-  type: ApiKeyType = ApiKeyType.HEADER;
+  username!: string;
 
   @IsString()
   @IsNotEmpty()
-  key!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  value!: string;
-
-  constructor(props: ApiKeyCredentials) {
-    Object.assign(this, props);
-  }
-}
-
-export class BasicCredentials implements AxiosBasicCredentials {
-  @IsString()
-  @IsNotEmpty()
-  username: string;
-
-  @IsString()
-  @IsNotEmpty()
-  password: string;
+  password!: string;
 
   constructor(props: BasicCredentials) {
     Object.assign(this, props);
@@ -64,11 +40,11 @@ export class BasicCredentials implements AxiosBasicCredentials {
 export class HttpProxyConfig implements AxiosProxyConfig {
   @IsNotEmpty()
   @IsString()
-  host: string;
+  host!: string;
 
   @IsNotEmpty()
   @IsNumber()
-  port: number;
+  port!: number;
 
   @IsOptional()
   @IsTypes([BasicCredentials])
@@ -83,14 +59,17 @@ export class HttpProxyConfig implements AxiosProxyConfig {
   }
 }
 
-export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
+export class HttpConfig extends ClientConfig {
   @IsOptional()
   @IsString()
   url?: string;
 
+  /**
+   * HTTP Method
+   */
   @IsOptional()
   @IsEnum(HttpMethod)
-  method?: HttpMethod;
+  method?: HttpMethod = HttpMethod.GET;
 
   @IsOptional()
   @IsString()
@@ -98,7 +77,7 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
 
   @IsOptional()
   @IsPositive()
-  timeout: number = 30000;
+  timeout?: number = 30000;
 
   @IsOptional()
   @IsString()
@@ -106,30 +85,27 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
 
   @IsOptional()
   @IsTypes([BasicCredentials])
-  auth?: AxiosBasicCredentials;
-
-  @IsOptional()
-  @IsArray()
-  @IsTypes([ApiKeyCredentials], { each: true })
-  apiKeys?: ApiKeyCredentials[];
+  auth?: BasicCredentials;
 
   @IsOptional()
   @IsInt()
   @IsPositive()
-  maxRedirects: number = 3;
+  maxRedirects?: number = 3;
 
   @IsOptional()
-  headers?: any;
+  @IsObject()
+  headers?: Record<string, any>;
 
   @IsOptional()
-  params?: any;
+  @IsObject()
+  params?: Record<string, any> = {};
 
   @IsOptional()
   @IsBoolean()
-  curlirize?: any;
+  curlirize?: boolean = false;
 
   @IsOptional()
-  raxConfig?: RetryConfig;
+  raxConfig?: RetryConfig = defaultRetryConfig;
 
   @IsOptional()
   @IsTypes([HttpProxyConfig])
@@ -139,24 +115,9 @@ export class HttpConfig extends ClientConfig implements AxiosRequestConfig {
     super(props);
     mergeDeep(this, {
       ...props,
-      method: props?.method || HttpMethod.GET,
-      raxConfig: props?.raxConfig || defaultRetryConfig,
-      headers: props?.headers || { accept: 'application/json' },
-      params: props?.params || {},
-      curlirize: toBool(props?.curlirize, false),
+      headers: Object.assign({ accept: 'application/json' }, props?.headers),
     });
-
-    if (props?.apiKeys?.length) {
-      props.apiKeys.map(item => {
-        const apiKey = { [item.key]: item.value };
-        if (!item.type || item.type === ApiKeyType.HEADER) Object.assign(this.headers, apiKey);
-        if (item.type === ApiKeyType.PARAM) Object.assign(this.params, apiKey);
-      });
-    }
-
-    if (props.proxy) {
-      this.proxy = new HttpProxyConfig(props.proxy);
-    }
+    if (props.proxy) this.proxy = new HttpProxyConfig(props.proxy);
   }
 
   onRetryAttempt(log: LogService) {

@@ -3,12 +3,12 @@ import { Consumer, ConsumerConfig, ConsumerSubscribeTopic, Kafka, Producer, Prod
 import {
   ConsumerBatchRunConfig,
   ConsumerMessageRunConfig,
-  KafkaClientConfig,
+  KafkaConfig,
   ProducerManyTopic,
   ProducerTopic,
 } from './kafka.config';
 
-export interface KafkaClient extends Client<KafkaClientConfig, Kafka> {
+export interface KafkaClient extends Client<KafkaConfig, Kafka> {
   consume(
     consumerSubscribeTopic: ConsumerSubscribeTopic,
     consumerCfg: ConsumerConfig,

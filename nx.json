@@ -19,7 +19,8 @@
   },
   "workspaceLayout": {
     "appsDir": "apps",
-    "libsDir": "packages"
+    "libsDir": "packages",
+    "toolsDir": "tools"
   },
   "namedInputs": {
     "default": [

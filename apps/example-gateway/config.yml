@@ -1,3 +1,5 @@
+$schema: ../../tools/types/config.schema.json
+
 gateway:
   port: 9010
   swagger:
@@ -9,23 +11,13 @@ gateway:
 
 log:
   level: info
-  useFilter: false
   format: pretty
-  logStash:
-    enable: false
-    host: 51.222.44.17
-    port: 31658
-  loki:
-    enable: false
-    host: https://logs-prod-011222.grafana.net
+  useFilter: false
   mongo:
     enable: true
     uri: mongodb://joktec:joktec123@localhost:27017/?authSource=sample_db
     database: sample_db
     collection: logs
-  logtail:
-    enable: false
-    token: v9YTJSReTAyV6cSRff3SJ4UE
 
 bull:
   queue: [ order ]
@@ -63,7 +55,7 @@ storage:
   secretKey: secretkey
   bucket: joktec
   endpoint: http://127.0.0.1:9000
-  useSSL: false
+  sslEnabled: false
   s3ForcePathStyle: true
   linkFormat: http://127.0.0.1:9000/joktec/<key>
 
@@ -71,6 +63,7 @@ http:
   timeout: 30000
 
 mailer:
+  service: zoho
   host: smtppro.zoho.com
   port: 465
   secure: true

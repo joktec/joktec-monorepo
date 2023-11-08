@@ -1,36 +1,60 @@
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 import { DestinationStream } from 'pino';
-import { toArray } from '../utils';
+import { IsTypes } from '../validation';
 import { CloudWatchConfig } from './cloudwatch/cloudwatch.config';
 import { FluentdConfig } from './fluentd/fluentd.config';
-import { GoogleLogConfig } from './googleLog/googleLog.config';
-import { LogLevel } from './log.level';
+import { LogLevel, LogFormat } from './log.enum';
 import { LogStashConfig } from './logstash/logstash.config';
 import { LokiConfig } from './loki/loki.config';
 import { PinoMongoConfig } from './mongodb/pino-mongo.config';
 
 export class LogConfig {
-  level!: LogLevel;
-  format!: 'pretty' | 'json';
+  @IsNotEmpty()
+  @IsEnum(LogLevel)
+  level?: LogLevel = 'info';
+
+  @IsOptional()
+  @IsEnum(LogFormat)
+  format?: LogFormat = LogFormat.PRETTY;
+
+  @IsOptional()
   contexts?: string | string[];
-  customStreams?: DestinationStream[];
+
+  @IsOptional()
+  @IsBoolean()
+  useFilter?: boolean = false;
+
+  @IsOptional()
+  customStreams?: DestinationStream[] = [];
+
+  @IsOptional()
+  @IsTypes([FluentdConfig])
   fluentd?: FluentdConfig;
+
+  @IsOptional()
+  @IsTypes([LogStashConfig])
   logStash?: LogStashConfig;
+
+  @IsOptional()
+  @IsTypes([CloudWatchConfig])
   cloudWatch?: CloudWatchConfig;
-  googleLog?: GoogleLogConfig;
+
+  @IsOptional()
+  @IsTypes([LokiConfig])
   loki?: LokiConfig;
+
+  @IsOptional()
+  @IsTypes([PinoMongoConfig])
   mongo?: PinoMongoConfig;
 
   constructor(props: LogConfig) {
-    this.level = props?.level ?? 'info';
-    this.format = props?.format || 'pretty';
+    Object.assign(this, props);
     this.contexts = this.setSearchValue(props?.contexts);
-    this.customStreams = toArray<DestinationStream>(props?.customStreams);
-    this.logStash = props?.logStash ? new LogStashConfig(props?.logStash) : null;
-    this.fluentd = props?.fluentd ? new FluentdConfig(props?.fluentd) : null;
-    this.cloudWatch = props?.cloudWatch ? new CloudWatchConfig(props?.cloudWatch) : null;
-    this.googleLog = props?.googleLog ? new GoogleLogConfig(props?.googleLog) : null;
-    this.loki = props?.loki ? new LokiConfig(props?.loki) : null;
-    this.mongo = props?.mongo ? new PinoMongoConfig(props?.mongo) : null;
+    if (props.logStash) this.logStash = new LogStashConfig(props?.logStash);
+    if (props.fluentd) this.fluentd = new FluentdConfig(props?.fluentd);
+    if (props.cloudWatch) this.cloudWatch = new CloudWatchConfig(props?.cloudWatch);
+    if (props.loki) this.loki = new LokiConfig(props?.loki);
+    if (props.mongo) this.mongo = new PinoMongoConfig(props?.mongo);
   }
 
   setSearchValue(contexts: string | string[]): string {

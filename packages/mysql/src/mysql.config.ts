@@ -1,7 +1,6 @@
-import { ClientConfig, IsArray, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toInt } from '@joktec/core';
+import { ClientConfig, IsArray, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/core';
 import { pick } from 'lodash';
 import { ConnectionOptions } from 'sequelize/types/sequelize';
-import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
 
 export class MysqlSlaveConfig implements ConnectionOptions {
   @IsString()
@@ -40,30 +39,30 @@ export enum Dialect {
   ORACLE = 'oracle',
 }
 
-export class MysqlConfig extends ClientConfig implements SequelizeOptions {
-  @IsString()
+export class MysqlConfig extends ClientConfig {
+  @IsEnum(Dialect)
   @IsNotEmpty()
-  dialect: Dialect;
+  dialect?: Dialect = Dialect.MYSQL;
 
   @IsString()
   @IsNotEmpty()
-  host: string;
+  host?: string = 'localhost';
 
   @IsInt()
   @IsNotEmpty()
-  port: number;
+  port?: number = 3306;
 
   @IsString()
   @IsNotEmpty()
-  username: string;
+  username!: string;
 
   @IsString()
   @IsNotEmpty()
-  password: string;
+  password!: string;
 
   @IsString()
   @IsNotEmpty()
-  database: string;
+  database!: string;
 
   @IsString()
   @IsOptional()
@@ -75,24 +74,16 @@ export class MysqlConfig extends ClientConfig implements SequelizeOptions {
 
   @IsInt()
   @IsOptional()
-  connectTimeout?: number;
+  connectTimeout?: number = 20000;
 
   @IsArray()
   @IsTypes([MysqlSlaveConfig], { each: true })
   @IsOptional()
-  slaves?: MysqlSlaveConfig[];
+  slaves?: MysqlSlaveConfig[] = [];
 
   constructor(props: MysqlConfig) {
     super(props);
-    Object.assign(this, {
-      ...props,
-      dialect: props?.dialect || Dialect.MYSQL,
-      host: props?.host || 'localhost',
-      port: toInt(props?.port, 3306),
-      connectTimeout: toInt(props?.connectTimeout, 20000),
-      slaves: [],
-    });
-
+    Object.assign(this, props);
     if (props?.slaves?.length) {
       const masterConfig = pick(props, ['host', 'port', 'username', 'password', 'database']);
       this.slaves = props.slaves.map(slave => new MysqlSlaveConfig({ ...masterConfig, ...slave }));
