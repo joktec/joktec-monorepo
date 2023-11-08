@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.97](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.96...@joktec/core@0.0.97) (2023-11-08)
+
+
+### Bug Fixes
+
+* try parse config type number and boolean ([65b1eef](https://github.com/joktec/joktec-monorepo/commit/65b1eef36329d52005cc653199dfefc344fc5e8b))
+
+
+
+
+
 ## [0.0.96](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.95...@joktec/core@0.0.96) (2023-11-08)
 
 **Note:** Version bump only for package @joktec/core
