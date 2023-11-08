@@ -37,12 +37,12 @@
     "seed:refresh": "node dist/app.seeder --refresh"
   },
   "dependencies": {
-    "@joktec/core": "^0.0.94",
-    "@joktec/http": "^0.0.96",
-    "@joktec/mailer": "^0.0.93",
-    "@joktec/mongo": "^0.0.120",
-    "@joktec/firebase": "^0.0.12",
-    "@joktec/storage": "^0.0.94",
+    "@joktec/core": "^0.0.95",
+    "@joktec/http": "^0.0.97",
+    "@joktec/mailer": "^0.0.94",
+    "@joktec/mongo": "^0.0.121",
+    "@joktec/firebase": "^0.0.13",
+    "@joktec/storage": "^0.0.95",
     "byte-length": "^1.0.2",
     "dot-object": "^2.1.4",
     "gravatar": "^1.8.2",
@@ -54,9 +54,9 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.2.0",
-    "@types/dot-object": "^2.1.4",
-    "@types/gravatar": "^1.8.5",
-    "@types/lodash": "^4.14.200",
+    "@types/dot-object": "^2.1.5",
+    "@types/gravatar": "^1.8.6",
+    "@types/lodash": "^4.14.201",
     "nestjs-seeder": "^0.3.2"
   },
   "lint-staged": {
