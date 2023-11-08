@@ -3032,6 +3032,267 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
+"@joktec/alert@^0.0.94":
+  version "0.0.94"
+  resolved "https://registry.yarnpkg.com/@joktec/alert/-/alert-0.0.94.tgz#0252c75d675fd9af2d9483ad481501cafccc27d9"
+  integrity sha512-8nvZDvt3G60HMH+wLbNaBTYZncw116phluwiDsmPFXQZjBhVdOpedd1zo5W8wS6DTFyiRT9tVjjjK6J8WT1HPg==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    "@slack/webhook" "^7.0.1"
+    lodash "^4.17.21"
+    node-telegram-bot-api "^0.64.0"
+    request "^2.88.2"
+    telegraf "^4.15.0"
+
+"@joktec/arango@^0.0.93":
+  version "0.0.93"
+  resolved "https://registry.yarnpkg.com/@joktec/arango/-/arango-0.0.93.tgz#93fb8806733eec55d554e785cd9d712c1592062b"
+  integrity sha512-PdaDrslUrJhY7v0stLJoJ14ITWH+CMsWWT2smfq+1jaA7BSCRHCqmPM72K04HJjRFEjgSvASh15Q9CLGd0c1pw==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    arangojs "^8.6.0"
+
+"@joktec/bigquery@^0.0.93":
+  version "0.0.93"
+  resolved "https://registry.yarnpkg.com/@joktec/bigquery/-/bigquery-0.0.93.tgz#a46d35552d5eb31d51518d5acb91cd73d027ceec"
+  integrity sha512-hbDONNQm7WBvxRHjix3xxhL6vyWsBeq3e8UJhiIXv5x9n3pH9lLNt3evnTngUJn6N+HRQsZUKiKBrak/jX+tvw==
+  dependencies:
+    "@google-cloud/bigquery" "^7.3.0"
+    "@joktec/core" "0.0.95"
+    lodash "^4.17.21"
+    moment "^2.29.4"
+
+"@joktec/cacher@^0.0.39":
+  version "0.0.39"
+  resolved "https://registry.yarnpkg.com/@joktec/cacher/-/cacher-0.0.39.tgz#5350d650ee0479d0c15a86d1e8090264f48f16ac"
+  integrity sha512-f91tfjRtmgMV/o2cabt14wm6gN0aruj4nyBP3IKaAclEBorE+uErJnHxwZSnt4n5+KSp+dpdnG1AJkBIqwkOTQ==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    dot-object "^2.1.4"
+    ioredis "^5.3.2"
+    lodash "^4.17.21"
+    memcache-client "^1.0.5"
+    node-cache "^5.1.2"
+    node-persist "^3.1.3"
+    object-hash "^3.0.0"
+
+"@joktec/core@0.0.95", "@joktec/core@^0.0.95":
+  version "0.0.95"
+  resolved "https://registry.yarnpkg.com/@joktec/core/-/core-0.0.95.tgz#ae7288c93e764a99e5b59c1bd45d877377ffa6a7"
+  integrity sha512-x05ft/pF1iy8K/amB+UxxwGhiIW+dKnf06FIAEvh4CxicdXr3U6Gx2Pdc3YBykxsKavu+0jKTlrNCMFTDmGKzA==
+  dependencies:
+    "@bull-board/api" "^5.8.2"
+    "@bull-board/express" "^5.8.2"
+    "@bull-board/ui" "^5.8.2"
+    "@burakbey/pino-mongodb" "^1.0.1"
+    "@grpc/proto-loader" "^0.7.9"
+    "@nestjs/bull" "^10.0.1"
+    "@nestjs/common" "^10.2.8"
+    "@nestjs/config" "^3.1.1"
+    "@nestjs/core" "^10.2.8"
+    "@nestjs/cqrs" "^10.2.6"
+    "@nestjs/graphql" "^12.0.9"
+    "@nestjs/mapped-types" "^2.0.2"
+    "@nestjs/microservices" "^10.2.8"
+    "@nestjs/platform-express" "^10.2.8"
+    "@nestjs/serve-static" "^4.0.0"
+    "@nestjs/swagger" "^7.1.14"
+    "@nestjs/terminus" "^10.1.1"
+    "@nestjs/testing" "^10.2.8"
+    "@nestjs/throttler" "^5.0.1"
+    "@willsoto/nestjs-prometheus" "5.3.0"
+    async "^3.2.4"
+    async-retry "^1.3.3"
+    backoff "^2.5.0"
+    bcryptjs "^2.4.3"
+    bull "^4.11.3"
+    class-transformer "^0.5.1"
+    class-validator "^0.14.0"
+    csurf "^1.11.0"
+    dataloader "^2.2.2"
+    dot-object "^2.1.4"
+    express "^4.18.2"
+    express-basic-auth "^1.2.1"
+    geoip-lite "^1.4.7"
+    graphql "^16.8.0"
+    hbs "^4.2.0"
+    helmet "^7.0.0"
+    i18n "^0.15.1"
+    js-yaml "4.1.0"
+    jsonwebtoken "^9.0.2"
+    lodash "^4.17.21"
+    merge-deep "^3.0.3"
+    moment "^2.29.4"
+    ms "^2.1.3"
+    multer "^1.4.5-lts.1"
+    nestjs-pino "^3.4.0"
+    opossum "^8.1.1"
+    pino "^8.15.1"
+    pino-cloudwatch "^0.7.0"
+    pino-fluentd "^0.2.4"
+    pino-http "^8.5.0"
+    pino-loki "^2.1.3"
+    pino-pretty "^10.2.0"
+    pino-stackdriver "^3.0.0"
+    pluralize "^8.0.0"
+    prom-client "^14.2.0"
+    qs "^6.11.2"
+    reflect-metadata "^0.1.13"
+    request-ip "^3.3.0"
+    retry "^0.13.1"
+    rxjs "^7.8.1"
+    slug "^8.2.3"
+    swagger-ui-express "^5.0.0"
+    type-cacheable "^4.1.2"
+    ua-parser-js "^1.0.36"
+    uuid "^9.0.1"
+
+"@joktec/cron@^0.0.99":
+  version "0.0.99"
+  resolved "https://registry.yarnpkg.com/@joktec/cron/-/cron-0.0.99.tgz#5e3a660228747eb194eda78c70f1c6fcb31bc181"
+  integrity sha512-T5lFIBA1mQRiIbVfFNGtU9/186KxZKwOHprjwfg4kD3CHCmZgePwVEWXXi5axUklNhueaf/wl5S3V5tljEV1EQ==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    "@joktec/mysql" "0.0.97"
+    "@nestjs/common" "^10.2.8"
+    "@nestjs/core" "^10.2.8"
+    "@nestjs/schedule" "^4.0.0"
+    async "^3.2.5"
+    async-retry "^1.3.3"
+    lodash "^4.17.21"
+    moment "^2.29.4"
+    moment-timezone "^0.5.43"
+    reflect-metadata "^0.1.13"
+
+"@joktec/elastic@^0.0.96":
+  version "0.0.96"
+  resolved "https://registry.yarnpkg.com/@joktec/elastic/-/elastic-0.0.96.tgz#77f5a830f69955e6a3b0ad740e75f343941f6619"
+  integrity sha512-zoQi9UXdj66hVOEXVT5oYddJ7VOH9Yh39uITKQ+b1dsg1yWcwYpfmIj715MN49KeI3+IV7i42juSvmBrKHti6A==
+  dependencies:
+    "@elastic/elasticsearch" "^8.10.0"
+    "@joktec/core" "0.0.95"
+    "@joktec/http" "0.0.97"
+    lodash "^4.17.21"
+    merge-deep "^3.0.3"
+
+"@joktec/file@^0.0.93":
+  version "0.0.93"
+  resolved "https://registry.yarnpkg.com/@joktec/file/-/file-0.0.93.tgz#bc62fc1017d5ad54275432bf22b30e820b5fd6a6"
+  integrity sha512-lGGwnW5wqmNG9K/EMFHXq6FFdNvozS/ZRu6p3bHIyM1qU+H0guAWGGZjL+DRsPlvTNggFChHh8mJuD7lOzJLVw==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    fs "^0.0.1-security"
+    fs-extra "^11.1.1"
+    lodash "^4.17.21"
+    rxjs "^7.8.1"
+
+"@joktec/firebase@^0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@joktec/firebase/-/firebase-0.0.13.tgz#ee742ab69b549027a22f3b6a19fb24ee0643f185"
+  integrity sha512-nWrk1vrzsYrKU4kXCpzycbilEGUMUxtvyYKZbV8OtebQAXwBBFidnBXktuwpRArjQBWZ3p7mcZy+9M3lw+iJBQ==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    firebase-admin "^11.11.0"
+    lodash "^4.17.21"
+    rxjs "^7.8.1"
+
+"@joktec/http@0.0.97", "@joktec/http@^0.0.97":
+  version "0.0.97"
+  resolved "https://registry.yarnpkg.com/@joktec/http/-/http-0.0.97.tgz#c377320a28deabd71479d0379de0768215fbfa73"
+  integrity sha512-HpccNERlCvb5/zb66CxSjyaFNZ483+8pOg9PokbilHRIUPf0AkZB+uk30uiB8eGG5bjGA1BiGUytUoi5wRrPHA==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    axios "^1.3.5"
+    axios-curlirize "~1.3.7"
+    form-data "^4.0.0"
+    http-proxy-agent "^5.0.0"
+    http-status-codes "^2.2.0"
+    https-proxy-agent "^5.0.1"
+    lodash "^4.17.21"
+    merge-deep "^3.0.3"
+    qs "^6.11.0"
+    retry-axios "^2.3.0"
+    rxjs "^7.8.1"
+
+"@joktec/kafka@^0.0.93":
+  version "0.0.93"
+  resolved "https://registry.yarnpkg.com/@joktec/kafka/-/kafka-0.0.93.tgz#df5343399b76c82e5579e1c4272b13208dfce1c4"
+  integrity sha512-4J9IgWazqUw9VbRHqOswhLVy5+DvuTtWREdwEoWyBGDIdHDqqefuEPsKOzgCOSEuww53z4VrxI1CH/TQvtNxKw==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    kafkajs "^2.2.4"
+    lodash "^4.17.21"
+
+"@joktec/mailer@^0.0.94":
+  version "0.0.94"
+  resolved "https://registry.yarnpkg.com/@joktec/mailer/-/mailer-0.0.94.tgz#95457780ef217459c613dc9c2b43f9c5fb8f0d39"
+  integrity sha512-pjB5tVPua4AEj24/+gnY0TXNErwZ9F/UROD01zmJ5XtMC8JuSV7pfjly6rPCdKAzIg7uf4Bu9nZef3WYayzaXA==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    handlebars "^4.7.8"
+    lodash "^4.17.21"
+    nodemailer "^6.9.7"
+
+"@joktec/mongo@^0.0.121":
+  version "0.0.121"
+  resolved "https://registry.yarnpkg.com/@joktec/mongo/-/mongo-0.0.121.tgz#98b578b2e1ea5c5a3713a9d08d1bc38b123ea427"
+  integrity sha512-+YTwu6QM4sutd5sZ7N/sbqWHqauK9hZTqckr6qFzbEE2O3VJBBenj1uMdNdHCQtQwSM5zieBdi8dsGRVMbrrSw==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    "@typegoose/typegoose" "^11.7.0"
+    dot-object "^2.1.4"
+    lodash "^4.17.21"
+    moment "^2.29.4"
+    mongoose "^8.0.0"
+    mongoose-beautiful-unique-validation "^7.1.1"
+
+"@joktec/mysql@0.0.97", "@joktec/mysql@^0.0.97":
+  version "0.0.97"
+  resolved "https://registry.yarnpkg.com/@joktec/mysql/-/mysql-0.0.97.tgz#e049e7336d239d4ff5870d8a5be8d60b24a0c385"
+  integrity sha512-ne5FRYcn5ljJZHWLLVPZ0Thi2YZuUQF7xC/su8gR1j/xoWTdDI+9pTttAtonwuTGVTlP9Ya9zQ3QFnhgbY1eQQ==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    lodash "^4.17.21"
+    mysql "2.18.1"
+    mysql2 "^3.6.3"
+    reflect-metadata "*"
+    sequelize "^6.34.0"
+    sequelize-typescript "^2.1.5"
+
+"@joktec/notifier@^0.0.93":
+  version "0.0.93"
+  resolved "https://registry.yarnpkg.com/@joktec/notifier/-/notifier-0.0.93.tgz#847f8ae9ad63d27033828c2a83a7d14b41d58071"
+  integrity sha512-VbK4gth2V6FoDfYfNXjHPr6MCgsiHvbA6sC+AG9j4/6ZlAL4EHik/3PmUwK9WQ0F9FEDslGqMzH/Y+OiCE87VA==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    lodash "^4.17.21"
+    merge-deep "^3.0.3"
+    node-pushnotifications "^2.1.0"
+    web-push "^3.6.6"
+
+"@joktec/rabbit@^0.0.93":
+  version "0.0.93"
+  resolved "https://registry.yarnpkg.com/@joktec/rabbit/-/rabbit-0.0.93.tgz#49bc8cb52708a9474cdda486c714d6296aa53495"
+  integrity sha512-EAegvG3TgaN/BpCBHfq03c9FmmsInreMmu883SAYoaH8dDlDFvHX/tBmjqVSl+TBOT81BhQay4I8n7VKEI8v8A==
+  dependencies:
+    "@joktec/core" "0.0.95"
+    amqplib "^0.10.3"
+    lodash "^4.17.21"
+    object-hash "^3.0.0"
+
+"@joktec/storage@^0.0.95":
+  version "0.0.95"
+  resolved "https://registry.yarnpkg.com/@joktec/storage/-/storage-0.0.95.tgz#9ecc424ff8750fc242796fd85f86b3c5491a851d"
+  integrity sha512-aV/YKxaYWsxhI9gVgAa7IVwTP12YOsoKaGmizDxf0WJHFlX6T01flj0WB4K6g9WGwmyW8upSd3VcMQRTAmDcbw==
+  dependencies:
+    "@aws-sdk/client-s3" "^3.441.0"
+    "@aws-sdk/s3-request-presigner" "^3.441.0"
+    "@joktec/core" "0.0.95"
+    image-downloader "^4.3.0"
+    lodash "^4.17.21"
+    merge-deep "^3.0.3"
+    mime-types "^2.1.35"
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"

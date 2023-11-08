@@ -1,8 +1,8 @@
 import { execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
 import { load } from 'js-yaml';
-import { get, pick, set, snakeCase } from 'lodash';
-import { flattenKeys } from '../utils';
+import { get, isBoolean, isNumber, pick, set, snakeCase } from 'lodash';
+import { flattenKeys, toBool, toInt } from '../utils';
 
 export enum ENV {
   DEV = 'develop',
@@ -27,7 +27,7 @@ const DOPPLER_CONFIG_FILENAME: string = 'doppler.yaml';
 export const initConfig = (): AppConfig => {
   const env: ENV = (process.env['NODE_ENV'] ?? ENV.DEV) as ENV;
   const appCfg = load(readFileSync(YAML_CONFIG_FILENAME, 'utf8')) as object;
-  const paths: string[] = flattenKeys(appCfg, null);
+  const paths: string[] = flattenKeys(appCfg, null).filter(key => !key.startsWith('$'));
 
   let dopplerSecret: object = {};
   if (existsSync(DOPPLER_CONFIG_FILENAME)) {
@@ -36,7 +36,12 @@ export const initConfig = (): AppConfig => {
 
   for (const path of paths) {
     const envKey: string = snakeCase(path).toUpperCase();
-    const overrideValue = dopplerSecret[envKey] ?? process.env[envKey] ?? get(appCfg, path);
+    const originValue = get(appCfg, path);
+    let overrideValue = dopplerSecret[envKey] ?? process.env[envKey] ?? originValue;
+    if (overrideValue !== originValue) {
+      if (isNumber(originValue)) overrideValue = toInt(overrideValue, originValue);
+      if (isBoolean(originValue)) overrideValue = toBool(overrideValue, originValue);
+    }
     set(appCfg, path, overrideValue);
     process.env[envKey] = get(appCfg, path);
   }
