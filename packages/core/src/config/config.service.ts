@@ -28,7 +28,7 @@ export class ConfigService extends JsConfigService {
     const cfgInstance = this.parse(clazz, propertyPath, defaultValue, getOpts);
     const flatErrors = this.validate(cfgInstance, options);
     if (flatErrors.length) {
-      throw new ConfigException(ExceptionMessage.INVALID_CONFIG, flatErrors);
+      throw new ConfigException(ExceptionMessage.INVALID_CONFIG, { error: flatErrors });
     }
     return cfgInstance;
   }

@@ -3,7 +3,7 @@ import { toBool, toInt } from '../utils';
 import {
   buildError,
   IsBoolean,
-  IsNumber,
+  IsInt,
   IsObject,
   IsOptional,
   IsString,
@@ -26,7 +26,7 @@ export class ClientConfig {
   @IsOptional()
   inherit?: boolean;
 
-  @IsNumber()
+  @IsInt()
   @IsOptional()
   initTimeout?: number;
 

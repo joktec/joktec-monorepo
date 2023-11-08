@@ -5,7 +5,6 @@ import {
   IsEnum,
   IsInt,
   IsNotEmpty,
-  IsNumber,
   IsObject,
   IsOptional,
   IsPositive,
@@ -43,7 +42,7 @@ export class HttpProxyConfig implements AxiosProxyConfig {
   host!: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsInt()
   port!: number;
 
   @IsOptional()

@@ -1,8 +1,8 @@
 import {
   ClientConfig,
   IsBoolean,
+  IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsString,
   LogService,
@@ -43,7 +43,7 @@ export class MailerConfig extends ClientConfig {
   @IsNotEmpty()
   host!: string;
 
-  @IsNumber()
+  @IsInt()
   @IsNotEmpty()
   port!: number;
 

@@ -1,5 +1,5 @@
 import { RmqUrl } from '@nestjs/microservices/external/rmq-url.interface';
-import { IsBoolean, IsNotEmpty, IsNumber, IsObject, IsOptional } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsObject, IsOptional } from 'class-validator';
 
 export enum MicroTransport {
   TCP = 'tcp',
@@ -44,7 +44,7 @@ export type MicroOptions = {
 };
 
 export class MicroConfig {
-  @IsNumber()
+  @IsInt()
   @IsNotEmpty()
   port?: number = 8010;
 

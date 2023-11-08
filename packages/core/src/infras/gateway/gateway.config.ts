@@ -1,5 +1,5 @@
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { HelmetOptions } from 'helmet';
 import { SwaggerConfig } from '../../swagger';
 import { IsTypes } from '../../validation';
@@ -15,7 +15,7 @@ export class StaticConfig {
 }
 
 export class GatewayConfig {
-  @IsNumber()
+  @IsInt()
   @IsNotEmpty()
   port?: number = 9010;
 
