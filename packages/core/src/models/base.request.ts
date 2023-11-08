@@ -24,7 +24,7 @@ export type IOpField<T> =
 
 export type ICondition<T extends Entity = {}> = {
   [key in keyof T]?: T[key] extends (infer U extends IDataType)[]
-    ? U | IOpField<U> | { [op in INumberOperation]?: number }
+    ? T[key] | IOpField<T[key]> | U | IOpField<U> | { [op in INumberOperation]?: number }
     : T[key] extends IDataType
     ? T[key] | IOpField<T[key]>
     : T[key] extends (infer U extends Entity)[]
