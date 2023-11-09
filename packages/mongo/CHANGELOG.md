@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.127](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.126...@joktec/mongo@0.0.127) (2023-11-09)
+
+
+### Bug Fixes
+
+* mongo pipeline paranoid ([6e6b66f](https://github.com/joktec/joktec-monorepo/commit/6e6b66ff183da697cb8c70919893da1906caa516))
+
+
+
+
+
 ## [0.0.126](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.125...@joktec/mongo@0.0.126) (2023-11-09)
 
 
