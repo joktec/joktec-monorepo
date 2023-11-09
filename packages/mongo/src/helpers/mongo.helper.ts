@@ -1,5 +1,5 @@
 import { Dictionary, ICondition, IPopulate, IPopulateOption, ISort, toArray } from '@joktec/core';
-import { isDate, isEmpty, isNil, isObject, isRegExp, isString, omit, pick } from 'lodash';
+import { isArray, isDate, isEmpty, isNil, isObject, isRegExp, isString, omit, pick } from 'lodash';
 import { PopulateOptions } from 'mongoose';
 import { MongoSchema, ObjectId } from '../models';
 
@@ -24,8 +24,16 @@ export class MongoHelper {
         return;
       }
 
-      if (!value || isDate(value) || isRegExp(value) || !isObject(value)) {
+      if (!value || isDate(value) || isRegExp(value)) {
         result[prefix] = value;
+        return;
+      }
+
+      if (isArray(value)) {
+        result[prefix] = value.map(v => {
+          if (isString(v) && ObjectId.isValid(v)) return ObjectId.create(v);
+          return v;
+        });
         return;
       }
 
