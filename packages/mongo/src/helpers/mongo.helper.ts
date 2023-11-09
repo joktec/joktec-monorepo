@@ -24,16 +24,16 @@ export class MongoHelper {
         return;
       }
 
-      if (!value || isDate(value) || isRegExp(value)) {
-        result[prefix] = value;
-        return;
-      }
-
       if (isArray(value)) {
         result[prefix] = value.map(v => {
           if (isString(v) && ObjectId.isValid(v)) return ObjectId.create(v);
           return v;
         });
+        return;
+      }
+
+      if (!value || isDate(value) || isRegExp(value) || !isObject(value)) {
+        result[prefix] = value;
         return;
       }
 
