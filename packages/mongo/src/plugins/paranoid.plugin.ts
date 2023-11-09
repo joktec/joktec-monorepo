@@ -53,20 +53,13 @@ function rejectPipeline(pipelines: PipelineStage[]): Exclude<PipelineStage, Pipe
 }
 
 function injectMatchPipeline(pipelines: PipelineStage[], key: string, paranoid: boolean = true): PipelineStage[] {
-  if (!pipelines?.length) return [];
   const newPipelines: PipelineStage[] = [];
-  for (const pipeline of pipelines) {
-    if ('$match' in pipeline) {
-      injectFilter(pipeline.$match, key, paranoid);
-    }
-
+  for (const pipeline of toArray(pipelines)) {
+    if ('$match' in pipeline) injectFilter(pipeline.$match, key, paranoid);
     if ('$lookup' in pipeline) {
       const lookupPipelines = injectMatchPipeline(pipeline.$lookup.pipeline, key, paranoid);
-      if (lookupPipelines.length) {
-        pipeline.$lookup.pipeline = rejectPipeline(lookupPipelines);
-      }
+      if (lookupPipelines.length) pipeline.$lookup.pipeline = rejectPipeline(lookupPipelines);
     }
-
     if ('$unionWith' in pipeline) {
       const unionWith = isString(pipeline.$unionWith) ? { coll: pipeline.$unionWith } : pipeline.$unionWith;
       const unionWithPipes = injectMatchPipeline(unionWith.pipeline, key, paranoid);
@@ -75,13 +68,12 @@ function injectMatchPipeline(pipelines: PipelineStage[], key: string, paranoid: 
         pipeline.$unionWith = unionWith;
       }
     }
-
     newPipelines.push(pipeline);
   }
 
   const match = injectFilter({}, key, paranoid);
-  if (!pipelines.some(p => '$match' in p) && !isEmpty(match)) {
-    pipelines.unshift({ $match: match });
+  if (!newPipelines.some(p => '$match' in p) && !isEmpty(match)) {
+    newPipelines.unshift({ $match: match });
   }
 
   return newPipelines;
