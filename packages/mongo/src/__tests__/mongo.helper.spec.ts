@@ -1,13 +1,18 @@
 import { describe, expect, it } from '@jest/globals';
 import { MongoHelper } from '../helpers';
 import { ICondition } from '@joktec/core';
+import { ObjectId } from '../models';
 
 describe('MongoHelper class', () => {
   describe('flatten function', () => {
     it('should flattening a simple object without nesting', () => {
-      const condition: ICondition<any> = { name: 'Alice', age: 25 };
+      const condition: ICondition<any> = { _id: '507f1f77bcf86cd799439011', name: 'Alice', age: 25 };
       const result = MongoHelper.flatten(condition);
-      expect(result).toEqual(condition);
+      expect(result).toMatchObject({
+        _id: ObjectId.create('507f1f77bcf86cd799439011'),
+        name: 'Alice',
+        age: 25,
+      });
     });
 
     it('should flattening an object with nested properties', () => {

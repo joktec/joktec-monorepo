@@ -35,9 +35,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     const client = mongoose.createConnection(uri, connectOptions);
     this.logService.info('`%s` Connection to MongoDB established', config.conId, uri);
 
-    client.on('open', () => {
-      this.logService.info('`%s` Connected to MongoDB successfully', config.conId);
-    });
+    client.on('open', () => this.start(client, config.conId));
     client.on('error', async err => {
       this.logService.error(err, '`%s` Error when connecting to MongoDB. Reconnecting...', config.conId);
       await this.clientInit(config, false);
@@ -57,11 +55,24 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   }
 
   async start(client: Mongoose, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // Do nothing
+    if (!this.isConnected(conId)) return;
+
+    const serverInfo = await client.db.admin().serverInfo();
+    const version = serverInfo.version;
+    this.logService.info('`%s` Connected to MongoDB (%s) successfully', conId, version);
+
+    const numericVersion = version.split('.').map(v => parseInt(v));
+    if (numericVersion[0] < 5) {
+      this.logService.warn(
+        `Warning: MongoDB version %s is less than 5.0. Some features may not work correctly. Please consider upgrading MongoDB to version 5.0 or higher`,
+        version,
+      );
+    }
   }
 
   async stop(client: Mongoose, conId: string = DEFAULT_CON_ID): Promise<void> {
     await client.close(true);
+    this.logService.error('`%s` MongoDB connection has been terminated', conId);
   }
 
   public isConnected(conId: string = DEFAULT_CON_ID): boolean {
