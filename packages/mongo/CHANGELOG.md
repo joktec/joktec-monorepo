@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.125](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.124...@joktec/mongo@0.0.125) (2023-11-09)
+
+
+### Bug Fixes
+
+* mongo auto convert object id ([6d45e1a](https://github.com/joktec/joktec-monorepo/commit/6d45e1a0f6d85b4fa0f4d255134c95a75ca78373))
+
+
+
+
+
 ## [0.0.124](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.123...@joktec/mongo@0.0.124) (2023-11-08)
 
 **Note:** Version bump only for package @joktec/mongo
