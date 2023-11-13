@@ -1,6 +1,6 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { getModelForClass, ReturnModelType } from '@typegoose/typegoose';
-import mongoose, { Connection as Mongoose } from 'mongoose';
+import mongoose, { ClientSession, ClientSessionOptions, Connection as Mongoose } from 'mongoose';
 import { MongoSchema, QueryHelper } from './models';
 import { MongoClient } from './mongo.client';
 import { MongoConfig } from './mongo.config';
@@ -78,6 +78,15 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   public isConnected(conId: string = DEFAULT_CON_ID): boolean {
     if (!this.getClient(conId)) return false;
     return this.getClient(conId).readyState === 1;
+  }
+
+  public async startTransaction(
+    options: ClientSessionOptions = {},
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<ClientSession> {
+    const session = await this.getClient(conId).startSession(options);
+    session.startTransaction();
+    return session;
   }
 
   public getModel<T extends MongoSchema>(
