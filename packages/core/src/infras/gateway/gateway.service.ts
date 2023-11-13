@@ -12,7 +12,7 @@ import basicAuth from 'express-basic-auth';
 import { lookup } from 'geoip-lite';
 import helmet from 'helmet';
 import requestIp from 'request-ip';
-import { ExpressRequest, ExpressResponse, GlobalOptions } from '../../base';
+import { ExpressRequest, ExpressResponse, ApplicationMiddlewares } from '../../base';
 import { BullConfig } from '../../bull';
 import { ConfigService } from '../../config';
 import { LogService } from '../../logger';
@@ -21,7 +21,7 @@ import { joinUrl, parseUA, toArray } from '../../utils';
 import { GatewayConfig } from './gateway.config';
 
 export class GatewayService {
-  static async bootstrap(app: NestExpressApplication, opts?: GlobalOptions) {
+  static async bootstrap(app: NestExpressApplication, middlewares?: ApplicationMiddlewares): Promise<void> {
     const config = app.get(ConfigService);
     const logger = await app.resolve(LogService);
     logger.setContext(GatewayService.name);
@@ -39,10 +39,10 @@ export class GatewayService {
       next();
     });
 
-    app.useGlobalGuards(...toArray(opts?.guards));
-    app.useGlobalPipes(...toArray(opts?.pipes));
-    app.useGlobalInterceptors(...toArray(opts?.interceptors));
-    app.useGlobalFilters(...toArray(opts?.filters));
+    app.useGlobalGuards(...toArray(middlewares?.guards));
+    app.useGlobalPipes(...toArray(middlewares?.pipes));
+    app.useGlobalInterceptors(...toArray(middlewares?.interceptors));
+    app.useGlobalFilters(...toArray(middlewares?.filters));
 
     const useSwagger = GatewayService.setupSwagger(app);
     const useBullBoard = GatewayService.setUpBullBoard(app);

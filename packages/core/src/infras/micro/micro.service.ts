@@ -2,14 +2,14 @@ import fs from 'fs';
 import { INestApplication } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import glob from 'glob';
-import { GlobalOptions } from '../../base';
+import { ApplicationMiddlewares } from '../../base';
 import { ConfigService, ENV } from '../../config';
 import { LogService } from '../../logger';
 import { toArray, toInt } from '../../utils';
 import { MicroConfig, MicroOptions, MicroTransport } from './micro.config';
 
 export class MicroService {
-  static async bootstrap(app: INestApplication, opts?: GlobalOptions) {
+  static async bootstrap(app: INestApplication, middlewares?: ApplicationMiddlewares): Promise<void> {
     const config = app.get(ConfigService);
     const logger = await app.resolve(LogService);
     logger.setContext(MicroService.name);
@@ -17,10 +17,10 @@ export class MicroService {
     const microConfig = config.parseOrThrow(MicroConfig, 'micro');
     const { port, inheritAppConfig, microservices } = microConfig;
 
-    app.useGlobalGuards(...toArray(opts?.guards));
-    app.useGlobalPipes(...toArray(opts?.pipes));
-    app.useGlobalInterceptors(...toArray(opts?.interceptors));
-    app.useGlobalFilters(...toArray(opts?.filters));
+    app.useGlobalGuards(...toArray(middlewares?.guards));
+    app.useGlobalPipes(...toArray(middlewares?.pipes));
+    app.useGlobalInterceptors(...toArray(middlewares?.interceptors));
+    app.useGlobalFilters(...toArray(middlewares?.filters));
 
     this.connectMicroservice(app, microservices).flatMap(opts => {
       logger.info('Transport %s: %j', Transport[opts['transport']], opts);
