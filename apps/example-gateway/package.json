@@ -40,7 +40,7 @@
     "@joktec/core": "^0.0.98",
     "@joktec/http": "^0.0.100",
     "@joktec/mailer": "^0.0.97",
-    "@joktec/mongo": "^0.0.127",
+    "@joktec/mongo": "^0.0.128",
     "@joktec/firebase": "^0.0.16",
     "@joktec/storage": "^0.0.98",
     "byte-length": "^1.0.2",
