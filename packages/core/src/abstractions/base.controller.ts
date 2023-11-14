@@ -30,15 +30,10 @@ import {
 } from '@nestjs/swagger';
 import { isFunction, startCase } from 'lodash';
 import { ConfigService } from '../config';
-import {
-  ExceptionMessage,
-  GatewayExceptionsFilter,
-  MethodNotAllowedException,
-  ServiceUnavailableException,
-} from '../exceptions';
+import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../exceptions';
 import { Jwt, JwtPayload } from '../guards';
 import { GatewayMetric } from '../infras';
-import { QueryInterceptor, ResponseInterceptor } from '../interceptors';
+import { QueryInterceptor } from '../interceptors';
 import { LogService } from '../logger';
 import { BaseListResponse, Clazz, Constructor, DeepPartial, Entity, IBaseController, IBaseRequest } from '../models';
 import { ApiSchema } from '../swagger';
@@ -113,7 +108,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
     @UsePipes(...toArray(props.pipes?.findAll))
-    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.findAll), ResponseInterceptor)
+    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.findAll))
     async findAll(@Query() query: IBaseRequest<T>): Promise<PaginationDto> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.LIST);
       return this.service.paginate(query);
@@ -125,7 +120,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
     @UsePipes(...toArray(props.pipes?.findOne))
-    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.findOne), ResponseInterceptor)
+    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.findOne))
     async findOne(@Param('id') id: ID, @Query() query: IBaseRequest<T>): Promise<T> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.GET);
       return this.service.findById(id, query);
@@ -137,7 +132,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiBody({ type: createDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
     @UsePipes(new BaseValidationPipe(), ...toArray(props.pipes?.create))
-    @UseInterceptors(...toArray(props.hooks?.create), ResponseInterceptor)
+    @UseInterceptors(...toArray(props.hooks?.create))
     async create(@Body() entity: DeepPartial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
       return this.service.create(entity, payload);
@@ -150,7 +145,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiBody({ type: updatedDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.pipes?.update))
-    @UseInterceptors(...toArray(props.hooks?.update), ResponseInterceptor)
+    @UseInterceptors(...toArray(props.hooks?.update))
     async update(@Param('id') id: ID, @Body() entity: DeepPartial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.UPDATE);
       return this.service.update(id, entity, payload);
@@ -162,7 +157,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiParam({ name: 'id' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.DELETE))
     @UsePipes(...toArray(props.pipes?.delete))
-    @UseInterceptors(...toArray(props.hooks?.delete), ResponseInterceptor)
+    @UseInterceptors(...toArray(props.hooks?.delete))
     async delete(@Param('id') id: ID, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.DELETE);
       return this.service.delete(id, payload);
@@ -198,8 +193,9 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
   }
 
   // Apply filter
-  if (!props.filter) props.filter = GatewayExceptionsFilter;
-  UseFilters(props.filter)(Controller);
+  if (props.filter) {
+    UseFilters(props.filter)(Controller);
+  }
 
   // Apply Metric
   const metric = toBool(props.metric, true);

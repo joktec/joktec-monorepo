@@ -1,4 +1,13 @@
-import { BullModule, CoreModule, JwtModule, Module } from '@joktec/core';
+import {
+  APP_FILTER,
+  APP_INTERCEPTOR,
+  BullModule,
+  CoreModule,
+  GatewayExceptionsFilter,
+  JwtModule,
+  Module,
+  ResponseInterceptor,
+} from '@joktec/core';
 import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
 import { MailerModule } from '@joktec/mailer';
@@ -42,6 +51,10 @@ import { UserModule } from './modules/users';
     SettingModule,
     AssetModule,
     OrderModule,
+  ],
+  providers: [
+    { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
+    { provide: APP_FILTER, useClass: GatewayExceptionsFilter },
   ],
 })
 export class AppModule {}
