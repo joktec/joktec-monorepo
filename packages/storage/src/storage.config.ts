@@ -1,4 +1,4 @@
-import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool } from '@joktec/core';
+import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/core';
 import { StorageACL } from './models';
 
 export const DEFAULT_CONTENT_TYPE = 'application/octet-stream';
@@ -6,15 +6,15 @@ export const DEFAULT_CONTENT_TYPE = 'application/octet-stream';
 export class StorageConfig extends ClientConfig {
   @IsString()
   @IsOptional()
-  region?: string;
+  region?: string = '';
+
+  @IsString()
+  @IsOptional()
+  accessKey?: string = '';
 
   @IsString()
   @IsNotEmpty()
-  accessKey!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  secretKey: string;
+  secretKey!: string;
 
   @IsString()
   @IsNotEmpty()
@@ -30,7 +30,7 @@ export class StorageConfig extends ClientConfig {
 
   @IsString()
   @IsOptional()
-  linkFormat?: string;
+  linkFormat?: string = '';
 
   @IsString()
   @IsOptional()
@@ -38,11 +38,11 @@ export class StorageConfig extends ClientConfig {
 
   @IsString()
   @IsOptional()
-  acl?: StorageACL;
+  acl?: StorageACL = StorageACL.PUBLIC_READ;
 
   @IsBoolean()
   @IsOptional()
-  useDualstack?: boolean;
+  useDualstack?: boolean = false;
 
   @IsString()
   @IsOptional()
@@ -58,11 +58,11 @@ export class StorageConfig extends ClientConfig {
 
   @IsBoolean()
   @IsOptional()
-  sslEnabled?: boolean;
+  sslEnabled?: boolean = false;
 
   @IsBoolean()
   @IsOptional()
-  s3ForcePathStyle?: boolean;
+  s3ForcePathStyle?: boolean = false;
 
   @IsInt()
   @IsOptional()
@@ -75,19 +75,15 @@ export class StorageConfig extends ClientConfig {
     super(props);
     Object.assign(this, {
       ...props,
-      acl: props.acl || StorageACL.PUBLIC_READ,
-      sslEnabled: toBool(props.sslEnabled, false),
-      s3ForcePathStyle: toBool(props.s3ForcePathStyle, false),
-      useDualstack: toBool(props.useDualstack, false),
-      linkFormat: props.linkFormat || '',
+      linkFormat: props?.linkFormat || props?.endpoint,
     });
   }
 
   public buildLink(key: string, bucket: string = ''): string {
     return this.linkFormat
-      .replace('<bucket>', bucket || this.bucket)
-      .replace('<key>', key)
-      .replace('<region>', this.region || '')
-      .replace('<namespace>', this.namespace || '');
+      ?.replace('<bucket>', bucket || this.bucket)
+      ?.replace('<key>', key)
+      ?.replace('<region>', this.region || '')
+      ?.replace('<namespace>', this.namespace || '');
   }
 }

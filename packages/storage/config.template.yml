@@ -1,8 +1,0 @@
-storage:
-  region: ap-southeast-1
-  accessKey: XXX
-  secretKey: YYY
-  bucket: my-bucket
-  endpoint: ap-southeast-1.aws.storage.com
-  useSSL: true
-  linkFormat: https://s3.amazonaws.com/<bucket>/<key>

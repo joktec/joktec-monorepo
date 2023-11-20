@@ -61948,9 +61948,6 @@
         "retry": {
           "$ref": "#/definitions/RetryOptions"
         },
-        "service": {
-          "$ref": "#/definitions/MailerServiceType"
-        },
         "host": {
           "type": "string"
         },
@@ -61961,30 +61958,24 @@
           "type": "boolean"
         },
         "auth": {
-          "$ref": "#/definitions/MailerAuth"
+          "anyOf": [
+            {
+              "$ref": "#/definitions/MailerAuth"
+            },
+            {
+              "$ref": "#/definitions/MailerOAuth2"
+            }
+          ]
         },
         "sender": {
           "type": "string"
         },
-        "templateDir": {
-          "type": "string"
+        "template": {
+          "$ref": "#/definitions/MailerTemplate"
         }
       },
       "required": [
-        "host",
-        "port",
-        "secure",
-        "auth"
-      ]
-    },
-    "MailerServiceType": {
-      "type": "string",
-      "enum": [
-        "self",
-        "mailgun",
-        "sendgrid",
-        "mailchimp",
-        "zoho"
+        "host"
       ]
     },
     "MailerAuth": {
@@ -61998,8 +61989,138 @@
         }
       },
       "required": [
+        "user",
         "pass"
       ]
+    },
+    "MailerOAuth2": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "clientSecret": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "accessUrl": {
+          "type": "string"
+        },
+        "accessToken": {
+          "type": "string"
+        },
+        "privateKey": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "passphrase": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "key",
+                "passphrase"
+              ]
+            }
+          ]
+        },
+        "expires": {
+          "type": "number"
+        },
+        "timeout": {
+          "type": "number"
+        },
+        "serviceClient": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "user"
+      ]
+    },
+    "MailerTemplate": {
+      "type": "object",
+      "properties": {
+        "dir": {
+          "type": "string"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "boolean"
+            },
+            "compat": {
+              "type": "boolean"
+            },
+            "knownHelpersOnly": {
+              "type": "boolean"
+            },
+            "noEscape": {
+              "type": "boolean"
+            },
+            "strict": {
+              "type": "boolean"
+            },
+            "assumeObjects": {
+              "type": "boolean"
+            },
+            "preventIndent": {
+              "type": "boolean"
+            },
+            "ignoreStandalone": {
+              "type": "boolean"
+            },
+            "explicitPartialContext": {
+              "type": "boolean"
+            }
+          }
+        },
+        "preview": {
+          "$ref": "#/definitions/MailerPreview"
+        }
+      }
+    },
+    "MailerPreview": {
+      "type": "object",
+      "properties": {
+        "dir": {
+          "type": "string"
+        },
+        "open": {
+          "type": "object",
+          "properties": {
+            "wait": {
+              "type": "boolean"
+            },
+            "app": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
     },
     "MongoConfig": {
       "type": "object",
