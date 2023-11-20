@@ -1,15 +1,14 @@
-export interface MailerTemplate {
-  filename: string;
-  variables?: { [key: string]: any };
+import Mail from 'nodemailer/lib/mailer';
+import { MailerEngine } from '../mailer.config';
+import { EjsOptions, HandlebarOptions, PugOptions } from '../stores';
+
+export interface MailerSendTemplate {
+  name: string;
+  context: { [key: string]: any };
+  engine?: MailerEngine;
+  options?: HandlebarOptions | PugOptions | EjsOptions;
 }
 
-export interface MailerSendRequest {
-  subject: string;
-  to: string | string[];
-  from?: string;
-  cc?: string | string[];
-  bcc?: string | string[];
-  text?: string;
-  html?: string;
-  template?: MailerTemplate;
+export interface MailerSendRequest extends Mail.Options {
+  template?: MailerSendTemplate;
 }

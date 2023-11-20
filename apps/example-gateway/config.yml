@@ -71,7 +71,12 @@ mailer:
     user: test@joktec.com
     pass: joktec123
   sender: 'JokTec <support@joktec.com>'
-  templateDir: ./public/templates
+  template:
+    dir: ./public/templates/preview
+    preview: true
+    options:
+      engine: hbs
+      strict: true
 
 firebase:
   credential: './credentials/joktec-firebase-adminsdk-s49hk-1e6cd820c7.json'

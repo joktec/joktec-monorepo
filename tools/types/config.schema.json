@@ -59791,6 +59791,12 @@
         },
         "license": {
           "$ref": "#/definitions/SwaggerLicense"
+        },
+        "security": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SwaggerSecurity"
+          }
         }
       }
     },
@@ -59862,6 +59868,16 @@
       },
       "required": [
         "url"
+      ]
+    },
+    "SwaggerSecurity": {
+      "type": "string",
+      "enum": [
+        "basic",
+        "bearer",
+        "oAuth2",
+        "cookie",
+        "apiKey"
       ]
     },
     "CorsOptions": {
@@ -62056,40 +62072,238 @@
         "dir": {
           "type": "string"
         },
+        "engine": {
+          "$ref": "#/definitions/MailerEngine"
+        },
         "options": {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "boolean"
+          "anyOf": [
+            {
+              "$ref": "#/definitions/HandlebarOptions"
             },
-            "compat": {
-              "type": "boolean"
+            {
+              "$ref": "#/definitions/PugOptions"
             },
-            "knownHelpersOnly": {
-              "type": "boolean"
-            },
-            "noEscape": {
-              "type": "boolean"
-            },
-            "strict": {
-              "type": "boolean"
-            },
-            "assumeObjects": {
-              "type": "boolean"
-            },
-            "preventIndent": {
-              "type": "boolean"
-            },
-            "ignoreStandalone": {
-              "type": "boolean"
-            },
-            "explicitPartialContext": {
-              "type": "boolean"
+            {
+              "$ref": "#/definitions/EjsOptions"
             }
-          }
+          ]
         },
         "preview": {
-          "$ref": "#/definitions/MailerPreview"
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/MailerPreview"
+            }
+          ]
+        }
+      }
+    },
+    "MailerEngine": {
+      "type": "string",
+      "enum": [
+        "hbs",
+        "ejs",
+        "pug"
+      ]
+    },
+    "HandlebarOptions": {
+      "type": "object",
+      "properties": {
+        "engine": {
+          "type": "string",
+          "const": "hbs"
+        },
+        "data": {
+          "type": "boolean"
+        },
+        "compat": {
+          "type": "boolean"
+        },
+        "knownHelpersOnly": {
+          "type": "boolean"
+        },
+        "noEscape": {
+          "type": "boolean"
+        },
+        "strict": {
+          "type": "boolean"
+        },
+        "assumeObjects": {
+          "type": "boolean"
+        },
+        "preventIndent": {
+          "type": "boolean"
+        },
+        "ignoreStandalone": {
+          "type": "boolean"
+        },
+        "explicitPartialContext": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "engine"
+      ]
+    },
+    "PugOptions": {
+      "type": "object",
+      "properties": {
+        "engine": {
+          "type": "string",
+          "const": "pug"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "basedir": {
+          "type": "string"
+        },
+        "doctype": {
+          "type": "string"
+        },
+        "pretty": {
+          "type": [
+            "boolean",
+            "string"
+          ]
+        },
+        "filters": {},
+        "self": {
+          "type": "boolean"
+        },
+        "debug": {
+          "type": "boolean"
+        },
+        "compileDebug": {
+          "type": "boolean"
+        },
+        "globals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cache": {
+          "type": "boolean"
+        },
+        "inlineRuntimeFunctions": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "engine"
+      ]
+    },
+    "EjsOptions": {
+      "type": "object",
+      "properties": {
+        "engine": {
+          "type": "string",
+          "const": "ejs"
+        },
+        "debug": {
+          "type": "boolean"
+        },
+        "compileDebug": {
+          "type": "boolean"
+        },
+        "_with": {
+          "type": "boolean"
+        },
+        "strict": {
+          "type": "boolean"
+        },
+        "destructuredLocals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rmWhitespace": {
+          "type": "boolean"
+        },
+        "client": {
+          "type": "boolean"
+        },
+        "escape": {
+          "$ref": "#/definitions/EscapeCallback"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "root": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "openDelimiter": {
+          "type": "string"
+        },
+        "closeDelimiter": {
+          "type": "string"
+        },
+        "delimiter": {
+          "type": "string"
+        },
+        "cache": {
+          "type": "boolean"
+        },
+        "context": {},
+        "async": {
+          "type": "boolean"
+        },
+        "beautify": {
+          "type": "boolean"
+        },
+        "localsName": {
+          "type": "string"
+        },
+        "outputFunctionName": {
+          "type": "string"
+        },
+        "views": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "includer": {
+          "$ref": "#/definitions/IncluderCallback"
+        }
+      },
+      "required": [
+        "engine"
+      ]
+    },
+    "EscapeCallback": {
+      "type": "object",
+      "properties": {
+        "isFunction": {
+          "type": "boolean",
+          "const": true
+        }
+      },
+      "description": "Escapes a string using HTML/XML escaping rules.\n\nReturns the empty string for `null` or `undefined`."
+    },
+    "IncluderCallback": {
+      "type": "object",
+      "properties": {
+        "isFunction": {
+          "type": "boolean",
+          "const": true
         }
       }
     },
@@ -62642,7 +62856,6 @@
         }
       },
       "required": [
-        "accessKey",
         "secretKey",
         "endpoint"
       ]

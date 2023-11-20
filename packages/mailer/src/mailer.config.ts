@@ -1,30 +1,32 @@
+import os from 'os';
 import {
   ClientConfig,
   IsBoolean,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsTypes,
   LogService,
-  toBool,
-  toInt,
-  Type,
 } from '@joktec/core';
+import { isObject } from 'lodash';
 import shared from 'nodemailer/lib/shared';
+import { EjsOptions, HandlebarOptions, PugOptions } from './stores';
 
-export enum MailerServiceType {
-  SELF = 'self',
-  MAILGUN = 'mailgun',
-  SENDGRID = 'sendgrid',
-  MAILCHIMP = 'mailchimp',
-  ZOHO = 'zoho',
+export enum MailerEngine {
+  HBS = 'hbs',
+  EJS = 'ejs',
+  PUG = 'pug',
 }
 
 export class MailerAuth {
+  /** Username or Email address */
   @IsString()
-  @IsOptional()
-  user?: string;
+  @IsNotEmpty()
+  user!: string;
 
+  /** Password */
   @IsString()
   @IsNotEmpty()
   pass!: string;
@@ -34,50 +36,125 @@ export class MailerAuth {
   }
 }
 
-export class MailerConfig extends ClientConfig {
+export class MailerOAuth2 {
+  /** Username or Email address */
+  @IsString()
   @IsNotEmpty()
-  @IsNotEmpty()
-  service?: MailerServiceType;
+  user!: string;
 
+  /** Client ID value */
+  @IsString()
+  @IsOptional()
+  clientId?: string;
+
+  /** Client secret value */
+  @IsString()
+  @IsOptional()
+  clientSecret?: string;
+
+  /** Refresh token for an user */
+  @IsString()
+  @IsOptional()
+  refreshToken?: string;
+
+  /** Endpoint for token generation, defaults to 'https://accounts.google.com/o/oauth2/token' */
+  @IsString()
+  @IsOptional()
+  accessUrl?: string;
+
+  /** An existing valid accessToken */
+  @IsString()
+  @IsOptional()
+  accessToken?: string;
+
+  /** Private key for JSW */
+  @IsOptional()
+  privateKey?: string | { key: string; passphrase: string };
+
+  /** Optional Access Token expire time in ms */
+  @IsInt()
+  @IsOptional()
+  expires?: number;
+
+  /** Optional TTL for Access Token in seconds */
+  @IsInt()
+  @IsOptional()
+  timeout?: number;
+
+  @IsString()
+  @IsOptional()
+  serviceClient?: string;
+
+  constructor(props: MailerOAuth2) {
+    Object.assign(this, props);
+  }
+}
+
+export class MailerPreview {
+  @IsString()
+  @IsNotEmpty()
+  dir?: string = os.tmpdir();
+
+  @IsOptional()
+  open?: { wait?: boolean; app?: string | string[] } = { wait: false };
+
+  constructor(props?: boolean | MailerPreview) {
+    if (isObject(props)) Object.assign(this, props);
+  }
+}
+
+export class MailerTemplate {
+  @IsString()
+  @IsOptional()
+  dir?: string = './templates';
+
+  @IsEnum(MailerEngine)
+  @IsOptional()
+  engine?: MailerEngine = MailerEngine.HBS;
+
+  @IsOptional()
+  options?: HandlebarOptions | PugOptions | EjsOptions;
+
+  @IsTypes([Boolean, MailerPreview])
+  @IsOptional()
+  preview?: boolean | MailerPreview;
+
+  constructor(props: MailerTemplate) {
+    Object.assign(this, props);
+    if (props?.preview) this.preview = new MailerPreview(props?.preview);
+  }
+}
+
+export class MailerConfig extends ClientConfig {
   @IsString()
   @IsNotEmpty()
   host!: string;
 
   @IsInt()
   @IsNotEmpty()
-  port!: number;
+  port?: number = 587;
 
   @IsBoolean()
   @IsNotEmpty()
-  secure!: boolean;
+  secure?: boolean = false;
 
-  @Type(() => MailerAuth)
-  @IsNotEmpty()
-  auth!: MailerAuth;
+  @IsTypes([MailerAuth, MailerOAuth2])
+  @IsOptional()
+  auth?: MailerAuth | MailerOAuth2;
 
   @IsString()
   @IsOptional()
   sender?: string;
 
-  @IsString()
+  @IsTypes([MailerTemplate])
   @IsOptional()
-  templateDir?: string;
+  template?: MailerTemplate;
 
   constructor(props: MailerConfig) {
     super(props);
-    const transport = MailerTransport[props?.service];
-    Object.assign(this, {
-      ...props,
-      service: props?.service || MailerServiceType.SELF,
-      host: props?.host || transport?.host,
-      port: toInt(props?.port || transport?.port, 587),
-      secure: toBool(props?.secure, false),
-      templateDir: props?.templateDir || '/templates',
-      auth: new MailerAuth({
-        user: props?.auth?.user || transport?.user || '',
-        pass: props?.auth?.pass,
-      }),
-    });
+    Object.assign(this, props);
+    if (props?.auth) this.auth = 'pass' in props.auth ? new MailerAuth(props.auth) : new MailerOAuth2(props.auth);
+    if (props?.template) this.template = new MailerTemplate(props.template);
   }
 
   bindingLogger(logger: LogService): shared.Logger {
@@ -92,25 +169,3 @@ export class MailerConfig extends ClientConfig {
     };
   }
 }
-
-export const MailerTransport = {
-  [MailerServiceType.MAILGUN]: {
-    host: 'smtp.mailgun.org',
-    port: 587,
-    user: 'api',
-  },
-  [MailerServiceType.SENDGRID]: {
-    host: 'smtp.sendgrid.net',
-    port: 587,
-    user: 'apikey',
-  },
-  [MailerServiceType.MAILCHIMP]: {
-    host: 'smtp.mandrillapp.com',
-    port: 587,
-    user: 'apikey',
-  },
-  [MailerServiceType.ZOHO]: {
-    host: 'smtppro.zoho.com',
-    port: 465,
-  },
-};
