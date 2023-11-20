@@ -26,6 +26,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { isFunction, startCase } from 'lodash';
@@ -41,7 +42,7 @@ import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '.
 import { BaseValidationPipe } from '../validation';
 import { BaseService } from './base.service';
 
-export type ControllerMethod = 'findAll' | 'findOne' | 'create' | 'update' | 'delete';
+export type ControllerMethod = 'paginate' | 'detail' | 'create' | 'update' | 'delete';
 
 export enum ControllerExclude {
   ALL,
@@ -58,6 +59,7 @@ export interface IControllerProps<T extends Entity> {
   dto: Constructor<T>;
   dtoName?: string;
   customDto?: {
+    queryDto?: Constructor<DeepPartial<T>> | Clazz;
     createDto?: Constructor<DeepPartial<T>> | Clazz;
     updatedDto?: Constructor<DeepPartial<T>> | Clazz;
   };
@@ -65,6 +67,7 @@ export interface IControllerProps<T extends Entity> {
   excludes?: ControllerExclude[];
   metric?: boolean;
   bearer?: (CanActivate | Function) | { [key in ControllerMethod]?: CanActivate | Function };
+  apiKey?: (CanActivate | Function) | { [key in ControllerMethod]?: CanActivate | Function };
   guards?: (CanActivate | Function) | { [key in ControllerMethod]?: (CanActivate | Function)[] };
   pipes?: { [key in ControllerMethod]?: (PipeTransform | Function)[] };
   hooks?: { [key in ControllerMethod]?: (NestInterceptor | Function)[] };
@@ -79,6 +82,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
   const tag = props.tag || toPlural(dtoName);
   const excludes = toArray<ControllerExclude>(props.excludes);
 
+  const queryDto: Constructor<T | any> = props?.customDto?.queryDto || props.dto;
   const createDto: Constructor<T | any> = props.customDto?.createDto || props.dto;
   const updatedDto: Constructor<T | any> = props.customDto?.updatedDto || createDto;
 
@@ -107,9 +111,9 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
-    @UsePipes(...toArray(props.pipes?.findAll))
-    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.findAll))
-    async findAll(@Query() query: IBaseRequest<T>): Promise<PaginationDto> {
+    @UsePipes(...toArray(props.pipes?.paginate))
+    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.paginate))
+    async paginate(@Query() query: IBaseRequest<typeof queryDto>): Promise<PaginationDto> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.LIST);
       return this.service.paginate(query);
     }
@@ -119,9 +123,9 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
-    @UsePipes(...toArray(props.pipes?.findOne))
-    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.findOne))
-    async findOne(@Param('id') id: ID, @Query() query: IBaseRequest<T>): Promise<T> {
+    @UsePipes(...toArray(props.pipes?.detail))
+    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.detail))
+    async detail(@Param('id') id: ID, @Query() query: IBaseRequest<typeof queryDto>): Promise<T> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.GET);
       return this.service.findById(id, query);
     }
@@ -188,6 +192,20 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
         const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
         UseGuards(...decorators)(Controller.prototype, method, descriptor);
         ApiBearerAuth()(Controller.prototype, method, descriptor);
+      });
+    }
+  }
+
+  if (props.apiKey) {
+    const apiKey = props.apiKey;
+    if (isFunction(apiKey) || 'canActivate' in apiKey) {
+      UseGuards(apiKey)(Controller);
+      ApiSecurity('X-Api-Key')(Controller);
+    } else {
+      Object.entries(apiKey).map(([method, decorators]) => {
+        const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
+        UseGuards(...decorators)(Controller.prototype, method, descriptor);
+        ApiSecurity('X-Api-Key')(Controller.prototype, method, descriptor);
       });
     }
   }

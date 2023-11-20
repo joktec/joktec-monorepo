@@ -9,7 +9,7 @@ const props: IControllerProps<Category> = {
   bearer: AuthGuard,
   guards: RoleGuard,
   decorators: {
-    findAll: [ResponseMessage('QUERY_CATEGORY_SUCCESS')],
+    paginate: [ResponseMessage('QUERY_CATEGORY_SUCCESS')],
     create: [ResponseMessage('CREATE_CATEGORY_SUCCESS')],
   },
 };

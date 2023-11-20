@@ -47,13 +47,13 @@ export const ClientController = <T extends Entity, ID>(
       this.logService.setContext(this.constructor.name);
     }
 
-    @MessagePattern({ cmd: `${nameSingular}.findAll` }, transport)
-    async findAll(@Payload('req') req: IBaseRequest<T>, @Ctx() context?: MicroContext): Promise<IListResponseDto<T>> {
+    @MessagePattern({ cmd: `${nameSingular}.paginate` }, transport)
+    async paginate(@Payload('req') req: IBaseRequest<T>, @Ctx() context?: MicroContext): Promise<IListResponseDto<T>> {
       return this.service.paginate(req);
     }
 
-    @MessagePattern({ cmd: `${nameSingular}.findOne` }, transport)
-    async findOne(
+    @MessagePattern({ cmd: `${nameSingular}.detail` }, transport)
+    async detail(
       @Payload('id') id: ID,
       @Payload('req') req: IBaseRequest<T>,
       @Ctx() context?: MicroContext,

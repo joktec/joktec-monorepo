@@ -10,8 +10,8 @@ const props: IControllerProps<Session> = {
   bearer: AuthGuard,
   guards: RoleGuard,
   hooks: {
-    findAll: [SessionQueryInterceptor],
-    findOne: [SessionQueryInterceptor],
+    paginate: [SessionQueryInterceptor],
+    detail: [SessionQueryInterceptor],
   },
 };
 

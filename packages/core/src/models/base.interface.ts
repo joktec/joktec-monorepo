@@ -8,9 +8,9 @@ export interface IBaseController<T, ID> {
 
   logService?: LogService;
 
-  findAll(query: IBaseRequest<T>): Promise<IListResponseDto<T>>;
+  paginate(query: IBaseRequest<T>): Promise<IListResponseDto<T>>;
 
-  findOne(id: ID, query: IBaseRequest<T>): Promise<T>;
+  detail(id: ID, query: IBaseRequest<T>): Promise<T>;
 
   create(entity: DeepPartial<T>, payload?: JwtPayload): Promise<T>;
 

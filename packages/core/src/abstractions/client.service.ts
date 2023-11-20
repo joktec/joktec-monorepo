@@ -31,19 +31,19 @@ export const ClientService = <T extends Entity, ID = string, REQ extends IBaseRe
     }
 
     async paginate(req: REQ): Promise<IListResponseDto<T>> {
-      const result = this.client.send<IListResponseDto<T>>({ cmd: `${nameSingular}.findAll` }, { req });
+      const result = this.client.send<IListResponseDto<T>>({ cmd: `${nameSingular}.paginate` }, { req });
       return await firstValueFrom(result);
     }
 
     async find(req: IBaseRequest<T>): Promise<T[]> {
-      const result = this.client.send<IListResponseDto<T>>({ cmd: `${nameSingular}.findAll` }, { req });
+      const result = this.client.send<IListResponseDto<T>>({ cmd: `${nameSingular}.paginate` }, { req });
       const data = await firstValueFrom(result);
       return data?.items || [];
     }
 
     async findOne(req: IBaseRequest<T> = {}): Promise<T> {
       const id = req?.condition?.['id'] || req?.condition?.['_id'];
-      const result = this.client.send<T>({ cmd: `${nameSingular}.findOne` }, { id, req });
+      const result = this.client.send<T>({ cmd: `${nameSingular}.detail` }, { id, req });
       return await firstValueFrom(result);
     }
 
