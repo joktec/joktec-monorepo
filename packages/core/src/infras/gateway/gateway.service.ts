@@ -12,11 +12,12 @@ import basicAuth from 'express-basic-auth';
 import { lookup } from 'geoip-lite';
 import helmet from 'helmet';
 import requestIp from 'request-ip';
-import { ExpressRequest, ExpressResponse, ApplicationMiddlewares } from '../../base';
+import { ApplicationMiddlewares, ExpressRequest, ExpressResponse } from '../../base';
 import { BullConfig } from '../../bull';
 import { ConfigService } from '../../config';
+import { HttpRequestHeader } from '../../constants';
 import { LogService } from '../../logger';
-import { SwaggerConfig } from '../../swagger';
+import { SwaggerConfig, SwaggerSecurity } from '../../swagger';
 import { joinUrl, parseUA, toArray } from '../../utils';
 import { GatewayConfig } from './gateway.config';
 
@@ -80,8 +81,20 @@ export class GatewayService {
       .setDescription(swagger.description || config.get('description'))
       .setVersion(swagger.version || config.get('version'))
       .setLicense(swagger.license?.name, swagger.license?.url)
-      .addServer(swagger.server || `http://localhost:${gatewayConfig.port}`)
-      .addBearerAuth();
+      .addServer(swagger.server || `http://localhost:${gatewayConfig.port}`);
+
+    swagger.security?.map(security => {
+      if (security === SwaggerSecurity.BASIC) options.addBasicAuth();
+      if (security === SwaggerSecurity.BEARER) options.addBearerAuth();
+      if (security === SwaggerSecurity.OAUTH2) options.addOAuth2();
+      if (security === SwaggerSecurity.COOKIE) options.addCookieAuth('optional-session-id');
+      if (security === SwaggerSecurity.APIKEY) {
+        options.addApiKey(
+          { type: 'apiKey', in: 'header', name: HttpRequestHeader.X_API_KEY },
+          HttpRequestHeader.X_API_KEY,
+        );
+      }
+    });
 
     const { username, password } = swagger.auth;
     if (username && password) {

@@ -1,39 +1,40 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { FileFilter, isAllowedMimeType } from '../file.pipe';
 import { ExpressRequest } from '../../base';
+import { HttpType } from '../../constants';
 
 describe('isAllowedMimeType function', () => {
   it('should return true for empty allowedMimeTypes array', () => {
-    const result = isAllowedMimeType('image/png', []);
+    const result = isAllowedMimeType(HttpType.PNG, []);
     expect(result).toBe(true);
   });
 
   it('should return true for exact match in allowedMimeTypes array', () => {
-    const result = isAllowedMimeType('image/png', ['image/png']);
+    const result = isAllowedMimeType(HttpType.PNG, [HttpType.PNG]);
     expect(result).toBe(true);
   });
 
   it('should return true for wildcard match in allowedMimeTypes array', () => {
-    const result = isAllowedMimeType('image/png', ['image/*']);
+    const result = isAllowedMimeType(HttpType.PNG, [HttpType.IMAGE]);
     expect(result).toBe(true);
   });
 
   it('should return false for non-matching mimeType', () => {
-    const result = isAllowedMimeType('video/mp4', ['image/*']);
+    const result = isAllowedMimeType(HttpType.MP4, [HttpType.IMAGE]);
     expect(result).toBe(false);
   });
 
   it('should return false for non-matching mimeType in a mixed allowedMimeTypes array', () => {
-    const result = isAllowedMimeType('video/mp4', ['image/png', 'text/html', 'application/pdf']);
+    const result = isAllowedMimeType(HttpType.MP4, [HttpType.PNG, HttpType.HTML, HttpType.PDF]);
     expect(result).toBe(false);
   });
 });
 
 describe('FileFilter function', () => {
   it('should call the callback with an error if the file type is not allowed', () => {
-    const options = { fileTypes: ['image/jpeg', 'image/png'] };
+    const options = { fileTypes: [HttpType.JPEG, HttpType.PNG] };
     const req = {} as ExpressRequest;
-    const file = { mimetype: 'image/gif', size: 1024 } as Express.Multer.File;
+    const file = { mimetype: HttpType.GIF, size: 1024 } as Express.Multer.File;
     const callback = jest.fn();
 
     FileFilter(options)(req, file, callback);
@@ -44,7 +45,7 @@ describe('FileFilter function', () => {
   it('should call the callback with an error if the file size exceeds the maximum allowed', () => {
     const options = { maxSize: 1024 };
     const req = {} as ExpressRequest;
-    const file = { mimetype: 'image/jpeg', size: 2048 } as Express.Multer.File;
+    const file = { mimetype: HttpType.JPEG, size: 2048 } as Express.Multer.File;
     const callback = jest.fn();
 
     FileFilter(options)(req, file, callback);
@@ -53,9 +54,9 @@ describe('FileFilter function', () => {
   });
 
   it('should call the callback with no error if the file type and size are allowed', () => {
-    const options = { fileTypes: ['image/jpeg', 'image/png'], maxSize: 1024 };
+    const options = { fileTypes: [HttpType.JPEG, HttpType.PNG], maxSize: 1024 };
     const req = {} as ExpressRequest;
-    const file = { mimetype: 'image/jpeg', size: 512 } as Express.Multer.File;
+    const file = { mimetype: HttpType.JPEG, size: 512 } as Express.Multer.File;
     const callback = jest.fn();
 
     FileFilter(options)(req, file, callback);
@@ -65,7 +66,7 @@ describe('FileFilter function', () => {
 
   it('should call the callback with no error if options are not provided', () => {
     const req = {} as ExpressRequest;
-    const file = { mimetype: 'image/jpeg', size: 1024 } as Express.Multer.File;
+    const file = { mimetype: HttpType.JPEG, size: 1024 } as Express.Multer.File;
     const callback = jest.fn();
 
     FileFilter()(req, file, callback);

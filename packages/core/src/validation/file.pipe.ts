@@ -1,6 +1,7 @@
-import { FileValidator, HttpStatus, ParseFilePipe, ParseFilePipeBuilder } from '@nestjs/common';
+import { FileValidator, ParseFilePipe, ParseFilePipeBuilder } from '@nestjs/common';
 import { Express } from 'express';
 import { ExpressRequest } from '../base';
+import { HttpStatus } from '../constants';
 import { BadRequestException, ExceptionMessage } from '../exceptions';
 
 export const FilePipe = (options?: {
@@ -12,7 +13,7 @@ export const FilePipe = (options?: {
   if (options?.fileType) pipe.addFileTypeValidator({ fileType: options.fileType });
   if (options?.maxSize) pipe.addMaxSizeValidator({ maxSize: options.maxSize });
   if (options?.validators?.length) options?.validators.map(v => pipe.addValidator(v));
-  return pipe.build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY });
+  return pipe.build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY as number });
 };
 
 export function isAllowedMimeType(mimeType: string, allowedMimeTypes: string[] = []) {

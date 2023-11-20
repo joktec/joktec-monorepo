@@ -1,4 +1,4 @@
-import { BaseController, Controller, IControllerProps, ResponseMessage } from '@joktec/core';
+import { BaseController, Controller, HttpResponse, HttpStatus, IControllerProps } from '@joktec/core';
 import { AuthGuard, RoleGuard } from '../../base';
 import { CategoryService } from './category.service';
 import { Category, CategoryDto } from './models';
@@ -9,8 +9,8 @@ const props: IControllerProps<Category> = {
   bearer: AuthGuard,
   guards: RoleGuard,
   decorators: {
-    paginate: [ResponseMessage('QUERY_CATEGORY_SUCCESS')],
-    create: [ResponseMessage('CREATE_CATEGORY_SUCCESS')],
+    paginate: [HttpResponse(HttpStatus.OK, 'QUERY_CATEGORY_SUCCESS')],
+    create: [HttpResponse(HttpStatus.OK, 'CREATE_CATEGORY_SUCCESS')],
   },
 };
 

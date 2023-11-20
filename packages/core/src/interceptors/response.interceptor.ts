@@ -1,13 +1,12 @@
-import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { RENDER_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
 import { instanceToPlain } from 'class-transformer';
-import { isNil } from 'lodash';
 import { catchError, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ExpressRequest, ExpressResponse } from '../base';
-import { RESPONSE_MESSAGE_KEY } from '../decorators';
-import { NotFoundException } from '../exceptions';
+import { HttpStatus } from '../constants';
+import { RESPONSE_MESSAGE_KEY, SUCCESS_STATUS_KEY } from '../decorators';
 import { LogService } from '../logger';
 import { IResponseDto } from '../models';
 
@@ -26,8 +25,9 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, Response
   intercept(context: ExecutionContext, next: CallHandler): Observable<ResponseType<T>> {
     const request = context.switchToHttp().getRequest<ExpressRequest>();
     const response = context.switchToHttp().getResponse<ExpressResponse>();
+    const handler = context.getHandler();
 
-    const renderMetadata = this.reflector.get<string>(RENDER_METADATA, context.getHandler());
+    const renderMetadata = this.reflector.get<string>(RENDER_METADATA, handler);
     if (!!renderMetadata || ExcludePaths.includes(request.path)) {
       return next.handle();
     }
@@ -39,8 +39,8 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, Response
           this.logger.info('Redirecting to: %s', redirectUrl);
         }
 
-        if (isNil(data)) throw new NotFoundException();
-        response.status(HttpStatus.OK);
+        const httpStatus = this.reflector.get<number | HttpStatus>(SUCCESS_STATUS_KEY, handler);
+        response.status(httpStatus || HttpStatus.OK);
         return {
           timestamp: new Date(),
           success: true,

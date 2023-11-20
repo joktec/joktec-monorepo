@@ -1,4 +1,4 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { RpcException } from '@nestjs/microservices';
 import { GraphQLError } from 'graphql/index';
@@ -6,6 +6,7 @@ import { isEmpty, isString } from 'lodash';
 import { PinoLogger } from 'nestjs-pino';
 import { ExpressRequest, ExpressResponse } from '../../base';
 import { ENV } from '../../config';
+import { HttpStatus } from '../../constants';
 import { IResponseDto } from '../../models';
 import { IValidateError, ValidateException } from '../../validation';
 import { ExceptionMessage } from '../exception-message';

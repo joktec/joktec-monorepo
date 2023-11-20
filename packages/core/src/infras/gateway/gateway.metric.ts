@@ -1,9 +1,10 @@
-import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { InjectMetric, makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
 import { Counter, Histogram } from 'prom-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ExpressRequest } from '../../base';
+import { HttpStatus } from '../../constants';
 import { Exception } from '../../exceptions';
 import { LogService } from '../../logger';
 import { getTimeString } from '../../utils';

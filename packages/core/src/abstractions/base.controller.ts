@@ -31,7 +31,14 @@ import {
 } from '@nestjs/swagger';
 import { isFunction, startCase } from 'lodash';
 import { ConfigService } from '../config';
-import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../exceptions';
+import { HttpRequestHeader, HttpStatus } from '../constants';
+import { HttpResponse } from '../decorators';
+import {
+  ExceptionMessage,
+  MethodNotAllowedException,
+  NotFoundException,
+  ServiceUnavailableException,
+} from '../exceptions';
 import { Jwt, JwtPayload } from '../guards';
 import { GatewayMetric } from '../infras';
 import { QueryInterceptor } from '../interceptors';
@@ -113,6 +120,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
     @UsePipes(...toArray(props.pipes?.paginate))
     @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.paginate))
+    @HttpResponse(HttpStatus.OK)
     async paginate(@Query() query: IBaseRequest<typeof queryDto>): Promise<PaginationDto> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.LIST);
       return this.service.paginate(query);
@@ -125,9 +133,12 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiParam({ name: 'id' })
     @UsePipes(...toArray(props.pipes?.detail))
     @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.detail))
+    @HttpResponse(HttpStatus.OK)
     async detail(@Param('id') id: ID, @Query() query: IBaseRequest<typeof queryDto>): Promise<T> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.GET);
-      return this.service.findById(id, query);
+      const detail = await this.service.findById(id, query);
+      if (!detail) throw new NotFoundException();
+      return detail;
     }
 
     @Post('/')
@@ -137,6 +148,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
     @UsePipes(new BaseValidationPipe(), ...toArray(props.pipes?.create))
     @UseInterceptors(...toArray(props.hooks?.create))
+    @HttpResponse(HttpStatus.CREATED)
     async create(@Body() entity: DeepPartial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
       return this.service.create(entity, payload);
@@ -150,9 +162,12 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.pipes?.update))
     @UseInterceptors(...toArray(props.hooks?.update))
+    @HttpResponse(HttpStatus.OK)
     async update(@Param('id') id: ID, @Body() entity: DeepPartial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.UPDATE);
-      return this.service.update(id, entity, payload);
+      const detail = await this.service.update(id, entity, payload);
+      if (!detail) throw new NotFoundException();
+      return detail;
     }
 
     @Delete('/:id')
@@ -162,9 +177,12 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.DELETE))
     @UsePipes(...toArray(props.pipes?.delete))
     @UseInterceptors(...toArray(props.hooks?.delete))
-    async delete(@Param('id') id: ID, @Jwt() payload?: JwtPayload): Promise<T> {
+    @HttpResponse(HttpStatus.NO_CONTENT)
+    async delete(@Param('id') id: ID, @Jwt() payload?: JwtPayload): Promise<T | null> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.DELETE);
-      return this.service.delete(id, payload);
+      const detail = await this.service.delete(id, payload);
+      if (!detail) throw new NotFoundException();
+      return null;
     }
   }
 
@@ -200,12 +218,12 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     const apiKey = props.apiKey;
     if (isFunction(apiKey) || 'canActivate' in apiKey) {
       UseGuards(apiKey)(Controller);
-      ApiSecurity('X-Api-Key')(Controller);
+      ApiSecurity(HttpRequestHeader.X_API_KEY)(Controller);
     } else {
       Object.entries(apiKey).map(([method, decorators]) => {
         const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
         UseGuards(...decorators)(Controller.prototype, method, descriptor);
-        ApiSecurity('X-Api-Key')(Controller.prototype, method, descriptor);
+        ApiSecurity(HttpRequestHeader.X_API_KEY)(Controller.prototype, method, descriptor);
       });
     }
   }

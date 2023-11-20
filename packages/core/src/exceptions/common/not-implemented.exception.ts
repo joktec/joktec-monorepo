@@ -1,4 +1,4 @@
-import { HttpStatus } from '@nestjs/common';
+import { HttpStatus } from '../../constants';
 import { ExceptionMessage } from '../exception-message';
 import { RuntimeException } from '../runtime.exception';
 
