@@ -65,7 +65,7 @@ http:
   timeout: 30000
 
 gpt:
-  apiKey: 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
+  apiKey: XXX
 
 mailer:
   service: zoho
