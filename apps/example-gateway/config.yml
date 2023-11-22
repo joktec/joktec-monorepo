@@ -8,9 +8,10 @@ gateway:
     auth:
       username: admin
       password: p4ssw0rd
+    security: [ basic, bearer, apiKey ]
 
 log:
-  level: info
+  level: debug
   format: pretty
   useFilter: false
   mongo:
@@ -23,6 +24,7 @@ bull:
   queue: [ order ]
   host: localhost
   port: 6379
+  password: root
   board:
     enable: true
     path: bulls
@@ -61,6 +63,9 @@ storage:
 
 http:
   timeout: 30000
+
+gpt:
+  apiKey: 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
 
 mailer:
   service: zoho

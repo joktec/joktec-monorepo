@@ -9,6 +9,7 @@ import {
   ResponseInterceptor,
 } from '@joktec/core';
 import { FirebaseModule } from '@joktec/firebase';
+import { GptModule } from '@joktec/gpt';
 import { HttpModule } from '@joktec/http';
 import { MailerModule } from '@joktec/mailer';
 import { MongoModule } from '@joktec/mongo';
@@ -19,7 +20,6 @@ import { AuthModule } from './modules/auth';
 import { CategoryModule } from './modules/categories';
 import { OrderModule } from './modules/orders';
 import { OtpModule } from './modules/otpLogs';
-import { ProductModule } from './modules/products';
 import { ProfileModule } from './modules/profile';
 import { RoomModule } from './modules/rooms';
 import { SessionModule } from './modules/sessions';
@@ -37,12 +37,13 @@ import { UserModule } from './modules/users';
     MailerModule,
     BullModule,
     FirebaseModule,
+    GptModule,
     // Global Modules
     UserModule,
     SessionModule,
     // Internal Modules
     CategoryModule,
-    ProductModule, // Microservice
+    // ProductModule, // Microservice
     OtpModule,
     AuthModule,
     ProfileModule,

@@ -39,6 +39,7 @@
   "dependencies": {
     "@joktec/core": "^0.0.100",
     "@joktec/http": "^0.0.102",
+    "@joktec/gpt": "^0.0.0",
     "@joktec/mailer": "^0.0.99",
     "@joktec/mongo": "^0.0.130",
     "@joktec/firebase": "^0.0.18",
