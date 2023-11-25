@@ -25,7 +25,9 @@ export class RedisStore implements ICacheStore {
   }
 
   async connect() {
-    await this.client.connect();
+    if (!['ready', 'connect', 'connecting', 'connected'].includes(this.client.status)) {
+      await this.client.connect();
+    }
     this.logger.info('Redis cache have been connected to the server.');
   }
 

@@ -16,6 +16,7 @@ import {
   UseInterceptors,
   UsePipes,
   Type,
+  applyDecorators,
 } from '@nestjs/common';
 import { UseFilters } from '@nestjs/common/decorators/core';
 import {
@@ -40,7 +41,6 @@ import {
   ServiceUnavailableException,
 } from '../exceptions';
 import { Jwt, JwtPayload } from '../guards';
-import { GatewayMetric } from '../infras';
 import { QueryInterceptor } from '../interceptors';
 import { LogService } from '../logger';
 import {
@@ -102,6 +102,15 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
   const createDto: Constructor<T | any> = props.customDto?.createDto || props.dto;
   const updatedDto: Constructor<T | any> = props.customDto?.updatedDto || createDto;
 
+  const { caching } = props;
+  const combineDecorators: { [key in IControllerMethod]?: MethodDecorator[] } = {
+    paginate: [...toArray(caching?.paginate)],
+    detail: [...toArray(caching?.detail)],
+    create: [...toArray(caching?.create)],
+    update: [...toArray(caching?.update)],
+    delete: [...toArray(caching?.delete)],
+  };
+
   @ApiSchema({ name: `${nameSingular}Pagination` })
   class PaginationDto extends BaseListResponse<T>(props.dto) {}
 
@@ -130,6 +139,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UsePipes(...toArray(props.pipes?.paginate))
     @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.paginate))
     @HttpResponse(HttpStatus.OK)
+    @applyDecorators(...combineDecorators.paginate)
     async paginate(@Query() query: IBaseRequest<typeof queryDto>): Promise<PaginationDto> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.LIST);
       return this.service.paginate(query);
@@ -143,6 +153,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UsePipes(...toArray(props.pipes?.detail))
     @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.detail))
     @HttpResponse(HttpStatus.OK)
+    @applyDecorators(...combineDecorators.detail)
     async detail(@Param('id') id: ID, @Query() query: IBaseRequest<typeof queryDto>): Promise<T> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.GET);
       const detail = await this.service.findById(id, query);
@@ -158,6 +169,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UsePipes(new BaseValidationPipe(), ...toArray(props.pipes?.create))
     @UseInterceptors(...toArray(props.hooks?.create))
     @HttpResponse(HttpStatus.CREATED)
+    @applyDecorators(...combineDecorators.create)
     async create(@Body() entity: DeepPartial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
       return this.service.create(entity, payload);
@@ -172,6 +184,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.pipes?.update))
     @UseInterceptors(...toArray(props.hooks?.update))
     @HttpResponse(HttpStatus.OK)
+    @applyDecorators(...combineDecorators.update)
     async update(@Param('id') id: ID, @Body() entity: DeepPartial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.UPDATE);
       const detail = await this.service.update(id, entity, payload);
@@ -187,6 +200,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UsePipes(...toArray(props.pipes?.delete))
     @UseInterceptors(...toArray(props.hooks?.delete))
     @HttpResponse(HttpStatus.NO_CONTENT)
+    @applyDecorators(...combineDecorators.delete)
     async delete(@Param('id') id: ID, @Jwt() payload?: JwtPayload): Promise<T | null> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.DELETE);
       const detail = await this.service.delete(id, payload);
@@ -244,15 +258,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
   // Apply Metric
   const metric = toBool(props.metric, true);
-  if (metric) UseInterceptors(GatewayMetric)(Controller);
-
-  // Apply caching
-  if (props.caching) {
-    Object.entries(props.caching).map(([method, decorator]) => {
-      const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
-      decorator(Controller.prototype, method, descriptor);
-    });
-  }
+  // if (metric) UseInterceptors(GatewayMetric)(Controller);
 
   // Apply Decorators
   if (props.decorators) {

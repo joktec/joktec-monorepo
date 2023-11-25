@@ -10,7 +10,7 @@ const props: IControllerProps<Category> = {
   bearer: AuthGuard,
   guards: RoleGuard,
   caching: CacheStrategy(Category.name, {
-    enable: false,
+    enable: true,
     expiry: CacheTtlSeconds.ONE_MINUTE,
     allEntries: true,
     conId: DEFAULT_CON_ID,

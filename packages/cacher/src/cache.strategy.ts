@@ -7,7 +7,7 @@ export const CacheStrategy = (
   opts?: CacheableOption & CacheEvictOption & { enable?: boolean },
 ): ICacheStrategy => {
   const enable = toBool(opts?.enable, true);
-  if (enable) return {};
+  if (!enable) return {};
 
   const cacheableOption: CacheableOption = {
     ...opts,

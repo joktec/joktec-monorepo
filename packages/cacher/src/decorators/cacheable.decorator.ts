@@ -13,8 +13,8 @@ import { CACHEABLE_WATERMARK, CacheableOption, CacheTtlSeconds } from '../models
 
 export const Cacheable = <T = Entity>(namespace: string, cacheableOptions?: CacheableOption): MethodDecorator => {
   return BaseMethodDecorator(
-    async (options: CallbackMethodOptions): Promise<T | void> => {
-      const { method, args, services, params, target } = options;
+    async (options: CallbackMethodOptions): Promise<T> => {
+      const { method, args, services, params } = options;
       const { key, expiry = CacheTtlSeconds.ONE_MINUTE, conId = DEFAULT_CON_ID } = cacheableOptions || {};
 
       const reflector: Reflector = services.reflector;
@@ -23,9 +23,11 @@ export const Cacheable = <T = Entity>(namespace: string, cacheableOptions?: Cach
 
       // TODO: Researching...
       // Set metadata and switch to use Interceptor for Controller
+      const { target, propertyKey, descriptor } = options;
       const isController = reflector.get<boolean>('__controller__', target.constructor);
       if (isController) {
-        SetMetadata<string, CacheableProps>(CACHEABLE_WATERMARK, { cacheKey, namespace, expiry, conId });
+        const metadata = { cacheKey, namespace, expiry, conId };
+        SetMetadata<string, CacheableProps>(CACHEABLE_WATERMARK, metadata)(target, propertyKey, descriptor);
         // UseInterceptors(CacheableInterceptor);
         // return;
       }
