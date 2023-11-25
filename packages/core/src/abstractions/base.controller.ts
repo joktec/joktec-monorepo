@@ -41,6 +41,7 @@ import {
   ServiceUnavailableException,
 } from '../exceptions';
 import { Jwt, JwtPayload } from '../guards';
+import { GatewayMetric } from '../infras';
 import { QueryInterceptor } from '../interceptors';
 import { LogService } from '../logger';
 import {
@@ -258,7 +259,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
   // Apply Metric
   const metric = toBool(props.metric, true);
-  // if (metric) UseInterceptors(GatewayMetric)(Controller);
+  if (metric) UseInterceptors(GatewayMetric)(Controller);
 
   // Apply Decorators
   if (props.decorators) {

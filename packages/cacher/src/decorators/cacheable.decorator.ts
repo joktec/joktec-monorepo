@@ -35,17 +35,13 @@ export const Cacheable = <T = Entity>(namespace: string, cacheableOptions?: Cach
       try {
         const cachedValue: T = await cacheService.get<T>(cacheKey, { namespace }, conId);
         if (cachedValue) {
-          services.pinoLogger.debug('`%s` Cache hit for [%s] successfully retrieved.', conId, cacheKey);
           return cachedValue;
         }
 
         const valueToCache: T = await method(...args);
         await cacheService.set<T>(cacheKey, valueToCache, { namespace, expiry }, conId);
-        services.pinoLogger.debug('`%s` Cache store for [%s] successfully cached.', conId, cacheKey);
         return valueToCache;
       } catch (error) {
-        const errMsg: string = '`%s` Cache strategy error: An error occurred during the automated process for [%s].';
-        services.pinoLogger.error(error, errMsg, conId, cacheKey);
         return null;
       }
     },

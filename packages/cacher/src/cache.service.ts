@@ -49,9 +49,9 @@ export class CacheService extends AbstractClientService<CacheConfig, ICacheStore
   }
 
   @DelCacheMetric()
-  async del(key: string, opts?: { namespace?: string }, conId: string = DEFAULT_CON_ID): Promise<any> {
+  async del(key: string, opts?: { namespace?: string }, conId: string = DEFAULT_CON_ID): Promise<boolean> {
     const { namespace = DEFAULT_CON_ID } = opts;
     const k = namespace ? `${namespace}:${key}` : key;
-    await this.getClient(conId).delItem(k);
+    return this.getClient(conId).delItem(k);
   }
 }

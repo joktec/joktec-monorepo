@@ -49,7 +49,7 @@ export class MemcachedStore implements ICacheStore {
   }
 
   async delItem(key: string): Promise<boolean> {
-    await this.client.delete(key);
-    return true;
+    const res = await this.client.delete(key);
+    return res.length > 0;
   }
 }

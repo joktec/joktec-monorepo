@@ -12,12 +12,10 @@ export const CacheEvict = (namespace: string, cacheEvictOption?: CacheEvictOptio
       const cacheKey = allEntries ? '*' : generateCacheKey({ method: method.name, key, params });
 
       try {
+        const res = await method(...args);
         await cacheService.del(cacheKey, { namespace }, conId);
-        services.pinoLogger.debug('`%s` Cache eviction for [%s] successfully removed.', conId, cacheKey);
-        return method(...args);
+        return res;
       } catch (error) {
-        const errMsg: string = '`%s` Cache strategy error: An error occurred during the automated process for [%s].';
-        services.pinoLogger.error(error, errMsg, conId, cacheKey);
         return null;
       }
     },

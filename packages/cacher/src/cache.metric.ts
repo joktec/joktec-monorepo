@@ -52,20 +52,26 @@ export const GetCacheMetric = () => {
   return BaseMethodDecorator(
     async (options: CallbackMethodOptions): Promise<any> => {
       const { method, args, services } = options;
-      const [key, namespace, type = CacheType.LOCAL, conId = DEFAULT_CON_ID] = args;
+      const [key, namespace, conId = DEFAULT_CON_ID] = args;
+
+      services.pinoLogger.setContext(CacheMetricService.name);
       const cacheMetricService: CacheMetricService = services.cacheMetricService;
 
       try {
         const value = await method(...args);
-        services.pinoLogger.debug('`%s` %s cache lookup success %s = %s', conId, type, key, value);
+
         if (isNull(value)) {
+          services.pinoLogger.debug('`%s` Cache miss for [%s].', conId, key);
           cacheMetricService.track(CacheMethod.GET, GetStatus.SUCCESS_MISS, namespace, conId);
           return value;
         }
+
+        services.pinoLogger.debug('`%s` Cache hit for [%s] successfully retrieved.', conId, key);
         cacheMetricService.track(CacheMethod.GET, GetStatus.SUCCESS_HIT, namespace, conId);
         return value;
       } catch (error) {
-        services.pinoLogger.error(error, '`%s` %s cache failed to get cache by key `%s`', conId, type, key);
+        const errMsg: string = '`%s` Cache hit for [%s] has an error occurred.';
+        services.pinoLogger.error(error, errMsg, conId, key);
         cacheMetricService.track(CacheMethod.GET, GetStatus.ERROR_GET_VALUE, namespace, conId);
       }
     },
@@ -78,27 +84,17 @@ export const SetCacheMetric = () => {
     async (options: CallbackMethodOptions): Promise<any> => {
       const { method, args, services } = options;
       const [key, value, namespace, type = CacheType.LOCAL, conId = DEFAULT_CON_ID] = args;
+
+      services.pinoLogger.setContext(CacheMetricService.name);
       const cacheMetricService: CacheMetricService = services.cacheMetricService;
 
       try {
         await method(...args);
-        services.pinoLogger.debug(
-          '`%s` %s cache set a cache is a success with key=%s, value=%s',
-          conId,
-          type,
-          key,
-          value,
-        );
+        services.pinoLogger.debug('`%s` Cache store for [%s] successfully cached.', conId, key);
         cacheMetricService.track(CacheMethod.SET, SetStatus.SUCCESS, namespace, conId);
       } catch (error) {
-        services.pinoLogger.error(
-          error,
-          '`%s` %s cache failed to set cache by key=%s, value=%s',
-          conId,
-          type,
-          key,
-          value,
-        );
+        const errMsg: string = '`%s` Cache store for [%s] has an error occurred.';
+        services.pinoLogger.error(error, errMsg, conId, key);
         cacheMetricService.track(CacheMethod.SET, SetStatus.ERROR_SET_VALUE, namespace, conId);
       }
     },
@@ -111,19 +107,25 @@ export const DelCacheMetric = () => {
     async (options: CallbackMethodOptions): Promise<any> => {
       const { method, args, services } = options;
       const [key, namespace, type = CacheType.LOCAL, conId = DEFAULT_CON_ID] = args;
+
+      services.pinoLogger.setContext(CacheMetricService.name);
       const cacheMetricService: CacheMetricService = services.cacheMetricService;
 
       try {
         const value: boolean = await method(...args);
-        services.pinoLogger.debug('`%s` %s cache delete success %s = %s', conId, type, key, value);
+
         if (isNull(value)) {
+          services.pinoLogger.debug('`%s` Cache miss for [%s].', conId, key);
           cacheMetricService.track(CacheMethod.DEL, DelStatus.SUCCESS_MISS, namespace, conId);
           return value;
         }
+
+        services.pinoLogger.debug('`%s` Cache eviction for [%s] successfully removed.', conId, key);
         cacheMetricService.track(CacheMethod.DEL, DelStatus.SUCCESS_HIT, namespace, conId);
         return value;
       } catch (error) {
-        services.pinoLogger.error(error, '`%s` %s cache failed to delete cache by key `%s`', conId, type, key);
+        const errMsg: string = '`%s` Cache eviction for [%s] has an error occurred.';
+        services.pinoLogger.error(error, errMsg, conId, key);
         cacheMetricService.track(CacheMethod.DEL, DelStatus.ERROR_DEL_VALUE, namespace, conId);
       }
     },

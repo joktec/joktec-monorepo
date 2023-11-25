@@ -45,7 +45,7 @@ export class RedisStore implements ICacheStore {
   }
 
   async delItem(key: string): Promise<boolean> {
-    await this.client.del(key);
-    return true;
+    const res = await this.client.del(key);
+    return res > 0;
   }
 }

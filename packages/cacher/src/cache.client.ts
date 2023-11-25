@@ -18,5 +18,5 @@ export interface CacheClient extends Client<CacheConfig, ICacheStore> {
 
   get<T>(key: string, opts?: { namespace?: string }, conId?: string): Promise<T>;
 
-  del(key: string, opts?: { namespace?: string }, conId?: string): Promise<any>;
+  del(key: string, opts?: { namespace?: string }, conId?: string): Promise<boolean>;
 }

@@ -14,11 +14,8 @@ export const CachePut = <T = Entity>(namespace: string, cacheableOptions?: Cache
       try {
         const valueToCache = await method(...args);
         await cacheService.set<T>(cacheKey, valueToCache, { namespace, expiry }, conId);
-        services.pinoLogger.debug('`%s` Cache store for [%s] successfully cached.', conId, cacheKey);
         return valueToCache;
       } catch (error) {
-        const errMsg: string = '`%s` Cache strategy error: An error occurred during the automated process for [%s].';
-        services.pinoLogger.error(error, errMsg, conId, cacheKey);
         return null;
       }
     },
