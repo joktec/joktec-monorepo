@@ -10,7 +10,7 @@ export type ServicesInject = {
   [serviceName: string]: any;
 };
 
-export type CallbackDecoratorOptions = {
+export type CallbackMethodOptions = {
   params: any;
   args: any[];
   method: (...args: any[]) => Promise<any> | any;
@@ -21,7 +21,7 @@ export type CallbackDecoratorOptions = {
 };
 
 export const BaseMethodDecorator = (
-  callback: (options: CallbackDecoratorOptions) => Promise<any> | any,
+  callback: (options: CallbackMethodOptions) => Promise<any> | any,
   injects: Clazz[] = [],
 ): MethodDecorator => {
   injects = union(injects, [LogService, ConfigService]);
@@ -46,7 +46,7 @@ export const BaseMethodDecorator = (
         target,
         propertyKey,
         descriptor,
-        method: originMethod.bind(this), // bind `this` help us have context when `callback` is a arrow functions.
+        method: originMethod.bind(this), // bind `this` helps us have context when `callback` is an arrow functions.
         services: fromPairs(map(injects, (i: Clazz) => [camelCase(i.name), this[i.name]])),
       });
     };

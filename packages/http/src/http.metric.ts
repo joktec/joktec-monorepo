@@ -1,6 +1,6 @@
 import {
   BaseMethodDecorator,
-  CallbackDecoratorOptions,
+  CallbackMethodOptions,
   Counter,
   DEFAULT_CON_ID,
   Histogram,
@@ -41,7 +41,7 @@ export class HttpMetricService {
 
 export const HttpMetricDecorator = () =>
   BaseMethodDecorator(
-    async function (options: CallbackDecoratorOptions): Promise<AxiosResponse<any>> {
+    async function (options: CallbackMethodOptions): Promise<AxiosResponse<any>> {
       const { method, args, services } = options;
       const [config, conId = DEFAULT_CON_ID] = args;
 

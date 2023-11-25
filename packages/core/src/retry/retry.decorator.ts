@@ -1,10 +1,10 @@
 import retry from 'async-retry';
 import { isObject, merge } from 'lodash';
-import { BaseMethodDecorator, CallbackDecoratorOptions } from '../decorators';
+import { BaseMethodDecorator, CallbackMethodOptions } from '../decorators';
 import { RetryOptions } from './retry.config';
 
 export const Retry = (retryOptions: RetryOptions | string = {}): MethodDecorator => {
-  return BaseMethodDecorator(async (options: CallbackDecoratorOptions): Promise<any> => {
+  return BaseMethodDecorator(async (options: CallbackMethodOptions): Promise<any> => {
     const { method, args, services, target, propertyKey } = options;
     const msgError = `${Reflect.get(target, 'constructor').name} ${propertyKey as string} error`;
     return await retry(

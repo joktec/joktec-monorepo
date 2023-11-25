@@ -1,6 +1,6 @@
 import {
   BaseMethodDecorator,
-  CallbackDecoratorOptions,
+  CallbackMethodOptions,
   Counter,
   DEFAULT_CON_ID,
   Injectable,
@@ -33,7 +33,7 @@ export class RabbitMetricService {
 
 export const RabbitMetric = () => {
   return BaseMethodDecorator(
-    async (options: CallbackDecoratorOptions): Promise<any> => {
+    async (options: CallbackMethodOptions): Promise<any> => {
       const { method, args, propertyKey, services } = options;
       const conId = args[3] ?? DEFAULT_CON_ID;
       const queue = args[0];

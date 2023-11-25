@@ -1,6 +1,6 @@
 import {
   BaseMethodDecorator,
-  CallbackDecoratorOptions,
+  CallbackMethodOptions,
   InternalServerException,
   IValidateError,
   ValidateException,
@@ -13,7 +13,7 @@ export class MongoException extends InternalServerException {
   }
 }
 
-export const MongoCatch = BaseMethodDecorator(async (options: CallbackDecoratorOptions): Promise<any> => {
+export const MongoCatch = BaseMethodDecorator(async (options: CallbackMethodOptions): Promise<any> => {
   const { method, args } = options;
   try {
     return await method(...args);

@@ -1,6 +1,6 @@
 import {
   BaseMethodDecorator,
-  CallbackDecoratorOptions,
+  CallbackMethodOptions,
   Counter,
   DEFAULT_CON_ID,
   Injectable,
@@ -25,7 +25,7 @@ export class KafkaMetricService {
 
 export const PublishKafkaMetric = () =>
   BaseMethodDecorator(
-    async (options: CallbackDecoratorOptions) => {
+    async (options: CallbackMethodOptions) => {
       const { args, method, propertyKey, services } = options;
       const [record = {}, producerConfig, conId = DEFAULT_CON_ID] = args;
       const key = record.producerKey ?? record.topic ?? undefined;

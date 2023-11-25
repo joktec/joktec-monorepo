@@ -1,6 +1,6 @@
 import {
   BaseMethodDecorator,
-  CallbackDecoratorOptions,
+  CallbackMethodOptions,
   Counter,
   DEFAULT_CON_ID,
   Histogram,
@@ -29,7 +29,7 @@ export class FileMetricService {
 
 export const FileMetric = () =>
   BaseMethodDecorator(
-    async function (options: CallbackDecoratorOptions): Promise<any> {
+    async function (options: CallbackMethodOptions): Promise<any> {
       const { method, args, services, propertyKey } = options;
       const type = propertyKey as string;
       const conId = args[3] ?? DEFAULT_CON_ID;

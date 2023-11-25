@@ -1,6 +1,6 @@
 import {
   BaseMethodDecorator,
-  CallbackDecoratorOptions,
+  CallbackMethodOptions,
   Counter,
   DEFAULT_CON_ID,
   Injectable,
@@ -30,7 +30,7 @@ export class MailerMetricService {
 
 export const SendEmailMetric = () => {
   return BaseMethodDecorator(
-    async (options: CallbackDecoratorOptions): Promise<any> => {
+    async (options: CallbackMethodOptions): Promise<any> => {
       const { method, args, services } = options;
       const [conId = DEFAULT_CON_ID] = args;
       const mailerMetricService: MailerMetricService = services.mailerMetricService;

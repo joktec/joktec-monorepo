@@ -1,6 +1,6 @@
 import {
   BaseMethodDecorator,
-  CallbackDecoratorOptions,
+  CallbackMethodOptions,
   Counter,
   DEFAULT_CON_ID,
   Injectable,
@@ -37,7 +37,7 @@ export class StorageMetricService {
 
 export const StorageMetric = (action: StorageMetricType | string) => {
   return BaseMethodDecorator(
-    async (options: CallbackDecoratorOptions): Promise<any> => {
+    async (options: CallbackMethodOptions): Promise<any> => {
       const { method, args, services } = options;
       const [req, conId = DEFAULT_CON_ID] = args;
       const storageMetricService: StorageMetricService = services.storageMetricService;

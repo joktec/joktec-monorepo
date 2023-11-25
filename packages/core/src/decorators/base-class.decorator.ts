@@ -4,10 +4,32 @@ import { ConfigService } from '../config';
 import { LogService } from '../logger';
 import { Clazz, InjectType } from '../models';
 
+export type CallbackClassOptions = {
+  className: string;
+  classPrototype: any;
+  properties: Array<{ name: string; value: any }>;
+  methods: Array<{ name: string; descriptor: PropertyDescriptor }>;
+};
+
+export const BaseClassDecorator = (
+  callback: (options: CallbackClassOptions) => Promise<any> | any,
+  injects: Clazz[] = [],
+): ClassDecorator => {
+  injects = union(injects, [LogService, ConfigService]);
+  const injectServices: InjectType[] = injects.map((inject: Clazz) => Inject(inject));
+
+  return (target: Function) => {
+    return callback.bind(this)({
+      className: target.name,
+      classPrototype: target.prototype,
+    });
+  };
+};
+
 const getMethods = (obj: any) =>
   Object.getOwnPropertyNames(obj).filter(item => typeof obj[item] === 'function' && item !== 'constructor');
 
-export const BaseClassDecorator = (methodDecorator: MethodDecorator, injects: Clazz[] = []): ClassDecorator => {
+export const BaseClassDecorator2 = (methodDecorator: MethodDecorator, injects: Clazz[] = []): ClassDecorator => {
   injects = union(injects, [LogService, ConfigService]);
   const injectServices: InjectType[] = injects.map((inject: Clazz) => Inject(inject));
 

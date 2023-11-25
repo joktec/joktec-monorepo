@@ -2,6 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { RENDER_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
 import { instanceToPlain } from 'class-transformer';
+import { isNil } from 'lodash';
 import { catchError, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ExpressRequest, ExpressResponse } from '../base';
@@ -39,14 +40,17 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, Response
           this.logger.info('Redirecting to: %s', redirectUrl);
         }
 
-        const httpStatus = this.reflector.get<number | HttpStatus>(SUCCESS_STATUS_KEY, handler);
+        const httpStatus = this.reflector.get<number>(SUCCESS_STATUS_KEY, handler);
+        const message = this.reflector.get<string>(RESPONSE_MESSAGE_KEY, context.getHandler()) || 'SUCCESS';
+        const dataJson = isNil(data) || httpStatus === HttpStatus.NO_CONTENT ? null : instanceToPlain<T>(data);
         response.status(httpStatus || HttpStatus.OK);
+
         return {
           timestamp: new Date(),
           success: true,
           errorCode: 0,
-          message: this.reflector.get<string>(RESPONSE_MESSAGE_KEY, context.getHandler()) || 'SUCCESS',
-          data: instanceToPlain<T>(data),
+          message,
+          data: dataJson,
         } as IResponseDto<T>;
       }),
       catchError(err => throwError(() => err)),
