@@ -1,3 +1,4 @@
+import { CacheModule } from '@joktec/cacher';
 import {
   APP_FILTER,
   APP_INTERCEPTOR,
@@ -38,6 +39,7 @@ import { UserModule } from './modules/users';
     BullModule,
     FirebaseModule,
     GptModule,
+    CacheModule,
     // Global Modules
     UserModule,
     SessionModule,

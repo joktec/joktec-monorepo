@@ -1,4 +1,5 @@
-import { BaseController, Controller, HttpResponse, HttpStatus, IControllerProps } from '@joktec/core';
+import { CacheStrategy, CacheTtlSeconds } from '@joktec/cacher';
+import { BaseController, Controller, DEFAULT_CON_ID, HttpResponse, HttpStatus, IControllerProps } from '@joktec/core';
 import { AuthGuard, RoleGuard } from '../../base';
 import { CategoryService } from './category.service';
 import { Category, CategoryDto } from './models';
@@ -8,6 +9,12 @@ const props: IControllerProps<Category> = {
   customDto: { createDto: CategoryDto },
   bearer: AuthGuard,
   guards: RoleGuard,
+  caching: CacheStrategy(Category.name, {
+    enable: false,
+    expiry: CacheTtlSeconds.ONE_MINUTE,
+    allEntries: true,
+    conId: DEFAULT_CON_ID,
+  }),
   decorators: {
     paginate: [HttpResponse(HttpStatus.OK, 'QUERY_CATEGORY_SUCCESS')],
     create: [HttpResponse(HttpStatus.OK, 'CREATE_CATEGORY_SUCCESS')],

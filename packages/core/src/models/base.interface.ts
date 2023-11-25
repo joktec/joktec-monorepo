@@ -3,6 +3,10 @@ import { JwtPayload } from '../guards';
 import { LogService } from '../logger';
 import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto } from '../models';
 
+export type IControllerMethod = 'paginate' | 'detail' | 'create' | 'update' | 'delete';
+
+export type ICacheStrategy = { [key in IControllerMethod]?: MethodDecorator };
+
 export interface IBaseController<T, ID> {
   configService?: ConfigService;
 

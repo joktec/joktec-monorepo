@@ -8,21 +8,8 @@ import {
   IsOptional,
   IsString,
   IsTypes,
-  toInt,
 } from '@joktec/core';
 import { validateSync, ValidationError } from '@joktec/core/dist/validation';
-
-export interface CacheableOption {
-  key?: 'auto' | string;
-  expiry?: number;
-  conId?: string;
-}
-
-export interface CacheEvictOption {
-  key?: 'auto' | string;
-  allEntries?: boolean;
-  conId?: string;
-}
 
 export enum CacheType {
   LOCAL = 'local',
@@ -65,11 +52,11 @@ export class CacheConfig extends ClientConfig {
 
   @IsOptional({ groups: [CacheType.LOCAL, CacheType.REDIS] })
   @IsInt({ groups: [CacheType.LOCAL, CacheType.REDIS] })
-  retryTimeout?: number;
+  retryTimeout?: number = 20000;
 
   @IsOptional({ groups: [CacheType.LOCAL, CacheType.REDIS] })
   @IsInt({ groups: [CacheType.LOCAL, CacheType.REDIS] })
-  connectTimeout?: number;
+  connectTimeout?: number = 20000;
 
   @IsOptional({ groups: [CacheType.LOCAL, CacheType.REDIS] })
   @IsInt({ groups: [CacheType.LOCAL, CacheType.REDIS] })
@@ -77,11 +64,7 @@ export class CacheConfig extends ClientConfig {
 
   constructor(props: CacheConfig) {
     super(props);
-    Object.assign(this, {
-      ...props,
-      retryTimeout: toInt(props?.retryTimeout, 20000),
-      connectTimeout: toInt(props?.connectTimeout, 20000),
-    });
+    Object.assign(this, props);
   }
 
   validate(): string[] {

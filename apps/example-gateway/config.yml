@@ -61,6 +61,12 @@ storage:
   s3ForcePathStyle: true
   linkFormat: http://127.0.0.1:9000/joktec/<key>
 
+cacher:
+  type: redis
+  host: localhost
+  port: 6379
+  password: root
+
 http:
   timeout: 30000
 

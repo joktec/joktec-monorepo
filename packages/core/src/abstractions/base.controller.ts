@@ -43,13 +43,21 @@ import { Jwt, JwtPayload } from '../guards';
 import { GatewayMetric } from '../infras';
 import { QueryInterceptor } from '../interceptors';
 import { LogService } from '../logger';
-import { BaseListResponse, Clazz, Constructor, DeepPartial, Entity, IBaseController, IBaseRequest } from '../models';
+import {
+  BaseListResponse,
+  Clazz,
+  Constructor,
+  DeepPartial,
+  Entity,
+  IBaseController,
+  IBaseRequest,
+  ICacheStrategy,
+  IControllerMethod,
+} from '../models';
 import { ApiSchema } from '../swagger';
 import { includes, someIncludes, toArray, toBool, toPlural, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
 import { BaseService } from './base.service';
-
-export type ControllerMethod = 'paginate' | 'detail' | 'create' | 'update' | 'delete';
 
 export enum ControllerExclude {
   ALL,
@@ -73,13 +81,14 @@ export interface IControllerProps<T extends Entity> {
   tag?: string;
   excludes?: ControllerExclude[];
   metric?: boolean;
-  bearer?: (CanActivate | Function) | { [key in ControllerMethod]?: CanActivate | Function };
-  apiKey?: (CanActivate | Function) | { [key in ControllerMethod]?: CanActivate | Function };
-  guards?: (CanActivate | Function) | { [key in ControllerMethod]?: (CanActivate | Function)[] };
-  pipes?: { [key in ControllerMethod]?: (PipeTransform | Function)[] };
-  hooks?: { [key in ControllerMethod]?: (NestInterceptor | Function)[] };
+  bearer?: (CanActivate | Function) | { [key in IControllerMethod]?: CanActivate | Function };
+  apiKey?: (CanActivate | Function) | { [key in IControllerMethod]?: CanActivate | Function };
+  guards?: (CanActivate | Function) | { [key in IControllerMethod]?: (CanActivate | Function)[] };
+  pipes?: { [key in IControllerMethod]?: (PipeTransform | Function)[] };
+  hooks?: { [key in IControllerMethod]?: (NestInterceptor | Function)[] };
   filter?: ExceptionFilter | Function;
-  decorators?: { [key in ControllerMethod]?: MethodDecorator[] };
+  caching?: ICacheStrategy;
+  decorators?: { [key in IControllerMethod]?: MethodDecorator[] };
 }
 
 export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>): Type<IBaseController<T, ID>> => {
@@ -236,6 +245,14 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
   // Apply Metric
   const metric = toBool(props.metric, true);
   if (metric) UseInterceptors(GatewayMetric)(Controller);
+
+  // Apply caching
+  if (props.caching) {
+    Object.entries(props.caching).map(([method, decorator]) => {
+      const descriptor = Object.getOwnPropertyDescriptor(Controller.prototype, method);
+      decorator(Controller.prototype, method, descriptor);
+    });
+  }
 
   // Apply Decorators
   if (props.decorators) {

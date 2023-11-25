@@ -1,6 +1,6 @@
 import {
   BaseMethodDecorator,
-  CallbackDecoratorOptions,
+  CallbackMethodOptions,
   Counter,
   DEFAULT_CON_ID,
   Injectable,
@@ -50,7 +50,7 @@ export class CacheMetricService {
 
 export const GetCacheMetric = () => {
   return BaseMethodDecorator(
-    async (options: CallbackDecoratorOptions): Promise<any> => {
+    async (options: CallbackMethodOptions): Promise<any> => {
       const { method, args, services } = options;
       const [key, namespace, type = CacheType.LOCAL, conId = DEFAULT_CON_ID] = args;
       const cacheMetricService: CacheMetricService = services.cacheMetricService;
@@ -75,7 +75,7 @@ export const GetCacheMetric = () => {
 
 export const SetCacheMetric = () => {
   return BaseMethodDecorator(
-    async (options: CallbackDecoratorOptions): Promise<any> => {
+    async (options: CallbackMethodOptions): Promise<any> => {
       const { method, args, services } = options;
       const [key, value, namespace, type = CacheType.LOCAL, conId = DEFAULT_CON_ID] = args;
       const cacheMetricService: CacheMetricService = services.cacheMetricService;
@@ -108,7 +108,7 @@ export const SetCacheMetric = () => {
 
 export const DelCacheMetric = () => {
   return BaseMethodDecorator(
-    async (options: CallbackDecoratorOptions): Promise<any> => {
+    async (options: CallbackMethodOptions): Promise<any> => {
       const { method, args, services } = options;
       const [key, namespace, type = CacheType.LOCAL, conId = DEFAULT_CON_ID] = args;
       const cacheMetricService: CacheMetricService = services.cacheMetricService;

@@ -1,10 +1,11 @@
-import { get, isArray, isEmpty, isObject } from 'lodash';
+import { get, has, isEmpty } from 'lodash';
 import hash from 'object-hash';
 
-export const generateCacheKey = (key: 'auto' | string, methodName: string, params: object): string => {
-  if (isEmpty(params)) return methodName;
-  if (key === 'auto') return hash(params, { unorderedArrays: true });
-  const value = get(params, key);
-  if (isObject(value) || isArray(value)) return hash(value, { unorderedArrays: true });
-  return String(value);
+const hashKey = (data: any): string => hash({ data }, { unorderedArrays: true, algorithm: 'md5' });
+
+export const generateCacheKey = (data: { method: string; params?: any; key?: string }): string => {
+  const { key, method, params = {} } = data;
+  if (isEmpty(params)) return method;
+  if (!key || !has(params, key)) return hashKey(params);
+  return hashKey(get(params, key));
 };

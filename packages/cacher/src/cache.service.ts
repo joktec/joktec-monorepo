@@ -31,7 +31,7 @@ export class CacheService extends AbstractClientService<CacheConfig, ICacheStore
 
   @SetCacheMetric()
   async set<T>(key: string, value: T, opts?: { namespace?: string; expiry?: number }, conId: string = DEFAULT_CON_ID) {
-    const { namespace = DEFAULT_CON_ID, expiry = CacheTtlSeconds.ONE_DAY } = opts;
+    const { namespace = DEFAULT_CON_ID, expiry = CacheTtlSeconds.ONE_MINUTE } = opts;
     const k = namespace ? `${namespace}:${key}` : key;
     const cacheModel: CacheModel<T> = { conId, namespace, value };
     const cacheValue: string = JSON.stringify(cacheModel);

@@ -30,7 +30,7 @@ export class RedisStore implements ICacheStore {
   }
 
   async disconnect() {
-    await this.client.disconnect(false);
+    this.client.disconnect(false);
     this.logger.info('Redis cache have been stopped.');
   }
 

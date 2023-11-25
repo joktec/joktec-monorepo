@@ -52,9 +52,10 @@
     "object-hash": "^3.0.0"
   },
   "devDependencies": {
-    "@types/dot-object": "^2.1.4",
+    "@types/dot-object": "^2.1.6",
     "@types/ioredis": "^4.28.10",
-    "@types/node-persist": "^3.1.5"
+    "@types/node-persist": "^3.1.7",
+    "@types/object-hash": "^3.0.6"
   },
   "lint-staged": {
     "*.ts": [
