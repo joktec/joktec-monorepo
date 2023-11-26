@@ -4,7 +4,6 @@ import {
   APP_INTERCEPTOR,
   BullModule,
   CoreModule,
-  GatewayExceptionsFilter,
   JwtModule,
   Module,
   ResponseInterceptor,
@@ -15,6 +14,7 @@ import { HttpModule } from '@joktec/http';
 import { MailerModule } from '@joktec/mailer';
 import { MongoModule } from '@joktec/mongo';
 import { StorageModule } from '@joktec/storage';
+import { CustomExceptionFilter } from './base/custom-exception.filter';
 import { ApartmentModule } from './modules/apartments';
 import { AssetModule } from './modules/assets';
 import { AuthModule } from './modules/auth';
@@ -57,7 +57,7 @@ import { UserModule } from './modules/users';
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
-    { provide: APP_FILTER, useClass: GatewayExceptionsFilter },
+    { provide: APP_FILTER, useClass: CustomExceptionFilter },
   ],
 })
 export class AppModule {}

@@ -1,7 +1,8 @@
+import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { LogService } from '../logger';
-import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto } from '../models';
+import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto, IResponseDto } from '../models';
 
 export type IControllerMethod = 'paginate' | 'detail' | 'create' | 'update' | 'delete';
 
@@ -57,4 +58,20 @@ export interface IBaseRepository<T extends Entity, ID> {
   delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: any }): Promise<T>;
 
   restore(condition: ICondition<T>, opts?: { userId?: any }): Promise<T>;
+}
+
+export interface IExceptionFilter extends ExceptionFilter {
+  debug(exception: Error): void;
+
+  transformStatus(exception: Error): number;
+
+  transformErrorData(exception: Error): any;
+
+  transformErrorCode(exception: Error): number;
+
+  transformMessage(exception: Error): string;
+
+  transformValidate(exception: Error): Array<{ path: string; messages: string[] }>;
+
+  minify(host: ArgumentsHost, errorBody: IResponseDto): IResponseDto;
 }

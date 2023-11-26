@@ -1,115 +1,127 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
+import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { GraphQLException } from '@nestjs/graphql/dist/exceptions';
 import { RpcException } from '@nestjs/microservices';
-import { GraphQLError } from 'graphql/index';
-import { isEmpty, isString } from 'lodash';
+import { get, has, isEmpty, isString } from 'lodash';
 import { PinoLogger } from 'nestjs-pino';
 import { ExpressRequest, ExpressResponse } from '../../base';
-import { ENV } from '../../config';
 import { HttpStatus } from '../../constants';
-import { IResponseDto } from '../../models';
+import { IExceptionFilter, IResponseDto } from '../../models';
 import { IValidateError, ValidateException } from '../../validation';
+import { Exception } from '../exception';
 import { ExceptionMessage } from '../exception-message';
 
 @Catch()
-export class GatewayExceptionsFilter implements ExceptionFilter {
+export class GatewayExceptionsFilter implements IExceptionFilter {
   constructor(
-    private cfg: ConfigService,
-    private logger: PinoLogger,
+    protected cfg: ConfigService,
+    protected logger: PinoLogger,
   ) {
     this.logger.setContext(GatewayExceptionsFilter.name);
   }
 
   catch(exception: any, host: ArgumentsHost) {
+    const res = host.switchToHttp().getResponse<ExpressResponse>();
     const type: string = host.getType();
+
+    // Build error dto
+    this.debug(exception);
+    const status: number = this.transformStatus(exception);
+    const errorBody: IResponseDto = {
+      timestamp: new Date(),
+      success: false,
+      error: this.transformErrorData(exception),
+      errorCode: this.transformErrorCode(exception),
+      message: this.transformMessage(exception),
+      validate: this.transformValidate(exception),
+    };
+
+    const miniError = this.minify(host, errorBody);
+    // Return error for each type
     switch (type) {
       case 'http':
-        return this.handleHttpException(exception, host);
+        return res.status(status).json(this.minify(host, miniError));
       case 'graphql':
-        throw this.handleGqlException(exception);
+        return new GraphQLException(errorBody.message, { extensions: { http: { status }, data: miniError } });
       default:
         this.logger.error(exception, 'Something when wrong');
         break;
     }
   }
 
-  private handleHttpException(exception: any, host: ArgumentsHost) {
-    const req = host.switchToHttp().getRequest<ExpressRequest>();
-    const res = host.switchToHttp().getResponse<ExpressResponse>();
-
-    let status: number = exception?.status || HttpStatus.INTERNAL_SERVER_ERROR;
-    let message: string = exception?.message || ExceptionMessage.INTERNAL_SERVER_ERROR;
-    let errorData: any = exception?.data || exception;
-
-    if (exception instanceof HttpException) {
-      status = exception.getStatus();
-      const errorResponse = exception.getResponse();
-      message = isString(errorResponse) ? errorResponse : exception.message;
-      errorData = errorResponse;
-    }
-
+  public debug(exception: Error) {
+    const status = this.transformStatus(exception);
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(exception, 'Something when wrong');
     }
 
-    const errorBody: IResponseDto = {
-      timestamp: new Date(),
-      success: false,
-      message,
-      error: errorData,
-    };
-
     const useFilter = this.cfg.get<boolean>('log.useFilter', false);
     if (useFilter && status < HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(exception, message);
+      const msg = this.transformMessage(exception);
+      this.logger.error(exception, msg);
     }
+  }
 
+  public transformStatus(exception: Error): number {
+    if (has(exception, 'status')) return get(exception, 'status');
+    if (exception instanceof HttpException) return exception.getStatus();
+    if (exception instanceof RpcException) {
+      const error = exception.getError();
+      return isString(error) ? ExceptionMessage.INTERNAL_SERVER_ERROR : (error as any).status;
+    }
+    return HttpStatus.INTERNAL_SERVER_ERROR;
+  }
+
+  public transformErrorData(exception: Error): any {
+    if (has(exception, 'data')) return get(exception, 'data');
+    if (exception instanceof HttpException) return exception.getResponse();
+    if (exception instanceof RpcException) return exception.getError();
+    return exception;
+  }
+
+  public transformErrorCode(exception: Error): number {
+    if (has(exception, 'status')) return get(exception, 'status');
+    return HttpStatus.INTERNAL_SERVER_ERROR;
+  }
+
+  public transformMessage(exception: Error): string {
+    if (exception instanceof HttpException) {
+      const error = exception.getResponse();
+      return isString(error) ? error : exception.message;
+    }
+    if (exception instanceof RpcException) {
+      const error = exception.getError();
+      return isString(error) ? error : (error as any).message;
+    }
+    if (exception instanceof Exception && exception?.message) return exception.message;
+    return ExceptionMessage.INTERNAL_SERVER_ERROR;
+  }
+
+  public transformValidate(exception: Error): Array<{ path: string; messages: string[] }> {
     if (exception instanceof ValidateException) {
       const validateError: IValidateError = exception.data;
-      errorBody.validate = Object.entries(validateError).map(([path, messages]) => {
+      return Object.entries(validateError).map(([path, messages]) => {
         return { path, messages: messages };
       });
     }
+    return [];
+  }
 
-    const isProd: boolean = this.cfg.get<ENV>('env') === ENV.PROD;
+  public minify(host: ArgumentsHost, errorBody: IResponseDto): IResponseDto {
+    const req = host.switchToHttp().getRequest<ExpressRequest>();
+    const res = host.switchToHttp().getResponse<ExpressResponse>();
+
+    if (errorBody.data) delete errorBody.data;
+    if (!errorBody.validate?.length) delete errorBody.validate;
+
+    const isProd: boolean = this.cfg.get<boolean>('isProd', false);
     if (!isProd) {
       Object.assign(errorBody, { path: req.url, method: req.method });
       if (!isEmpty(res.locals.body)) errorBody.body = res.locals.body;
       if (!isEmpty(res.locals.query)) errorBody.query = res.locals.query;
       if (!isEmpty(res.locals.params)) errorBody.params = res.locals.params;
     }
-    res.status(status).json({ ...errorBody });
-  }
 
-  private handleGqlException(exception: any): GraphQLError {
-    let message: string = exception?.message || ExceptionMessage.INTERNAL_SERVER_ERROR;
-    let status: number = exception?.status || ExceptionMessage.INTERNAL_SERVER_ERROR;
-    let data: any = exception?.data;
-
-    if (exception instanceof RpcException) {
-      const error = exception.getError();
-      message = isString(error) ? error : (error as any).message;
-      status = isString(error) ? ExceptionMessage.INTERNAL_SERVER_ERROR : (error as any).status;
-    }
-
-    if (exception instanceof HttpException) {
-      const response = exception.getResponse();
-      message = typeof response === 'string' ? response : (response as any).message;
-      status = exception.getStatus();
-      data = exception.getResponse();
-    }
-
-    // If the exception status is gte 500, it will be print in log console
-    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(exception, exception.message);
-    }
-
-    // Hidden message in Production
-    const env: ENV = this.cfg.get<ENV>('env');
-    if (env === ENV.PROD) {
-      data = {};
-    }
-
-    return new GraphQLError(message, { extensions: { code: status, message, data } });
+    return errorBody;
   }
 }
