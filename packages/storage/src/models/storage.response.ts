@@ -17,6 +17,7 @@ export interface StorageDownloadResponse {
 export interface StoragePreSignedResponse {
   key: string;
   url: string;
+  contentType?: string;
 }
 
 export interface StorageListObjectsResponse {

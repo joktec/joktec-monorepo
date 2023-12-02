@@ -32,7 +32,8 @@ bull:
     password: p4ssw0rd
 
 misc:
-  cdnUrl: http://127.0.0.1:9000/apartment
+  # cdnUrl: http://127.0.0.1:9000/apartment
+  cdnUrl: https://asset.joktec.com
 
 guard:
   secretKey: $ecr3tK4y

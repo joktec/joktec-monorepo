@@ -18,7 +18,7 @@ export enum StorageMetricStatus {
 export enum StorageMetricType {
   UPLOAD = 'UPLOAD',
   DOWNLOAD = 'DOWNLOAD',
-  PRE_SIGNED = 'PRE_SIGNED',
+  PRESIGNED = 'PRESIGNED',
 }
 
 @Injectable()

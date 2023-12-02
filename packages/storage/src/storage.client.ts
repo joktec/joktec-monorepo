@@ -21,7 +21,7 @@ export interface StorageClient extends Client<StorageConfig, S3Client> {
 
   download(req: StorageDownloadRequest, conId?: string): Promise<StorageDownloadResponse>;
 
-  preSignedUrl(req: StoragePreSignedRequest, conId?: string): Promise<StoragePreSignedResponse>;
+  presigned(req: StoragePreSignedRequest, conId?: string): Promise<StoragePreSignedResponse>;
 
   listObjects(req: StorageListObjectsRequest, conId?: string): Promise<StorageListObjectsResponse[]>;
 }

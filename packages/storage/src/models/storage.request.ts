@@ -29,7 +29,8 @@ export interface StorageDownloadRequest {
 
 export interface StoragePreSignedRequest {
   operation: StorageOperation;
-  key: string;
+  filename: string;
+  prefix?: string;
   bucket?: string;
   expires?: number;
   acl?: StorageACL;

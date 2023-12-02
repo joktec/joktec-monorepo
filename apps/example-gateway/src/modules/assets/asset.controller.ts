@@ -1,12 +1,13 @@
 import {
+  ApiBody,
   ApiConsumes,
   ApiFile,
   ApiFiles,
   ApiOkResponse,
   ApiOperation,
   BaseController,
+  Body,
   Controller,
-  FileFilter,
   FileInterceptor,
   FilesInterceptor,
   IControllerProps,
@@ -18,20 +19,14 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@joktec/core';
-import { head } from 'lodash';
-import { AuthGuard, RoleGuard } from '../../base';
 import { AssetService } from './asset.service';
-import { Asset, AssetResponseDto } from './models';
-
-const MAX_TOTAL_FILE = 10;
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-
-const fileFilter = FileFilter({ fileTypes: ['image/*'], maxSize: MAX_FILE_SIZE });
+import { fileFilter, MAX_TOTAL_FILE } from './asset.utils';
+import { Asset, AssetPresigned, AssetPresignedDto } from './models';
 
 const props: IControllerProps<Asset> = {
   dto: Asset,
-  bearer: AuthGuard,
-  guards: RoleGuard,
+  // bearer: AuthGuard,
+  // guards: RoleGuard,
 };
 
 @Controller('assets')
@@ -47,18 +42,32 @@ export class AssetController extends BaseController<Asset, string>(props) {
   @ApiOkResponse({ description: 'File successfully uploaded', type: Asset })
   @UseInterceptors(FileInterceptor('file', { fileFilter }))
   async create(@UploadedFile() file: MulterFile, @Jwt() payload: JwtPayload): Promise<Asset> {
-    const { success } = await this.assetService.bulkUpload(file, payload);
-    return head(success);
+    return this.assetService.upload(file, payload);
   }
 
   @Post('/multiple')
   @ApiOperation({ summary: 'Upload files' })
   @ApiConsumes('multipart/form-data')
   @ApiFiles('files')
-  @ApiOkResponse({ description: 'Assets successfully uploaded', type: [AssetResponseDto] })
+  @ApiOkResponse({ description: 'Assets successfully uploaded', type: Asset, isArray: true })
   @UseInterceptors(FilesInterceptor('files', MAX_TOTAL_FILE, { fileFilter }))
-  async uploadMultiple(@UploadedFiles() files: MulterFile[], @Jwt() payload: JwtPayload): Promise<AssetResponseDto> {
-    const { success, failed } = await this.assetService.bulkUpload(files, payload);
-    return { success, failed };
+  async bulkCreate(@UploadedFiles() files: MulterFile[], @Jwt() payload: JwtPayload): Promise<Asset[]> {
+    return Promise.all(files.map(file => this.assetService.upload(file, payload)));
+  }
+
+  @Post('/presigned')
+  @ApiOperation({ summary: 'Presigned URL' })
+  @ApiBody({ type: AssetPresignedDto })
+  @ApiOkResponse({ description: 'Successfully', type: AssetPresigned })
+  async presigned(@Body() file: AssetPresignedDto, @Jwt() payload: JwtPayload): Promise<AssetPresigned> {
+    return this.assetService.presigned(file, payload);
+  }
+
+  @Post('/bulkPresigned')
+  @ApiOperation({ summary: 'Presigned URL' })
+  @ApiBody({ type: AssetPresignedDto, isArray: true })
+  @ApiOkResponse({ description: 'Successfully', type: AssetPresigned, isArray: true })
+  async bulkPresigned(@Body() files: AssetPresignedDto[], @Jwt() payload: JwtPayload): Promise<AssetPresigned[]> {
+    return Promise.all(files.map(file => this.assetService.presigned(file, payload)));
   }
 }

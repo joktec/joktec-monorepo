@@ -11,7 +11,7 @@ import {
   S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
+import { AbstractClientService, Clazz, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import mime from 'mime-types';
 import {
   StorageDownloadRequest,
@@ -89,9 +89,10 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
       ACL: req.acl || config.acl,
       Bucket: req.bucket || config.bucket,
       Key: path.posix.join(req.prefix || '', req.filename),
+      ContentType: req.contentType,
     };
 
-    if (!req.contentType || req.contentType.endsWith('*')) {
+    if (!params.ContentType || params.ContentType.endsWith('*')) {
       params.ContentType = mime.lookup(req.filename) || DEFAULT_CONTENT_TYPE;
     }
 
@@ -120,26 +121,25 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
     };
   }
 
-  @StorageMetric(StorageMetricType.PRE_SIGNED)
-  async preSignedUrl(req: StoragePreSignedRequest, conId: string = DEFAULT_CON_ID): Promise<StoragePreSignedResponse> {
+  @StorageMetric(StorageMetricType.PRESIGNED)
+  async presigned(req: StoragePreSignedRequest, conId: string = DEFAULT_CON_ID): Promise<StoragePreSignedResponse> {
     const config = this.getConfig(conId);
     const params = {
       Bucket: req.bucket || config.bucket,
-      Key: req.key,
+      Key: path.posix.join(req.prefix || '', req.filename),
       ACL: req.acl || config.acl,
       ContentType: req.contentType,
     };
 
-    if (!req.contentType || req.contentType.endsWith('*')) {
-      params.ContentType = mime.lookup(req.key) || DEFAULT_CONTENT_TYPE;
+    if (!params.ContentType || params.ContentType.endsWith('*')) {
+      params.ContentType = mime.lookup(req.filename) || DEFAULT_CONTENT_TYPE;
     }
 
     const expires = req.expires || 60 * 5;
     const operation: StorageOperation = req.operation || StorageOperation.GET_OBJECT;
-    const command =
-      operation === StorageOperation.PUT_OBJECT ? new PutObjectCommand(params) : new GetObjectCommand(params);
-    const url: string = await getSignedUrl(this.getClient(conId), command, { expiresIn: expires });
-    return { url, key: req.key };
+    const Command: Clazz = operation === StorageOperation.PUT_OBJECT ? PutObjectCommand : GetObjectCommand;
+    const url: string = await getSignedUrl(this.getClient(conId), new Command(params), { expiresIn: expires });
+    return { url, key: params.Key, contentType: params.ContentType };
   }
 
   async listObjects(

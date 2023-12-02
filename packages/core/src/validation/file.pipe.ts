@@ -1,3 +1,4 @@
+import path from 'path';
 import { FileValidator, ParseFilePipe, ParseFilePipeBuilder } from '@nestjs/common';
 import { Express } from 'express';
 import { ExpressRequest } from '../base';
@@ -29,19 +30,26 @@ export function isAllowedMimeType(mimeType: string, allowedMimeTypes: string[] =
   return false;
 }
 
-export const FileFilter = (options?: { fileTypes?: string[]; maxSize?: number }) => {
+export const FileFilter = (options?: { fileTypes?: '*' | string[]; maxSize?: number }) => {
   return (
     req: ExpressRequest,
     file: Express.Multer.File,
     callback: (error: Error | null, acceptFile: boolean) => void,
   ) => {
-    const { fileTypes, maxSize } = options || {};
+    if (!file.mimetype && !path.parse(file.originalname).ext) {
+      return callback(new BadRequestException(ExceptionMessage.INVALID_FILE_TYPE), false);
+    }
+
+    const { fileTypes = '*', maxSize = 0 } = options || {};
+    if (fileTypes === '*') return callback(null, true);
     if (fileTypes && !isAllowedMimeType(file.mimetype, fileTypes)) {
       return callback(new BadRequestException(ExceptionMessage.INVALID_FILE_TYPE), false);
     }
+
     if (maxSize && file.size > maxSize) {
       return callback(new BadRequestException(ExceptionMessage.INVALID_FILE_SIZE), false);
     }
+
     callback(null, true);
   };
 };

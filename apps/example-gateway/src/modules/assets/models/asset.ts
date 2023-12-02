@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional, IsArray, IsEnum, IsNotEmpty, IsOptional } from '@joktec/core';
 import { MongoSchema, prop, PropType, Schema } from '@joktec/mongo';
+import { isEmpty } from 'lodash';
 import { IsCdnUrl } from '../../../utils';
 import { AssetStatus } from './asset.enum';
 
@@ -28,10 +29,10 @@ export class Asset extends MongoSchema {
   @prop({ required: true, trim: true, immutable: true })
   @IsNotEmpty({ message: 'KEY_REQUIRED' })
   @IsCdnUrl({ message: 'LINK_INVALID' })
-  @ApiProperty({ example: `https://s3.domain.com/assets/my_filename.png` })
+  @ApiProperty({ example: `https://asset.domain.com/assets/my_filename.png` })
   key!: string;
 
-  @prop({ trim: true, immutable: true })
+  @prop({ trim: true, default: '', immutable: value => !isEmpty(value) })
   @ApiProperty({ example: 'f74b82c901415ff5e8c8ec13e31d2c8a' })
   etag!: string;
 
@@ -48,6 +49,16 @@ export class Asset extends MongoSchema {
   @prop({ default: 0 })
   @ApiProperty()
   size!: number;
+
+  @prop({ default: null })
+  @IsOptional()
+  @ApiPropertyOptional()
+  width?: number;
+
+  @prop({ default: null })
+  @IsOptional()
+  @ApiPropertyOptional()
+  height?: number;
 
   @prop({ required: true, enum: AssetStatus })
   @IsNotEmpty({ message: 'ASSET_STATUS_REQUIRED' })
