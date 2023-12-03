@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import { IsCdnUrl } from '../../../utils';
 import { AssetStatus } from './asset.enum';
 
-@Schema({ collection: 'assets', textSearch: 'title,subhead', paranoid: true })
+@Schema<Asset>({ collection: 'assets', textSearch: 'title,subhead', unique: 'etag', paranoid: true })
 export class Asset extends MongoSchema {
   @prop({ required: true })
   @IsNotEmpty({ message: 'FILENAME_REQUIRED' })
@@ -32,7 +32,7 @@ export class Asset extends MongoSchema {
   @ApiProperty({ example: `https://asset.domain.com/assets/my_filename.png` })
   key!: string;
 
-  @prop({ trim: true, default: '', immutable: value => !isEmpty(value) })
+  @prop({ trim: true, default: null, immutable: (value: string) => !isEmpty(value) })
   @ApiProperty({ example: 'f74b82c901415ff5e8c8ec13e31d2c8a' })
   etag!: string;
 

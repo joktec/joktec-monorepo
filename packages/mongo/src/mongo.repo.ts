@@ -14,8 +14,8 @@ import { Inject } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { isArray, isNil, omit, pick } from 'lodash';
-import { AggregateOptions, QueryOptions, UpdateQuery, Aggregate } from 'mongoose';
-import { MongoPipeline, UPDATE_OPTIONS, UPSERT_OPTIONS, MongoHelper } from './helpers';
+import { Aggregate, AggregateOptions, QueryOptions, UpdateQuery } from 'mongoose';
+import { MongoHelper, MongoPipeline, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
 import { IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema, QueryHelper } from './models';
 import { IMongoRepository } from './mongo.client';
 import { MongoCatch } from './mongo.exception';
@@ -34,14 +34,15 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     protected conId: string = DEFAULT_CON_ID,
   ) {}
 
-  onModuleInit() {
+  async onModuleInit() {
     this.logService.setContext(this.constructor.name);
-    this.lazyRegister();
+    await this.lazyRegister();
   }
 
-  private lazyRegister() {
+  private async lazyRegister() {
     if (this.mongoService.isConnected(this.conId)) {
       this._model = this.mongoService.getModel(this.schema, this.conId);
+      await this.mongoService.syncModel(this._model, this.conId);
       return;
     }
     setTimeout(this.lazyRegister.bind(this), 1000);

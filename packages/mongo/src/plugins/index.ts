@@ -1,4 +1,5 @@
-export const beautifulUnique = {
-  mongoosePlugin: require('mongoose-beautiful-unique-validation'),
-  options: { defaultMessage: '{PATH}_MUST_BE_UNIQUE' },
+export const UniquePlugin = {
+  mongoosePlugin: require('mongoose-unique-validator'),
+  options: { message: 'Error, expected {PATH} to be unique.' },
 };
+export * from './paranoid.plugin';

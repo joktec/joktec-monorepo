@@ -1,4 +1,4 @@
-import { IBaseRepository, Client, DeepPartial, ICondition } from '@joktec/core';
+import { Client, DeepPartial, IBaseRepository, ICondition } from '@joktec/core';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ClientSession, ClientSessionOptions, Connection, UpdateQuery } from 'mongoose';
 import { IMongoAggregation, MongoBulkRequest, MongoSchema, QueryHelper } from './models';
@@ -11,6 +11,8 @@ export interface MongoClient extends Client<MongoConfig, Connection> {
     schemaClass: typeof MongoSchema,
     conId?: string,
   ): ReturnModelType<typeof MongoSchema, QueryHelper<T>>;
+
+  syncModel(model: ReturnModelType<any>, conId?: string): Promise<void>;
 
   startTransaction(options?: ClientSessionOptions, conId?: string): Promise<ClientSession>;
 }

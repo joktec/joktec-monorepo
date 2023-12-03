@@ -50,11 +50,12 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mongoose": "^8.0.0",
-    "mongoose-beautiful-unique-validation": "^7.1.1"
+    "mongoose-unique-validator": "^4.0.0"
   },
   "devDependencies": {
     "@types/dot-object": "^2.1.4",
-    "@types/mongoose": "^5.11.97"
+    "@types/mongoose": "^5.11.97",
+    "@types/mongoose-unique-validator": "^1.0.9"
   },
   "lint-staged": {
     "*.ts": [

@@ -1,8 +1,10 @@
-import { IBaseRepository, Client, DeepPartial, ICondition } from '@joktec/core';
-import { Model, Sequelize } from 'sequelize-typescript';
+import { Client, DeepPartial, IBaseRepository, ICondition } from '@joktec/core';
+import { Model, ModelCtor, Sequelize } from 'sequelize-typescript';
 import { MysqlConfig } from './mysql.config';
 
 export interface MysqlClient extends Client<MysqlConfig, Sequelize> {
+  getModel<T extends Model<T>>(model: ModelCtor<T>, conId?: string): ModelCtor<T>;
+
   exportDiagram(conId?: string): Promise<void>;
 }
 

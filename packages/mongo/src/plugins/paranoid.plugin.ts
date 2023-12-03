@@ -1,6 +1,6 @@
 import { Clazz, toArray, toBool } from '@joktec/core';
 import { isEmpty, isString } from 'lodash';
-import { Schema, PopulateOptions, QueryOptions, PipelineStage } from 'mongoose';
+import { PipelineStage, PopulateOptions, QueryOptions, Schema } from 'mongoose';
 import { ObjectId } from '../models';
 
 export interface ParanoidOptions {

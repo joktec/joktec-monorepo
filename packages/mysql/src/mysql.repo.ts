@@ -3,12 +3,12 @@ import {
   DeepPartial,
   DEFAULT_CON_ID,
   ICondition,
+  Inject,
   Injectable,
   LogService,
   OnModuleInit,
   toArray,
   toBool,
-  Inject,
 } from '@joktec/core';
 import { FindOptions, RestoreOptions } from 'sequelize';
 import { DestroyOptions } from 'sequelize/types/model';
@@ -32,7 +32,8 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   async onModuleInit() {
     this.logService.setContext(this.constructor.name);
-    await this.mysqlService.getModelSync(this.model, this.conId);
+    this.mysqlService.getModel(this.model, this.conId);
+    await this.model.sync({ alter: { drop: false } });
   }
 
   @MysqlCatch

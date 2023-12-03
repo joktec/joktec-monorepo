@@ -18,7 +18,7 @@ import { Room } from '../../rooms';
 import { Setting } from '../../settings';
 import { ApartmentStatus, ApartmentType } from './apartment.enum';
 
-@Schema({ collection: 'apartments', textSearch: ['title', 'subhead'], geoSearch: 'location', paranoid: true })
+@Schema({ collection: 'apartments', textSearch: 'title,subhead', geoSearch: 'location', paranoid: true })
 export class Apartment extends MongoSchema {
   @prop({ required: true, trim: true, uppercase: true, immutable: true })
   @IsNotEmpty({ message: 'CODE_REQUIRED' })

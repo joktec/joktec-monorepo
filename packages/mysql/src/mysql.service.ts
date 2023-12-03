@@ -60,17 +60,6 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
     return model;
   }
 
-  public async getModelSync<T extends Model<T>>(
-    model: ModelCtor<T>,
-    conId: string = DEFAULT_CON_ID,
-  ): Promise<ModelCtor<T>> {
-    if (!this.getClient(conId).isDefined(model.name)) {
-      this.getClient(conId).addModels([model]);
-      await model.sync({ alter: { drop: false } });
-    }
-    return model;
-  }
-
   /**
    * See more: https://www.npmjs.com/package/sequelize-erd
    * @param conId

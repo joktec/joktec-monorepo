@@ -98,11 +98,20 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
       existingConnection: this.getClient(conId),
     });
 
-    const config = this.getConfig(conId);
-    if (config.debug) {
+    if (this.getConfig(conId).debug) {
       this.logService.info('`%s` Schema `%s` registered', conId, schemaClass.name);
     }
 
     return model;
+  }
+
+  public async syncModel(model: ReturnModelType<any>, conId: string = DEFAULT_CON_ID) {
+    const diffIndexes = await model.diffIndexes();
+    if (diffIndexes.toCreate.length || diffIndexes.toDrop.length) {
+      await model.syncIndexes({ continueOnError: true });
+      if (this.getConfig(conId).debug) {
+        this.logService.info('`%s` Schema `%s` sync indexes', conId, model.modelName);
+      }
+    }
   }
 }

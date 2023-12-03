@@ -22,7 +22,7 @@ import { IsCdnUrl } from '../../../utils';
 import { Address } from './address';
 import { UserGender, UserRole, UserStatus } from './user.enum';
 
-@Schema({ collection: 'users', textSearch: ['fullName', 'phone', 'email'], paranoid: true })
+@Schema({ collection: 'users', textSearch: 'fullName,phone,email', paranoid: true })
 export class User extends MongoSchema {
   @prop({ required: true })
   @IsNotEmpty({ message: 'FULL_NAME_REQUIRED' })
