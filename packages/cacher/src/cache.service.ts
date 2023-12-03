@@ -29,29 +29,35 @@ export class CacheService extends AbstractClientService<CacheConfig, ICacheStore
     await client.disconnect();
   }
 
+  async keys(key: string, opts?: { namespace?: string }, conId?: string): Promise<string[]> {
+    const { namespace = DEFAULT_CON_ID } = opts;
+    const keyPattern = namespace ? `${namespace}:${key}` : key;
+    return this.getClient(conId).keys(keyPattern);
+  }
+
   @SetCacheMetric()
   async set<T>(key: string, value: T, opts?: { namespace?: string; expiry?: number }, conId: string = DEFAULT_CON_ID) {
     const { namespace = DEFAULT_CON_ID, expiry = CacheTtlSeconds.ONE_MINUTE } = opts;
-    const k = namespace ? `${namespace}:${key}` : key;
+    const keyPattern = namespace ? `${namespace}:${key}` : key;
     const cacheModel: CacheModel<T> = { conId, namespace, value };
     const cacheValue: string = JSON.stringify(cacheModel);
-    await this.getClient(conId).setItem(k, cacheValue, expiry);
+    await this.getClient(conId).setItem(keyPattern, cacheValue, expiry);
   }
 
   @GetCacheMetric()
   async get<T = any>(key: string, opts?: { namespace?: string }, conId: string = DEFAULT_CON_ID): Promise<T> {
     const { namespace = DEFAULT_CON_ID } = opts;
-    const k = namespace ? `${namespace}:${key}` : key;
-    const value: string | null = await this.getClient(conId).getItem(k);
+    const keyPattern = namespace ? `${namespace}:${key}` : key;
+    const value: string | null = await this.getClient(conId).getItem(keyPattern);
     if (isNull(value)) return null;
     const parseValue: CacheModel<T> = JSON.parse(value);
     return parseValue.value;
   }
 
   @DelCacheMetric()
-  async del(key: string, opts?: { namespace?: string }, conId: string = DEFAULT_CON_ID): Promise<boolean> {
+  async del(key: string, opts?: { namespace?: string }, conId: string = DEFAULT_CON_ID): Promise<string[]> {
     const { namespace = DEFAULT_CON_ID } = opts;
-    const k = namespace ? `${namespace}:${key}` : key;
-    return this.getClient(conId).delItem(k);
+    const keyPattern = namespace ? `${namespace}:${key}` : key;
+    return this.getClient(conId).delItem(keyPattern);
   }
 }

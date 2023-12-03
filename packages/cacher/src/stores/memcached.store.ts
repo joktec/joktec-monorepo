@@ -39,8 +39,12 @@ export class MemcachedStore implements ICacheStore {
     this.logger.info('Memcached cache have been stopped.');
   }
 
+  async keys(keyPattern: string): Promise<string[]> {
+    return [];
+  }
+
   async setItem(key: string, value: string, expiry: number): Promise<any> {
-    return await this.client.set(key, value, { lifetime: expiry });
+    return this.client.set(key, value, { lifetime: expiry });
   }
 
   async getItem(key: string): Promise<string> {
@@ -48,8 +52,7 @@ export class MemcachedStore implements ICacheStore {
     return res.value;
   }
 
-  async delItem(key: string): Promise<boolean> {
-    const res = await this.client.delete(key);
-    return res.length > 0;
+  async delItem(key: string): Promise<string[]> {
+    return this.client.delete(key);
   }
 }

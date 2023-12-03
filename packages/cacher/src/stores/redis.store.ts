@@ -36,6 +36,10 @@ export class RedisStore implements ICacheStore {
     this.logger.info('Redis cache have been stopped.');
   }
 
+  async keys(keyPattern: string): Promise<string[]> {
+    return this.client.keys(keyPattern);
+  }
+
   async setItem(key: string, value: string, expiry: number): Promise<any> {
     await this.client.set(key, value, 'EX', expiry);
   }
@@ -44,8 +48,9 @@ export class RedisStore implements ICacheStore {
     return this.client.get(key);
   }
 
-  async delItem(key: string): Promise<boolean> {
-    const res = await this.client.del(key);
-    return res > 0;
+  async delItem(key: string): Promise<string[]> {
+    const keys = await this.keys(key);
+    await Promise.all(keys.map(k => this.client.del(k)));
+    return keys;
   }
 }

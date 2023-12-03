@@ -3,6 +3,7 @@ import { LogService } from '@joktec/core';
 import storage, { LocalStorage } from 'node-persist';
 import { ICacheStore } from '../cache.client';
 import { CacheConfig } from '../cache.config';
+import { wildcardToRegExp } from '../cache.utils';
 
 export class LocalStore implements ICacheStore {
   private client: LocalStorage;
@@ -27,6 +28,12 @@ export class LocalStore implements ICacheStore {
     this.logger.info('Local cache have been stopped.');
   }
 
+  async keys(keyPattern: string): Promise<string[]> {
+    const regex = wildcardToRegExp(keyPattern);
+    const keys = await this.client.keys();
+    return keys.filter(k => regex.test(k) || k === keyPattern);
+  }
+
   async setItem(key: string, value: string, expiry: number): Promise<any> {
     await this.client.set(key, value, { ttl: expiry });
   }
@@ -35,8 +42,9 @@ export class LocalStore implements ICacheStore {
     return this.client.get(key);
   }
 
-  async delItem(key: string): Promise<boolean> {
-    const res = await this.client.del(key);
-    return res.removed;
+  async delItem(key: string): Promise<string[]> {
+    const keys = await this.keys(key);
+    await Promise.all(keys.map(k => this.client.del(k)));
+    return keys;
   }
 }
