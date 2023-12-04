@@ -2,8 +2,8 @@ import { ApiProperty, Field, ICondition, Type } from '@joktec/core';
 import { prop, ReturnModelType } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { QueryWithHelpers, UpdateWriteOpResult } from 'mongoose';
-import { ParanoidQueryOptions } from '../plugins/paranoid.plugin';
-import { QueryHelper } from './mongo.method';
+import { QueryHelper } from '../helpers';
+import { ParanoidQueryOptions } from '../plugins';
 import { ObjectId } from './mongo.request';
 
 export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> {

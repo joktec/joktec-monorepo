@@ -1,7 +1,8 @@
 import { Client, DeepPartial, IBaseRepository, ICondition } from '@joktec/core';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ClientSession, ClientSessionOptions, Connection, UpdateQuery } from 'mongoose';
-import { IMongoAggregation, MongoBulkRequest, MongoSchema, QueryHelper } from './models';
+import { QueryHelper } from './helpers';
+import { IMongoAggregation, MongoBulkRequest, MongoSchema } from './models';
 import { MongoConfig } from './mongo.config';
 
 export interface MongoClient extends Client<MongoConfig, Connection> {

@@ -6,9 +6,7 @@ import {
   hashPassword,
   IsDate,
   IsEmail,
-  isEmail,
   IsEnum,
-  isMobilePhone,
   IsMobilePhone,
   IsNotEmpty,
   IsOptional,
@@ -22,7 +20,7 @@ import { IsCdnUrl } from '../../../utils';
 import { Address } from './address';
 import { UserGender, UserRole, UserStatus } from './user.enum';
 
-@Schema({ collection: 'users', textSearch: 'fullName,phone,email', paranoid: true })
+@Schema({ collection: 'users', textSearch: 'fullName,phone,email', unique: ['email', 'phone'], paranoid: true })
 export class User extends MongoSchema {
   @prop({ required: true })
   @IsNotEmpty({ message: 'FULL_NAME_REQUIRED' })
@@ -30,14 +28,14 @@ export class User extends MongoSchema {
   @Factory(faker => faker.name.fullName())
   fullName!: string;
 
-  @prop({ required: true, validate: (v: string) => isMobilePhone(v, 'vi-VN') })
+  @prop({ required: true })
   @IsNotEmpty({ message: 'PHONE_REQUIRED' })
   @IsMobilePhone('vi-VN', { strictMode: true }, { message: 'PHONE_INVALID' })
   @ApiProperty({ required: true })
   @Factory(faker => faker.phone.number('+849########'))
   phone!: string;
 
-  @prop({ trim: true, lowercase: true, validate: isEmail, default: null })
+  @prop({ trim: true, lowercase: true, default: null })
   @IsOptional()
   @IsEmail({}, { message: 'EMAIL_INVALID' })
   @ApiPropertyOptional()

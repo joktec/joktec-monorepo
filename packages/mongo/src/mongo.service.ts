@@ -1,7 +1,8 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { getModelForClass, ReturnModelType } from '@typegoose/typegoose';
 import mongoose, { ClientSession, ClientSessionOptions, Connection as Mongoose } from 'mongoose';
-import { MongoSchema, QueryHelper } from './models';
+import { QueryHelper } from './helpers';
+import { MongoSchema } from './models';
 import { MongoClient } from './mongo.client';
 import { MongoConfig } from './mongo.config';
 

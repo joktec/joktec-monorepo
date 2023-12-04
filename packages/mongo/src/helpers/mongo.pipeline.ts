@@ -2,8 +2,9 @@ import { ICondition, INear, IPopulate, ISort, toInt } from '@joktec/core';
 import { getModelWithString, ReturnModelType } from '@typegoose/typegoose';
 import { isEmpty } from 'lodash';
 import { PipelineStage } from 'mongoose';
-import { MongoSchema, QueryHelper } from '../models';
+import { MongoSchema } from '../models';
 import { MongoHelper } from './mongo.helper';
+import { QueryHelper } from './mongo.method';
 
 export class MongoPipeline {
   static match(condition: ICondition<any>): PipelineStage.Match['$match'] {

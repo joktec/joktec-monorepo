@@ -3,7 +3,7 @@ import { pre } from '@typegoose/typegoose';
 import { Aggregate, PipelineStage } from 'mongoose';
 import { MongoHelper } from './mongo.helper';
 
-export function preSave<T>() {
+function preSave<T>() {
   return pre<T>('save', function (next) {
     ['_id', '__v', 'createdAt', 'updatedAt', '__t'].map(path => {
       if (this[path]) delete this[path];
@@ -12,7 +12,7 @@ export function preSave<T>() {
   });
 }
 
-export function preBase<T extends Entity>() {
+function preBase<T extends Entity>() {
   return pre<T>(
     [
       'find',
@@ -55,7 +55,7 @@ export function preBase<T extends Entity>() {
   );
 }
 
-export function preAggregate<T>() {
+function preAggregate<T>() {
   return pre<Aggregate<T>>('aggregate', function (next) {
     const pipelines: PipelineStage[] = [];
     while (this.pipeline().length) pipelines.push(this.pipeline().shift());
@@ -69,4 +69,8 @@ export function preAggregate<T>() {
     });
     next();
   });
+}
+
+export function buildMiddleware<T>(): ClassDecorator[] {
+  return [preSave<T>(), preBase<T>(), preAggregate<T>()];
 }

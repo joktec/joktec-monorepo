@@ -1,10 +1,10 @@
 import { DeepPartial, ICondition, INear, toInt } from '@joktec/core';
-import { types } from '@typegoose/typegoose';
+import { queryMethod, types } from '@typegoose/typegoose';
 import { isEmpty, isNil } from 'lodash';
 import { QueryWithHelpers, UpdateWriteOpResult } from 'mongoose';
 import { DELETE_OPTIONS, PARANOID_OPTIONS, RESTORE_OPTIONS } from '../helpers';
-import { ParanoidQueryOptions } from '../plugins/paranoid.plugin';
-import { ObjectId } from './mongo.request';
+import { ObjectId } from '../models';
+import { ParanoidQueryOptions } from '../plugins';
 
 export interface QueryHelper<T> {
   search: types.AsQueryMethod<typeof search<T>>;
@@ -92,4 +92,7 @@ function restore<T>(
   return this.findOneAndUpdate(filter, { $set: bodyUpdate }, { ...RESTORE_OPTIONS, ...options });
 }
 
-export const QueryMethods = [search, center, destroyOne, destroyMany, restore];
+export function buildQueryMethod(): ClassDecorator[] {
+  const QueryMethods = [search, center, destroyOne, destroyMany, restore];
+  return QueryMethods.map(method => queryMethod(method));
+}

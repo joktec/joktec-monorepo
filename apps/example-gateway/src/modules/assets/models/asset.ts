@@ -4,7 +4,7 @@ import { isEmpty } from 'lodash';
 import { IsCdnUrl } from '../../../utils';
 import { AssetStatus } from './asset.enum';
 
-@Schema<Asset>({ collection: 'assets', textSearch: 'title,subhead', unique: 'etag', paranoid: true })
+@Schema<Asset>({ collection: 'assets', textSearch: 'title,subhead', index: 'key', unique: 'etag', paranoid: true })
 export class Asset extends MongoSchema {
   @prop({ required: true })
   @IsNotEmpty({ message: 'FILENAME_REQUIRED' })
