@@ -18,12 +18,12 @@ lerna/
 .npm/
 
 # Logs
-log/
-logs/
+log*/
 *.log
 
 # Unit test / Coverage reports
 coverage/
+.postman/
 
 # Editors
 .vscode/
