@@ -3,3 +3,4 @@ export const UniquePlugin = {
   options: { message: 'Error, expected {PATH} to be unique.' },
 };
 export * from './paranoid.plugin';
+export * from './strict-reference.plugin';

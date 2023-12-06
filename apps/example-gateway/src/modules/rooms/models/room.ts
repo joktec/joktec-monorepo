@@ -11,7 +11,7 @@ import {
   Type,
   ValidateNested,
 } from '@joktec/core';
-import { MongoSchema, prop, PropType, Ref, Schema } from '@joktec/mongo';
+import { MongoSchema, Prop, PropType, Ref, Schema } from '@joktec/mongo';
 import { orderBy } from 'lodash';
 import { IsCdnUrl } from '../../../utils';
 import { Apartment } from '../../apartments';
@@ -21,63 +21,63 @@ import { RoomStatus, RoomType } from './room.enum';
 
 @Schema({ collection: 'rooms', textSearch: 'title,subhead', paranoid: true })
 export class Room extends MongoSchema {
-  @prop({ required: true, trim: true, uppercase: true, immutable: true })
+  @Prop({ required: true, trim: true, uppercase: true, immutable: true })
   @IsNotEmpty({ message: 'CODE_REQUIRED' })
   @ApiProperty({ type: String, required: true, example: 'LF07PPCCCD' })
   code!: string;
 
-  @prop({ required: true })
+  @Prop({ required: true })
   @IsNotEmpty({ message: 'TITLE_REQUIRED' })
   @ApiProperty({ example: 'Passport' })
   title!: string;
 
-  @prop({ default: '' })
+  @Prop({ default: '' })
   @IsOptional()
   @ApiPropertyOptional()
   subhead?: string;
 
-  @prop({ default: '' })
+  @Prop({ default: '' })
   @IsOptional()
   @ApiPropertyOptional()
   description?: string;
 
-  @prop({ required: true, enum: RoomType })
+  @Prop({ required: true, enum: RoomType })
   @IsNotEmpty({ message: 'ROOM_TYPE_REQUIRED' })
   @IsEnum(RoomType, { message: 'ROOM_TYPE_INVALID' })
   @ApiProperty({ enum: RoomType, example: RoomType.PERSONAL })
   type!: RoomType;
 
-  @prop({ required: true })
+  @Prop({ required: true })
   @IsNotEmpty({ message: 'FLOOR_REQUIRED' })
   @IsPositive({ message: 'FLOOR_INVALID' })
   @ApiProperty()
   floor!: number;
 
-  @prop({ required: true })
+  @Prop({ required: true })
   @IsNotEmpty({ message: 'ROOM_NUMBER_REQUIRED' })
   @IsPositive({ message: 'ROOM_NUMBER_INVALID' })
   @ApiProperty()
   roomNumber!: number;
 
-  @prop({ required: true })
+  @Prop({ required: true })
   @IsNotEmpty({ message: 'SLOT_REQUIRED' })
   @IsPositive({ message: 'SLOT_INVALID' })
   @ApiProperty()
   slot!: number;
 
-  @prop({ default: '' })
+  @Prop({ default: '' })
   @IsOptional()
   @IsCdnUrl({ message: 'LINK_INVALID' })
   @ApiPropertyOptional({ example: 'https://example.com/image.png' })
   image?: string;
 
-  @prop({ default: '' })
+  @Prop({ default: '' })
   @IsOptional()
   @IsCdnUrl({ message: 'LINK_INVALID' })
   @ApiPropertyOptional({ example: 'https://example.com/image.png' })
   thumbnail?: string;
 
-  @prop({ type: String, default: [] }, PropType.ARRAY)
+  @Prop({ type: String, default: [] }, PropType.ARRAY)
   @Type(() => String)
   @IsOptional()
   @IsArray()
@@ -85,25 +85,25 @@ export class Room extends MongoSchema {
   @ApiProperty({ type: String, isArray: true })
   gallery?: string[];
 
-  @prop({ default: 0 })
+  @Prop({ default: 0 })
   @IsOptional()
   @IsPositive({ message: 'ORDER_INVALID' })
   @ApiPropertyOptional()
   order?: number;
 
-  @prop({ default: 0 })
+  @Prop({ default: 0 })
   @IsNotEmpty({ message: 'ROOM_PRICE_REQUIRED' })
   @IsPositive({ message: 'ROOM_PRICE_INVALID' })
   @ApiProperty()
   price!: number;
 
-  @prop({ required: true, ref: () => Apartment })
+  @Prop({ required: true, ref: () => Apartment })
   @Type(() => String)
   @IsNotEmpty()
   @ApiProperty({ type: String })
   apartmentId!: Ref<Apartment, string>;
 
-  @prop({ required: true, ref: () => Setting, default: [] }, PropType.ARRAY)
+  @Prop({ required: true, ref: () => Setting, default: [] }, PropType.ARRAY)
   @Type(() => String)
   @IsOptional()
   @IsArray()
@@ -111,26 +111,26 @@ export class Room extends MongoSchema {
   @ApiPropertyOptional({ type: String, isArray: true })
   settingIds!: Ref<Setting, string>[];
 
-  @prop({ type: RoomSchedule, required: true, default: [] }, PropType.ARRAY)
+  @Prop({ type: RoomSchedule, required: true, default: [] }, PropType.ARRAY)
   @Type(() => RoomSchedule)
   @IsArray()
   @ValidateNested({ each: true })
   @ApiPropertyOptional({ type: RoomSchedule, isArray: true })
   schedules!: RoomSchedule[];
 
-  @prop({ required: true, enum: RoomStatus })
+  @Prop({ required: true, enum: RoomStatus })
   @IsNotEmpty({ message: 'ROOM_STATUS_REQUIRED' })
   @IsEnum(RoomStatus, { message: 'ROOM_STATUS_INVALID' })
   @ApiProperty({ enum: RoomStatus, example: RoomStatus.ACTIVATED })
   status!: RoomStatus;
 
   // Virtual
-  @prop({ ref: () => Apartment, foreignField: '_id', localField: 'apartmentId', justOne: true })
+  @Prop({ ref: () => Apartment, foreignField: '_id', localField: 'apartmentId', justOne: true })
   @Type(() => Apartment)
   @ApiPropertyOptional({ type: Apartment })
   apartment?: Ref<Apartment>;
 
-  @prop({ ref: () => Setting, foreignField: '_id', localField: 'settingIds' })
+  @Prop({ ref: () => Setting, foreignField: '_id', localField: 'settingIds' })
   @Type(() => Setting)
   @Transform(({ value }) => (!value ? [] : orderBy<Setting>(value, ['order'], ['asc'])))
   @ApiPropertyOptional({ type: Setting, isArray: true })

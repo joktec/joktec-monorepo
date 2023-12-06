@@ -1,9 +1,25 @@
-import { Entity } from '@joktec/core';
+import { toArray } from '@joktec/core';
 import { pre } from '@typegoose/typegoose';
-import { Aggregate, PipelineStage } from 'mongoose';
+import { Aggregate, PipelineStage, PopulateOptions } from 'mongoose';
+import { get } from 'lodash';
 import { MongoHelper } from './mongo.helper';
 
-function preSave<T>() {
+type IPopulateOptions = string | PopulateOptions;
+
+function combinePopulateMatch(
+  populates: IPopulateOptions | IPopulateOptions[],
+  virtualMatch: object,
+): PopulateOptions[] {
+  return toArray<IPopulateOptions>(populates).map<PopulateOptions>(populate => {
+    if (typeof populate === 'string') {
+      populate = { path: populate, match: {} } as PopulateOptions;
+    }
+    populate.match = Object.assign({}, populate.match, virtualMatch);
+    return populate;
+  });
+}
+
+function preSave<T extends object>() {
   return pre<T>('save', function (next) {
     ['_id', '__v', 'createdAt', 'updatedAt', '__t'].map(path => {
       if (this[path]) delete this[path];
@@ -12,7 +28,7 @@ function preSave<T>() {
   });
 }
 
-function preBase<T extends Entity>() {
+function preBase<T extends object>() {
   return pre<T>(
     [
       'find',
@@ -49,13 +65,24 @@ function preBase<T extends Entity>() {
         this.setUpdate(newUpdate);
       }
 
+      // Intercept populate
+      const populatedPaths = this.getPopulatedPaths();
+      if (populatedPaths.length) {
+        populatedPaths.forEach(path => {
+          const virtual = this.model.schema.virtuals[path];
+          const virtualMatch = Object.assign({}, get(virtual, 'options.match'), get(virtual, 'options.options.match'));
+          const populateOptions = this.mongooseOptions().populate[path];
+          const populates = combinePopulateMatch(populateOptions, virtualMatch);
+          this.populate(populates);
+        });
+      }
       next();
     },
     { document: false, query: true },
   );
 }
 
-function preAggregate<T>() {
+function preAggregate<T extends object>() {
   return pre<Aggregate<T>>('aggregate', function (next) {
     const pipelines: PipelineStage[] = [];
     while (this.pipeline().length) pipelines.push(this.pipeline().shift());
@@ -71,6 +98,6 @@ function preAggregate<T>() {
   });
 }
 
-export function buildMiddleware<T>(): ClassDecorator[] {
+export function buildMiddleware<T extends object>(): ClassDecorator[] {
   return [preSave<T>(), preBase<T>(), preAggregate<T>()];
 }

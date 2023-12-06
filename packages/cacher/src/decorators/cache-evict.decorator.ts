@@ -16,7 +16,7 @@ export const CacheEvict = (namespace: string, cacheEvictOption?: CacheEvictOptio
         await cacheService.del(cacheKey, { namespace }, conId);
         return res;
       } catch (error) {
-        return null;
+        throw error;
       }
     },
     [CacheService],

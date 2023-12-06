@@ -1,51 +1,51 @@
 import { IBrowser, ICPU, IDevice, IEngine, IOS, IsEnum, IsNotEmpty } from '@joktec/core';
-import { MongoSchema, prop, Ref, Schema } from '@joktec/mongo';
+import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
 import { PropType, Severity } from '@typegoose/typegoose';
 import { User } from '../../users/models';
 import { SessionStatus } from './session.enum';
 
 @Schema({ collection: 'sessions', paranoid: true })
 export class Session extends MongoSchema {
-  @prop({ required: true })
+  @Prop({ required: true })
   tokenId!: string;
 
-  @prop({ required: true })
+  @Prop({ required: true })
   expiresAt!: Date;
 
-  @prop({ required: true, default: new Date() })
+  @Prop({ required: true, default: new Date() })
   lastActiveAt!: Date;
 
-  @prop({ default: null })
+  @Prop({ default: null })
   revokedAt?: Date;
 
-  @prop({})
+  @Prop({})
   userAgent?: string;
 
-  @prop({})
+  @Prop({})
   ipAddress?: string;
 
-  @prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
+  @Prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
   os?: IOS;
 
-  @prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
+  @Prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
   browser?: IBrowser;
 
-  @prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
+  @Prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
   device?: IDevice;
 
-  @prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
+  @Prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
   cpu?: ICPU;
 
-  @prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
+  @Prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
   engine?: IEngine;
 
-  @prop({ default: null })
+  @Prop({ default: null })
   registrationId?: string;
 
-  @prop({ ref: () => User, default: null })
+  @Prop({ ref: () => User, default: null })
   userId?: Ref<User, string>;
 
-  @prop({ required: true, enum: SessionStatus })
+  @Prop({ required: true, enum: SessionStatus })
   @IsNotEmpty({ message: 'SESSION_STATUS_REQUIRED' })
   @IsEnum(SessionStatus, { message: 'SESSION_STATUS_INVALID' })
   status!: SessionStatus;

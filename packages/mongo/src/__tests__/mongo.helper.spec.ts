@@ -6,10 +6,16 @@ import { ObjectId } from '../models';
 describe('MongoHelper class', () => {
   describe('flatten function', () => {
     it('should flattening a simple object without nesting', () => {
-      const condition: ICondition<any> = { _id: '507f1f77bcf86cd799439011', name: 'Alice', age: 25 };
+      const condition: ICondition<any> = {
+        _id: '507f1f77bcf86cd799439011',
+        parentId: new ObjectId('656c096ad77a68cf9c495e28'),
+        name: 'Alice',
+        age: 25,
+      };
       const result = MongoHelper.flatten(condition);
       expect(result).toMatchObject({
         _id: ObjectId.create('507f1f77bcf86cd799439011'),
+        parentId: ObjectId.create('656c096ad77a68cf9c495e28'),
         name: 'Alice',
         age: 25,
       });
@@ -73,8 +79,13 @@ describe('MongoHelper class', () => {
       const condition = {
         status: 'activated',
         $text: { $search: 'Tìm đồ' },
+        parentId: new ObjectId('656c096ad77a68cf9c495e28'),
       };
-      const result = MongoHelper.parseFilter(condition);
+      const result = MongoHelper.parseFilter({
+        status: 'activated',
+        $text: { $search: 'Tìm đồ' },
+        parentId: ObjectId.create('656c096ad77a68cf9c495e28'),
+      });
       expect(result).toEqual(condition);
     });
 

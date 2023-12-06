@@ -78,7 +78,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     if (query?.condition) qb.where(query.condition);
     if (query?.select) qb.select(query.select);
     if (query?.sort) qb.sort(query.sort as any);
-    if (query?.limit) qb.limit(query.limit);
+    if (query?.limit) qb.skip(0).limit(query.limit);
     if (query?.limit && query?.page) qb.skip((query.page - 1) * query.limit).limit(query.limit);
     if (query?.populate) qb.populate(MongoHelper.parsePopulate(query.populate));
 

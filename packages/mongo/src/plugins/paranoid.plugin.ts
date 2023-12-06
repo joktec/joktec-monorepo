@@ -1,6 +1,6 @@
 import { Clazz, toArray, toBool } from '@joktec/core';
 import { isEmpty, isString } from 'lodash';
-import { PipelineStage, PopulateOptions, QueryOptions, Schema } from 'mongoose';
+import { PipelineStage, QueryOptions, Schema } from 'mongoose';
 import { ObjectId } from '../models';
 
 export interface ParanoidOptions {
@@ -18,28 +18,6 @@ export interface ParanoidQueryOptions<T = any> extends QueryOptions<T> {
 function injectFilter(filter: Record<string, any>, key: string, paranoid: boolean = true) {
   if (!paranoid) return filter;
   return Object.assign(filter, { [key]: null });
-}
-
-function convertPopulate(populates: string | PopulateOptions | (string | PopulateOptions)[]): PopulateOptions[] {
-  return toArray<string | PopulateOptions>(populates).map(populate => {
-    if (typeof populate === 'string') {
-      populate = { path: populate } as PopulateOptions;
-    }
-    return populate;
-  });
-}
-
-function injectPopulateFilter(
-  populates: string | PopulateOptions | (string | PopulateOptions)[],
-  key: string,
-  paranoid: boolean = true,
-): PopulateOptions[] {
-  return convertPopulate(populates).map(populate => {
-    if (!populate.match) populate.match = {};
-    injectFilter(populate.match, key, paranoid);
-    if (populate.populate) injectPopulateFilter(populate.populate, key, paranoid);
-    return populate;
-  });
 }
 
 function rejectPipeline(pipelines: PipelineStage[]): Exclude<PipelineStage, PipelineStage.Merge | PipelineStage.Out>[] {
@@ -118,16 +96,6 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
       const filter = this.getFilter();
       injectFilter(filter, deletedAtKey, options?.paranoid);
       this.setQuery(filter);
-
-      // Intercept populate
-      const populatedPaths = this.getPopulatedPaths();
-      if (populatedPaths.length) {
-        const populates = populatedPaths.flatMap(path => {
-          const populateOptions = this.mongooseOptions().populate[path] as PopulateOptions;
-          return injectPopulateFilter(populateOptions, deletedAtKey, options?.paranoid);
-        });
-        this.populate(populates);
-      }
 
       next();
     },

@@ -9,7 +9,7 @@ export class CategoryService extends BaseService<Category, string> {
   }
 
   async paginate(query: IBaseRequest<Category>): Promise<IListResponseDto<Category>> {
-    await sleep(5000);
+    // await sleep(5000);
     return super.paginate(query);
   }
 }

@@ -19,6 +19,11 @@ export class MongoHelper {
     }
 
     function recurse(value: any, prefix = '') {
+      if (value instanceof ObjectId) {
+        result[prefix] = value;
+        return;
+      }
+
       if (isString(value) && ObjectId.isValid(value)) {
         result[prefix] = ObjectId.create(value);
         return;
@@ -26,6 +31,7 @@ export class MongoHelper {
 
       if (isArray(value)) {
         result[prefix] = value.map(v => {
+          if (v instanceof ObjectId) return v;
           if (isString(v) && ObjectId.isValid(v)) return ObjectId.create(v);
           return v;
         });
@@ -77,7 +83,7 @@ export class MongoHelper {
   static parseSort(sort: ISort<any>): Record<string, 1 | -1> {
     const flattenSort = MongoHelper.flatten(sort);
     return Object.entries(flattenSort).reduce((acc: Record<string, 1 | -1>, [field, order]) => {
-      acc[field] = order === 'asc' ? 1 : -1;
+      acc[field] = order === 'asc' || order === 1 || order === '1' ? 1 : -1;
       return acc;
     }, {});
   }
@@ -88,6 +94,10 @@ export class MongoHelper {
     for (const key of keys) {
       if (isNil(flatObj[key])) {
         flatObj[key] = null;
+        continue;
+      }
+
+      if (flatObj[key] instanceof ObjectId) {
         continue;
       }
 

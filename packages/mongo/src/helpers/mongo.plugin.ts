@@ -2,7 +2,8 @@ import { toArray } from '@joktec/core';
 import { plugin } from '@typegoose/typegoose';
 import { ISchemaOptions } from '../decorators';
 import { ObjectId } from '../models';
-import { ParanoidOptions, ParanoidPlugin } from '../plugins';
+import { ParanoidOptions, ParanoidPlugin, StrictReferencePlugin } from '../plugins';
+import { get } from 'lodash';
 
 export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
   const plugins = toArray(options.plugins).map(p => plugin(p.mongoosePlugin, p.options));
@@ -16,6 +17,11 @@ export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
     }
     plugins.push(plugin(ParanoidPlugin, paranoidOpts));
   }
+
+  const deletedAt: string = get(options, 'paranoid.deletedAt.name', 'deletedAt');
+  const opts = { paranoidKey: options?.paranoid ? deletedAt : null };
+  plugins.push(plugin(StrictReferencePlugin, opts));
+
   // plugins.push(plugin(UniquePlugin.mongoosePlugin, UniquePlugin.options));
   return plugins;
 }

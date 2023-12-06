@@ -16,7 +16,7 @@ export const CachePut = <T = Entity>(namespace: string, cacheableOptions?: Cache
         await cacheService.set<T>(cacheKey, valueToCache, { namespace, expiry }, conId);
         return valueToCache;
       } catch (error) {
-        return null;
+        throw error;
       }
     },
     [CacheService],

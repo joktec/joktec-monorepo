@@ -1,6 +1,7 @@
 import {
   BaseMethodDecorator,
   CallbackMethodOptions,
+  Exception,
   InternalServerException,
   IValidateError,
   ValidateException,
@@ -19,6 +20,10 @@ export const MongoCatch = BaseMethodDecorator(async (options: CallbackMethodOpti
   try {
     return await method(...args);
   } catch (err) {
+    if (err instanceof Exception) {
+      throw err;
+    }
+
     const formatError: IValidateError = {};
 
     function injectError(path: string, errMsgCode: string) {

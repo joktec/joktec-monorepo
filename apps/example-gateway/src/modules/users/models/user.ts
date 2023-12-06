@@ -13,7 +13,7 @@ import {
   Type,
   ValidateNested,
 } from '@joktec/core';
-import { MongoSchema, prop, Schema } from '@joktec/mongo';
+import { MongoSchema, Prop, Schema } from '@joktec/mongo';
 import moment from 'moment';
 import { Factory } from 'nestjs-seeder';
 import { IsCdnUrl } from '../../../utils';
@@ -22,58 +22,58 @@ import { UserGender, UserRole, UserStatus } from './user.enum';
 
 @Schema({ collection: 'users', textSearch: 'fullName,phone,email', unique: ['email', 'phone'], paranoid: true })
 export class User extends MongoSchema {
-  @prop({ required: true })
+  @Prop({ required: true })
   @IsNotEmpty({ message: 'FULL_NAME_REQUIRED' })
   @ApiProperty({ example: 'John Doe' })
   @Factory(faker => faker.name.fullName())
   fullName!: string;
 
-  @prop({ required: true })
+  @Prop({ required: true })
   @IsNotEmpty({ message: 'PHONE_REQUIRED' })
   @IsMobilePhone('vi-VN', { strictMode: true }, { message: 'PHONE_INVALID' })
   @ApiProperty({ required: true })
   @Factory(faker => faker.phone.number('+849########'))
   phone!: string;
 
-  @prop({ trim: true, lowercase: true, default: null })
+  @Prop({ trim: true, lowercase: true, default: null })
   @IsOptional()
   @IsEmail({}, { message: 'EMAIL_INVALID' })
   @ApiPropertyOptional()
   @Factory(faker => faker.internet.email())
   email?: string;
 
-  @prop({ trim: true, immutable: true })
+  @Prop({ trim: true, immutable: true })
   @IsOptional()
   @ApiPropertyOptional()
   googleId?: string;
 
-  @prop({ trim: true, immutable: true })
+  @Prop({ trim: true, immutable: true })
   @IsOptional()
   @ApiPropertyOptional()
   facebookId?: string;
 
-  @prop({})
+  @Prop({})
   @Exclude({ toPlainOnly: true })
   @IsOptional()
   @ApiHideProperty()
   @Factory(() => hashPassword('simplePass123'))
   hashPassword!: string;
 
-  @prop({ required: true, enum: UserRole, default: UserRole.USER })
+  @Prop({ required: true, enum: UserRole, default: UserRole.USER })
   @IsNotEmpty({ message: 'USER_ROLE_REQUIRED' })
   @IsEnum(UserRole, { message: 'USER_ROLE_INVALID' })
   @ApiProperty({ enum: UserRole })
   @Factory(UserRole.ADMIN)
   role!: UserRole;
 
-  @prop({ addNullToEnum: true, enum: UserGender, default: UserGender.UNKNOWN })
+  @Prop({ addNullToEnum: true, enum: UserGender, default: UserGender.UNKNOWN })
   @IsOptional()
   @IsEnum(UserGender, { message: 'GENDER_INVALID' })
   @ApiPropertyOptional({ enum: UserGender })
   @Factory(faker => faker.helpers.arrayElement(Object.values(UserGender)))
   gender?: UserGender;
 
-  @prop({ default: moment().startOf('year').toDate() })
+  @Prop({ default: moment().startOf('year').toDate() })
   @Type(() => Date)
   @IsOptional()
   @IsDate({ message: 'BIRTHDAY_INVALID' })
@@ -81,28 +81,28 @@ export class User extends MongoSchema {
   @Factory(faker => faker.date.birthdate())
   birthday?: Date;
 
-  @prop({ type: Address, default: new Address() })
+  @Prop({ type: Address, default: new Address() })
   @Type(() => Address)
   @IsOptional()
   @ValidateNested()
   @ApiPropertyOptional({ type: Address })
   address?: Address;
 
-  @prop({ default: '' })
+  @Prop({ default: '' })
   @IsOptional()
   @IsCdnUrl({ message: 'LINK_INVALID' })
   @ApiPropertyOptional()
   @Factory(faker => faker.image.avatar())
   image?: string;
 
-  @prop({ default: '' })
+  @Prop({ default: '' })
   @IsOptional()
   @IsCdnUrl({ message: 'LINK_INVALID' })
   @ApiPropertyOptional()
   @Factory(faker => faker.image.avatar())
   thumbnail?: string;
 
-  @prop({ required: true, enum: UserStatus, default: UserStatus.PENDING })
+  @Prop({ required: true, enum: UserStatus, default: UserStatus.PENDING })
   @IsNotEmpty({ message: 'STATUS_REQUIRED' })
   @IsEnum(UserStatus, { message: 'STATUS_INVALID' })
   @ApiProperty({ enum: UserStatus, example: UserStatus.PENDING })
