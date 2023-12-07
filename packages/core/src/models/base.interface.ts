@@ -71,7 +71,5 @@ export interface IExceptionFilter extends ExceptionFilter {
 
   transformMessage(exception: Error): string;
 
-  transformValidate(exception: Error): Array<{ path: string; messages: string[] }>;
-
   minify(host: ArgumentsHost, errorBody: IResponseDto): IResponseDto;
 }

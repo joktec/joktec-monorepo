@@ -1,11 +1,6 @@
-import {
-  BaseMethodDecorator,
-  CallbackMethodOptions,
-  InternalServerException,
-  IValidateError,
-  ValidateException,
-} from '@joktec/core';
+import { BaseMethodDecorator, CallbackMethodOptions, InternalServerException, ValidatorBuilder } from '@joktec/core';
 import { snakeCase } from 'lodash';
+import { ValidationErrorItem } from 'sequelize';
 
 export class MysqlException extends InternalServerException {
   constructor(msg: string = 'MYSQL_EXCEPTION', error: any) {
@@ -19,14 +14,11 @@ export const MysqlCatch = BaseMethodDecorator(async (options: CallbackMethodOpti
     return await method(...args);
   } catch (err) {
     if (err.errors && Array.isArray(err.errors)) {
-      const formatError: IValidateError = {};
-      err.errors.map(errItem => {
-        if (!formatError.hasOwnProperty(errItem.path)) {
-          formatError[errItem.path] = [];
-        }
-        formatError[errItem.path].push(errItem.message);
+      const validationBuilder = new ValidatorBuilder();
+      err.errors.map((errItem: ValidationErrorItem) => {
+        validationBuilder.add(errItem.path, errItem.message, errItem.value);
       });
-      throw new ValidateException(formatError);
+      throw validationBuilder.build();
     }
 
     if (err.parent || err.original) {

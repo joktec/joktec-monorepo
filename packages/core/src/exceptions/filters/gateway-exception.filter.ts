@@ -7,7 +7,6 @@ import { PinoLogger } from 'nestjs-pino';
 import { ExpressRequest, ExpressResponse } from '../../base';
 import { HttpStatus } from '../../constants';
 import { IExceptionFilter, IResponseDto } from '../../models';
-import { IValidateError, ValidateException } from '../../validation';
 import { Exception } from '../exception';
 import { ExceptionMessage } from '../exception-message';
 
@@ -33,7 +32,6 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
       error: this.transformErrorData(exception),
       errorCode: this.transformErrorCode(exception),
       message: this.transformMessage(exception),
-      validate: this.transformValidate(exception),
     };
 
     const miniError = this.minify(host, errorBody);
@@ -97,23 +95,10 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
     return ExceptionMessage.INTERNAL_SERVER_ERROR;
   }
 
-  public transformValidate(exception: Error): Array<{ path: string; messages: string[] }> {
-    if (exception instanceof ValidateException) {
-      const validateError: IValidateError = exception.data;
-      return Object.entries(validateError).map(([path, messages]) => {
-        return { path, messages: messages };
-      });
-    }
-    return [];
-  }
-
   public minify(host: ArgumentsHost, errorBody: IResponseDto): IResponseDto {
     const req = host.switchToHttp().getRequest<ExpressRequest>();
     const res = host.switchToHttp().getResponse<ExpressResponse>();
-
     if (errorBody.data) delete errorBody.data;
-    if (!errorBody.validate?.length) delete errorBody.validate;
-
     const isProd: boolean = this.cfg.get<boolean>('isProd', false);
     if (!isProd) {
       Object.assign(errorBody, { path: req.url, method: req.method });

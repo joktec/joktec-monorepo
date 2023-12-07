@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { buildError } from '../validator';
+import { buildError } from '../validation.utils';
 
 describe('buildError function', () => {
   it('should correctly build error object for flat errors array', () => {

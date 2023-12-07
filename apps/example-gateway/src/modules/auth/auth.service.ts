@@ -16,8 +16,7 @@ import {
   matchPassword,
   NotFoundException,
   REQUEST,
-  ValidateBuilder,
-  ValidateException,
+  ValidatorBuilder,
 } from '@joktec/core';
 import { isEmpty } from 'lodash';
 import moment from 'moment';
@@ -138,30 +137,31 @@ export class AuthService {
   }
 
   async register(input: RegisterDto): Promise<TokeResponseDto> {
+    const builder = ValidatorBuilder.init();
     const otp = await this.otpService.findByActiveCode(input.activeCode);
     if (!otp || otp?.status !== OTPStatus.VERIFIED) throw new BadRequestException('SESSION_INVALID');
-    if (otp.phone !== input.phone) throw new ValidateException({ phone: ['PHONE_NOT_MATCH'] });
+    if (otp.phone !== input.phone) {
+      builder.add('phone', 'PHONE_NOT_MATCH', input.phone);
+    }
 
     let inputHashPassword: string = null;
     if (!input.googleId && !input.facebookId) {
-      const builder = ValidateBuilder.init();
       if (!input.password) builder.add('password', 'PASSWORD_REQUIRED');
-      if (!isStrongPassword(input.password, PASSWORD_OPTIONS)) builder.add('password', 'PASSWORD_WEEK');
+      if (!isStrongPassword(input.password, PASSWORD_OPTIONS)) builder.add('password', 'PASSWORD_WEEK', input.password);
       if (!input.confirmedPassword) builder.add('confirmedPassword', 'CONFIRMED_PASSWORD_REQUIRED');
-      if (input.password !== input.confirmedPassword) builder.add('confirmedPassword', 'CONFIRMED_PASSWORD_NOT_MATCH');
-
-      const validateError = builder.build();
-      if (!isEmpty(validateError)) throw new ValidateException(validateError);
-
+      if (input.password !== input.confirmedPassword) {
+        builder.add('confirmedPassword', 'CONFIRMED_PASSWORD_NOT_MATCH', input.confirmedPassword);
+      }
       inputHashPassword = hashPassword(input.password);
     }
 
     const email = input.email || otp.email;
     if (email) {
       const existEmail = await this.userService.findByEmail(email);
-      if (existEmail) throw new ValidateException({ email: ['EMAIL_EXISTED'] });
+      if (existEmail) builder.add('email', 'EMAIL_EXISTED', email);
     }
 
+    if (!isEmpty(builder.isError())) throw builder.build();
     const gravatar: Gravatar = await getGravatar(input.email || otp.email);
     const user = await this.userService.create({
       fullName: input.fullName || gravatar?.fullName || otp.phone,
@@ -192,9 +192,8 @@ export class AuthService {
     const user = await this.userService.findByPhone(input.phone);
     if (!user) throw new NotFoundException('USER_NOT_FOUND');
     if (user.status === UserStatus.DISABLED) throw new ForbiddenException('USER_DISABLED');
-    if (!user.hashPassword) throw new ValidateException({ password: ['PASSWORD_NOT_SETUP'] });
-    if (!matchPassword(input.password, user.hashPassword))
-      throw new ValidateException({ password: ['PASSWORD_INVALID'] });
+    if (!user.hashPassword) throw new BadRequestException('PASSWORD_NOT_SETUP');
+    if (!matchPassword(input.password, user.hashPassword)) throw new BadRequestException('PASSWORD_INVALID');
     return this.createTokenAndUpdate({
       sub: user._id,
       jti: generateUUID({ prefix: 'PASSWORD' }),
@@ -227,15 +226,15 @@ export class AuthService {
     if (!user) throw new NotFoundException('USER_NOT_FOUND');
     if (user.status === UserStatus.DISABLED) throw new ForbiddenException('USER_DISABLED');
 
-    const validateBuilder = ValidateBuilder.init();
-    if (otp.phone !== user.phone) validateBuilder.add('phone', 'PHONE_NOT_MATCH');
-    if (!input.password) validateBuilder.add('password', 'PASSWORD_REQUIRED');
-    if (!isStrongPassword(input.password, PASSWORD_OPTIONS)) validateBuilder.add('password', 'PASSWORD_WEEK');
-    if (!input.confirmedPassword) validateBuilder.add('confirmedPassword', 'CONFIRMED_PASSWORD_REQUIRED');
-    if (input.password !== input.confirmedPassword)
-      validateBuilder.add('confirmedPassword', 'CONFIRMED_PASSWORD_NOT_MATCH');
-    const validateError = validateBuilder.build();
-    if (!isEmpty(validateError)) throw new ValidateException(validateError);
+    const builder = ValidatorBuilder.init();
+    if (otp.phone !== user.phone) builder.add('phone', 'PHONE_NOT_MATCH');
+    if (!input.password) builder.add('password', 'PASSWORD_REQUIRED');
+    if (!isStrongPassword(input.password, PASSWORD_OPTIONS)) builder.add('password', 'PASSWORD_WEEK', input.password);
+    if (!input.confirmedPassword) builder.add('confirmedPassword', 'CONFIRMED_PASSWORD_REQUIRED');
+    if (input.password !== input.confirmedPassword) {
+      builder.add('confirmedPassword', 'CONFIRMED_PASSWORD_NOT_MATCH', input.confirmedPassword);
+    }
+    if (!isEmpty(builder.isError())) throw builder.build();
 
     return this.createTokenAndUpdate(
       {

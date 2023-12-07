@@ -1,7 +1,7 @@
 import { BadRequestException, toArray } from '@joktec/core';
+import { getModelWithString } from '@typegoose/typegoose';
 import { difference, get, has, isEmpty, pickBy } from 'lodash';
 import mongoose, { Error, Schema } from 'mongoose';
-import { getModelWithString } from '@typegoose/typegoose';
 
 type IRefPath = { path: string; ref: string };
 

@@ -3,12 +3,11 @@ import {
   buildError,
   IsStrongPasswordOptions,
   IsUrl,
-  IValidateError,
   linkTransform,
   Transform,
   Type,
   validate,
-  ValidateException,
+  ValidationException,
   ValidationOptions,
 } from '@joktec/core';
 import { isArray, isEmpty } from 'lodash';
@@ -50,8 +49,8 @@ export const IsCdnUrl = (options?: ValidationOptions & { host?: string }): Prope
 
 export const validateHook = async (entity: object) => {
   const validationErrors = await validate(entity, { groups: [ValidateGroup.HOOK] });
-  const formatError: IValidateError = buildError(validationErrors);
+  const formatError = buildError(validationErrors);
   if (!isEmpty(formatError)) {
-    throw new ValidateException(formatError);
+    throw new ValidationException(formatError);
   }
 };

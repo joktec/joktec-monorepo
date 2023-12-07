@@ -104,13 +104,13 @@ export class Apartment extends MongoSchema {
   @ApiPropertyOptional({ type: Apartment })
   parent?: Ref<Apartment>;
 
-  @Prop({ ref: () => Apartment, foreignField: 'parentId', localField: '_id' })
+  @Prop({ ref: () => Apartment, foreignField: 'parentId', localField: '_id', strictRef: true })
   @Type(() => Apartment)
   @Transform(({ value }) => (!value ? [] : value.sort((a: Apartment, b: Apartment) => a.order - b.order)))
   @ApiPropertyOptional({ type: Apartment, isArray: true })
   children?: Ref<Apartment>[];
 
-  @Prop({ ref: () => Room, foreignField: 'apartmentId', localField: '_id' })
+  @Prop({ ref: () => Room, foreignField: 'apartmentId', localField: '_id', strictRef: true })
   @Type(() => Room)
   @Transform(({ value }) => (!value ? [] : orderBy<Room>(value, ['floor', 'roomNumber'], ['asc', 'asc'])))
   @ApiPropertyOptional({ type: Room, isArray: true })

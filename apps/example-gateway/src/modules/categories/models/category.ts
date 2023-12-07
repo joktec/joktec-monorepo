@@ -12,9 +12,9 @@ import {
 } from '@joktec/core';
 import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
 import { IsCdnUrl } from '../../../utils';
+import { Apartment } from '../../apartments';
 import { CategoryWhiteLabel } from './category-white-label';
 import { CategoryStatus, CategoryType } from './category.enum';
-import { Apartment } from '../../apartments';
 
 @Schema<Category>({ collection: 'categories', textSearch: 'title,subhead', unique: 'code', paranoid: true })
 export class Category extends MongoSchema {

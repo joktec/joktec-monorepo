@@ -10,7 +10,6 @@ import { CacheService } from '../cache.service';
 import { generateCacheKey } from '../cache.utils';
 import { CacheableProps } from '../interceptors';
 import { CACHEABLE_WATERMARK, CacheableOption, CacheTtlSeconds } from '../models';
-import { throwError } from 'rxjs';
 
 export const Cacheable = <T = Entity>(namespace: string, cacheableOptions?: CacheableOption): MethodDecorator => {
   return BaseMethodDecorator(
@@ -33,18 +32,14 @@ export const Cacheable = <T = Entity>(namespace: string, cacheableOptions?: Cach
         // return;
       }
 
-      try {
-        const cachedValue: T = await cacheService.get<T>(cacheKey, { namespace }, conId);
-        if (cachedValue) {
-          return cachedValue;
-        }
-
-        const valueToCache: T = await method(...args);
-        await cacheService.set<T>(cacheKey, valueToCache, { namespace, expiry }, conId);
-        return valueToCache;
-      } catch (error) {
-        throw error;
+      const cachedValue: T = await cacheService.get<T>(cacheKey, { namespace }, conId);
+      if (cachedValue) {
+        return cachedValue;
       }
+
+      const valueToCache: T = await method(...args);
+      await cacheService.set<T>(cacheKey, valueToCache, { namespace, expiry }, conId);
+      return valueToCache;
     },
     [CacheService, Reflector],
   );

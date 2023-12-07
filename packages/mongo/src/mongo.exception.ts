@@ -3,11 +3,10 @@ import {
   CallbackMethodOptions,
   Exception,
   InternalServerException,
-  IValidateError,
-  ValidateException,
+  ValidatorBuilder,
 } from '@joktec/core';
+import { has, upperCase } from 'lodash';
 import { Error } from 'mongoose';
-import { has, isEmpty, upperCase } from 'lodash';
 
 export class MongoException extends InternalServerException {
   constructor(msg: string = 'MONGO_EXCEPTION', error: any) {
@@ -24,30 +23,24 @@ export const MongoCatch = BaseMethodDecorator(async (options: CallbackMethodOpti
       throw err;
     }
 
-    const formatError: IValidateError = {};
-
-    function injectError(path: string, errMsgCode: string) {
-      if (!formatError[path]) formatError[path] = [];
-      formatError[path].push(errMsgCode);
-    }
-
+    // Handle basic mongo exception
     if (err instanceof Error.ValidationError) {
+      const validationBuilder = new ValidatorBuilder();
       Object.values(err.errors).map(errItem => {
-        const message: string =
-          errItem instanceof Error.CastError ? `${errItem.path}_INVALID`.toUpperCase() : errItem.message;
-        injectError(errItem.path, message);
+        const msg = errItem instanceof Error.CastError ? `${errItem.path}_INVALID`.toUpperCase() : errItem.message;
+        validationBuilder.add(errItem.path, msg, errItem.value);
       });
+      throw validationBuilder.build();
     }
 
     // Handle unique error
     if ((err?.code === 11000 || err?.code === 11001) && has(err, 'keyValue')) {
-      Object.keys(err['keyValue']).map(path => {
-        injectError(path, `${upperCase(path)}_DUPLICATED_VALUE`);
+      const validationBuilder = new ValidatorBuilder();
+      Object.entries(err['keyValue']).map(([path, value]) => {
+        const msg = `${upperCase(path)}_DUPLICATED_VALUE`;
+        validationBuilder.add(path, msg, value);
       });
-    }
-
-    if (!isEmpty(formatError)) {
-      throw new ValidateException(formatError);
+      throw validationBuilder.build();
     }
 
     throw new MongoException(err.message, err);

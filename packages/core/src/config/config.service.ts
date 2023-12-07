@@ -3,7 +3,7 @@ import { ConfigGetOptions, ConfigService as JsConfigService, NoInferType } from 
 import { ValidatorOptions } from 'class-validator';
 import { ExceptionMessage } from '../exceptions';
 import { Constructor } from '../models';
-import { buildError, validateSync, ValidationError } from '../validation';
+import { buildError, IValidationProperty, validateSync, ValidationError } from '../validation';
 import { ConfigException } from './config.exception';
 
 @Injectable()
@@ -33,10 +33,9 @@ export class ConfigService extends JsConfigService {
     return cfgInstance;
   }
 
-  validate(value: object, options?: ValidatorOptions): string[] {
+  validate(value: object, options?: ValidatorOptions): IValidationProperty[] {
     const errors: ValidationError[] = validateSync(value, options);
     if (!errors.length) return [];
-    const formatError = buildError(errors);
-    return Object.values(formatError).flat();
+    return buildError(errors);
   }
 }

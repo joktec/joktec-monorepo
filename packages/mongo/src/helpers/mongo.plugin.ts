@@ -1,9 +1,9 @@
 import { toArray } from '@joktec/core';
 import { plugin } from '@typegoose/typegoose';
+import { get } from 'lodash';
 import { ISchemaOptions } from '../decorators';
 import { ObjectId } from '../models';
 import { ParanoidOptions, ParanoidPlugin, StrictReferencePlugin } from '../plugins';
-import { get } from 'lodash';
 
 export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
   const plugins = toArray(options.plugins).map(p => plugin(p.mongoosePlugin, p.options));

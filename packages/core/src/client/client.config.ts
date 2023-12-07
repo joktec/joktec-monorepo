@@ -7,6 +7,7 @@ import {
   IsObject,
   IsOptional,
   IsString,
+  IValidationProperty,
   validateSync,
   ValidationError,
 } from '../validation';
@@ -43,10 +44,9 @@ export class ClientConfig {
     });
   }
 
-  validate(): string[] {
+  validate(): IValidationProperty[] {
     const errors: ValidationError[] = validateSync(this);
-    if (!errors.length) return null;
-    const formatError = buildError(errors);
-    return Object.values(formatError).flat();
+    if (!errors.length) return [];
+    return buildError(errors);
   }
 }

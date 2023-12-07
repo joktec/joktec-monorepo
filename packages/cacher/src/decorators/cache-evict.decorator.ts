@@ -9,15 +9,12 @@ export const CacheEvict = (namespace: string, cacheEvictOption?: CacheEvictOptio
       const { method, args, services, params } = options;
       const { key, allEntries = false, conId = DEFAULT_CON_ID } = cacheEvictOption || {};
       const cacheService: CacheService = services.cacheService;
-      const cacheKey = allEntries ? '*' : generateCacheKey({ method: method.name, key, params });
 
-      try {
-        const res = await method(...args);
-        await cacheService.del(cacheKey, { namespace }, conId);
-        return res;
-      } catch (error) {
-        throw error;
-      }
+      const cacheKey = allEntries ? '*' : generateCacheKey({ method: method.name, key, params });
+      const res = await method(...args);
+      await cacheService.del(cacheKey, { namespace }, conId);
+
+      return res;
     },
     [CacheService],
   );

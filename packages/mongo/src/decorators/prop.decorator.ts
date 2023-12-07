@@ -1,5 +1,6 @@
 import { applyDecorators } from '@joktec/core';
 import { prop } from '@typegoose/typegoose';
+import { PropType } from '@typegoose/typegoose/lib/internal/constants';
 import {
   ArrayPropOptions,
   BasePropOptions,
@@ -8,7 +9,6 @@ import {
   PropOptionsForString,
   VirtualOptions,
 } from '@typegoose/typegoose/lib/types';
-import { PropType } from '@typegoose/typegoose/lib/internal/constants';
 
 export type IPropOptions = (
   | BasePropOptions

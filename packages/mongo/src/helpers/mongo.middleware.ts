@@ -1,7 +1,7 @@
 import { toArray } from '@joktec/core';
 import { pre } from '@typegoose/typegoose';
-import { Aggregate, PipelineStage, PopulateOptions } from 'mongoose';
 import { get } from 'lodash';
+import { Aggregate, PipelineStage, PopulateOptions } from 'mongoose';
 import { MongoHelper } from './mongo.helper';
 
 type IPopulateOptions = string | PopulateOptions;

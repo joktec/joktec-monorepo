@@ -1,11 +1,11 @@
 import {
+  BadRequestException,
   hashPassword,
   Injectable,
   isStrongPassword,
   JwtPayload,
   matchPassword,
-  ValidateBuilder,
-  ValidateException,
+  ValidatorBuilder,
 } from '@joktec/core';
 import { isEmpty } from 'lodash';
 import { PASSWORD_OPTIONS } from '../../utils';
@@ -29,7 +29,7 @@ export class ProfileService {
     const user = await this.userService.findById(payload.sub);
     if (input.email) {
       const existEmail = await this.userService.findByEmail(input.email, user._id);
-      if (existEmail) throw new ValidateException({ email: ['EMAIL_EXISTED'] });
+      if (existEmail) throw new BadRequestException('EMAIL_EXISTED');
     }
     return this.userService.update(payload.sub, input, payload);
   }
@@ -37,15 +37,14 @@ export class ProfileService {
   async changePassword(input: UserPasswordDto, payload: JwtPayload): Promise<UserProfile> {
     const user = await this.userService.findById(payload.sub);
 
-    const builder = ValidateBuilder.init();
+    const builder = ValidatorBuilder.init();
     if (!matchPassword(input.oldPassword, user.hashPassword)) builder.add('oldPassword', 'OLD_PASSWORD_NOT_MATCH');
     if (input.password === input.oldPassword) builder.add('password', 'DUPLICATE_OLD_PASSWORD');
     if (!isStrongPassword(input.password, PASSWORD_OPTIONS)) builder.add('password', 'PASSWORD_WEEK');
     if (!input.confirmedPassword) builder.add('confirmedPassword', 'CONFIRMED_PASSWORD_REQUIRED');
     if (input.password !== input.confirmedPassword) builder.add('confirmedPassword', 'CONFIRMED_PASSWORD_NOT_MATCH');
 
-    const validateError = builder.build();
-    if (!isEmpty(validateError)) throw new ValidateException(validateError);
+    if (!isEmpty(builder.isError())) throw builder.build();
 
     return this.userService.update(user._id, { hashPassword: hashPassword(input.password) });
   }

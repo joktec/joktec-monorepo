@@ -2,8 +2,8 @@ import { ArgumentMetadata, Injectable, PipeTransform, ValidationPipe, Validation
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { isEmpty } from 'lodash';
-import { ValidateException } from './validate.exception';
-import { buildError } from './validator';
+import { ValidationException } from './validation.exception';
+import { buildError } from './validation.utils';
 
 export const DEFAULT_PIPE_OPTIONS: ValidationPipeOptions = {
   transform: true,
@@ -35,7 +35,7 @@ export class BaseValidationPipe extends ValidationPipe implements PipeTransform 
     const validationErrors = await validate(object, { ...this.customOptions });
     if (validationErrors.length > 0) {
       const formatError = buildError(validationErrors);
-      throw new ValidateException(formatError);
+      throw new ValidationException(formatError);
     }
     return value;
   }

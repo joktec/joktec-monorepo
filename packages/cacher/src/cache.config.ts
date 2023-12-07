@@ -8,8 +8,10 @@ import {
   IsOptional,
   IsString,
   IsTypes,
+  IValidationProperty,
+  validateSync,
+  ValidationError,
 } from '@joktec/core';
-import { validateSync, ValidationError } from '@joktec/core/dist/validation';
 
 export enum CacheType {
   LOCAL = 'local',
@@ -67,10 +69,9 @@ export class CacheConfig extends ClientConfig {
     Object.assign(this, props);
   }
 
-  validate(): string[] {
+  validate(): IValidationProperty[] {
     const errors: ValidationError[] = validateSync(this, { groups: [this.type] });
-    if (!errors.length) return null;
-    const formatError = buildError(errors);
-    return Object.values(formatError).flat();
+    if (!errors.length) return [];
+    return buildError(errors);
   }
 }
