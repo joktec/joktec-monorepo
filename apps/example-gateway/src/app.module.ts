@@ -15,21 +15,10 @@ import { MailerModule } from '@joktec/mailer';
 import { MongoModule } from '@joktec/mongo';
 import { StorageModule } from '@joktec/storage';
 import { CustomExceptionFilter } from './base/custom-exception.filter';
-import { ApartmentModule } from './modules/apartments';
-import { AssetModule } from './modules/assets';
-import { AuthModule } from './modules/auth';
-import { CategoryModule } from './modules/categories';
-import { OrderModule } from './modules/orders';
-import { OtpModule } from './modules/otpLogs';
-import { ProfileModule } from './modules/profile';
-import { RoomModule } from './modules/rooms';
-import { SessionModule } from './modules/sessions';
-import { SettingModule } from './modules/settings';
-import { UserModule } from './modules/users';
+import { MainModule } from './modules/main.module';
 
 @Module({
   imports: [
-    // Lib Modules
     CoreModule,
     MongoModule,
     StorageModule,
@@ -40,20 +29,7 @@ import { UserModule } from './modules/users';
     FirebaseModule,
     GptModule,
     CacheModule,
-    // Global Modules
-    UserModule,
-    SessionModule,
-    // Internal Modules
-    CategoryModule,
-    // ProductModule, // Microservice
-    OtpModule,
-    AuthModule,
-    ProfileModule,
-    ApartmentModule,
-    RoomModule,
-    SettingModule,
-    AssetModule,
-    OrderModule,
+    MainModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
