@@ -1,6 +1,6 @@
 import { BadRequestException, toArray } from '@joktec/core';
 import { getModelWithString } from '@typegoose/typegoose';
-import { difference, get, has, isEmpty, pickBy } from 'lodash';
+import { difference, get, isEmpty, pickBy } from 'lodash';
 import mongoose, { Error, Schema } from 'mongoose';
 
 type IRefPath = { path: string; ref: string };
@@ -70,7 +70,7 @@ export const StrictReferencePlugin = (schema: Schema, opts?: { paranoidKey?: str
 
   schema.pre(['findOneAndUpdate', 'findOneAndReplace', 'updateOne', 'updateMany'], async function (next) {
     const paranoidKey = opts?.paranoidKey;
-    if (paranoidKey && this.getUpdate() && has(this.getUpdate(), ['$set', paranoidKey])) {
+    if (paranoidKey && this.get(paranoidKey)) {
       return next();
     }
 
@@ -108,7 +108,7 @@ export const StrictReferencePlugin = (schema: Schema, opts?: { paranoidKey?: str
     ['findOneAndUpdate', 'updateMany', 'updateOne', 'findOneAndDelete', 'deleteMany', 'deleteOne'],
     async function (next) {
       const paranoidKey = opts?.paranoidKey;
-      if (paranoidKey && this.getUpdate() && !has(this.getUpdate(), ['$set', paranoidKey])) {
+      if (paranoidKey && this.get(paranoidKey)) {
         return next();
       }
 

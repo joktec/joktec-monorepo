@@ -1,4 +1,5 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { has, set } from 'lodash';
 import { Observable } from 'rxjs';
 import { ExpressRequest, ExpressResponse } from '../base';
 import { IBaseRequest } from '../models';
@@ -19,8 +20,12 @@ export class QueryInterceptor implements NestInterceptor {
       page: toInt(req.query?.page, 1),
       limit: toInt(req.query?.limit, 20),
       sort: req.query?.sort || { createdAt: 'desc' },
-      language: req.headers['content-language'] || req.query?.language || '*',
+      language: req.headers['accept-language'] || req.query?.language || '*',
     } as IBaseRequest<any>;
+
+    if (has(req.params, 'id')) {
+      set(req.query, 'condition.id', req.params.id);
+    }
 
     return next.handle();
   }

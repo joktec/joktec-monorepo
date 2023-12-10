@@ -11,7 +11,7 @@ import {
   TcpContext,
   Transport,
 } from '@nestjs/microservices';
-import { startCase } from 'lodash';
+import { set, startCase } from 'lodash';
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { MicroMetric } from '../infras';
@@ -58,7 +58,8 @@ export const ClientController = <T extends Entity, ID>(
       @Payload('req') req: IBaseRequest<T>,
       @Ctx() context?: MicroContext,
     ): Promise<T> {
-      return this.service.findById(id, req);
+      set(req, 'condition.id', id);
+      return this.service.findOne(req);
     }
 
     @MessagePattern({ cmd: `${nameSingular}.create` }, transport)

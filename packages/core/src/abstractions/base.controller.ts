@@ -1,4 +1,5 @@
 import {
+  applyDecorators,
   Body,
   CanActivate,
   Delete,
@@ -12,11 +13,10 @@ import {
   Post,
   Put,
   Query,
+  Type,
   UseGuards,
   UseInterceptors,
   UsePipes,
-  Type,
-  applyDecorators,
 } from '@nestjs/common';
 import { UseFilters } from '@nestjs/common/decorators/core';
 import {
@@ -24,13 +24,14 @@ import {
   ApiBody,
   ApiExcludeController,
   ApiExcludeEndpoint,
+  ApiHeader,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { isFunction, startCase } from 'lodash';
+import { isFunction, set, startCase } from 'lodash';
 import { ConfigService } from '../config';
 import { HttpRequestHeader, HttpStatus } from '../constants';
 import { HttpResponse } from '../decorators';
@@ -136,6 +137,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @Get('/')
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: PaginationDto })
+    @ApiHeader({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
     @UsePipes(...toArray(props.pipes?.paginate))
     @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.paginate))
@@ -149,6 +151,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @Get('/:id')
     @ApiOperation({ summary: `Get ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
+    @ApiHeader({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
     @UsePipes(...toArray(props.pipes?.detail))
@@ -157,7 +160,8 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @applyDecorators(...combineDecorators.detail)
     async detail(@Param('id') id: ID, @Query() query: IBaseRequest<typeof queryDto>): Promise<T> {
       this.checkMethod(ControllerExclude.READ, ControllerExclude.GET);
-      const detail = await this.service.findById(id, query);
+      set(query, 'condition.id', id);
+      const detail = await this.service.findOne(query);
       if (!detail) throw new NotFoundException();
       return detail;
     }
@@ -166,6 +170,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `Create ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiBody({ type: createDto })
+    @ApiHeader({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
     @UsePipes(new BaseValidationPipe(), ...toArray(props.pipes?.create))
     @UseInterceptors(...toArray(props.hooks?.create))
@@ -181,6 +186,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
     @ApiBody({ type: updatedDto })
+    @ApiHeader({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.pipes?.update))
     @UseInterceptors(...toArray(props.hooks?.update))

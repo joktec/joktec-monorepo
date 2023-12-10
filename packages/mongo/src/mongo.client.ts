@@ -1,4 +1,4 @@
-import { Client, DeepPartial, IBaseRepository, ICondition } from '@joktec/core';
+import { Client, DeepPartial, IBaseRepository, ICondition, ILanguage } from '@joktec/core';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ClientSession, ClientSessionOptions, Connection, UpdateQuery } from 'mongoose';
 import { QueryHelper } from './helpers';
@@ -19,11 +19,11 @@ export interface MongoClient extends Client<MongoConfig, Connection> {
 }
 
 export interface IMongoRepository<T extends MongoSchema, ID = string> extends IBaseRepository<T, ID> {
-  update(condition: ICondition<T>, body: DeepPartial<T> & UpdateQuery<T>): Promise<T>;
+  update(condition: ICondition<T>, body: DeepPartial<T> & UpdateQuery<T>, opts?: { language?: ILanguage }): Promise<T>;
 
-  aggregate<U = T>(aggregations: IMongoAggregation[]): Promise<U[]>;
+  aggregate<U = T>(aggregations: IMongoAggregation[], opts?: { language?: ILanguage }): Promise<U[]>;
 
-  upsert(condition: ICondition<T>, body: DeepPartial<T>): Promise<T>;
+  upsert(condition: ICondition<T>, body: DeepPartial<T>, opts?: { language?: ILanguage }): Promise<T>;
 
   bulkUpsert(docs: DeepPartial<T>[], upsert?: MongoBulkRequest): Promise<any>;
 

@@ -40,10 +40,11 @@ export class ResponseInterceptor<T = any> implements NestInterceptor<T, Response
           this.logger.info('Redirecting to: %s', redirectUrl);
         }
 
+        const language = request.headers['accept-language'] || request.query.language || '*';
         const httpStatus = this.reflector.get<number>(SUCCESS_STATUS_KEY, handler);
         const message = this.reflector.get<string>(RESPONSE_MESSAGE_KEY, context.getHandler()) || 'SUCCESS';
         const dataJson = isNil(data) || httpStatus === HttpStatus.NO_CONTENT ? null : instanceToPlain<T>(data);
-        response.status(httpStatus || HttpStatus.OK);
+        response.status(httpStatus || HttpStatus.OK).setHeader('content-language', language);
 
         return {
           timestamp: new Date(),

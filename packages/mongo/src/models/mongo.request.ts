@@ -1,6 +1,6 @@
-import { IBaseRequest } from '@joktec/core';
+import { IBaseRequest, ILanguage } from '@joktec/core';
 import { mongoose } from '@typegoose/typegoose';
-import { PipelineStage } from 'mongoose';
+import { AggregateOptions, PipelineStage } from 'mongoose';
 import { MongoSchema } from './mongo.schema';
 
 export class ObjectId extends mongoose.Types.ObjectId {
@@ -15,9 +15,10 @@ export class ObjectId extends mongoose.Types.ObjectId {
   }
 }
 
-export type MongoBulkRequest = { conditions?: string[]; operator?: string; fields?: string[] };
+export type MongoBulkRequest = { conditions?: string[]; operator?: string; fields?: string[]; language?: ILanguage };
 
 export type IMongoAggregation = PipelineStage;
+export type IMongoAggregateOptions = AggregateOptions & { language?: ILanguage };
 
 export interface IMongoRequest<T extends MongoSchema> extends IBaseRequest<T> {
   aggregations?: IMongoAggregation[];

@@ -3,20 +3,20 @@ import {
   DeepPartial,
   DEFAULT_CON_ID,
   ICondition,
+  ILanguage,
   Injectable,
   LogService,
   OnModuleInit,
   plainToInstance,
-  toArray,
   toBool,
 } from '@joktec/core';
 import { Inject } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { isArray, isNil, omit, pick } from 'lodash';
-import { Aggregate, AggregateOptions, QueryOptions, UpdateQuery } from 'mongoose';
+import { isArray, isNil, pick } from 'lodash';
+import { Aggregate, QueryOptions, UpdateQuery } from 'mongoose';
 import { MongoHelper, MongoPipeline, QueryHelper, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
-import { IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema } from './models';
+import { IMongoAggregateOptions, IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema } from './models';
 import { IMongoRepository } from './mongo.client';
 import { MongoCatch } from './mongo.exception';
 import { MongoService } from './mongo.service';
@@ -55,24 +55,18 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   protected transform(docs: any | any[]): T | T[] {
     if (isNil(docs)) return null;
     if (isArray(docs) && !docs.length) return [];
-
-    const paths = this.model.schema.paths;
-    const omitKey: string[] = Object.values(paths).reduce((body, schema) => {
-      if (schema.options.deletedAt) body.push(schema.options.deletedAt);
-      if (schema.options.deletedBy) body.push(schema.options.deletedBy);
-      return body;
-    }, []);
-
-    const omitDocs = toArray<T>(docs).map(d => omit(d, omitKey));
-    const transformDocs = plainToInstance(this.schema, omitDocs);
+    const transformDocs = plainToInstance(this.schema, docs);
     return (isArray(docs) ? transformDocs : transformDocs[0]) as any;
   }
 
-  protected qb(query?: IMongoRequest<T>, options?: QueryOptions<T>) {
+  protected qb(query?: IMongoRequest<T>, options: QueryOptions<T> = {}) {
     if (!query?.condition) return this.model.find<T>().lean();
 
     const qb = this.model.find<T>();
-    if (options) qb.setOptions(options);
+
+    if (query.language) options.language = query.language;
+    qb.setOptions({ ...options, language: query?.language });
+
     if (query?.near) qb.center(query.near);
     if (query?.keyword) qb.search(query.keyword);
     if (query?.condition) qb.where(query.condition);
@@ -85,10 +79,10 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     return qb.lean();
   }
 
-  protected pipeline(query?: IMongoRequest<T>, options?: AggregateOptions): Aggregate<Array<any>> {
+  protected pipeline(query?: IMongoRequest<T>, options?: IMongoAggregateOptions): Aggregate<Array<any>> {
     const aggregations = this.model.aggregate();
 
-    if (options) aggregations.option(options);
+    if (options) aggregations.option({ ...options, language: query?.language });
     if (query?.near) MongoPipeline.near(query.near).map(near => aggregations.near(near));
     if (query?.keyword) aggregations.match(MongoPipeline.search(query.keyword));
     if (query?.condition) aggregations.match(MongoPipeline.match(query.condition));
@@ -127,21 +121,27 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async aggregate<U = T>(aggregations: IMongoAggregation[]): Promise<U[]> {
-    return this.pipeline({ aggregations }).exec();
+  async aggregate<U = T>(aggregations: IMongoAggregation[], opts?: IMongoAggregateOptions): Promise<U[]> {
+    return this.pipeline({ aggregations }, opts).exec();
   }
 
   @MongoCatch
-  async create(body: DeepPartial<T>): Promise<T> {
+  async create(body: DeepPartial<T>, opts?: { language: ILanguage }): Promise<T> {
     const transformBody: T = this.transform(body) as T;
+    const language = opts?.language;
     const doc = await this.model.create(transformBody);
-    return this.findOne({ condition: { _id: String(doc._id) } as any });
+    return this.findOne({ condition: { _id: String(doc._id) }, language } as any);
   }
 
   @MongoCatch
-  async update(condition: ICondition<T>, body: DeepPartial<T> & UpdateQuery<T>): Promise<T> {
+  async update(
+    condition: ICondition<T>,
+    body: DeepPartial<T> & UpdateQuery<T>,
+    opts?: { language: ILanguage },
+  ): Promise<T> {
     const transformBody: T = this.transform(body) as T;
-    const doc = await this.qb({ condition }, UPDATE_OPTIONS).findOneAndUpdate(transformBody).exec();
+    const language = opts?.language;
+    const doc = await this.qb({ condition, language }, UPDATE_OPTIONS).findOneAndUpdate(transformBody).exec();
     return this.transform(doc) as T;
   }
 
@@ -168,9 +168,10 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async upsert(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
+  async upsert(condition: ICondition<T>, body: DeepPartial<T>, opts?: { language?: ILanguage }): Promise<T> {
     const transformBody: T = this.transform(body) as T;
-    const doc = await this.qb({ condition }, UPSERT_OPTIONS).findOneAndUpdate(transformBody).exec();
+    const language = opts?.language;
+    const doc = await this.qb({ condition, language }, UPSERT_OPTIONS).findOneAndUpdate(transformBody).exec();
     return this.transform(doc) as T;
   }
 

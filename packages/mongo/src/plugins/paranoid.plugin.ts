@@ -67,11 +67,13 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
       type: opts?.deletedAt?.type || Date,
       default: null,
       deletedAt: deletedAtKey,
+      select: false,
     },
     [deletedByKey]: {
       type: opts?.deletedBy?.type || ObjectId,
       default: null,
       deletedBy: deletedByKey,
+      select: false,
     },
   });
 
@@ -80,7 +82,6 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
       'find',
       'findOne',
       'findOneAndUpdate',
-      'count',
       'countDocuments',
       'estimatedDocumentCount',
       'updateMany',

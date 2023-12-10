@@ -16,19 +16,25 @@ import { Apartment } from '../../apartments';
 import { CategoryWhiteLabel } from './category-white-label';
 import { CategoryStatus, CategoryType } from './category.enum';
 
-@Schema<Category>({ collection: 'categories', textSearch: 'title,subhead', unique: 'code', paranoid: true })
+@Schema<Category>({
+  collection: 'categories',
+  textSearch: 'title,subhead',
+  unique: 'code',
+  paranoid: true,
+  i18n: { locales: ['en', 'vi'], fallback: true },
+})
 export class Category extends MongoSchema {
   @Prop({ required: true, trim: true, uppercase: true, immutable: true })
   @IsNotEmpty({ message: 'CODE_REQUIRED' })
   @ApiProperty({ type: String, required: true, example: 'LF07PPCCCD' })
   code!: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, i18n: true })
   @IsNotEmpty({ message: 'TITLE_REQUIRED' })
   @ApiProperty({ example: 'Passport' })
   title!: string;
 
-  @Prop({ default: null })
+  @Prop({ default: null, i18n: true })
   @IsOptional()
   @ApiPropertyOptional()
   subhead?: string;

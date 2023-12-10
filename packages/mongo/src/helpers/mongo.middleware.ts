@@ -1,6 +1,6 @@
 import { toArray } from '@joktec/core';
-import { pre } from '@typegoose/typegoose';
-import { get } from 'lodash';
+import { post, pre } from '@typegoose/typegoose';
+import { get, isArray } from 'lodash';
 import { Aggregate, PipelineStage, PopulateOptions } from 'mongoose';
 import { MongoHelper } from './mongo.helper';
 
@@ -22,7 +22,7 @@ function combinePopulateMatch(
 function preSave<T extends object>() {
   return pre<T>('save', function (next) {
     ['_id', '__v', 'createdAt', 'updatedAt', '__t'].map(path => {
-      if (this[path]) delete this[path];
+      if (this.get(path)) this.set(path, undefined);
     });
     next();
   });
@@ -34,7 +34,6 @@ function preBase<T extends object>() {
       'find',
       'findOne',
       'findOneAndUpdate',
-      'count',
       'countDocuments',
       'estimatedDocumentCount',
       'updateMany',
@@ -98,6 +97,23 @@ function preAggregate<T extends object>() {
   });
 }
 
+function postFind<T extends object>() {
+  function cleanUpDocument(paths: string[], doc: any) {
+    for (const key in doc) {
+      if (!paths.includes(key)) {
+        delete doc[key];
+      }
+    }
+  }
+
+  return post<T>(/^find/, function (res, next) {
+    const paths = Object.keys(this.schema.paths);
+    if (isArray(res)) res.map(doc => cleanUpDocument(paths, doc));
+    else cleanUpDocument(paths, res);
+    next();
+  });
+}
+
 export function buildMiddleware<T extends object>(): ClassDecorator[] {
-  return [preSave<T>(), preBase<T>(), preAggregate<T>()];
+  return [preSave<T>(), preBase<T>(), preAggregate<T>(), postFind<T>()];
 }

@@ -34,7 +34,7 @@ export type ICondition<T extends Entity = {}> = {
     : IDataType | IOpField<T[key]> | ICondition<T[key]>;
 } & { $or?: ICondition<T>[]; $and?: ICondition<T>[] };
 
-export type ILanguage = '*' | 'vi' | 'en';
+export type ILanguage = '*' | string;
 type IDirection = 'asc' | 'desc';
 export type ISort<T extends Entity = {}> = {
   [key in keyof T]?: T[key] extends IDataType | IDataType[]

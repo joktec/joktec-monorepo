@@ -4,7 +4,7 @@ import { Func, ICustomOptions, IndexOptions } from '@typegoose/typegoose/lib/typ
 import { snakeCase, union } from 'lodash';
 import { IndexDirection, SchemaOptions } from 'mongoose';
 import { buildIndex, buildMiddleware, buildPlugin, buildQueryMethod } from '../helpers';
-import { ParanoidOptions } from '../plugins';
+import { LocaleOptions, ParanoidOptions } from '../plugins';
 
 export interface IPlugin<TFunc extends Func = any, TParams = Parameters<TFunc>[1]> {
   mongoosePlugin: TFunc;
@@ -22,6 +22,7 @@ export interface ISchemaOptions {
   customOptions?: ICustomOptions;
   // Plugins
   paranoid?: boolean | ParanoidOptions;
+  i18n?: boolean | LocaleOptions;
   plugins?: IPlugin[];
   // Index
   index?: string | string[];

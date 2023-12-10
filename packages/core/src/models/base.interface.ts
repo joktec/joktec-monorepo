@@ -2,7 +2,7 @@ import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
 import { LogService } from '../logger';
-import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto, IResponseDto } from '../models';
+import { DeepPartial, Entity, IBaseRequest, ICondition, ILanguage, IListResponseDto, IResponseDto } from '../models';
 
 export type IControllerMethod = 'paginate' | 'detail' | 'create' | 'update' | 'delete';
 
@@ -51,9 +51,9 @@ export interface IBaseRepository<T extends Entity, ID> {
 
   findOne(query: IBaseRequest<T>): Promise<T>;
 
-  create(body: DeepPartial<T>): Promise<T>;
+  create(body: DeepPartial<T>, opts?: { language?: ILanguage }): Promise<T>;
 
-  update(condition: ICondition<T>, body: DeepPartial<T>): Promise<T>;
+  update(condition: ICondition<T>, body: DeepPartial<T>, opts?: { language?: ILanguage }): Promise<T>;
 
   delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: any }): Promise<T>;
 
