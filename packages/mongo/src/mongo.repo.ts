@@ -8,6 +8,7 @@ import {
   LogService,
   OnModuleInit,
   plainToInstance,
+  toArray,
   toBool,
 } from '@joktec/core';
 import { Inject } from '@nestjs/common';
@@ -55,7 +56,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   protected transform(docs: any | any[]): T | T[] {
     if (isNil(docs)) return null;
     if (isArray(docs) && !docs.length) return [];
-    const transformDocs = plainToInstance(this.schema, docs);
+    const transformDocs = plainToInstance(this.schema, toArray(docs));
     return (isArray(docs) ? transformDocs : transformDocs[0]) as any;
   }
 
@@ -72,8 +73,8 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     if (query?.condition) qb.where(query.condition);
     if (query?.select) qb.select(query.select);
     if (query?.sort) qb.sort(query.sort as any);
-    if (query?.limit) qb.skip(0).limit(query.limit);
-    if (query?.limit && query?.page) qb.skip((query.page - 1) * query.limit).limit(query.limit);
+    if (query?.offset) qb.skip(query.offset);
+    if (query?.limit) qb.limit(query.limit);
     if (query?.populate) qb.populate(MongoHelper.parsePopulate(query.populate));
 
     return qb.lean();
@@ -88,8 +89,8 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     if (query?.condition) aggregations.match(MongoPipeline.match(query.condition));
     if (query?.select) aggregations.project(MongoPipeline.projection(query.select));
     if (query?.sort) aggregations.sort(MongoPipeline.sort(query.sort));
+    if (query?.offset) aggregations.skip(query.offset);
     if (query?.limit) aggregations.limit(query.limit);
-    if (query?.limit && query.page) aggregations.skip((query.page - 1) * query.limit).limit(query.limit);
     if (query?.populate) MongoPipeline.lookup(query.populate, this.model).map(p => aggregations.append(p));
     if (query?.aggregations?.length) aggregations.append(...query.aggregations);
 
@@ -108,10 +109,8 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async count(query: IMongoRequest<T>): Promise<number> {
-    if (query.near) {
-      return this.qb(query).estimatedDocumentCount();
-    }
-    return this.qb(query).countDocuments();
+    const qb = this.qb(query).limit(null).skip(null);
+    return query.near ? qb.estimatedDocumentCount() : qb.countDocuments();
   }
 
   @MongoCatch

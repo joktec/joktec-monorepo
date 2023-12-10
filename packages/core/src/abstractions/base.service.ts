@@ -1,4 +1,5 @@
 import { Inject, OnModuleInit } from '@nestjs/common';
+import { head } from 'lodash';
 import { ExpressRequest, REQUEST } from '../base';
 import { ConfigService } from '../config';
 import { JwtPayload } from '../guards';
@@ -12,7 +13,7 @@ import {
   ICondition,
   IListResponseDto,
 } from '../models';
-import { cloneInstance } from '../utils';
+import { cloneInstance, parseLang } from '../utils';
 
 export abstract class BaseService<T extends Entity, ID = string, REQ extends IBaseRequest<T> = IBaseRequest<T>>
   implements OnModuleInit, IBaseService<T, ID, REQ>
@@ -28,8 +29,9 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   }
 
   private get language(): string {
+    const lang = parseLang(this.request);
     const query: REQ = this.request.query as REQ;
-    return this.request.headers['accept-language'] || query?.language || '*';
+    return head(lang) || query?.language || '*';
   }
 
   async paginate(query: REQ): Promise<IListResponseDto<T>> {

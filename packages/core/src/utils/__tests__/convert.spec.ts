@@ -5,6 +5,7 @@ import {
   linkTransform,
   nullKeysToObject,
   objectToQueryString,
+  parseLang,
   toArray,
   toBool,
   toInt,
@@ -313,5 +314,27 @@ describe('nullKeysToObject function', () => {
     const expected = { a: 1, b: null, c: { d: null }, e: null };
     const converted = nullKeysToObject(obj);
     expect(converted).toEqual(expected);
+  });
+});
+
+describe('parseLang function', () => {
+  it('should extract single language code from header and return single language array', () => {
+    const languages = parseLang({ headers: { 'accept-language': 'vi' } } as any);
+    expect(languages).toEqual(['vi']);
+  });
+
+  it('should extract language code with region from header and return language code only', () => {
+    const languages = parseLang({ headers: { 'accept-language': 'vi-VN' } } as any);
+    expect(languages).toEqual(['vi']);
+  });
+
+  it('should handle multiple language preferences with quality values and return single language array', () => {
+    const languages = parseLang({ headers: { 'accept-language': 'vi-VN, vi;q=0.9' } } as any);
+    expect(languages).toEqual(['vi']);
+  });
+
+  it('should handle multiple languages with quality values in header and return multiple languages', () => {
+    const languages = parseLang({ headers: { 'accept-language': 'vi-VN, vi;q=0.9, en;q=0.8' } } as any);
+    expect(languages).toEqual(['vi', 'en']);
   });
 });

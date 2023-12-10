@@ -1,5 +1,6 @@
 import { toArray } from '@joktec/core';
 import { post, pre } from '@typegoose/typegoose';
+import dot from 'dot-object';
 import { get, isArray } from 'lodash';
 import { Aggregate, PipelineStage, PopulateOptions } from 'mongoose';
 import { MongoHelper } from './mongo.helper';
@@ -98,8 +99,9 @@ function preAggregate<T extends object>() {
 }
 
 function postFind<T extends object>() {
-  function cleanUpDocument(paths: string[], doc: any) {
-    for (const key in doc) {
+  function cleanUpDocument(doc: any, paths: string[]) {
+    const dotDoc = dot.dot(doc);
+    for (const key in dotDoc) {
       if (!paths.includes(key)) {
         delete doc[key];
       }
@@ -108,8 +110,8 @@ function postFind<T extends object>() {
 
   return post<T>(/^find/, function (res, next) {
     const paths = Object.keys(this.schema.paths);
-    if (isArray(res)) res.map(doc => cleanUpDocument(paths, doc));
-    else cleanUpDocument(paths, res);
+    if (isArray(res)) res.map(doc => cleanUpDocument(doc, paths));
+    else cleanUpDocument(res, paths);
     next();
   });
 }

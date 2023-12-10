@@ -82,7 +82,6 @@ export const LocalePlugin = (schema: Schema, options?: LocaleOptions) => {
       }
       set(item, path, value);
     }
-    delete item.i18n;
   }
 
   schema.post(/^find/, function (res: any, next) {
@@ -93,6 +92,10 @@ export const LocalePlugin = (schema: Schema, options?: LocaleOptions) => {
       if (isArray(res)) res.map(item => makeupItem(item, path, lang));
       else makeupItem(res, path, lang);
     });
+
+    if (isArray(res)) res.map(item => delete item.i18n);
+    else delete res.i18n;
+
     next();
   });
 };

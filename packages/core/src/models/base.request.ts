@@ -85,6 +85,7 @@ export interface IBaseRequest<T extends Entity = {}> {
   language?: ILanguage;
   page?: number;
   limit?: number;
+  offset?: number;
   sort?: ISort<T>;
   near?: INear<T>;
   populate?: IPopulate<T>;

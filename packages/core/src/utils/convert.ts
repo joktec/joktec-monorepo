@@ -1,8 +1,8 @@
-import { isArray, isBoolean, isNaN, isNil, isPlainObject, isString } from 'lodash';
+import { isArray, isBoolean, isEmpty, isNaN, isNil, isPlainObject, isString, uniq } from 'lodash';
 import pluralize from 'pluralize';
 import slug from 'slug';
 import UAParser from 'ua-parser-js';
-import { IUserAgent } from '../base';
+import { ExpressRequest, IUserAgent } from '../base';
 
 /**
  * Recursively flattens the keys of an object and returns an array of strings
@@ -76,7 +76,7 @@ export function toArray<T>(data: T | Array<T>, opts?: { split: string | RegExp }
  * Transforms a link based on a specified host and type.
  * @param {string} link - The link to transform.
  * @param {string} host - The host to use for the transformation.
- * @param {"relative" | "absolute"} type - The type of transformation to perform ('relative' or 'absolute').
+ * @param {'relative' | 'absolute'} type - The type of transformation to perform ('relative' or 'absolute').
  * @returns {string} The transformed link.
  */
 export function linkTransform(link: string, host: string, type: 'relative' | 'absolute' = 'relative'): string {
@@ -176,8 +176,6 @@ export function nullKeysToObject(obj: { [key: string]: any }): object {
 }
 
 export function parseUA(userAgent: string): IUserAgent {
-  // lostnfound/1.0.0 (com.vn.lostnfound.android; Android 13; build 23; Galaxy Z Fold4 - SM-F936B) Chrome/4.9.3 Mobile
-  // lostnfound/1.0.0 (com.vn.lostnfound.ios; iOS 16; build 23; iPhone 11) Alamofire/4.9.3 Mobile
   const extensions = {
     browser: [[/(okhttp|alamofire)\/([\w.]+)/i], [UAParser.BROWSER.NAME, UAParser.BROWSER.VERSION]],
   };
@@ -188,4 +186,29 @@ export function toRoute(path: string): string {
   if (!path) return '/';
   if (path.startsWith('/') || path.startsWith('http')) return path;
   return `/${path}`;
+}
+
+export function parseLang(request: ExpressRequest): string[] {
+  const acceptLanguage: string = request.headers['accept-language'];
+  if (!acceptLanguage) return [];
+
+  const regex = /((([a-zA-Z]+(-[a-zA-Z0-9]+){0,2})|\*)(;q=[0-1](\.[0-9]+)?)?)*/g;
+  const strings = acceptLanguage.match(regex);
+  const languages = strings
+    .filter(m => !isEmpty(m))
+    .map(m => {
+      const bits = m.split(';');
+      const ietf = bits[0].split('-');
+      const hasScript = ietf.length === 3;
+      return {
+        code: ietf[0],
+        script: hasScript ? ietf[1] : null,
+        region: hasScript ? ietf[2] : ietf[1],
+        quality: bits[1] ? parseFloat(bits[1].split('=')[1]) : 1.0,
+      };
+    })
+    .filter(r => r)
+    .sort((a, b) => b.quality - a.quality)
+    .map(lang => lang.code);
+  return uniq(languages);
 }
