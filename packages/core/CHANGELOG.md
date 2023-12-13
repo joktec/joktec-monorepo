@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.101](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.100...@joktec/core@0.0.101) (2023-12-13)
+
+
+### Bug Fixes
+
+* redis dup connect and apply cacheable ([6d489a6](https://github.com/joktec/joktec-monorepo/commit/6d489a6de43b1811e575c4819d401e1a5455688f))
+
+
+
+
+
 ## [0.0.100](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.99...@joktec/core@0.0.100) (2023-11-14)
 
 **Note:** Version bump only for package @joktec/core
