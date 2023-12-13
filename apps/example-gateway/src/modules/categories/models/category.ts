@@ -80,7 +80,7 @@ export class Category extends MongoSchema {
   @ApiProperty()
   commission!: number;
 
-  @Prop({ default: null })
+  @Prop({ default: null, i18n: true })
   @Type(() => CategoryWhiteLabel)
   @IsOptional()
   @ValidateNested()

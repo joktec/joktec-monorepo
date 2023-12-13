@@ -3,7 +3,7 @@ import { modelOptions, Severity } from '@typegoose/typegoose';
 import { Func, ICustomOptions, IndexOptions } from '@typegoose/typegoose/lib/types';
 import { snakeCase, union } from 'lodash';
 import { IndexDirection, SchemaOptions } from 'mongoose';
-import { buildIndex, buildMiddleware, buildPlugin, buildQueryMethod } from '../helpers';
+import { buildIndex, buildPlugin, buildQueryMethod } from '../helpers';
 import { LocaleOptions, ParanoidOptions } from '../plugins';
 
 export interface IPlugin<TFunc extends Func = any, TParams = Parameters<TFunc>[1]> {
@@ -51,19 +51,18 @@ export const Schema = <T extends Entity = {}>(options: ISchemaOptions = {}): Cla
       customOptions: { allowMixed: Severity.ALLOW, ...options?.customOptions },
     };
 
-    const baseDecorators: Array<ClassDecorator> = [
-      SetMetadata<string, ISchemaOptions>(className, opts),
-      modelOptions({
-        schemaOptions: { ...opts.schemaOptions, collection: opts.collection },
-        options: { ...opts.customOptions },
-      }),
-    ];
-    const middlewares = buildMiddleware<T>();
-    const queryMethods = buildQueryMethod();
-    const plugins = buildPlugin(options);
-    const indexes = buildIndex(options);
-
-    const decorators = union(baseDecorators, middlewares, queryMethods, plugins, indexes);
+    const decorators = union(
+      [
+        SetMetadata<string, ISchemaOptions>(className, opts),
+        modelOptions({
+          schemaOptions: { ...opts.schemaOptions, collection: opts.collection },
+          options: { ...opts.customOptions },
+        }),
+      ],
+      buildQueryMethod(),
+      buildPlugin(options),
+      buildIndex(options),
+    );
     applyDecorators(...decorators)(target);
   };
 };

@@ -1,11 +1,17 @@
 import { toBool } from '@joktec/core';
-import { get, has, isArray, isEmpty, isUndefined, pickBy, set } from 'lodash';
-import mongoose, { Schema, SchemaDefinitionProperty } from 'mongoose';
+import { get, has, isEmpty, isUndefined, pickBy, set, unset } from 'lodash';
+import mongoose, { Query, Schema, SchemaDefinitionProperty } from 'mongoose';
 
 export interface LocaleOptions {
   locales: string[];
   default?: string;
   fallback?: boolean;
+}
+
+function allowKind(schemaType: mongoose.SchemaType): boolean {
+  const isString = schemaType instanceof mongoose.Schema.Types.String;
+  const isNotEnum = !schemaType.options.enum;
+  return isString && isNotEnum;
 }
 
 export const LocalePlugin = (schema: Schema, options?: LocaleOptions) => {
@@ -20,9 +26,12 @@ export const LocalePlugin = (schema: Schema, options?: LocaleOptions) => {
 
   const i18nProperty: SchemaDefinitionProperty = {};
   schema.eachPath((path, schemaType) => {
-    if (schemaType.schema) return schemaType.schema.plugin(LocalePlugin, options);
+    if (schemaType.schema && schemaType.options.i18n) {
+      schemaType.schema.plugin(LocalePlugin, options);
+      return;
+    }
     if (!schemaType.options.i18n) return;
-    if (!(schemaType instanceof mongoose.Schema.Types.String) || schemaType.options.enum) {
+    if (!allowKind(schemaType)) {
       throw new mongoose.Error('i18n can be used with String type only');
     }
 
@@ -42,10 +51,13 @@ export const LocalePlugin = (schema: Schema, options?: LocaleOptions) => {
   });
 
   if (isEmpty(i18nProperty)) return;
-  schema.add({ i18n: i18nProperty });
+  schema.add({ i18n: new Schema(i18nProperty, { timestamps: false, _id: false }) });
 
   schema.pre('validate', function (next, opts?: Record<string, any>) {
-    schema.eachPath((path, _) => {
+    schema.eachPath((path, schemaType) => {
+      if (!schemaType.options.i18n) return;
+      if (!this.get(path)) return;
+
       // Insert
       if (this.isNew) {
         options.locales.map(locale => this.set(`i18n.${path}.${locale}`, this.get(path)));
@@ -60,42 +72,68 @@ export const LocalePlugin = (schema: Schema, options?: LocaleOptions) => {
     next();
   });
 
-  schema.pre(['findOneAndUpdate', 'findOneAndReplace', 'updateOne', 'updateMany'], function (next) {
+  const hook = function (doc: any, schema: Schema, lang: string = options.default) {
     schema.eachPath((path, schemaType) => {
       if (!schemaType.options.i18n) return;
-      const lang = getLanguage(this.getOptions().language);
+      if (!has(doc, path) && !has(doc, `i18n.${path}`)) return;
 
-      if (!this.get(path)) return;
-      const originValue = this.get(path);
+      if (schemaType.schema) {
+        if (schemaType instanceof mongoose.Schema.Types.Array) {
+          get(doc, path, []).forEach((subDoc: any) => hook(subDoc, schemaType.schema, lang));
+          return;
+        }
 
-      if (lang !== options.default) this.set(path, undefined);
-      this.set(`i18n.${path}.${lang}`, originValue);
+        hook(get(doc, path), schemaType.schema, lang);
+        return;
+      }
+
+      const originValue = get(doc, path);
+      const i18nPath = `i18n.${path}.${lang}`;
+      if (!has(doc, `i18n`)) {
+        set(doc, i18nPath, originValue);
+        return;
+      }
+
+      if (lang !== options.default) unset(doc, path);
+      else if (has(doc, i18nPath)) set(doc, path, get(doc, i18nPath));
     });
+  };
+
+  schema.pre<Query<any, any>>(['findOneAndUpdate', 'findOneAndReplace', 'updateOne', 'updateMany'], function (next) {
+    const lang = getLanguage(this.getOptions().language);
+    const data = this.getUpdate();
+    hook(data, this.model.schema, lang);
+    this.setUpdate(data);
     next();
   });
 
-  function makeupItem(item: any, path: string, lang: string) {
-    if (has(item, `i18n.${path}`)) {
-      let value = get(item, `i18n.${path}.${lang}`, null);
-      if (!value && options.fallback) {
-        value = get(item, `i18n.${path}.${options.default}`, null);
+  function makeupItem(doc: any, schema: Schema, lang: string) {
+    schema.eachPath((path, schemaType) => {
+      if (!schemaType.options.i18n) return;
+      if (schemaType.schema) {
+        if (schemaType instanceof mongoose.Schema.Types.Array) {
+          get(doc, path, []).forEach((subDoc: any) => makeupItem(subDoc, schemaType.schema, lang));
+          return;
+        }
+        makeupItem(get(doc, path), schemaType.schema, lang);
+        return;
       }
-      set(item, path, value);
-    }
+
+      if (!has(doc, `i18n.${path}`)) return;
+      let value = get(doc, `i18n.${path}.${lang}`, null);
+      if (!value && options.fallback) {
+        value = get(doc, `i18n.${path}.${options.default}`, null);
+      }
+      set(doc, path, value);
+      unset(doc, `i18n.${path}.${lang}`);
+    });
+    delete doc['i18n'];
   }
 
   schema.post(/^find/, function (res: any, next) {
     if (isEmpty(res)) return next();
-    schema.eachPath((path, schemaType) => {
-      if (!schemaType.options.i18n) return;
-      const lang = getLanguage(this.getOptions().language);
-      if (isArray(res)) res.map(item => makeupItem(item, path, lang));
-      else makeupItem(res, path, lang);
-    });
-
-    if (isArray(res)) res.map(item => delete item.i18n);
-    else delete res.i18n;
-
+    const lang = getLanguage(this.getOptions().language);
+    makeupItem(res, this.model.schema, lang);
     next();
   });
 };

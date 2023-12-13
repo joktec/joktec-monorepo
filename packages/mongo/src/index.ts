@@ -7,6 +7,7 @@ export * from './mongo.exception';
 export * from './decorators';
 export * from './models';
 export * from './plugins';
+export { Aggregate, QueryOptions, UpdateQuery } from 'mongoose';
 export { mongoose, Ref } from '@typegoose/typegoose';
 export { VirtualOptions, RefType } from '@typegoose/typegoose/lib/types';
 export { PropType, Severity, DecoratorKeys } from '@typegoose/typegoose/lib/internal/constants';

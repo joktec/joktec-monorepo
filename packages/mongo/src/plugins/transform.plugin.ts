@@ -1,9 +1,8 @@
 import { toArray } from '@joktec/core';
-import { post, pre } from '@typegoose/typegoose';
 import dot from 'dot-object';
-import { get, isArray } from 'lodash';
-import { Aggregate, PipelineStage, PopulateOptions } from 'mongoose';
-import { MongoHelper } from './mongo.helper';
+import { get } from 'lodash';
+import { PipelineStage, PopulateOptions, Schema } from 'mongoose';
+import { MongoHelper } from '../helpers';
 
 type IPopulateOptions = string | PopulateOptions;
 
@@ -20,17 +19,24 @@ function combinePopulateMatch(
   });
 }
 
-function preSave<T extends object>() {
-  return pre<T>('save', function (next) {
+function cleanUpDocument(doc: any, paths: string[]) {
+  const dotDoc = dot.dot(doc);
+  for (const key in dotDoc) {
+    if (!paths.includes(key)) {
+      delete doc[key];
+    }
+  }
+}
+
+export const TransformPlugin = (schema: Schema) => {
+  schema.pre('save', function (next) {
     ['_id', '__v', 'createdAt', 'updatedAt', '__t'].map(path => {
-      if (this.get(path)) this.set(path, undefined);
+      if (this[path]) delete this[path];
     });
     next();
   });
-}
 
-function preBase<T extends object>() {
-  return pre<T>(
+  schema.pre(
     [
       'find',
       'findOne',
@@ -43,6 +49,7 @@ function preBase<T extends object>() {
       'findOneAndDelete',
       'deleteMany',
     ],
+    { document: false, query: true },
     function (next) {
       // Intercept options
       if (this.getOptions()) {
@@ -78,12 +85,9 @@ function preBase<T extends object>() {
       }
       next();
     },
-    { document: false, query: true },
   );
-}
 
-function preAggregate<T extends object>() {
-  return pre<Aggregate<T>>('aggregate', function (next) {
+  schema.pre('aggregate', function (next) {
     const pipelines: PipelineStage[] = [];
     while (this.pipeline().length) pipelines.push(this.pipeline().shift());
     pipelines.map(pipeline => {
@@ -96,26 +100,11 @@ function preAggregate<T extends object>() {
     });
     next();
   });
-}
 
-function postFind<T extends object>() {
-  function cleanUpDocument(doc: any, paths: string[]) {
-    const dotDoc = dot.dot(doc);
-    for (const key in dotDoc) {
-      if (!paths.includes(key)) {
-        delete doc[key];
-      }
-    }
-  }
-
-  return post<T>(/^find/, function (res, next) {
-    const paths = Object.keys(this.schema.paths);
-    if (isArray(res)) res.map(doc => cleanUpDocument(doc, paths));
-    else cleanUpDocument(res, paths);
+  schema.post(/^find/, function (res, next) {
+    // const paths = Object.keys(this.model.schema.paths);
+    // if (isArray(res)) res.map(doc => cleanUpDocument(doc, paths));
+    // else cleanUpDocument(res, paths);
     next();
   });
-}
-
-export function buildMiddleware<T extends object>(): ClassDecorator[] {
-  return [preSave<T>(), preBase<T>(), preAggregate<T>(), postFind<T>()];
-}
+};

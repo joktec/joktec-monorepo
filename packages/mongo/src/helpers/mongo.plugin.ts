@@ -3,7 +3,14 @@ import { plugin } from '@typegoose/typegoose';
 import { first, get } from 'lodash';
 import { ISchemaOptions } from '../decorators';
 import { ObjectId } from '../models';
-import { LocaleOptions, LocalePlugin, ParanoidOptions, ParanoidPlugin, StrictReferencePlugin } from '../plugins';
+import {
+  LocaleOptions,
+  LocalePlugin,
+  ParanoidOptions,
+  ParanoidPlugin,
+  StrictReferencePlugin,
+  TransformPlugin,
+} from '../plugins';
 
 export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
   const plugins = toArray(options.plugins).map(p => plugin(p.mongoosePlugin, p.options));
@@ -32,5 +39,6 @@ export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
     plugins.push(plugin(LocalePlugin, i18nOption));
   }
 
+  plugins.push(plugin(TransformPlugin));
   return plugins;
 }

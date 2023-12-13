@@ -125,7 +125,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async create(body: DeepPartial<T>, opts?: { language: ILanguage }): Promise<T> {
+  async create(body: DeepPartial<T> & UpdateQuery<T>, opts?: { language: ILanguage }): Promise<T> {
     const transformBody: T = this.transform(body) as T;
     const language = opts?.language;
     const doc = await this.model.create(transformBody);
