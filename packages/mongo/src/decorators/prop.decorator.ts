@@ -34,7 +34,7 @@ export type IPropOptions = TypegooseProp & {
   strictRef?: boolean;
   i18n?: boolean;
   kind?: PropType;
-  decorator?: PropertyDecorator[];
+  decorators?: PropertyDecorator[];
   swagger?: ApiPropertyOptions;
 };
 
@@ -43,7 +43,7 @@ export const Prop = (opts?: IPropOptions): PropertyDecorator => {
     const type = opts?.type || Reflect.getMetadata('design:type', target, propertyKey);
     const isArrayType = opts?.kind === PropType.ARRAY;
 
-    const decorators: PropertyDecorator[] = [];
+    const decorators: PropertyDecorator[] = [...toArray(opts?.decorators)];
     const swaggerOptions: ApiPropertyOptions = {
       type,
       required: !!opts?.required,
@@ -65,11 +65,6 @@ export const Prop = (opts?: IPropOptions): PropertyDecorator => {
     if (type === Number) decorators.push(IsNumber({}, { each: isArrayType }));
     if (opts?.enum) decorators.push(IsEnum(CategoryType, { each: isArrayType }));
 
-    applyDecorators(
-      prop(opts, opts?.kind),
-      ...decorators,
-      ...toArray(opts?.decorator),
-      ApiProperty(swaggerOptions),
-    )(target, propertyKey);
+    applyDecorators(prop(opts, opts?.kind), ...decorators, ApiProperty(swaggerOptions))(target, propertyKey);
   };
 };
