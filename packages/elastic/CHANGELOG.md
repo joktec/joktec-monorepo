@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.103](https://github.com/joktec/joktec-monorepo/compare/@joktec/elastic@0.0.102...@joktec/elastic@0.0.103) (2023-12-14)
+
+**Note:** Version bump only for package @joktec/elastic
+
+
+
+
+
 ## [0.0.102](https://github.com/joktec/joktec-monorepo/compare/@joktec/elastic@0.0.101...@joktec/elastic@0.0.102) (2023-12-13)
 
 **Note:** Version bump only for package @joktec/elastic
