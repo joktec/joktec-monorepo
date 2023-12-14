@@ -49,8 +49,7 @@
     "dot-object": "^2.1.4",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "mongoose": "^8.0.3",
-    "mongoose-intl": "^3.3.0"
+    "mongoose": "^8.0.3"
   },
   "devDependencies": {
     "@types/dot-object": "^2.1.6",

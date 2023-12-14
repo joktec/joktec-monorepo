@@ -49,4 +49,9 @@ export class ValidatorBuilder {
     });
     return new ValidationException(err);
   }
+
+  throw() {
+    if (!this.isError()) return;
+    throw this.build();
+  }
 }

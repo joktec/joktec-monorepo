@@ -18,7 +18,7 @@ import { cloneInstance, parseLang } from '../utils';
 export abstract class BaseService<T extends Entity, ID = string, REQ extends IBaseRequest<T> = IBaseRequest<T>>
   implements OnModuleInit, IBaseService<T, ID, REQ>
 {
-  @Inject(REQUEST) private request: ExpressRequest;
+  @Inject(REQUEST) public request: ExpressRequest;
   @Inject() public readonly configService: ConfigService;
   @Inject() public readonly logService: LogService;
 
@@ -28,7 +28,7 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
     this.logService.setContext(this.constructor.name);
   }
 
-  private get language(): string {
+  get language(): string {
     const lang = parseLang(this.request);
     const query: REQ = this.request.query as REQ;
     return head(lang) || query?.language || '*';
