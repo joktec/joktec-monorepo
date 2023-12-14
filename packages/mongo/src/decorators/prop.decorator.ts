@@ -19,7 +19,7 @@ import {
   PropOptionsForString,
   VirtualOptions,
 } from '@typegoose/typegoose/lib/types';
-import { isArray } from 'lodash';
+import { isArray, last } from 'lodash';
 
 export type TypegooseProp =
   | BasePropOptions
@@ -35,7 +35,7 @@ export type IPropOptions = TypegooseProp & {
   i18n?: boolean;
   kind?: PropType;
   decorator?: PropertyDecorator[];
-  apiProperty?: ApiPropertyOptions;
+  swagger?: ApiPropertyOptions;
 };
 
 export const Prop = (opts?: IPropOptions): PropertyDecorator => {
@@ -44,21 +44,18 @@ export const Prop = (opts?: IPropOptions): PropertyDecorator => {
     const isArrayType = opts?.kind === PropType.ARRAY;
 
     const decorators: PropertyDecorator[] = [];
-    const apiPropertyOptions: ApiPropertyOptions = {
+    const swaggerOptions: ApiPropertyOptions = {
       type,
       required: !!opts?.required,
       example: opts?.default || opts?.example,
       enum: opts?.enum,
       isArray: isArrayType,
-      ...opts?.apiProperty,
+      ...opts?.swagger,
     };
 
     if (opts?.required) {
       const validatorOption: any = {};
-      if (isArray(opts.required)) {
-        const [_, message] = opts.required;
-        validatorOption.message = message;
-      }
+      if (isArray(opts.required)) validatorOption.message = last(opts.required);
       decorators.push(IsNotEmpty(validatorOption));
     } else {
       decorators.push(IsOptional());
@@ -66,15 +63,13 @@ export const Prop = (opts?: IPropOptions): PropertyDecorator => {
 
     if (type === String) decorators.push(IsString({ each: isArrayType }));
     if (type === Number) decorators.push(IsNumber({}, { each: isArrayType }));
-    // if (type === Object) {
-    // }
     if (opts?.enum) decorators.push(IsEnum(CategoryType, { each: isArrayType }));
 
     applyDecorators(
       prop(opts, opts?.kind),
       ...decorators,
       ...toArray(opts?.decorator),
-      ApiProperty(apiPropertyOptions),
+      ApiProperty(swaggerOptions),
     )(target, propertyKey);
   };
 };
