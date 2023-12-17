@@ -8,9 +8,10 @@ export interface IValidationProperty {
   value?: any;
 }
 
-export class ValidationException extends BadRequestException<{ validate: IValidationProperty[] }> {
-  constructor(data: IValidationProperty | IValidationProperty[]) {
+export class ValidationException extends BadRequestException<{ validate: IValidationProperty[]; scope?: string }> {
+  constructor(data: IValidationProperty | IValidationProperty[], scope: string = ValidationException.name) {
     super(ExceptionMessage.INVALID_INPUT, {
+      scope,
       validate: toArray(data).map(item => {
         return { ...item, message: toArray(item.message) };
       }),
@@ -19,10 +20,16 @@ export class ValidationException extends BadRequestException<{ validate: IValida
 }
 
 export class ValidatorBuilder {
+  private readonly scope: string;
   private readonly validators: { [path: string]: { message: string[]; value?: any } } = {};
 
-  static init(): ValidatorBuilder {
-    return new ValidatorBuilder();
+  private constructor(scope: string) {
+    this.scope = scope;
+    this.validators = {};
+  }
+
+  static init(scope: string = ValidationException.name): ValidatorBuilder {
+    return new ValidatorBuilder(scope);
   }
 
   add(path: string, message: string | string[], value?: any): ValidatorBuilder {
@@ -47,7 +54,7 @@ export class ValidatorBuilder {
     const err: IValidationProperty[] = Object.entries(this.validators).map(([path, data]) => {
       return { path, ...data };
     });
-    return new ValidationException(err);
+    return new ValidationException(err, this.scope);
   }
 
   throw() {

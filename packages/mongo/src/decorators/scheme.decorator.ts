@@ -1,4 +1,4 @@
-import { applyDecorators, Entity, SetMetadata, toPlural } from '@joktec/core';
+import { applyDecorators, SetMetadata, toPlural } from '@joktec/core';
 import { modelOptions, Severity } from '@typegoose/typegoose';
 import { Func, ICustomOptions, IndexOptions } from '@typegoose/typegoose/lib/types';
 import { snakeCase, union } from 'lodash';
@@ -32,7 +32,7 @@ export interface ISchemaOptions {
   customIndexes?: IIndexOptions[];
 }
 
-export const Schema = <T extends Entity = {}>(options: ISchemaOptions = {}): ClassDecorator => {
+export const Schema = (options: ISchemaOptions = {}): ClassDecorator => {
   return (target: any) => {
     const className = target.name;
 

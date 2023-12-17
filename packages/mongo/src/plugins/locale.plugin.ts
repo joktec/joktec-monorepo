@@ -1,5 +1,5 @@
 import { toBool } from '@joktec/core';
-import { get, has, isEmpty, isUndefined, pickBy, set, unset } from 'lodash';
+import { get, has, isArray, isEmpty, isNil, isUndefined, pickBy, set, unset } from 'lodash';
 import mongoose, { Query, Schema, SchemaDefinitionProperty } from 'mongoose';
 
 export interface LocaleOptions {
@@ -107,27 +107,35 @@ export const LocalePlugin = (schema: Schema, options?: LocaleOptions) => {
     next();
   });
 
+  function flattenI18n(doc: any, paths: string[], lang: string) {
+    paths.map(path => {
+      if (isNil(doc)) return;
+      if (!has(doc, `i18n.${path}`)) return;
+      let i18nValue = get(doc, `i18n.${path}.${lang}`, null);
+      if (!i18nValue && options.fallback) {
+        const originValue = get(doc, path);
+        i18nValue = get(doc, `i18n.${path}.${options.default}`, originValue);
+      }
+      set(doc, path, i18nValue);
+    });
+    if (has(doc, 'i18n')) unset(doc, 'i18n');
+  }
+
   function makeupItem(doc: any, schema: Schema, lang: string) {
+    const paths: string[] = [];
+
     schema.eachPath((path, schemaType) => {
       if (!schemaType.options.i18n) return;
       if (schemaType.schema) {
-        if (schemaType instanceof mongoose.Schema.Types.Array) {
-          get(doc, path, []).forEach((subDoc: any) => makeupItem(subDoc, schemaType.schema, lang));
-          return;
-        }
-        makeupItem(get(doc, path), schemaType.schema, lang);
+        if (isArray(doc)) doc.map(item => makeupItem(item[path], schemaType.schema, lang));
+        else makeupItem(doc[path], schemaType.schema, lang);
         return;
       }
-
-      if (!has(doc, `i18n.${path}`)) return;
-      let value = get(doc, `i18n.${path}.${lang}`, null);
-      if (!value && options.fallback) {
-        value = get(doc, `i18n.${path}.${options.default}`, null);
-      }
-      set(doc, path, value);
-      unset(doc, `i18n.${path}.${lang}`);
+      paths.push(path);
     });
-    delete doc['i18n'];
+
+    if (isArray(doc)) doc.map(item => flattenI18n(item, paths, lang));
+    else flattenI18n(doc, paths, lang);
   }
 
   schema.post(/^find/, function (res: any, next) {

@@ -1,68 +1,44 @@
-import { ApiProperty, ApiPropertyOptional, IsArray, IsEnum, IsNotEmpty, IsOptional } from '@joktec/core';
 import { MongoSchema, Prop, PropType, Schema } from '@joktec/mongo';
 import { isEmpty } from 'lodash';
 import { IsCdnUrl } from '../../../utils';
 import { AssetStatus } from './asset.enum';
 
-@Schema<Asset>({ collection: 'assets', textSearch: 'title,subhead', index: 'key', unique: 'etag', paranoid: true })
+@Schema({ collection: 'assets', textSearch: 'title,subhead', index: 'key', unique: 'etag', paranoid: true })
 export class Asset extends MongoSchema {
-  @Prop({ required: true })
-  @IsNotEmpty({ message: 'FILENAME_REQUIRED' })
-  @ApiProperty({ example: 'my_filename.png' })
+  @Prop({ required: true, example: 'my_filename.png' })
   title!: string;
 
-  @Prop({ default: '' })
-  @IsOptional()
-  @ApiPropertyOptional()
+  @Prop({ default: null })
   subhead?: string;
 
-  @Prop({ default: '' })
-  @IsOptional()
-  @ApiPropertyOptional()
+  @Prop({ default: null })
   description?: string;
 
-  @Prop({ required: true, trim: true, immutable: true })
-  @IsNotEmpty({ message: 'FILENAME_REQUIRED' })
-  @ApiProperty({ example: 'my_filename.png' })
+  @Prop({ required: true, trim: true, immutable: true, example: 'my_filename.png' })
   originalName!: string;
 
-  @Prop({ required: true, trim: true, immutable: true })
-  @IsNotEmpty({ message: 'KEY_REQUIRED' })
+  @Prop({ required: true, trim: true, immutable: true, example: `https://asset.domain.com/assets/my_filename.png` })
   @IsCdnUrl({ message: 'LINK_INVALID' })
-  @ApiProperty({ example: `https://asset.domain.com/assets/my_filename.png` })
   key!: string;
 
-  @Prop({ trim: true, default: null, immutable: (value: string) => !isEmpty(value) })
-  @ApiProperty({ example: 'f74b82c901415ff5e8c8ec13e31d2c8a' })
+  @Prop({ trim: true, default: null, immutable: v => !isEmpty(v), example: 'f74b82c901415ff5e8c8ec13e31d2c8a' })
   etag!: string;
 
-  @Prop({ trim: true, immutable: true })
-  @ApiProperty({ example: 'image/png' })
+  @Prop({ trim: true, immutable: true, example: 'image/png' })
   mimeType!: string;
 
-  @Prop({ type: String, default: [], lowercase: true }, PropType.ARRAY)
-  @IsOptional()
-  @IsArray({ each: true })
-  @ApiProperty({ type: String, isArray: true })
+  @Prop({ type: [String], default: [], lowercase: true }, PropType.ARRAY)
   tags?: string[];
 
-  @Prop({ default: 0 })
-  @ApiProperty()
+  @Prop({ default: 0, unsigned: true })
   size!: number;
 
-  @Prop({ default: null })
-  @IsOptional()
-  @ApiPropertyOptional()
+  @Prop({ default: null, unsigned: true })
   width?: number;
 
-  @Prop({ default: null })
-  @IsOptional()
-  @ApiPropertyOptional()
+  @Prop({ default: null, unsigned: true })
   height?: number;
 
-  @Prop({ required: true, enum: AssetStatus })
-  @IsNotEmpty({ message: 'ASSET_STATUS_REQUIRED' })
-  @IsEnum(AssetStatus, { message: 'ASSET_STATUS_INVALID' })
-  @ApiProperty({ enum: AssetStatus })
+  @Prop({ required: true, enum: AssetStatus, example: AssetStatus.ACTIVATED })
   status!: AssetStatus;
 }

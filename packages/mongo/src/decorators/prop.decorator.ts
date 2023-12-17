@@ -1,59 +1,68 @@
 import {
+  ApiHideProperty,
   ApiProperty,
   applyDecorators,
+  Clazz,
+  Exclude,
+  IsArray,
+  IsDate,
   IsEnum,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
-  IsString,
   toArray,
+  Type,
+  ValidateNested,
 } from '@joktec/core';
-import { CategoryType } from '@joktec/gateway/dist/modules/categories/models/category.enum';
-import { ApiPropertyOptions } from '@nestjs/swagger/dist/decorators/api-property.decorator';
+import { ApiPropertyOptions } from '@nestjs/swagger';
 import { prop, PropType } from '@typegoose/typegoose';
-import {
-  ArrayPropOptions,
-  BasePropOptions,
-  MapPropOptions,
-  PropOptionsForNumber,
-  PropOptionsForString,
-  VirtualOptions,
-} from '@typegoose/typegoose/lib/types';
-import { isArray, last } from 'lodash';
+import { ArrayPropOptions, BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
+import { isArray, last, omit } from 'lodash';
+import { NumberPropOptions, NumberProps, StringPropOptions, StringProps } from './props';
 
 export type TypegooseProp =
   | BasePropOptions
   | ArrayPropOptions
   | MapPropOptions
-  | PropOptionsForNumber
-  | PropOptionsForString
+  | NumberPropOptions
+  | StringPropOptions
   | VirtualOptions;
 
-export type IPropOptions = TypegooseProp & {
-  example?: any;
+export type IPropOptions<T = any> = Exclude<TypegooseProp, 'type'> & {
+  exclude?: boolean;
+  type?: Clazz | readonly [Clazz];
+  example?: T;
+  comment?: string;
   strictRef?: boolean;
   i18n?: boolean;
-  kind?: PropType;
   decorators?: PropertyDecorator[];
   swagger?: ApiPropertyOptions;
 };
 
-export const Prop = (opts?: IPropOptions): PropertyDecorator => {
+export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): PropertyDecorator => {
   return (target: object, propertyKey: string | symbol) => {
-    const type = opts?.type || Reflect.getMetadata('design:type', target, propertyKey);
-    const isArrayType = opts?.kind === PropType.ARRAY;
+    const designType = Reflect.getMetadata('design:type', target, propertyKey);
 
-    const decorators: PropertyDecorator[] = [...toArray(opts?.decorators)];
+    const decorators: PropertyDecorator[] = [...toArray(opts.decorators)];
     const swaggerOptions: ApiPropertyOptions = {
-      type,
-      required: !!opts?.required,
-      example: opts?.default || opts?.example,
-      enum: opts?.enum,
-      isArray: isArrayType,
-      ...opts?.swagger,
+      type: designType,
+      required: !!opts.required,
+      example: opts.example || opts.default || undefined,
+      enum: opts.enum,
+      ...opts.swagger,
     };
 
-    if (opts?.required) {
+    let isArrayType: boolean = false;
+    if (opts.type) {
+      isArrayType = isArray(opts.type);
+      const type = isArrayType ? opts.type[0] : opts.type;
+
+      swaggerOptions.type = type;
+      swaggerOptions.isArray = isArrayType;
+      decorators.push(Type(() => type));
+      if (isArrayType) decorators.push(IsArray());
+    }
+
+    if (opts.required) {
       const validatorOption: any = {};
       if (isArray(opts.required)) validatorOption.message = last(opts.required);
       decorators.push(IsNotEmpty(validatorOption));
@@ -61,10 +70,24 @@ export const Prop = (opts?: IPropOptions): PropertyDecorator => {
       decorators.push(IsOptional());
     }
 
-    if (type === String) decorators.push(IsString({ each: isArrayType }));
-    if (type === Number) decorators.push(IsNumber({}, { each: isArrayType }));
-    if (opts?.enum) decorators.push(IsEnum(CategoryType, { each: isArrayType }));
+    if (opts.enum) decorators.push(IsEnum(opts.enum, { each: isArrayType }));
+    if (designType === String) {
+      decorators.push(...StringProps(opts, isArrayType));
+    } else if (designType === Number) {
+      decorators.push(...NumberProps(opts, isArrayType));
+    } else if (designType === Date) {
+      decorators.push(Type(() => Date));
+      decorators.push(IsDate({ each: isArrayType }));
+    } else {
+      decorators.push(ValidateNested({ each: isArrayType }));
+    }
 
-    applyDecorators(prop(opts, opts?.kind), ...decorators, ApiProperty(swaggerOptions))(target, propertyKey);
+    if (opts.exclude) {
+      decorators.push(Exclude({ toPlainOnly: true }));
+      decorators.push(ApiHideProperty());
+    }
+
+    const mongooseOpts = omit(opts, ['type']);
+    applyDecorators(prop(mongooseOpts, kind), ...decorators, ApiProperty(swaggerOptions))(target, propertyKey);
   };
 };

@@ -1,5 +1,5 @@
 import path from 'path';
-import { BaseService, Injectable, JwtPayload, MulterFile } from '@joktec/core';
+import { BaseService, DeepPartial, Injectable, JwtPayload, MulterFile, NotImplementedException } from '@joktec/core';
 import {
   StorageOperation,
   StoragePreSignedRequest,
@@ -18,6 +18,10 @@ export class AssetService extends BaseService<Asset, string> {
     private storageService: StorageService,
   ) {
     super(assetRepo);
+  }
+
+  async create(_: DeepPartial<Asset>): Promise<never> {
+    throw new NotImplementedException();
   }
 
   async upload(file: MulterFile, payload?: JwtPayload): Promise<Asset> {

@@ -116,6 +116,12 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
   @ApiSchema({ name: `${nameSingular}Pagination` })
   class PaginationDto extends BaseListResponse<T>(props.dto) {}
 
+  @ApiSchema({ name: `${nameSingular}CreateDto` })
+  class CreateDto extends createDto {}
+
+  @ApiSchema({ name: `${nameSingular}UpdateDto` })
+  class UpdateDto extends updatedDto {}
+
   @ApiTags(tag.toLowerCase())
   @ApiExcludeController(includes(excludes, ControllerExclude.ALL))
   class Controller implements IBaseController<T, ID>, OnModuleInit {
@@ -169,14 +175,14 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @Post('/')
     @ApiOperation({ summary: `Create ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
-    @ApiBody({ type: createDto })
+    @ApiBody({ type: CreateDto })
     @ApiHeader({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
     @UsePipes(new BaseValidationPipe(), ...toArray(props.pipes?.create))
     @UseInterceptors(...toArray(props.hooks?.create))
     @HttpResponse(HttpStatus.CREATED)
     @applyDecorators(...combineDecorators.create)
-    async create(@Body() entity: DeepPartial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
+    async create(@Body() entity: CreateDto, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.CREATE);
       return this.service.create(entity, payload);
     }
@@ -185,14 +191,14 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `Update ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
-    @ApiBody({ type: updatedDto })
+    @ApiBody({ type: UpdateDto })
     @ApiHeader({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.pipes?.update))
     @UseInterceptors(...toArray(props.hooks?.update))
     @HttpResponse(HttpStatus.OK)
     @applyDecorators(...combineDecorators.update)
-    async update(@Param('id') id: ID, @Body() entity: DeepPartial<T>, @Jwt() payload?: JwtPayload): Promise<T> {
+    async update(@Param('id') id: ID, @Body() entity: UpdateDto, @Jwt() payload?: JwtPayload): Promise<T> {
       this.checkMethod(ControllerExclude.WRITE, ControllerExclude.UPDATE);
       const detail = await this.service.update(id, entity, payload);
       if (!detail) throw new NotFoundException();

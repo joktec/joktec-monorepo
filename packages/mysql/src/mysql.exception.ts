@@ -14,11 +14,11 @@ export const MysqlCatch = BaseMethodDecorator(async (options: CallbackMethodOpti
     return await method(...args);
   } catch (err) {
     if (err.errors && Array.isArray(err.errors)) {
-      const validationBuilder = new ValidatorBuilder();
+      const validationBuilder = ValidatorBuilder.init(MysqlException.name);
       err.errors.map((errItem: ValidationErrorItem) => {
         validationBuilder.add(errItem.path, errItem.message, errItem.value);
       });
-      throw validationBuilder.build();
+      validationBuilder.throw();
     }
 
     if (err.parent || err.original) {

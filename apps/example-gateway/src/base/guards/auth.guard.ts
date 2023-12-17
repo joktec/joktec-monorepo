@@ -7,9 +7,9 @@ import {
   UnauthorizedException,
 } from '@joktec/core';
 import moment from 'moment';
-import { SessionService } from '../../modules/sessions';
+import { SessionRepo } from '../../modules/sessions';
 import { SessionStatus } from '../../modules/sessions/models';
-import { UserService } from '../../modules/users';
+import { UserRepo } from '../../modules/users';
 import { UserStatus } from '../../modules/users/models';
 import { Request } from '../models';
 
@@ -17,8 +17,8 @@ import { Request } from '../models';
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private sessionService: SessionService,
-    private userService: UserService,
+    private sessionRepo: SessionRepo,
+    private userRepo: UserRepo,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -27,8 +27,8 @@ export class AuthGuard implements CanActivate {
     req.payload = await this.jwtService.verify(token);
 
     const [session, loggedUser] = await Promise.all([
-      this.sessionService.findByTokenId(req.payload.jti),
-      this.userService.findById(req.payload.sub),
+      this.sessionRepo.findByTokenId(req.payload.jti),
+      this.userRepo.findById(req.payload.sub),
     ]);
 
     if (!session || moment().isSameOrAfter(session?.expiresAt) || session.status === SessionStatus.DISABLED) {

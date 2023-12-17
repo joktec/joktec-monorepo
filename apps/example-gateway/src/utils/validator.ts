@@ -1,16 +1,5 @@
-import {
-  applyDecorators,
-  buildError,
-  IsStrongPasswordOptions,
-  IsUrl,
-  linkTransform,
-  Transform,
-  Type,
-  validate,
-  ValidationException,
-  ValidationOptions,
-} from '@joktec/core';
-import { isArray, isEmpty } from 'lodash';
+import { applyDecorators, IsStrongPasswordOptions, linkTransform, Transform, ValidationOptions } from '@joktec/core';
+import { isArray } from 'lodash';
 
 export const ValidateGroup = {
   HOOK: 'hook',
@@ -26,8 +15,7 @@ export const PASSWORD_OPTIONS: IsStrongPasswordOptions = {
 
 export const IsCdnUrl = (options?: ValidationOptions & { host?: string }): PropertyDecorator => {
   return applyDecorators(
-    Type(() => String),
-    IsUrl({ protocols: ['http', 'https', ''] }, options),
+    // IsUrl({ protocols: ['http', 'https', ''] }, options),
     Transform(
       ({ value }) => {
         const host = options?.host || process.env.MISC_CDN_URL;
@@ -45,12 +33,4 @@ export const IsCdnUrl = (options?: ValidationOptions & { host?: string }): Prope
       { toPlainOnly: true },
     ),
   );
-};
-
-export const validateHook = async (entity: object) => {
-  const validationErrors = await validate(entity, { groups: [ValidateGroup.HOOK] });
-  const formatError = buildError(validationErrors);
-  if (!isEmpty(formatError)) {
-    throw new ValidationException(formatError);
-  }
 };

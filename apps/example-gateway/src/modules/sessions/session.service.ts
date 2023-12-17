@@ -9,6 +9,6 @@ export class SessionService extends BaseService<Session, string> {
   }
 
   async findByTokenId(tokenId: string): Promise<Session> {
-    return this.sessionRepo.findOne({ condition: { tokenId } });
+    return this.sessionRepo.findByTokenId(tokenId);
   }
 }

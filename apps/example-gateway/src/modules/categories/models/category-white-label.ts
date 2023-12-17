@@ -1,79 +1,48 @@
-import { ApiPropertyOptional, IsOptional } from '@joktec/core';
-import { Prop, Schema } from '@joktec/mongo';
+import { IsHexColor } from '@joktec/core';
+import { Prop, PropType, Schema } from '@joktec/mongo';
+import { IsCdnUrl } from '../../../utils';
+import { CategoryPlaceholder } from './category-placeholder';
 
 @Schema({ schemaOptions: { _id: false, timestamps: false } })
 export class CategoryWhiteLabel {
-  // @Prop({ default: null })
-  // @IsOptional()
-  // @IsHexColor({ message: 'PRIMARY_COLOR_INVALID' })
-  // @ApiPropertyOptional({ example: '#FFFFFF' })
-  // primaryColor?: string;
-  //
-  // @Prop({ default: null })
-  // @IsOptional()
-  // @IsCdnUrl({ message: 'LINK_INVALID' })
-  // @ApiPropertyOptional({ example: 'https://example.com/image.png' })
-  // banner?: string;
-  //
-  // @Prop({ default: null })
-  // @IsOptional()
-  // @IsCdnUrl({ message: 'LINK_INVALID' })
-  // @ApiPropertyOptional({ example: 'https://example.com/image.png' })
-  // background?: string;
-  //
-  // @Prop({ default: new CategoryPlaceholder() })
-  // @Type(() => CategoryPlaceholder)
-  // @IsOptional()
-  // @ValidateNested()
-  // @ApiPropertyOptional()
-  // finderPlaceholder?: CategoryPlaceholder;
-  //
-  // @Prop({ default: new CategoryPlaceholder() })
-  // @Type(() => CategoryPlaceholder)
-  // @IsOptional()
-  // @ValidateNested()
-  // @ApiPropertyOptional()
-  // ownerPlaceholder?: CategoryPlaceholder;
+  @Prop({ default: null, decorators: [IsHexColor()], example: '#FFFFFF' })
+  primaryColor?: string;
 
-  // @Prop({ default: null })
-  // @IsOptional()
-  // @IsCdnUrl({ message: 'FINDER_LINK_INVALID' })
-  // @ApiPropertyOptional({ example: 'https://example.com/image.png', deprecated: true })
-  // finderBanner?: string;
-  //
-  // @Prop({ default: null })
-  // @IsOptional()
-  // @IsCdnUrl({ message: 'OWNER_LINK_INVALID' })
-  // @ApiPropertyOptional({ example: 'https://example.com/image.png', deprecated: true })
-  // ownerBanner?: string;
+  @Prop({ default: null, example: 'https://example.com/image.png' })
+  @IsCdnUrl({ message: 'LINK_INVALID' })
+  banner?: string;
 
-  @Prop({ default: null, i18n: true })
-  @IsOptional()
-  @ApiPropertyOptional({ example: 'Thông tin thú cưng', deprecated: true })
+  @Prop({ default: null, example: 'https://example.com/image.png' })
+  @IsCdnUrl({ message: 'LINK_INVALID' })
+  background?: string;
+
+  @Prop({ type: CategoryPlaceholder, default: new CategoryPlaceholder() })
+  finderPlaceholder?: CategoryPlaceholder;
+
+  @Prop({ type: CategoryPlaceholder, default: new CategoryPlaceholder() })
+  ownerPlaceholder?: CategoryPlaceholder;
+
+  @Prop({ default: null, example: 'https://example.com/image.png' })
+  @IsCdnUrl({ message: 'LINK_INVALID' })
+  finderBanner?: string;
+
+  @Prop({ default: null, example: 'https://example.com/image.png' })
+  @IsCdnUrl({ message: 'LINK_INVALID' })
+  ownerBanner?: string;
+
+  @Prop({ default: null, i18n: true, example: 'Thông tin thú cưng' })
   formTitle?: string;
 
-  @Prop({ default: null })
-  @IsOptional()
-  @ApiPropertyOptional({ example: 'Bạn thất lạc thú cưng gì?', deprecated: true })
+  @Prop({ default: null, example: 'Bạn thất lạc thú cưng gì?' })
   formLabel?: string;
 
-  // @Prop({ default: null })
-  // @IsOptional()
-  // @IsCdnUrl({ message: 'LINK_INVALID' })
-  // @ApiPropertyOptional({ example: 'https://example.com/image.png', deprecated: true })
-  // formIcon?: string;
-  //
-  // @Prop({ type: () => String, default: [] }, PropType.ARRAY)
-  // @IsOptional()
-  // @IsArray()
-  // @IsString({ each: true })
-  // @ApiPropertyOptional({ isArray: true, example: ['Đánh rơi', 'Để quên', 'Bị mất cắp', 'Không rõ'], deprecated: true })
-  // finderReasons?: string[];
-  //
-  // @Prop({ type: () => String, default: [] }, PropType.ARRAY)
-  // @IsOptional()
-  // @IsArray()
-  // @IsString({ each: true })
-  // @ApiPropertyOptional({ isArray: true, example: ['Đang tạm giữ', 'Giao nộp cho Công an'], deprecated: true })
-  // ownerReasons?: string[];
+  @Prop({ default: null, example: 'https://example.com/image.png' })
+  @IsCdnUrl({ message: 'LINK_INVALID' })
+  formIcon?: string;
+
+  @Prop({ type: [String], default: [], example: ['Đánh rơi', 'Để quên', 'Bị mất cắp', 'Không rõ'] }, PropType.ARRAY)
+  finderReasons?: string[];
+
+  @Prop({ type: [String], default: [], example: ['Đang tạm giữ', 'Giao nộp cho Công an'] }, PropType.ARRAY)
+  ownerReasons?: string[];
 }

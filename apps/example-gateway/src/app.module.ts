@@ -9,13 +9,15 @@ import {
   ResponseInterceptor,
 } from '@joktec/core';
 import { FirebaseModule } from '@joktec/firebase';
-import { GptModule } from '@joktec/gpt';
 import { HttpModule } from '@joktec/http';
 import { MailerModule } from '@joktec/mailer';
 import { MongoModule } from '@joktec/mongo';
 import { StorageModule } from '@joktec/storage';
 import { CustomExceptionFilter } from './base/custom-exception.filter';
 import { MainModule } from './modules/main.module';
+import { SessionRepo } from './modules/sessions';
+import { UserRepo } from './modules/users';
+import { RepositoryModule } from './repositories';
 
 @Module({
   imports: [
@@ -27,11 +29,13 @@ import { MainModule } from './modules/main.module';
     MailerModule,
     BullModule,
     FirebaseModule,
-    GptModule,
     CacheModule,
+    RepositoryModule,
     MainModule,
   ],
   providers: [
+    UserRepo,
+    SessionRepo,
     { provide: APP_INTERCEPTOR, useClass: ResponseInterceptor },
     { provide: APP_FILTER, useClass: CustomExceptionFilter },
   ],

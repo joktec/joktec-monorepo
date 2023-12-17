@@ -25,22 +25,22 @@ export const MongoCatch = BaseMethodDecorator(async (options: CallbackMethodOpti
 
     // Handle basic mongo exception
     if (err instanceof Error.ValidationError) {
-      const validationBuilder = new ValidatorBuilder();
+      const validationBuilder = ValidatorBuilder.init(MongoException.name);
       Object.values(err.errors).map(errItem => {
         const msg = errItem instanceof Error.CastError ? `${errItem.path}_INVALID`.toUpperCase() : errItem.message;
         validationBuilder.add(errItem.path, msg, errItem.value);
       });
-      throw validationBuilder.build();
+      validationBuilder.throw();
     }
 
     // Handle unique error
     if ((err?.code === 11000 || err?.code === 11001) && has(err, 'keyValue')) {
-      const validationBuilder = new ValidatorBuilder();
+      const validationBuilder = ValidatorBuilder.init(MongoException.name);
       Object.entries(err['keyValue']).map(([path, value]) => {
         const msg = `${upperCase(path)}_DUPLICATED_VALUE`;
         validationBuilder.add(path, msg, value);
       });
-      throw validationBuilder.build();
+      validationBuilder.throw();
     }
 
     throw new MongoException(err.message, err);
