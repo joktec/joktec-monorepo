@@ -115,7 +115,7 @@ export class MailerTemplate {
   @IsOptional()
   options?: HandlebarOptions | PugOptions | EjsOptions;
 
-  @IsTypes([Boolean, MailerPreview])
+  @IsTypes(['boolean', MailerPreview])
   @IsOptional()
   preview?: boolean | MailerPreview;
 
@@ -146,7 +146,7 @@ export class MailerConfig extends ClientConfig {
   @IsOptional()
   sender?: string;
 
-  @IsTypes([MailerTemplate])
+  @IsTypes(MailerTemplate)
   @IsOptional()
   template?: MailerTemplate;
 

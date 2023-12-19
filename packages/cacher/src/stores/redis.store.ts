@@ -16,6 +16,7 @@ export class RedisStore implements ICacheStore {
       port: toInt(config.port, 6379),
       db: config.database,
       readOnly: toBool(config.readonly, false),
+      password: config?.password ? String(config.password) : undefined,
     });
 
     this.client.on('connect', () => logger.info('Redis is initiating a connection to the server.'));

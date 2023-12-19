@@ -46,12 +46,12 @@ export class User extends MongoSchema {
   address?: Address;
 
   @Prop({ default: null })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   @Factory(faker => faker.image.avatar())
   image?: string;
 
   @Prop({ default: null })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   @Factory(faker => faker.image.avatar())
   thumbnail?: string;
 

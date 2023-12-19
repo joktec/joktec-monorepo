@@ -28,23 +28,23 @@ export class LogConfig {
   customStreams?: DestinationStream[] = [];
 
   @IsOptional()
-  @IsTypes([FluentdConfig])
+  @IsTypes(FluentdConfig)
   fluentd?: FluentdConfig;
 
   @IsOptional()
-  @IsTypes([LogStashConfig])
+  @IsTypes(LogStashConfig)
   logStash?: LogStashConfig;
 
   @IsOptional()
-  @IsTypes([CloudWatchConfig])
+  @IsTypes(CloudWatchConfig)
   cloudWatch?: CloudWatchConfig;
 
   @IsOptional()
-  @IsTypes([LokiConfig])
+  @IsTypes(LokiConfig)
   loki?: LokiConfig;
 
   @IsOptional()
-  @IsTypes([PinoMongoConfig])
+  @IsTypes(PinoMongoConfig)
   mongo?: PinoMongoConfig;
 
   constructor(props: LogConfig) {

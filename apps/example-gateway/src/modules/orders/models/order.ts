@@ -27,11 +27,11 @@ export class Order extends MongoSchema {
   type!: OrderType;
 
   @Prop({ default: null })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   image?: string;
 
   @Prop({ default: null })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   thumbnail?: string;
 
   @Prop({ required: true, type: OrderContact })

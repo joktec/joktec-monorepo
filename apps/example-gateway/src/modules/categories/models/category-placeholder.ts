@@ -6,7 +6,7 @@ import { IsCdnUrl } from 'src/utils';
 export class CategoryPlaceholder {
   @Prop({ default: null })
   @IsOptional()
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   @ApiPropertyOptional({ example: 'https://example.com/image.png' })
   banner?: string;
 
@@ -21,7 +21,7 @@ export class CategoryPlaceholder {
   formText?: string;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   formIcon?: string;
 
   @Prop({ default: null, example: 'Địa điểm nhặt được' })

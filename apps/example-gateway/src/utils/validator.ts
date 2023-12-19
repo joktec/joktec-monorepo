@@ -1,9 +1,5 @@
-import { applyDecorators, IsStrongPasswordOptions, linkTransform, Transform, ValidationOptions } from '@joktec/core';
-import { isArray } from 'lodash';
-
-export const ValidateGroup = {
-  HOOK: 'hook',
-};
+import { applyDecorators, IsStrongPasswordOptions, linkTransform, Transform } from '@joktec/core';
+import { isArray, isFunction } from 'lodash';
 
 export const PASSWORD_OPTIONS: IsStrongPasswordOptions = {
   minLength: 6,
@@ -13,22 +9,30 @@ export const PASSWORD_OPTIONS: IsStrongPasswordOptions = {
   minSymbols: 0,
 };
 
-export const IsCdnUrl = (options?: ValidationOptions & { host?: string }): PropertyDecorator => {
+function getHost(host: string | (() => string) | [(...args: any[]) => string, ...args: any[]]): string {
+  if (isFunction(host)) return host();
+  if (isArray(host)) {
+    const [callback, ...args] = host;
+    return callback(args);
+  }
+  return host || process.env.MISC_CDN_URL;
+}
+
+export const IsCdnUrl = (
+  host?: string | (() => string) | [(...args: any[]) => string, ...args: any[]],
+): PropertyDecorator => {
   return applyDecorators(
-    // IsUrl({ protocols: ['http', 'https', ''] }, options),
     Transform(
       ({ value }) => {
-        const host = options?.host || process.env.MISC_CDN_URL;
-        if (isArray(value)) return value.map(item => linkTransform(item, host, 'relative'));
-        return linkTransform(value, host, 'relative');
+        if (isArray(value)) return value.map(item => linkTransform(item, getHost(host), 'relative'));
+        return linkTransform(value, getHost(host), 'relative');
       },
       { toClassOnly: true },
     ),
     Transform(
       ({ value }) => {
-        const host = options?.host || process.env.MISC_CDN_URL;
-        if (isArray(value)) return value.map(item => linkTransform(item, host, 'absolute'));
-        return linkTransform(value, host, 'absolute');
+        if (isArray(value)) return value.map(item => linkTransform(item, getHost(host), 'absolute'));
+        return linkTransform(value, getHost(host), 'absolute');
       },
       { toPlainOnly: true },
     ),

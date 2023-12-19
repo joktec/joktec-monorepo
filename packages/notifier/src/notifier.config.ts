@@ -10,8 +10,8 @@ export class NotifierGcm {
 
 export class NotifierApnToken {
   @IsOptional()
-  @IsTypes([Buffer, String])
-  key?: Buffer | string;
+  @IsTypes('string')
+  key?: string;
 
   @IsOptional()
   @IsString()
@@ -28,7 +28,7 @@ export class NotifierApnToken {
 
 export class NotifierApn {
   @IsOptional()
-  @IsTypes([NotifierApnToken])
+  @IsTypes(NotifierApnToken)
   token?: NotifierApnToken;
 
   cert?: string;
@@ -93,23 +93,23 @@ export class NotifierMpns {
 
 export class NotifierConfig extends ClientConfig {
   @IsOptional()
-  @IsTypes([NotifierGcm])
+  @IsTypes(NotifierGcm)
   gcm?: NotifierGcm;
 
   @IsOptional()
-  @IsTypes([NotifierApn])
+  @IsTypes(NotifierApn)
   apn?: NotifierApn;
 
   @IsOptional()
-  @IsTypes([NotifierAdm])
+  @IsTypes(NotifierAdm)
   adm?: NotifierAdm;
 
   @IsOptional()
-  @IsTypes([NotifierWns])
+  @IsTypes(NotifierWns)
   wns?: NotifierWns;
 
   @IsOptional()
-  @IsTypes([NotifierMpns])
+  @IsTypes(NotifierMpns)
   mpns?: NotifierMpns;
 
   @IsOptional()

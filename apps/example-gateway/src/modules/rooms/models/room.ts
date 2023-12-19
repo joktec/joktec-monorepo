@@ -32,15 +32,15 @@ export class Room extends MongoSchema {
   slot!: number;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   image?: string;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   thumbnail?: string;
 
   @Prop({ type: [String], default: [] }, PropType.ARRAY)
-  @IsCdnUrl({ message: 'LINK_INVALID', each: true })
+  @IsCdnUrl()
   gallery?: string[];
 
   @Prop({ default: 0, unsigned: true })

@@ -66,11 +66,11 @@ export class SwaggerConfig {
   @IsOptional()
   options?: SwaggerUiOptions;
 
-  @IsTypes([SwaggerAuth])
+  @IsTypes(SwaggerAuth)
   @IsOptional()
   auth?: SwaggerAuth;
 
-  @IsTypes([SwaggerLicense])
+  @IsTypes(SwaggerLicense)
   @IsOptional()
   license?: SwaggerLicense;
 

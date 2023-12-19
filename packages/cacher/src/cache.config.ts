@@ -42,7 +42,7 @@ export class CacheConfig extends ClientConfig {
 
   @IsOptional({ groups: [CacheType.REDIS] })
   @IsTypes(['string', 'int'], { groups: [CacheType.REDIS] })
-  password?: string;
+  password?: string | number;
 
   @IsOptional({ groups: [CacheType.REDIS] })
   @IsInt({ groups: [CacheType.REDIS] })

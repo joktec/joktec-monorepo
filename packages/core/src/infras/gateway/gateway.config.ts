@@ -23,11 +23,11 @@ export class GatewayConfig {
   @IsOptional()
   contextPath?: string = '';
 
-  @IsTypes([StaticConfig])
+  @IsTypes(StaticConfig)
   @IsOptional()
   static?: StaticConfig;
 
-  @IsTypes([SwaggerConfig])
+  @IsTypes(SwaggerConfig)
   @IsOptional()
   swagger?: SwaggerConfig;
 

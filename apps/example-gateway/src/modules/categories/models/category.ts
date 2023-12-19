@@ -27,11 +27,11 @@ export class Category extends MongoSchema {
   type!: CategoryType;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   image?: string;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   thumbnail?: string;
 
   @Prop({ default: 0, unsigned: true })

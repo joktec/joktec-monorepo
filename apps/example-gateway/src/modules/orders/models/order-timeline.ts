@@ -10,6 +10,6 @@ export class OrderTimeline {
   subhead?: string;
 
   @Prop({ default: null, trim: true })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   link?: string;
 }

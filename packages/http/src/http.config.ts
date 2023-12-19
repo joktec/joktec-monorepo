@@ -46,7 +46,7 @@ export class HttpProxyConfig implements AxiosProxyConfig {
   port!: number;
 
   @IsOptional()
-  @IsTypes([BasicCredentials])
+  @IsTypes(BasicCredentials)
   auth?: BasicCredentials;
 
   @IsOptional()
@@ -83,7 +83,7 @@ export class HttpConfig extends ClientConfig {
   timeoutErrorMessage?: string;
 
   @IsOptional()
-  @IsTypes([BasicCredentials])
+  @IsTypes(BasicCredentials)
   auth?: BasicCredentials;
 
   @IsOptional()
@@ -107,7 +107,7 @@ export class HttpConfig extends ClientConfig {
   raxConfig?: RetryConfig = defaultRetryConfig;
 
   @IsOptional()
-  @IsTypes([HttpProxyConfig])
+  @IsTypes(HttpProxyConfig)
   proxy?: HttpProxyConfig;
 
   constructor(props: HttpConfig) {

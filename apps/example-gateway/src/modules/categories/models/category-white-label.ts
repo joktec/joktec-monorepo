@@ -9,11 +9,11 @@ export class CategoryWhiteLabel {
   primaryColor?: string;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   banner?: string;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   background?: string;
 
   @Prop({ type: CategoryPlaceholder, default: new CategoryPlaceholder() })
@@ -23,11 +23,11 @@ export class CategoryWhiteLabel {
   ownerPlaceholder?: CategoryPlaceholder;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   finderBanner?: string;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   ownerBanner?: string;
 
   @Prop({ default: null, i18n: true, example: 'Thông tin thú cưng' })
@@ -37,7 +37,7 @@ export class CategoryWhiteLabel {
   formLabel?: string;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   formIcon?: string;
 
   @Prop({ type: [String], default: [], example: ['Đánh rơi', 'Để quên', 'Bị mất cắp', 'Không rõ'] }, PropType.ARRAY)

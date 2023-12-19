@@ -77,7 +77,7 @@ export class MysqlConfig extends ClientConfig {
   connectTimeout?: number = 20000;
 
   @IsArray()
-  @IsTypes([MysqlSlaveConfig], { each: true })
+  @IsTypes(MysqlSlaveConfig, { each: true })
   @IsOptional()
   slaves?: MysqlSlaveConfig[] = [];
 

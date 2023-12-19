@@ -1,11 +1,17 @@
-import { MongoSchema, Prop, PropType, Ref, Schema } from '@joktec/mongo';
+import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
 import { Location } from '../../../base';
 import { IsCdnUrl } from '../../../utils';
 import { Room } from '../../rooms';
 import { Setting } from '../../settings';
 import { ApartmentStatus, ApartmentType } from './apartment.enum';
 
-@Schema({ collection: 'apartments', textSearch: 'title,subhead', geoSearch: 'location', paranoid: true })
+@Schema({
+  collection: 'apartments',
+  textSearch: 'title,subhead',
+  geoSearch: 'location',
+  paranoid: true,
+  unique: 'code',
+})
 export class Apartment extends MongoSchema {
   @Prop({ required: true, trim: true, uppercase: true, immutable: true })
   code!: string;
@@ -23,21 +29,21 @@ export class Apartment extends MongoSchema {
   type!: ApartmentType;
 
   @Prop({ default: null, example: 'https://example.com/image.png' })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   image?: string;
 
   @Prop({ default: null })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   thumbnail?: string;
 
-  @Prop({ type: [String], default: [], example: ['https://example.com/image.png'] }, PropType.ARRAY)
-  @IsCdnUrl({ message: 'LINK_INVALID', each: true })
+  @Prop({ type: [String], default: [], minSize: 2, example: ['https://example.com/image.png'] })
+  @IsCdnUrl()
   gallery?: string[];
 
-  @Prop({ default: 0, unsigned: true })
+  @Prop({ default: 0, min: 0 })
   order?: number;
 
-  @Prop({ required: true })
+  @Prop({ required: true, nested: true })
   location!: Location;
 
   @Prop({ type: [String], ref: () => Setting, default: [] })

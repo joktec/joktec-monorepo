@@ -9,6 +9,7 @@ import {
   ValidationOptions,
 } from 'class-validator';
 import { Clazz } from '../models';
+import { toArray } from '../utils';
 
 const primitiveTypeValidator = {
   string(value: any, args: ValidationArguments) {
@@ -20,31 +21,38 @@ const primitiveTypeValidator = {
   int(value: any, args: ValidationArguments) {
     return isInt(value);
   },
+  'int[]'(value: any, args: ValidationArguments) {
+    return isArray(value) && value.every(v => isInt(v));
+  },
   boolean(value: any, args: ValidationArguments) {
     return isBoolean(value);
   },
 };
 
+type TypeDefined = 'int' | 'int[]' | 'string' | 'boolean' | 'string[]' | Clazz;
+
 export const IsTypes = (
-  types: ReadonlyArray<'int' | 'string' | 'boolean' | 'string[]' | Clazz>,
+  types: Readonly<TypeDefined> | ReadonlyArray<TypeDefined>,
   validationOptions?: ValidationOptions,
 ) => {
   return function (object: Object, propertyName: string) {
     registerDecorator({
-      name: 'wrongType',
+      name: 'IsTypes',
       target: object.constructor,
       propertyName,
       options: validationOptions,
       validator: {
         validate(value: any, args: ValidationArguments) {
-          return types.some(type => {
+          return toArray(types).some(type => {
             return primitiveTypeValidator[type as string]
               ? primitiveTypeValidator[type as string](value, args)
               : !validateSync(new (type as Clazz)(value)).length;
           });
         },
         defaultMessage(args?: ValidationArguments) {
-          return `${propertyName} in one of [${types.map(type => type['name'] ?? type).join(', ')}] types`;
+          return `${propertyName} in one of [${toArray(types)
+            .map(type => type['name'] ?? type)
+            .join(', ')}] types`;
         },
       },
     });

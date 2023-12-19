@@ -18,7 +18,7 @@ export class Asset extends MongoSchema {
   originalName!: string;
 
   @Prop({ required: true, trim: true, immutable: true, example: `https://asset.domain.com/assets/my_filename.png` })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   key!: string;
 
   @Prop({ trim: true, default: null, immutable: v => !isEmpty(v), example: 'f74b82c901415ff5e8c8ec13e31d2c8a' })

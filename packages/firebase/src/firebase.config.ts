@@ -31,7 +31,7 @@ export class FirebaseCredential implements ServiceAccount {
 
 export class FirebaseConfig extends ClientConfig {
   @IsNotEmpty()
-  @IsTypes([String, FirebaseCredential])
+  @IsTypes(['string', FirebaseCredential])
   credential!: string | FirebaseCredential;
 
   @IsOptional()

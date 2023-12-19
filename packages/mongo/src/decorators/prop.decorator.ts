@@ -4,20 +4,29 @@ import {
   applyDecorators,
   Clazz,
   Exclude,
-  IsArray,
-  IsDate,
-  IsEnum,
   IsNotEmpty,
   IsOptional,
   toArray,
+  toBool,
   Type,
   ValidateNested,
 } from '@joktec/core';
 import { ApiPropertyOptions } from '@nestjs/swagger';
 import { prop, PropType } from '@typegoose/typegoose';
-import { ArrayPropOptions, BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
-import { isArray, last, omit } from 'lodash';
-import { NumberPropOptions, NumberProps, StringPropOptions, StringProps } from './props';
+import { BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
+import { isArray, isUndefined, last, omit } from 'lodash';
+import {
+  ArrayPropOptions,
+  ArrayProps,
+  DatePropOptions,
+  DateProps,
+  EnumPropOptions,
+  EnumProps,
+  NumberPropOptions,
+  NumberProps,
+  StringPropOptions,
+  StringProps,
+} from './props';
 
 export type TypegooseProp =
   | BasePropOptions
@@ -25,41 +34,50 @@ export type TypegooseProp =
   | MapPropOptions
   | NumberPropOptions
   | StringPropOptions
+  | DatePropOptions
+  | EnumPropOptions
   | VirtualOptions;
 
 export type IPropOptions<T = any> = Exclude<TypegooseProp, 'type'> & {
   exclude?: boolean;
+  nested?: boolean;
   type?: Clazz | readonly [Clazz];
   example?: T;
   comment?: string;
   strictRef?: boolean;
   i18n?: boolean;
+  deprecated?: boolean;
   decorators?: PropertyDecorator[];
   swagger?: ApiPropertyOptions;
 };
 
 export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): PropertyDecorator => {
   return (target: object, propertyKey: string | symbol) => {
-    const designType = Reflect.getMetadata('design:type', target, propertyKey);
+    let designType = Reflect.getMetadata('design:type', target, propertyKey);
 
     const decorators: PropertyDecorator[] = [...toArray(opts.decorators)];
     const swaggerOptions: ApiPropertyOptions = {
       type: designType,
       required: !!opts.required,
-      example: opts.example || opts.default || undefined,
+      example: !isUndefined(opts.example) ? opts.example : opts.default,
       enum: opts.enum,
+      deprecated: toBool(opts.deprecated, false),
       ...opts.swagger,
     };
 
     let isArrayType: boolean = false;
     if (opts.type) {
       isArrayType = isArray(opts.type);
-      const type = isArrayType ? opts.type[0] : opts.type;
+      designType = isArrayType ? opts.type[0] : opts.type;
 
-      swaggerOptions.type = type;
+      swaggerOptions.type = designType;
       swaggerOptions.isArray = isArrayType;
-      decorators.push(Type(() => type));
-      if (isArrayType) decorators.push(IsArray());
+      decorators.push(Type(() => designType));
+    }
+
+    if (opts.nested) {
+      decorators.push(ValidateNested({ each: isArrayType }));
+      if (!opts.type) decorators.push(Type(() => designType));
     }
 
     if (opts.required) {
@@ -70,16 +88,13 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
       decorators.push(IsOptional());
     }
 
-    if (opts.enum) decorators.push(IsEnum(opts.enum, { each: isArrayType }));
-    if (designType === String) {
-      decorators.push(...StringProps(opts, isArrayType));
-    } else if (designType === Number) {
-      decorators.push(...NumberProps(opts, isArrayType));
-    } else if (designType === Date) {
-      decorators.push(Type(() => Date));
-      decorators.push(IsDate({ each: isArrayType }));
-    } else {
-      decorators.push(ValidateNested({ each: isArrayType }));
+    if (isArrayType) decorators.push(...ArrayProps(opts));
+    if (opts.enum) decorators.push(...EnumProps(opts, isArrayType));
+    else if (designType === String) decorators.push(...StringProps(opts, isArrayType));
+    else if (designType === Number) decorators.push(...NumberProps(opts, isArrayType));
+    else if (designType === Date) decorators.push(...DateProps(opts, isArrayType));
+    else {
+      // TODO:
     }
 
     if (opts.exclude) {

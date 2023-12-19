@@ -20,14 +20,14 @@ export class Setting extends MongoSchema {
   type!: SettingType;
 
   @Prop({ trim: true, default: null })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   link?: string;
 
   @Prop({ default: null })
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   image?: string;
 
-  @IsCdnUrl({ message: 'LINK_INVALID' })
+  @IsCdnUrl()
   thumbnail?: string;
 
   @Prop({ default: 0, unsigned: true })
