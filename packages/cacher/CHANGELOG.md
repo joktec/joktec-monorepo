@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.47](https://github.com/joktec/joktec-monorepo/compare/@joktec/cacher@0.0.46...@joktec/cacher@0.0.47) (2023-12-19)
+
+**Note:** Version bump only for package @joktec/cacher
+
+
+
+
+
 ## [0.0.46](https://github.com/joktec/joktec-monorepo/compare/@joktec/cacher@0.0.45...@joktec/cacher@0.0.46) (2023-12-14)
 
 **Note:** Version bump only for package @joktec/cacher
