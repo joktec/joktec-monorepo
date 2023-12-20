@@ -12,12 +12,14 @@ import {
   ValidateNested,
 } from '@joktec/core';
 import { ApiPropertyOptions } from '@nestjs/swagger';
-import { prop, PropType } from '@typegoose/typegoose';
+import { prop, PropType, Severity } from '@typegoose/typegoose';
 import { BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
-import { isArray, isUndefined, last, omit } from 'lodash';
+import { isArray, isBoolean, isFunction, isNil, isUndefined, last, omit } from 'lodash';
 import {
   ArrayPropOptions,
   ArrayProps,
+  BoolPropOptions,
+  BoolProps,
   DatePropOptions,
   DateProps,
   EnumPropOptions,
@@ -30,18 +32,19 @@ import {
 
 export type TypegooseProp =
   | BasePropOptions
-  | ArrayPropOptions
-  | MapPropOptions
-  | NumberPropOptions
   | StringPropOptions
+  | NumberPropOptions
   | DatePropOptions
   | EnumPropOptions
+  | BoolPropOptions
+  | ArrayPropOptions
+  | MapPropOptions
   | VirtualOptions;
 
-export type IPropOptions<T = any> = Exclude<TypegooseProp, 'type'> & {
+export type IPropOptions<T = any> = Omit<TypegooseProp, 'type'> & {
   exclude?: boolean;
   nested?: boolean;
-  type?: Clazz | readonly [Clazz];
+  type?: Clazz | readonly [Clazz] | (() => Clazz);
   example?: T;
   comment?: string;
   strictRef?: boolean;
@@ -49,6 +52,7 @@ export type IPropOptions<T = any> = Exclude<TypegooseProp, 'type'> & {
   deprecated?: boolean;
   decorators?: PropertyDecorator[];
   swagger?: ApiPropertyOptions;
+  useGQL?: boolean;
 };
 
 export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): PropertyDecorator => {
@@ -62,22 +66,22 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
       example: !isUndefined(opts.example) ? opts.example : opts.default,
       enum: opts.enum,
       deprecated: toBool(opts.deprecated, false),
+      nullable: !opts.required,
+      description: opts?.comment || undefined,
       ...opts.swagger,
     };
 
     let isArrayType: boolean = false;
     if (opts.type) {
-      isArrayType = isArray(opts.type);
+      const typeFunction = isFunction(opts.type) ? opts.type : isArray(opts.type) ? opts.type[0] : opts.type;
+      decorators.push(Type(typeFunction));
+
+      isArrayType = isArray(opts.type) || kind === PropType.ARRAY;
       designType = isArrayType ? opts.type[0] : opts.type;
+      if (isArrayType && kind !== PropType.ARRAY) kind = PropType.ARRAY;
 
-      swaggerOptions.type = designType;
+      swaggerOptions.type = typeFunction;
       swaggerOptions.isArray = isArrayType;
-      decorators.push(Type(() => designType));
-    }
-
-    if (opts.nested) {
-      decorators.push(ValidateNested({ each: isArrayType }));
-      if (!opts.type) decorators.push(Type(() => designType));
     }
 
     if (opts.required) {
@@ -88,19 +92,31 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
       decorators.push(IsOptional());
     }
 
-    if (isArrayType) decorators.push(...ArrayProps(opts));
-    if (opts.enum) decorators.push(...EnumProps(opts, isArrayType));
-    else if (designType === String) decorators.push(...StringProps(opts, isArrayType));
-    else if (designType === Number) decorators.push(...NumberProps(opts, isArrayType));
-    else if (designType === Date) decorators.push(...DateProps(opts, isArrayType));
-    else {
-      // TODO:
-    }
-
     if (opts.exclude) {
       decorators.push(Exclude({ toPlainOnly: true }));
       decorators.push(ApiHideProperty());
     }
+
+    if (opts.nested) {
+      decorators.push(ValidateNested({ each: isArrayType }));
+      if (!opts.type) decorators.push(Type(() => designType));
+    }
+
+    if (opts.immutable) {
+      swaggerOptions.readOnly = true;
+      if (isBoolean(opts.immutable) && swaggerOptions.nullable) {
+        opts.immutable = (v: any) => !isNil(v);
+      }
+    }
+
+    if (kind === PropType.MAP) opts.allowMixed = Severity.ALLOW;
+
+    if (isArrayType) decorators.push(...ArrayProps(opts, swaggerOptions));
+    if (opts.enum) decorators.push(...EnumProps(opts, swaggerOptions));
+    else if (designType === String) decorators.push(...StringProps(opts, swaggerOptions));
+    else if (designType === Number) decorators.push(...NumberProps(opts, swaggerOptions));
+    else if (designType === Date) decorators.push(...DateProps(opts, swaggerOptions));
+    else if (designType === Boolean) decorators.push(...BoolProps(opts, swaggerOptions));
 
     const mongooseOpts = omit(opts, ['type']);
     applyDecorators(prop(mongooseOpts, kind), ...decorators, ApiProperty(swaggerOptions))(target, propertyKey);

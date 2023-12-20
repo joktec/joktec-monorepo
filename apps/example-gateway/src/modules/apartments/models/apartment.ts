@@ -40,7 +40,7 @@ export class Apartment extends MongoSchema {
   @IsCdnUrl()
   gallery?: string[];
 
-  @Prop({ default: 0, min: 0 })
+  @Prop({ default: 0, min: 0, minlength: 1 })
   order?: number;
 
   @Prop({ required: true, nested: true })
