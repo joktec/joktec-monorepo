@@ -50,6 +50,7 @@ export type IPropOptions<T = any> = Omit<TypegooseProp, 'type'> & {
   strictRef?: boolean;
   i18n?: boolean;
   deprecated?: boolean;
+  groups?: string[];
   decorators?: PropertyDecorator[];
   swagger?: ApiPropertyOptions;
   useGQL?: boolean;

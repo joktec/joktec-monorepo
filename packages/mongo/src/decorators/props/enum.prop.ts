@@ -3,7 +3,7 @@ import { ApiPropertyOptions } from '@nestjs/swagger';
 import { PropOptionsForString } from '@typegoose/typegoose/lib/types';
 import { IPropOptions } from '../prop.decorator';
 
-export type EnumPropOptions = PropOptionsForString & {};
+export interface EnumPropOptions extends PropOptionsForString {}
 
 export function EnumProps(opts: IPropOptions, swagger: ApiPropertyOptions): PropertyDecorator[] {
   const decorators: PropertyDecorator[] = [];

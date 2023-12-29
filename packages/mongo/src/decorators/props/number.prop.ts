@@ -4,9 +4,9 @@ import { PropOptionsForNumber } from '@typegoose/typegoose/lib/types';
 import { isArray, isNil, isNumber } from 'lodash';
 import { IPropOptions } from '../prop.decorator';
 
-export type NumberPropOptions = PropOptionsForNumber & {
+export interface NumberPropOptions extends PropOptionsForNumber {
   unsigned?: boolean | [boolean, string] | readonly [boolean, string];
-};
+}
 
 export function NumberProps(opts: IPropOptions, swagger: ApiPropertyOptions): PropertyDecorator[] {
   const decorators: PropertyDecorator[] = [];

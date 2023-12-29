@@ -4,6 +4,10 @@ import { AggregateOptions, PipelineStage } from 'mongoose';
 import { MongoSchema } from './mongo.schema';
 
 export class ObjectId extends mongoose.Types.ObjectId {
+  constructor(inputId?: string | ObjectId) {
+    super(inputId);
+  }
+
   public static create(value?: string | ObjectId): ObjectId {
     if (!value) return new ObjectId();
     return new ObjectId(value);

@@ -11,6 +11,7 @@ import {
   StrictReferencePlugin,
   TransformPlugin,
 } from '../plugins';
+import { SlugOptions, SlugPlugin } from '../plugins/slug.plugin';
 
 export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
   const plugins = toArray(options.plugins).map(p => plugin(p.mongoosePlugin, p.options));
@@ -28,6 +29,12 @@ export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
       Object.assign(paranoidOpts, options.paranoid);
     }
     plugins.push(plugin(ParanoidPlugin, paranoidOpts));
+  }
+
+  if (options.slug) {
+    const slugOptions: SlugOptions = { unique: false, paddingSize: 6 };
+    if (typeof options?.i18n === 'object') Object.assign(slugOptions, options.i18n);
+    plugins.push(plugin(SlugPlugin, slugOptions));
   }
 
   if (options.i18n) {

@@ -112,7 +112,7 @@ export function toPlural(str: string, count?: number): string {
  */
 export function toSlugify(...values: any[]): string {
   if (!values.length) return null;
-  return slug(values.join(' '), { lower: true });
+  return slug(values.join(' '), { lower: true }).trim();
 }
 
 /**

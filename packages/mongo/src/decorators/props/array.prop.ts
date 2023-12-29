@@ -4,11 +4,11 @@ import { ArrayPropOptions as PropOptionsForArray } from '@typegoose/typegoose/li
 import { isArray, isNil, uniq } from 'lodash';
 import { IPropOptions } from '../prop.decorator';
 
-export type ArrayPropOptions = PropOptionsForArray & {
+export interface ArrayPropOptions extends PropOptionsForArray {
   minSize?: number | readonly [number, string];
   maxSize?: number | readonly [number, string];
   uniqItems?: boolean;
-};
+}
 
 export function ArrayProps(opts: IPropOptions, swagger: ApiPropertyOptions): PropertyDecorator[] {
   const decorators: PropertyDecorator[] = [];

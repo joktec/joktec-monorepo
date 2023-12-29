@@ -4,10 +4,10 @@ import { PropOptionsForString } from '@typegoose/typegoose/lib/types';
 import { isArray, isNil } from 'lodash';
 import { IPropOptions } from '../prop.decorator';
 
-export type DatePropOptions = PropOptionsForString & {
+export interface DatePropOptions extends PropOptionsForString {
   minDate?: Date | (() => Date) | readonly [Date | (() => Date), string];
   maxDate?: Date | (() => Date) | readonly [Date | (() => Date), string];
-};
+}
 
 export function DateProps(opts: IPropOptions, swagger: ApiPropertyOptions): PropertyDecorator[] {
   const decorators: PropertyDecorator[] = [];

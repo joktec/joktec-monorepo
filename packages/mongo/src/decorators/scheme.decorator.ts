@@ -5,6 +5,7 @@ import { snakeCase, union } from 'lodash';
 import { IndexDirection, SchemaOptions } from 'mongoose';
 import { buildIndex, buildPlugin, buildQueryMethod } from '../helpers';
 import { LocaleOptions, ParanoidOptions } from '../plugins';
+import { SlugOptions } from '../plugins/slug.plugin';
 
 export interface IPlugin<TFunc extends Func = any, TParams = Parameters<TFunc>[1]> {
   mongoosePlugin: TFunc;
@@ -23,6 +24,7 @@ export interface ISchemaOptions {
   // Plugins
   paranoid?: boolean | ParanoidOptions;
   i18n?: boolean | LocaleOptions;
+  slug?: boolean | SlugOptions;
   plugins?: IPlugin[];
   // Index
   index?: string | string[];

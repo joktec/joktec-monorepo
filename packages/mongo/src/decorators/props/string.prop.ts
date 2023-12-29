@@ -9,6 +9,7 @@ import {
   IsHexColor,
   isMobilePhone,
   isEmail,
+  IsUrl,
 } from '@joktec/core';
 import { ApiPropertyOptions } from '@nestjs/swagger';
 import { PropOptionsForString } from '@typegoose/typegoose/lib/types';
@@ -16,11 +17,13 @@ import { isArray, isNil, isNumber, isObject } from 'lodash';
 import { IsEmailOptions } from 'validator/lib/isEmail';
 import { IPropOptions } from '../prop.decorator';
 
-export type StringPropOptions = PropOptionsForString & {
+export interface StringPropOptions extends PropOptionsForString {
+  slug?: string;
   isEmail?: boolean | [boolean, string] | (IsEmailOptions & { message?: boolean });
   isPhone?: boolean | [boolean, string] | { locale?: string; strictMode?: boolean; message?: boolean };
   isHexColor?: boolean | [boolean, string];
-};
+  isUrl?: boolean | [boolean, string];
+}
 
 export function StringProps(opts: IPropOptions, swagger: ApiPropertyOptions): PropertyDecorator[] {
   const decorators: PropertyDecorator[] = [];
@@ -73,6 +76,12 @@ export function StringProps(opts: IPropOptions, swagger: ApiPropertyOptions): Pr
     const defMsg = '$property must be a hex color';
     const hexOption: any = isArray(opts.isHexColor) ? { message: opts.isHexColor[1] || defMsg } : {};
     decorators.push(IsHexColor({ each: swagger.isArray, message: hexOption.message }));
+  }
+
+  if (opts.isUrl) {
+    const defMsg = '$property must be a url';
+    const urlOption: any = isArray(opts.isUrl) ? { message: opts.isUrl[1] || defMsg } : {};
+    decorators.push(IsUrl({}, { each: swagger.isArray, message: urlOption.message }));
   }
 
   return decorators;

@@ -24,7 +24,8 @@ import {
   ApiBody,
   ApiExcludeController,
   ApiExcludeEndpoint,
-  ApiHeader,
+  ApiHeaderOptions,
+  ApiHeaders,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -86,6 +87,7 @@ export interface IControllerProps<T extends Entity> {
   bearer?: (CanActivate | Function) | { [key in IControllerMethod]?: CanActivate | Function };
   apiKey?: (CanActivate | Function) | { [key in IControllerMethod]?: CanActivate | Function };
   guards?: (CanActivate | Function) | { [key in IControllerMethod]?: (CanActivate | Function)[] };
+  acceptLanguage?: boolean;
   pipes?: { [key in IControllerMethod]?: (PipeTransform | Function)[] };
   hooks?: { [key in IControllerMethod]?: (NestInterceptor | Function)[] };
   filter?: ExceptionFilter | Function;
@@ -103,6 +105,11 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
   const queryDto: Constructor<T | any> = props?.customDto?.queryDto || props.dto;
   const createDto: Constructor<T | any> = props.customDto?.createDto || props.dto;
   const updatedDto: Constructor<T | any> = props.customDto?.updatedDto || createDto;
+
+  const headers: ApiHeaderOptions[] = [];
+  if (props.acceptLanguage) {
+    headers.push({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' });
+  }
 
   const { caching } = props;
   const combineDecorators: { [key in IControllerMethod]?: MethodDecorator[] } = {
@@ -124,6 +131,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
   @ApiTags(tag.toLowerCase())
   @ApiExcludeController(includes(excludes, ControllerExclude.ALL))
+  @ApiHeaders(headers)
   class Controller implements IBaseController<T, ID>, OnModuleInit {
     @Inject() public readonly configService: ConfigService;
     @Inject() public readonly logService: LogService;
@@ -143,7 +151,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @Get('/')
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiOkResponse({ type: PaginationDto })
-    @ApiHeader({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
     @UsePipes(...toArray(props.pipes?.paginate))
     @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.paginate))
@@ -157,7 +164,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @Get('/:id')
     @ApiOperation({ summary: `Get ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
-    @ApiHeader({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
     @UsePipes(...toArray(props.pipes?.detail))
@@ -176,7 +182,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `Create ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiBody({ type: CreateDto })
-    @ApiHeader({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.CREATE))
     @UsePipes(new BaseValidationPipe(), ...toArray(props.pipes?.create))
     @UseInterceptors(...toArray(props.hooks?.create))
@@ -192,7 +197,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
     @ApiBody({ type: UpdateDto })
-    @ApiHeader({ name: HttpRequestHeader.ACCEPT_LANGUAGE, example: 'en' })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.WRITE, ControllerExclude.UPDATE))
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.pipes?.update))
     @UseInterceptors(...toArray(props.hooks?.update))

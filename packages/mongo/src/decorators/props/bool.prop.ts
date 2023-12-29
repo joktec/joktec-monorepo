@@ -3,7 +3,7 @@ import { ApiPropertyOptions } from '@nestjs/swagger';
 import { BasePropOptions } from '@typegoose/typegoose/lib/types';
 import { IPropOptions } from '../prop.decorator';
 
-export type BoolPropOptions = BasePropOptions & {};
+export interface BoolPropOptions extends BasePropOptions {}
 
 export function BoolProps(opts: IPropOptions, swagger: ApiPropertyOptions): PropertyDecorator[] {
   const decorators: PropertyDecorator[] = [];
