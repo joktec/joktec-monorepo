@@ -19,8 +19,8 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   implements OnModuleInit, IBaseService<T, ID, REQ>
 {
   @Inject(REQUEST) public request: ExpressRequest;
-  @Inject() public readonly configService: ConfigService;
   @Inject() public readonly logService: LogService;
+  @Inject() public readonly configService: ConfigService;
 
   protected constructor(protected repository: IBaseRepository<T, ID>) {}
 
