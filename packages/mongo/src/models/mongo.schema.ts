@@ -16,13 +16,13 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
   @Prop({ type: Date, default: new Date(), immutable: true })
   createdAt?: Date;
 
-  @Prop({ type: ObjectId, default: null, immutable: true, example: '507f1f77bcf86cd799439011' })
+  @Prop({ type: String, default: null, immutable: true, example: '507f1f77bcf86cd799439011' })
   createdBy?: string;
 
   @Prop({ type: Date, default: new Date() })
   updatedAt?: Date;
 
-  @Prop({ type: ObjectId, default: null, example: '507f1f77bcf86cd799439011' })
+  @Prop({ type: String, default: null, example: '507f1f77bcf86cd799439011' })
   updatedBy?: string;
 
   public static destroyOne<T>(
