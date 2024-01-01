@@ -48,7 +48,8 @@
     "image-downloader": "^4.3.0",
     "lodash": "^4.17.21",
     "merge-deep": "^3.0.3",
-    "mime-types": "^2.1.35"
+    "mime-types": "^2.1.35",
+    "url-parse": "^1.5.10"
   },
   "devDependencies": {
     "@types/merge-deep": "^3.0.3",
