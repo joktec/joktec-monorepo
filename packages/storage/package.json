@@ -1,7 +1,7 @@
 {
   "name": "@joktec/storage",
   "description": "JokTec - Storage Service",
-  "version": "0.0.105",
+  "version": "0.0.106",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
