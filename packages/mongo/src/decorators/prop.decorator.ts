@@ -13,8 +13,8 @@ import {
 } from '@joktec/core';
 import { ApiPropertyOptions } from '@nestjs/swagger';
 import { prop, PropType, Severity } from '@typegoose/typegoose';
-import { BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
-import { isArray, isBoolean, isFunction, isNil, isUndefined, last, omit } from 'lodash';
+import { BasePropOptions, DeferredFunc, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
+import { isArray, isBoolean, isFunction, isNil, isUndefined, last, omit, unset } from 'lodash';
 import {
   ArrayPropOptions,
   ArrayProps,
@@ -41,14 +41,13 @@ export type TypegooseProp =
   | MapPropOptions
   | VirtualOptions;
 
-export type IPropOptions<T = any> = Omit<TypegooseProp, 'type'> & {
-  exclude?: boolean;
+export type IPropOptions<T = any> = TypegooseProp & {
+  type?: Clazz | readonly [Clazz] | DeferredFunc<Clazz> | DeferredFunc<unknown> | unknown;
+  hidden?: boolean;
   nested?: boolean;
-  type?: Clazz | readonly [Clazz] | (() => Clazz);
   example?: T;
   comment?: string;
   strictRef?: boolean;
-  i18n?: boolean;
   deprecated?: boolean;
   groups?: string[];
   decorators?: PropertyDecorator[];
@@ -59,6 +58,8 @@ export type IPropOptions<T = any> = Omit<TypegooseProp, 'type'> & {
 export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): PropertyDecorator => {
   return (target: object, propertyKey: string | symbol) => {
     let designType = Reflect.getMetadata('design:type', target, propertyKey);
+
+    ['unique', 'index', 'text'].map(key => unset(opts, key));
 
     const decorators: PropertyDecorator[] = [...toArray(opts.decorators)];
     const swaggerOptions: ApiPropertyOptions = {
@@ -93,7 +94,7 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
       decorators.push(IsOptional());
     }
 
-    if (opts.exclude) {
+    if (opts.hidden) {
       decorators.push(Exclude({ toPlainOnly: true }));
       decorators.push(ApiHideProperty());
     }
