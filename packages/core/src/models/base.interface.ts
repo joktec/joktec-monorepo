@@ -49,7 +49,11 @@ export interface IBaseRepository<T extends Entity, ID> {
 
   count(query: IBaseRequest<T>): Promise<number>;
 
+  findAndCount(query: IBaseRequest<T>): Promise<{ items: T[]; totalItems: number }>;
+
   findOne(query: IBaseRequest<T>): Promise<T>;
+
+  findById(id: ID, query?: IBaseRequest<T>): Promise<T>;
 
   create(body: DeepPartial<T>, opts?: { language?: ILanguage }): Promise<T>;
 

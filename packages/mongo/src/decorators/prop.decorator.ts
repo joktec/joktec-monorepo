@@ -45,7 +45,7 @@ export type IPropOptions<T = any> = TypegooseProp & {
   type?: Clazz | readonly [Clazz] | DeferredFunc<Clazz> | DeferredFunc<unknown> | unknown;
   hidden?: boolean;
   nested?: boolean;
-  example?: T;
+  example?: T | Clazz<T>;
   comment?: string;
   strictRef?: boolean;
   deprecated?: boolean;

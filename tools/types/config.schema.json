@@ -60827,7 +60827,10 @@
           "type": "string"
         },
         "password": {
-          "type": "string"
+          "type": [
+            "string",
+            "number"
+          ]
         },
         "database": {
           "type": "number"
@@ -62634,14 +62637,7 @@
       "type": "object",
       "properties": {
         "key": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/global.Buffer"
-            },
-            {
-              "type": "string"
-            }
-          ]
+          "type": "string"
         },
         "keyId": {
           "type": "string"

@@ -14,7 +14,7 @@ export class Category extends MongoSchema {
   @Prop({ required: true, trim: true, uppercase: true, immutable: true, example: 'LF07PPCCCD' })
   code!: string;
 
-  @Prop({ required: true, i18n: true, example: 'Passport' })
+  @Prop({ required: [true, 'TITLE_REQUIRED'], i18n: true, example: 'Passport' })
   title!: string;
 
   @Prop({ default: null, i18n: true })

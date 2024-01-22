@@ -1,3 +1,4 @@
+import path from 'path';
 import { CacheModule } from '@joktec/cacher';
 import {
   APP_FILTER,
@@ -11,8 +12,7 @@ import {
 import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
 import { MailerModule } from '@joktec/mailer';
-import { MongoModule } from '@joktec/mongo';
-import { StorageModule } from '@joktec/storage';
+import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { CustomExceptionFilter } from './base/custom-exception.filter';
 import { MainModule } from './modules/main.module';
 import { SessionRepo } from './modules/sessions';
@@ -22,8 +22,6 @@ import { RepositoryModule } from './repositories';
 @Module({
   imports: [
     CoreModule,
-    MongoModule,
-    StorageModule,
     HttpModule,
     JwtModule,
     MailerModule,
@@ -32,6 +30,17 @@ import { RepositoryModule } from './repositories';
     CacheModule,
     RepositoryModule,
     MainModule,
+    I18nModule.forRoot({
+      fallbackLanguage: 'vi',
+      loaderOptions: { path: path.join(__dirname, '/i18n/'), watch: true },
+      typesOutputPath: path.join(__dirname, '../src/i18n/i18n.generated.ts'),
+      resolvers: [
+        { use: QueryResolver, options: ['lang', 'language'] },
+        new HeaderResolver(['x-lang']),
+        new CookieResolver(),
+        AcceptLanguageResolver,
+      ],
+    }),
   ],
   providers: [
     UserRepo,

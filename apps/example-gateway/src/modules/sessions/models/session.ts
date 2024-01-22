@@ -1,7 +1,7 @@
-import { IBrowser, ICPU, IDevice, IEngine, IOS, IsEnum, IsNotEmpty } from '@joktec/core';
 import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
 import { PropType, Severity } from '@typegoose/typegoose';
 import { User } from '../../users/models';
+import { SessionBrowser, SessionCPU, SessionDevice, SessionEngine, SessionOs } from './session.device';
 import { SessionStatus } from './session.enum';
 
 @Schema({ collection: 'sessions', paranoid: true })
@@ -24,20 +24,20 @@ export class Session extends MongoSchema {
   @Prop({})
   ipAddress?: string;
 
-  @Prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
-  os?: IOS;
+  @Prop({})
+  os?: SessionOs;
 
-  @Prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
-  browser?: IBrowser;
+  @Prop({})
+  browser?: SessionBrowser;
 
-  @Prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
-  device?: IDevice;
+  @Prop({})
+  device?: SessionDevice;
 
-  @Prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
-  cpu?: ICPU;
+  @Prop({})
+  cpu?: SessionCPU;
 
-  @Prop({ type: Object, allowMixed: Severity.ALLOW }, PropType.MAP)
-  engine?: IEngine;
+  @Prop({})
+  engine?: SessionEngine;
 
   @Prop({ default: null })
   registrationId?: string;
@@ -46,7 +46,5 @@ export class Session extends MongoSchema {
   userId?: Ref<User, string>;
 
   @Prop({ required: true, enum: SessionStatus })
-  @IsNotEmpty({ message: 'SESSION_STATUS_REQUIRED' })
-  @IsEnum(SessionStatus, { message: 'SESSION_STATUS_INVALID' })
   status!: SessionStatus;
 }

@@ -8,7 +8,7 @@ const props: IControllerProps<Category> = {
   dto: Category,
   customDto: { createDto: CategoryDto },
   bearer: AuthGuard,
-  guards: RoleGuard,
+  // guards: RoleGuard,
   caching: CacheStrategy(Category.name, {
     enable: false,
     expiry: CacheTtlSeconds.ONE_MINUTE,

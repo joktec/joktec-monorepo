@@ -56,7 +56,21 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
+  async findAndCount(query: IMysqlRequest<T>): Promise<{ items: T[]; totalItems: number }> {
+    const [items, totalItems] = await Promise.all([this.find(query), this.count(query)]);
+    return { items, totalItems };
+  }
+
+  @MysqlCatch
   async findOne(query: IMysqlRequest<T>): Promise<T> {
+    const options: FindOptions = MysqlHelper.parseFilter(query);
+    if (query.select) options.attributes = toArray(query.select, { split: ',' });
+    return this.model.findOne(options);
+  }
+
+  @MysqlCatch
+  async findById(id: ID, query: IMysqlRequest<T>): Promise<T> {
+    query.condition = { _id: id } as any;
     const options: FindOptions = MysqlHelper.parseFilter(query);
     if (query.select) options.attributes = toArray(query.select, { split: ',' });
     return this.model.findOne(options);

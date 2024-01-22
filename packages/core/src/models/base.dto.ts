@@ -5,7 +5,7 @@ export type IDateType = Date;
 export type IEnum = { readonly [path: string | number]: Readonly<string | number | null> };
 
 export type Constructor<T> = new (...args: any[]) => T;
-export type Clazz = Constructor<any>;
+export type Clazz<T = any> = Constructor<T>;
 export type InjectType = (target: object, key: string | symbol, index?: number) => void;
 export type Wrapper<T = object> = { new (): T & any; prototype: T };
 export type Dictionary<T = any> = { [key: string]: T };

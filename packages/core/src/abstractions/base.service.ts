@@ -36,7 +36,7 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
 
   async paginate(query: REQ): Promise<IListResponseDto<T>> {
     if (!query.language) query.language = this.language;
-    const [items, totalItems] = await Promise.all([this.repository.find(query), this.repository.count(query)]);
+    const { items, totalItems } = await this.repository.findAndCount(query);
     const totalPage = Math.ceil(totalItems / query.limit);
     const isLastPage = items.length < query.limit;
     return { items, totalItems, totalPage, isLastPage };
@@ -48,9 +48,8 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   }
 
   async findById(id: ID, query?: REQ): Promise<T> {
-    const processQuery: REQ = { ...query, condition: { id } };
-    if (!processQuery.language) processQuery.language = this.language;
-    return this.repository.findOne(processQuery);
+    if (!query.language) query.language = this.language;
+    return this.repository.findById(id, query);
   }
 
   async findOne(query: REQ): Promise<T> {

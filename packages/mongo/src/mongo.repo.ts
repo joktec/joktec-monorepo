@@ -14,7 +14,7 @@ import {
 import { Inject } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { isArray, isNil, pick } from 'lodash';
+import { isArray, isNil, omit, pick } from 'lodash';
 import { Aggregate, QueryOptions, UpdateQuery } from 'mongoose';
 import { MongoHelper, MongoPipeline, QueryHelper, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
 import { IMongoAggregateOptions, IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema } from './models';
@@ -109,12 +109,26 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async count(query: IMongoRequest<T>): Promise<number> {
-    const qb = this.qb(query).limit(null).skip(null);
+    const processQuery = omit(query, ['select', 'page', 'limit', 'sort']);
+    const qb = this.qb(processQuery);
     return query.near ? qb.estimatedDocumentCount() : qb.countDocuments();
   }
 
   @MongoCatch
+  async findAndCount(query: IMongoRequest<T>): Promise<{ items: T[]; totalItems: number }> {
+    const [items, totalItems] = await Promise.all([this.find(query), this.count(query)]);
+    return { items, totalItems };
+  }
+
+  @MongoCatch
   async findOne(query: IMongoRequest<T>): Promise<T> {
+    const doc = await this.qb(query).findOne().exec();
+    return this.transform(doc) as T;
+  }
+
+  @MongoCatch
+  async findById(id: ID, query: IMongoRequest<T> = {}): Promise<T> {
+    query.condition = { _id: id } as any;
     const doc = await this.qb(query).findOne().exec();
     return this.transform(doc) as T;
   }

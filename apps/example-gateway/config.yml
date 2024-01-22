@@ -49,7 +49,7 @@ mongo:
   database: sample_db
   connectTimeout: 20000
   directConnection: true
-  debug: false
+  debug: true
 
 storage:
   region: ap-southeast-1

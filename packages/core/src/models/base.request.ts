@@ -1,4 +1,6 @@
-import { Entity, IDateType, IPrimaryType, IZeroType, KeyOf } from './base.dto';
+import { Field } from '@nestjs/graphql';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Constructor, Entity, IDateType, IPrimaryType, IZeroType, KeyOf } from './base.dto';
 
 /** A union of primitive data types that are allowed in a MongoDB query. */
 export type IDataType = IZeroType | IPrimaryType | IDateType;
@@ -92,3 +94,25 @@ export interface IBaseRequest<T extends Entity = {}> {
 
   [key: string]: any;
 }
+
+export const BaseListRequest = <T extends Entity>(dto: Constructor<T>) => {
+  class BaseRequest implements IBaseRequest<T> {
+    @Field({})
+    @ApiPropertyOptional({})
+    select?: string;
+
+    @Field({})
+    @ApiPropertyOptional({})
+    keyword?: string;
+
+    @Field({})
+    @ApiPropertyOptional({})
+    page?: number;
+
+    @Field({})
+    @ApiPropertyOptional({})
+    offset?: number;
+  }
+
+  return BaseRequest;
+};
