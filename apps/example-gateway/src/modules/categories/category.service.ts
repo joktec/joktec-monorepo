@@ -1,4 +1,4 @@
-import { BaseService, IBaseRequest, IListResponseDto, Injectable } from '@joktec/core';
+import { BaseService, Injectable } from '@joktec/core';
 import { Category } from '../../models/entities';
 import { CategoryRepo } from '../../repositories';
 

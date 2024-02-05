@@ -1,9 +1,14 @@
-import { ClientController, Controller } from '@joktec/core';
+import { ClientController, Controller, IMicroControllerProps, Transport } from '@joktec/core';
 import { Product } from './models';
 import { ProductService } from './product.service';
 
+const props: IMicroControllerProps<Product> = {
+  dto: Product,
+  transport: Transport.RMQ,
+};
+
 @Controller('product')
-export class ProductController extends ClientController<Product, string>({ dto: Product }) {
+export class ProductController extends ClientController<Product, string>(props) {
   constructor(protected productService: ProductService) {
     super(productService);
   }

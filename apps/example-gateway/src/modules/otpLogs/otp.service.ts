@@ -1,8 +1,8 @@
 import { BaseService, Injectable } from '@joktec/core';
 import moment from 'moment';
+import { OTPStatus, OTPType } from '../../models/constants';
 import { Otp } from '../../models/entities';
 import { OtpRepo } from '../../repositories';
-import { OTPStatus, OTPType } from '../../models/constants';
 
 @Injectable()
 export class OtpService extends BaseService<Otp, string> {

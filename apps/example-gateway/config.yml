@@ -10,6 +10,21 @@ gateway:
       password: p4ssw0rd
     security: [ basic, bearer, apiKey ]
 
+transports:
+  - name: RedisTransport
+    transport: redis
+    options:
+      host: localhost
+      port: 6379
+      password: root
+  - name: RabbitTransport
+    transport: rmq
+    options:
+      urls: [ amqp://guest:guest@localhost:5672 ]
+      queue: product_queue
+      queueOptions:
+        durable: true
+
 log:
   level: debug
   format: pretty

@@ -11,6 +11,12 @@
         "micro": {
           "$ref": "#/definitions/MicroConfig"
         },
+        "transports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Transporter"
+          }
+        },
         "log": {
           "$ref": "#/definitions/LogConfig"
         },
@@ -59987,288 +59993,243 @@
         "inheritAppConfig": {
           "type": "boolean"
         },
-        "microservices": {
-          "$ref": "#/definitions/MicroOptions"
+        "httpEnable": {
+          "type": "boolean"
+        },
+        "transports": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Transporter"
+          }
         }
       }
     },
-    "MicroOptions": {
-      "type": "object",
-      "properties": {
-        "tcp": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "host": {
-                  "type": "string"
-                },
-                "port": {
-                  "type": "number"
-                },
-                "retryAttempts": {
-                  "type": "number"
-                },
-                "retryDelay": {
-                  "type": "number"
-                }
-              }
-            },
-            {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "host": {
-                    "type": "string"
-                  },
-                  "port": {
-                    "type": "number"
-                  },
-                  "retryAttempts": {
-                    "type": "number"
-                  },
-                  "retryDelay": {
-                    "type": "number"
-                  }
-                }
-              }
-            }
-          ]
+    "Transporter": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/TcpTransport"
         },
-        "rmq": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "urls": {
-                  "anyOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/definitions/RmqUrl"
-                      }
-                    }
-                  ]
-                },
-                "queue": {
-                  "type": "string"
-                },
-                "prefetchCount": {
-                  "type": "number"
-                },
-                "noAck": {
-                  "type": "boolean"
-                },
-                "replyQueue": {
-                  "type": "string"
-                },
-                "persistent": {
-                  "type": "boolean"
-                },
-                "noAssert": {
-                  "type": "boolean"
-                },
-                "queueOptions": {
-                  "type": "object",
-                  "properties": {
-                    "durable": {
-                      "type": "boolean"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "urls": {
-                    "anyOf": [
-                      {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/definitions/RmqUrl"
-                        }
-                      }
-                    ]
-                  },
-                  "queue": {
-                    "type": "string"
-                  },
-                  "prefetchCount": {
-                    "type": "number"
-                  },
-                  "noAck": {
-                    "type": "boolean"
-                  },
-                  "replyQueue": {
-                    "type": "string"
-                  },
-                  "persistent": {
-                    "type": "boolean"
-                  },
-                  "noAssert": {
-                    "type": "boolean"
-                  },
-                  "queueOptions": {
-                    "type": "object",
-                    "properties": {
-                      "durable": {
-                        "type": "boolean"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          ]
+        {
+          "$ref": "#/definitions/GrpcTransport"
         },
-        "nats": {
-          "anyOf": [
-            {},
-            {
-              "type": "array",
-              "items": {}
-            }
-          ]
+        {
+          "$ref": "#/definitions/RmqTransport"
         },
-        "redis": {
-          "anyOf": [
-            {},
-            {
-              "type": "array",
-              "items": {}
-            }
-          ]
+        {
+          "$ref": "#/definitions/RedisTransport"
         },
-        "mqtt": {
-          "anyOf": [
-            {},
-            {
-              "type": "array",
-              "items": {}
-            }
-          ]
+        {
+          "$ref": "#/definitions/MqttTransport"
         },
-        "kafka": {
-          "anyOf": [
-            {},
-            {
-              "type": "array",
-              "items": {}
-            }
-          ]
+        {
+          "$ref": "#/definitions/NatsTransport"
         },
-        "gRPC": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "filePattern": {
-                  "type": "string"
-                },
-                "url": {
-                  "type": "string"
-                },
-                "package": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  ]
-                },
-                "protoPath": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  ]
-                },
-                "protoLoader": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "filePattern": {
-                    "type": "string"
-                  },
-                  "url": {
-                    "type": "string"
-                  },
-                  "package": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    ]
-                  },
-                  "protoPath": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    ]
-                  },
-                  "protoLoader": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          ]
+        {
+          "$ref": "#/definitions/KafkaTransport"
         }
-      }
+      ]
     },
-    "RmqUrl": {
+    "TcpTransport": {
       "type": "object",
       "properties": {
-        "protocol": {
+        "name": {
           "type": "string"
         },
-        "hostname": {
+        "transport": {
+          "$ref": "#/definitions/TransportType"
+        },
+        "enable": {
+          "type": "boolean"
+        },
+        "options": {
+          "$ref": "#/definitions/TcpOptions"
+        }
+      },
+      "required": [
+        "options",
+        "transport"
+      ]
+    },
+    "TransportType": {
+      "type": "string",
+      "enum": [
+        "tcp",
+        "rmq",
+        "nats",
+        "redis",
+        "gRPC",
+        "mqtt",
+        "kafka"
+      ]
+    },
+    "TcpOptions": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "number"
+        },
+        "retryAttempts": {
+          "type": "number"
+        },
+        "retryDelay": {
+          "type": "number"
+        },
+        "serializer": {},
+        "tlsOptions": {},
+        "deserializer": {},
+        "socketClass": {}
+      }
+    },
+    "GrpcTransport": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "transport": {
+          "$ref": "#/definitions/TransportType"
+        },
+        "enable": {
+          "type": "boolean"
+        },
+        "options": {
+          "$ref": "#/definitions/GrpcOptions"
+        }
+      },
+      "required": [
+        "options",
+        "transport"
+      ]
+    },
+    "GrpcOptions": {
+      "type": "object",
+      "properties": {
+        "port": {
+          "type": "number"
+        },
+        "filePattern": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "package": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "protoPath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "protoLoader": {
+          "type": "string"
+        }
+      }
+    },
+    "RmqTransport": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "transport": {
+          "$ref": "#/definitions/TransportType"
+        },
+        "enable": {
+          "type": "boolean"
+        },
+        "options": {
+          "$ref": "#/definitions/RmqOptions"
+        }
+      },
+      "required": [
+        "options",
+        "transport"
+      ]
+    },
+    "RmqOptions": {
+      "type": "object",
+      "properties": {
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "queue": {
+          "type": "string"
+        },
+        "prefetchCount": {
+          "type": "number"
+        },
+        "noAck": {
+          "type": "boolean"
+        },
+        "replyQueue": {
+          "type": "string"
+        },
+        "persistent": {
+          "type": "boolean"
+        },
+        "noAssert": {
+          "type": "boolean"
+        },
+        "queueOptions": {
+          "type": "object",
+          "properties": {
+            "durable": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "RedisTransport": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "transport": {
+          "$ref": "#/definitions/TransportType"
+        },
+        "enable": {
+          "type": "boolean"
+        },
+        "options": {
+          "$ref": "#/definitions/RedisOptions"
+        }
+      },
+      "required": [
+        "options",
+        "transport"
+      ]
+    },
+    "RedisOptions": {
+      "type": "object",
+      "properties": {
+        "host": {
           "type": "string"
         },
         "port": {
@@ -60280,19 +60241,369 @@
         "password": {
           "type": "string"
         },
-        "locale": {
-          "type": "string"
-        },
-        "frameMax": {
+        "db": {
           "type": "number"
         },
-        "heartbeat": {
+        "retryAttempts": {
           "type": "number"
         },
-        "vhost": {
+        "retryDelay": {
+          "type": "number"
+        },
+        "wildcards": {
+          "type": "boolean"
+        },
+        "serializer": {},
+        "deserializer": {}
+      }
+    },
+    "MqttTransport": {
+      "type": "object",
+      "properties": {
+        "name": {
           "type": "string"
+        },
+        "transport": {
+          "$ref": "#/definitions/TransportType"
+        },
+        "enable": {
+          "type": "boolean"
+        },
+        "options": {
+          "$ref": "#/definitions/MqttOptions"
+        }
+      },
+      "required": [
+        "options",
+        "transport"
+      ]
+    },
+    "MqttOptions": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "serializer": {},
+        "deserializer": {},
+        "subscribeOptions": {
+          "type": "object",
+          "properties": {
+            "qos": {
+              "type": "number",
+              "enum": [
+                0,
+                1,
+                2
+              ]
+            },
+            "nl": {
+              "type": "boolean"
+            },
+            "rap": {
+              "type": "boolean"
+            },
+            "rh": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "qos"
+          ]
+        },
+        "userProperties": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          }
         }
       }
+    },
+    "NatsTransport": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "transport": {
+          "$ref": "#/definitions/TransportType"
+        },
+        "enable": {
+          "type": "boolean"
+        },
+        "options": {
+          "$ref": "#/definitions/NatsOptions"
+        }
+      },
+      "required": [
+        "options",
+        "transport"
+      ]
+    },
+    "NatsOptions": {
+      "type": "object",
+      "properties": {
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "authenticator": {},
+        "debug": {
+          "type": "boolean"
+        },
+        "ignoreClusterUpdates": {
+          "type": "boolean"
+        },
+        "inboxPrefix": {
+          "type": "string"
+        },
+        "encoding": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        },
+        "pass": {
+          "type": "string"
+        },
+        "maxPingOut": {
+          "type": "number"
+        },
+        "maxReconnectAttempts": {
+          "type": "number"
+        },
+        "reconnectTimeWait": {
+          "type": "number"
+        },
+        "reconnectJitter": {
+          "type": "number"
+        },
+        "reconnectJitterTLS": {
+          "type": "number"
+        },
+        "reconnectDelayHandler": {},
+        "servers": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "nkey": {},
+        "reconnect": {
+          "type": "boolean"
+        },
+        "pedantic": {
+          "type": "boolean"
+        },
+        "tls": {},
+        "queue": {
+          "type": "string"
+        },
+        "serializer": {},
+        "deserializer": {},
+        "userJWT": {
+          "type": "string"
+        },
+        "nonceSigner": {},
+        "userCreds": {},
+        "useOldRequestStyle": {
+          "type": "boolean"
+        },
+        "pingInterval": {
+          "type": "number"
+        },
+        "preserveBuffers": {
+          "type": "boolean"
+        },
+        "waitOnFirstConnect": {
+          "type": "boolean"
+        },
+        "verbose": {
+          "type": "boolean"
+        },
+        "noEcho": {
+          "type": "boolean"
+        },
+        "noRandomize": {
+          "type": "boolean"
+        },
+        "timeout": {
+          "type": "number"
+        },
+        "token": {
+          "type": "string"
+        },
+        "yieldTime": {
+          "type": "number"
+        },
+        "tokenHandler": {}
+      }
+    },
+    "KafkaTransport": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "transport": {
+          "$ref": "#/definitions/TransportType"
+        },
+        "enable": {
+          "type": "boolean"
+        },
+        "options": {
+          "$ref": "#/definitions/KafkaOptions"
+        }
+      },
+      "required": [
+        "options",
+        "transport"
+      ]
+    },
+    "KafkaOptions": {
+      "type": "object",
+      "properties": {
+        "postfixId": {
+          "type": "string"
+        },
+        "client": {
+          "type": "object",
+          "properties": {
+            "brokers": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "$ref": "#/definitions/BrokersFunction"
+                }
+              ]
+            }
+          },
+          "required": [
+            "brokers"
+          ]
+        },
+        "consumer": {
+          "type": "object",
+          "properties": {
+            "groupId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "groupId"
+          ]
+        },
+        "run": {
+          "type": "object",
+          "properties": {
+            "autoCommit": {
+              "type": "boolean"
+            },
+            "autoCommitInterval": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "autoCommitThreshold": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "eachBatchAutoResolve": {
+              "type": "boolean"
+            },
+            "partitionsConsumedConcurrently": {
+              "type": "number"
+            }
+          }
+        },
+        "subscribe": {
+          "type": "object",
+          "properties": {
+            "fromBeginning": {
+              "type": "boolean"
+            }
+          }
+        },
+        "producer": {
+          "type": "object"
+        },
+        "send": {
+          "type": "object",
+          "properties": {
+            "acks": {
+              "type": "number"
+            },
+            "timeout": {
+              "type": "number"
+            },
+            "compression": {
+              "$ref": "#/definitions/CompressionTypes"
+            }
+          }
+        },
+        "serializer": {},
+        "deserializer": {},
+        "parser": {
+          "type": "object",
+          "properties": {
+            "keepBinary": {
+              "type": "boolean"
+            }
+          }
+        },
+        "producerOnlyMode": {
+          "type": "boolean"
+        }
+      }
+    },
+    "BrokersFunction": {
+      "type": "object",
+      "properties": {
+        "isFunction": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "CompressionTypes": {
+      "type": "number",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
     },
     "LogConfig": {
       "type": "object",

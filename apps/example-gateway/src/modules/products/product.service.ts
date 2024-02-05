@@ -1,5 +1,5 @@
 import { ClientProxy, ClientService, Inject, Injectable } from '@joktec/core';
-import { Product } from './models';
+import { Product } from '../../models/entities';
 
 @Injectable()
 export class ProductService extends ClientService({ dto: Product }) {

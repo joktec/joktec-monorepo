@@ -1,7 +1,7 @@
 import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
 import { IsCdnUrl } from '../../utils';
-import { CategoryWhiteLabel } from './category-white-label';
 import { CategoryStatus, CategoryType } from '../constants';
+import { CategoryWhiteLabel } from './category-white-label';
 
 @Schema({
   collection: 'categories',

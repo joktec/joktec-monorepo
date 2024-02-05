@@ -5,6 +5,7 @@ import { AuthModule } from './auth';
 import { CategoryModule } from './categories';
 import { OrderModule } from './orders';
 import { OtpModule } from './otpLogs';
+import { ProductModule } from './products';
 import { ProfileModule } from './profile';
 import { RoomModule } from './rooms';
 import { SessionModule } from './sessions';
@@ -16,7 +17,7 @@ import { UserModule } from './users';
     UserModule,
     SessionModule,
     CategoryModule,
-    // ProductModule, // Microservice
+    ProductModule, // Microservice
     OtpModule,
     AuthModule,
     ProfileModule,

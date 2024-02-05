@@ -2,7 +2,7 @@ import { AlertConfig } from '@joktec/alert';
 import { ArangoConfig } from '@joktec/arango';
 import { BigQueryConfig } from '@joktec/bigquery';
 import { CacheConfig } from '@joktec/cacher';
-import { BullConfig, GatewayConfig, JwtConfig, LogConfig, MicroConfig } from '@joktec/core';
+import { BullConfig, GatewayConfig, JwtConfig, LogConfig, MicroConfig, Transporter } from '@joktec/core';
 import { ElasticConfig } from '@joktec/elastic';
 import { FileConfig } from '@joktec/file';
 import { FirebaseConfig } from '@joktec/firebase';
@@ -19,6 +19,7 @@ export type JoktecConfig = {
   // Core
   gateway?: GatewayConfig;
   micro?: MicroConfig;
+  transports?: Transporter[];
   log?: LogConfig;
   bull?: BullConfig;
   guard?: JwtConfig;
