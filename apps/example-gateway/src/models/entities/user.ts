@@ -1,7 +1,7 @@
 import { MongoSchema, Prop, Schema } from '@joktec/mongo';
-import { IsCdnUrl } from '../../../utils';
+import { IsCdnUrl } from '../../utils';
+import { UserGender, UserRole, UserStatus } from '../constants';
 import { Address } from './address';
-import { UserGender, UserRole, UserStatus } from './user.enum';
 
 @Schema({ collection: 'users', textSearch: 'fullName,phone,email', unique: ['email', 'phone'], paranoid: true })
 export class User extends MongoSchema {

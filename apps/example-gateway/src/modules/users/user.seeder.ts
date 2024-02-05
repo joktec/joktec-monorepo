@@ -1,7 +1,8 @@
 import { hashPassword, Injectable, sleep } from '@joktec/core';
 import { DataFactory, Seeder } from 'nestjs-seeder';
-import { User, UserRole } from './models';
-import { UserRepo } from './user.repo';
+import { UserRole } from '../../models/constants';
+import { User } from '../../models/entities';
+import { UserRepo } from '../../repositories';
 
 @Injectable()
 export class UserSeeder implements Seeder {

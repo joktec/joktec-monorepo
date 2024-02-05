@@ -11,7 +11,8 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@joktec/core';
-import { Otp, OTPStatus } from '../otpLogs';
+import { OTPStatus } from '../../models/constants';
+import { Otp } from '../../models/entities';
 import { AuthService } from './auth.service';
 import {
   LoginDto,

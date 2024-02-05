@@ -1,6 +1,6 @@
 import { BaseService, Injectable } from '@joktec/core';
-import { Session } from './models';
-import { SessionRepo } from './session.repo';
+import { Session } from '../../models/entities';
+import { SessionRepo } from '../../repositories';
 
 @Injectable()
 export class SessionService extends BaseService<Session, string> {

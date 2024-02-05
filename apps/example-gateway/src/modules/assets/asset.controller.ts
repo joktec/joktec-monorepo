@@ -19,9 +19,10 @@ import {
   UseInterceptors,
 } from '@joktec/core';
 import { AuthGuard, RoleGuard } from '../../base';
+import { Asset } from '../../models/entities';
 import { AssetService } from './asset.service';
 import { fileFilter, MAX_TOTAL_FILE } from './asset.utils';
-import { Asset, AssetPresigned, AssetPresignedDto } from './models';
+import { AssetPresigned, AssetPresignedDto } from './models';
 
 const props: IControllerProps<Asset> = {
   dto: Asset,

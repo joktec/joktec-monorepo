@@ -8,9 +8,9 @@ import {
   ValidatorBuilder,
 } from '@joktec/core';
 import { isEmpty } from 'lodash';
+import { SessionStatus } from '../../models/constants';
 import { PASSWORD_OPTIONS } from '../../utils';
 import { SessionService } from '../sessions';
-import { SessionStatus } from '../sessions/models';
 import { UserService } from '../users';
 import { UserFcmDto, UserLogoutDto, UserPasswordDto, UserProfile, UserProfileDto } from './models';
 

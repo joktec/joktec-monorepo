@@ -1,9 +1,9 @@
 import { Job, JwtPayload, plainToInstance, Process, Processor, toInt } from '@joktec/core';
 import { head } from 'lodash';
 import moment from 'moment';
-import { Apartment } from '../apartments';
-import { Room, RoomService, RoomStatus } from '../rooms';
-import { Order, OrderStatus, PaymentMethod } from './models';
+import { OrderStatus, PaymentMethod, RoomStatus } from '../../models/constants';
+import { Apartment, Order, Room } from '../../models/entities';
+import { RoomService } from '../rooms';
 import { OrderService } from './order.service';
 
 const LIMIT_ORDER = 10;

@@ -1,8 +1,7 @@
 import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
-import { PropType, Severity } from '@typegoose/typegoose';
-import { User } from '../../users/models';
-import { SessionBrowser, SessionCPU, SessionDevice, SessionEngine, SessionOs } from './session.device';
-import { SessionStatus } from './session.enum';
+import { SessionStatus } from '../constants';
+import { SessionBrowser, SessionCPU, SessionDevice, SessionEngine, SessionOs } from './session-device';
+import { User } from './user';
 
 @Schema({ collection: 'sessions', paranoid: true })
 export class Session extends MongoSchema {

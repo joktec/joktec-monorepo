@@ -1,9 +1,9 @@
 import { MongoSchema, Prop, PropType, Ref, Schema } from '@joktec/mongo';
-import { IsCdnUrl } from '../../../utils';
-import { Apartment } from '../../apartments';
-import { Setting } from '../../settings';
+import { IsCdnUrl } from '../../utils';
+import { RoomStatus, RoomType } from '../constants';
+import { Apartment } from './apartment';
 import { RoomSchedule } from './room-schedule';
-import { RoomStatus, RoomType } from './room.enum';
+import { Setting } from './setting';
 
 @Schema({ collection: 'rooms', textSearch: 'title,subhead', paranoid: true })
 export class Room extends MongoSchema {

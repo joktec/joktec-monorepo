@@ -7,11 +7,9 @@ import {
   UnauthorizedException,
 } from '@joktec/core';
 import moment from 'moment';
-import { SessionRepo } from '../../modules/sessions';
-import { SessionStatus } from '../../modules/sessions/models';
-import { UserRepo } from '../../modules/users';
-import { UserStatus } from '../../modules/users/models';
-import { Request } from '../models';
+import { IRequest } from '../../app.constant';
+import { SessionStatus, UserStatus } from '../../models/constants';
+import { SessionRepo, UserRepo } from '../../repositories';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -22,7 +20,7 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const req = context.switchToHttp().getRequest<Request>();
+    const req = context.switchToHttp().getRequest<IRequest>();
     const token = await this.jwtService.extractToken(req);
     req.payload = await this.jwtService.verify(token);
 

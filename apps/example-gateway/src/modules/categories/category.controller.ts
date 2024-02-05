@@ -1,14 +1,15 @@
 import { CacheStrategy, CacheTtlSeconds } from '@joktec/cacher';
 import { BaseController, Controller, DEFAULT_CON_ID, HttpResponse, HttpStatus, IControllerProps } from '@joktec/core';
 import { AuthGuard, RoleGuard } from '../../base';
+import { Category } from '../../models/entities';
 import { CategoryService } from './category.service';
-import { Category, CategoryDto } from './models';
+import { CategoryDto } from './models';
 
 const props: IControllerProps<Category> = {
   dto: Category,
   customDto: { createDto: CategoryDto },
   bearer: AuthGuard,
-  // guards: RoleGuard,
+  guards: RoleGuard,
   caching: CacheStrategy(Category.name, {
     enable: false,
     expiry: CacheTtlSeconds.ONE_MINUTE,

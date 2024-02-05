@@ -7,9 +7,11 @@ import {
   StorageUploadRequest,
   StorageUploadResponse,
 } from '@joktec/storage';
-import { AssetRepo } from './asset.repo';
+import { AssetStatus } from '../../models/constants';
+import { Asset } from '../../models/entities';
+import { AssetRepo } from '../../repositories';
 import { AssetUtils } from './asset.utils';
-import { Asset, AssetPresigned, AssetPresignedDto, AssetStatus } from './models';
+import { AssetPresigned, AssetPresignedDto } from './models';
 
 @Injectable()
 export class AssetService extends BaseService<Asset, string> {

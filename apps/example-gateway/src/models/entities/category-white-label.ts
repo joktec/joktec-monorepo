@@ -1,6 +1,6 @@
 import { IsHexColor } from '@joktec/core';
 import { Prop, PropType, Schema } from '@joktec/mongo';
-import { IsCdnUrl } from '../../../utils';
+import { IsCdnUrl } from '../../utils';
 import { CategoryPlaceholder } from './category-placeholder';
 
 @Schema({ schemaOptions: { _id: false, timestamps: false } })

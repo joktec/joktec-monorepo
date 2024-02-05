@@ -20,12 +20,13 @@ import {
 } from '@joktec/core';
 import { isEmpty } from 'lodash';
 import moment from 'moment';
+import { OTPStatus, OTPType, SessionStatus, UserStatus } from '../../models/constants';
+import { Otp, User } from '../../models/entities';
+import { getGravatar, Gravatar } from '../../models/objects';
 import { PASSWORD_OPTIONS } from '../../utils';
-import { Otp, OtpService, OTPStatus, OTPType } from '../otpLogs';
+import { OtpService } from '../otpLogs';
 import { SessionService } from '../sessions';
-import { SessionStatus } from '../sessions/models';
 import { UserService } from '../users';
-import { getGravatar, Gravatar, User, UserStatus } from '../users/models';
 import { AuthConfig } from './auth.config';
 import {
   LoginDto,

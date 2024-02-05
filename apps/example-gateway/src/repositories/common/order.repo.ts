@@ -1,6 +1,6 @@
 import { Injectable } from '@joktec/core';
 import { MongoRepo, MongoService } from '@joktec/mongo';
-import { Order } from './models';
+import { Order } from '../../models/entities';
 
 @Injectable()
 export class OrderRepo extends MongoRepo<Order, string> {

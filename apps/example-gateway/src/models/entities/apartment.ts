@@ -1,9 +1,9 @@
 import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
-import { Location } from '../../../base';
-import { IsCdnUrl } from '../../../utils';
-import { Room } from '../../rooms';
-import { Setting } from '../../settings';
-import { ApartmentStatus, ApartmentType } from './apartment.enum';
+import { IsCdnUrl } from '../../utils';
+import { ApartmentStatus, ApartmentType } from '../constants';
+import { Location } from './location';
+import { Room } from './room';
+import { Setting } from './setting';
 
 @Schema({
   collection: 'apartments',

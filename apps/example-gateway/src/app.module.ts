@@ -15,9 +15,7 @@ import { MailerModule } from '@joktec/mailer';
 import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { CustomExceptionFilter } from './base/custom-exception.filter';
 import { MainModule } from './modules/main.module';
-import { SessionRepo } from './modules/sessions';
-import { UserRepo } from './modules/users';
-import { RepositoryModule } from './repositories';
+import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
 
 @Module({
   imports: [

@@ -1,6 +1,6 @@
 import { Global, Module } from '@joktec/core';
 import { MongoModule } from '@joktec/mongo';
-import { Repositories } from '../modules';
+import { Repositories } from './index';
 
 @Global()
 @Module({

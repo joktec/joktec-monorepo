@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional, IsNotEmpty, IsOptional } from '@joktec/core';
-import { Asset } from './asset';
+import { Asset } from '../../../models/entities';
 
 export class AssetPresignedDto {
   @IsNotEmpty()

@@ -1,7 +1,7 @@
 import { BaseService, Injectable, JwtPayload } from '@joktec/core';
 import { IMongoRequest, mongoose } from '@joktec/mongo';
-import { Order } from './models';
-import { OrderRepo } from './order.repo';
+import { Order } from '../../models/entities';
+import { OrderRepo } from '../../repositories';
 
 @Injectable()
 export class OrderService extends BaseService<Order, string> {

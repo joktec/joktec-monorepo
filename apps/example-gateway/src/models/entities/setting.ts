@@ -1,6 +1,6 @@
 import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
-import { IsCdnUrl } from '../../../utils';
-import { SettingStatus, SettingType } from './setting.enum';
+import { IsCdnUrl } from '../../utils';
+import { SettingStatus, SettingType } from '../constants';
 
 @Schema({ collection: 'settings', textSearch: 'title,subhead', paranoid: true })
 export class Setting extends MongoSchema {

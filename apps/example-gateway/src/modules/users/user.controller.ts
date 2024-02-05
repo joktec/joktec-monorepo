@@ -1,11 +1,12 @@
 import { BaseController, Controller, IControllerProps } from '@joktec/core';
-import { User } from './models';
+import { AuthGuard, RoleGuard } from '../../base';
+import { User } from '../../models/entities';
 import { UserService } from './user.service';
 
 const props: IControllerProps<User> = {
   dto: User,
-  // bearer: AuthGuard,
-  // guards: RoleGuard,
+  bearer: AuthGuard,
+  guards: RoleGuard,
 };
 
 @Controller('users')

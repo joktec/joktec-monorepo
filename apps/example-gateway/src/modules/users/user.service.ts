@@ -1,6 +1,7 @@
 import { BaseService, ICondition, Injectable, NotImplementedException } from '@joktec/core';
-import { AuthPlatform, User } from './models';
-import { UserRepo } from './user.repo';
+import { User } from '../../models/entities';
+import { UserRepo } from '../../repositories';
+import { AuthPlatform } from '../../models/constants';
 
 @Injectable()
 export class UserService extends BaseService<User, string> {

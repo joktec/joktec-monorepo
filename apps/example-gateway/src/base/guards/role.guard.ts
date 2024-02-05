@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, Reflector, SetMetadata } from '@joktec/core';
-import { UserRole } from '../../modules/users/models';
-import { Request } from '../models';
+import { IRequest } from '../../app.constant';
+import { UserRole } from '../../models/constants';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -9,7 +9,7 @@ export class RoleGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const req = context.switchToHttp().getRequest<Request>();
+    const req = context.switchToHttp().getRequest<IRequest>();
     if (!req.loggedUser) throw new ForbiddenException('PERMISSION_DENIED');
 
     const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(RoleGuard.ROLES_KEY, [

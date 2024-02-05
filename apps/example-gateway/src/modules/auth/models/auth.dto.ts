@@ -7,9 +7,9 @@ import {
   IsStrongPassword,
   PickType,
 } from '@joktec/core';
+import { AuthPlatform, OTPType } from '../../../models/constants';
+import { User } from '../../../models/entities';
 import { PASSWORD_OPTIONS } from '../../../utils';
-import { OTPType } from '../../otpLogs';
-import { AuthPlatform, User } from '../../users/models';
 
 export class SendOtpDto extends PickType(User, ['phone'] as const) {
   @IsNotEmpty({ message: 'OTP_TYPE_REQUIRED' })

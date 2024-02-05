@@ -1,7 +1,7 @@
 import { MongoSchema, Prop, PropType, Schema } from '@joktec/mongo';
 import { isEmpty } from 'lodash';
-import { IsCdnUrl } from '../../../utils';
-import { AssetStatus } from './asset.enum';
+import { IsCdnUrl } from '../../utils';
+import { AssetStatus } from '../constants';
 
 @Schema({ collection: 'assets', textSearch: 'title,subhead', index: 'key', unique: 'etag', paranoid: true })
 export class Asset extends MongoSchema {

@@ -1,6 +1,6 @@
 import { BaseService, Injectable } from '@joktec/core';
-import { Setting } from './models';
-import { SettingRepo } from './setting.repo';
+import { Setting } from '../../models/entities';
+import { SettingRepo } from '../../repositories';
 
 @Injectable()
 export class SettingService extends BaseService<Setting, string> {

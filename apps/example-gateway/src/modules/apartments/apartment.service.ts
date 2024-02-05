@@ -1,6 +1,6 @@
 import { BaseService, Injectable } from '@joktec/core';
-import { ApartmentRepo } from './apartment.repo';
-import { Apartment } from './models';
+import { Apartment } from '../../models/entities';
+import { ApartmentRepo } from '../../repositories';
 
 @Injectable()
 export class ApartmentService extends BaseService<Apartment, string> {

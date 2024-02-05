@@ -1,7 +1,7 @@
 import { isEmail, isMobilePhone } from '@joktec/core';
 import { MongoSchema, Prop, Schema } from '@joktec/mongo';
 import moment from 'moment';
-import { OTPStatus, OTPType } from './otp.enum';
+import { OTPStatus, OTPType } from '../constants';
 
 @Schema({ collection: 'otpLogs', textSearch: 'fullName,phone,email', paranoid: true })
 export class Otp extends MongoSchema {

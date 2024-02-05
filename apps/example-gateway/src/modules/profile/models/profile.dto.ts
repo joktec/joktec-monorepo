@@ -8,8 +8,8 @@ import {
   OmitType,
   PickType,
 } from '@joktec/core';
+import { User } from '../../../models/entities';
 import { PASSWORD_OPTIONS } from '../../../utils';
-import { User } from '../../users/models';
 
 export class UserProfile extends OmitType(User, ['hashPassword'] as const) {}
 

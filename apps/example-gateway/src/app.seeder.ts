@@ -1,7 +1,8 @@
 import { CoreModule } from '@joktec/core';
 import { MongoModule } from '@joktec/mongo';
 import { seeder } from 'nestjs-seeder';
-import { UserRepo, UserSeeder } from './modules/users';
+import { UserSeeder } from './modules/users';
+import { UserRepo } from './repositories';
 
 seeder({
   imports: [CoreModule, MongoModule],

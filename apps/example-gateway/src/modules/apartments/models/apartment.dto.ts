@@ -1,5 +1,5 @@
 import { OmitType, PartialType } from '@joktec/core';
-import { Apartment } from './apartment';
+import { Apartment } from '../../../models/entities';
 
 export class ApartmentCreateDto extends OmitType(Apartment, [
   '_id',

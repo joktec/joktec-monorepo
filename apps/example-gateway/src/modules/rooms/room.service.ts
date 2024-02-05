@@ -1,8 +1,8 @@
 import { BaseService, ICondition, Injectable } from '@joktec/core';
-import { IMongoRequest } from '@joktec/mongo';
 import moment from 'moment';
-import { Room, RoomStatus } from './models';
-import { RoomRepo } from './room.repo';
+import { RoomStatus } from '../../models/constants';
+import { Room } from '../../models/entities';
+import { RoomRepo } from '../../repositories';
 
 @Injectable()
 export class RoomService extends BaseService<Room, string> {
@@ -21,9 +21,7 @@ export class RoomService extends BaseService<Room, string> {
         status: RoomStatus.ACTIVATED,
         $or: [
           { schedules: { $size: 0 } },
-          {
-            $and: [{ schedules: { fromDate: { $gte: toDate } } }, { schedules: { toDate: { $lte: fromDate } } }],
-          },
+          { $and: [{ schedules: { fromDate: { $gte: toDate } } }, { schedules: { toDate: { $lte: fromDate } } }] },
         ],
       },
     });
@@ -33,9 +31,5 @@ export class RoomService extends BaseService<Room, string> {
     const condition: ICondition<Room> = { schedules: { orderId } };
     const updateData: any = { $pull: { schedules: { orderId } } };
     await this.roomRepo.update({ ...condition }, { ...updateData });
-  }
-
-  async find(query: IMongoRequest<Room>): Promise<Room[]> {
-    return super.find(query);
   }
 }

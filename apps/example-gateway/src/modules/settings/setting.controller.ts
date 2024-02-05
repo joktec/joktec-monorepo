@@ -1,6 +1,6 @@
 import { BaseController, Controller, IControllerProps } from '@joktec/core';
 import { AuthGuard, RoleGuard } from '../../base';
-import { Setting } from './models';
+import { Setting } from '../../models/entities';
 import { SettingService } from './setting.service';
 
 const props: IControllerProps<Setting> = {

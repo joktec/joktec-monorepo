@@ -1,5 +1,5 @@
 import { Prop, Schema } from '@joktec/mongo';
-import { IsCdnUrl } from '../../../utils';
+import { IsCdnUrl } from '../../utils';
 
 @Schema({ schemaOptions: { _id: false, timestamps: false } })
 export class OrderTimeline {

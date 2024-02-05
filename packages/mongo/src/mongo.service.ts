@@ -1,5 +1,6 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { getModelForClass, ReturnModelType } from '@typegoose/typegoose';
+import { has } from 'lodash';
 import mongoose, { ClientSession, ClientSessionOptions, Connection as Mongoose } from 'mongoose';
 import { QueryHelper } from './helpers';
 import { MongoSchema } from './models';
@@ -10,12 +11,16 @@ const RETRY_OPTS = 'mongo.retry';
 
 @Injectable()
 export class MongoService extends AbstractClientService<MongoConfig, Mongoose> implements MongoClient {
+  private readonly model: { [conId: string]: { [model: string]: any } } = {};
+
   constructor() {
     super('mongo', MongoConfig);
   }
 
   @Retry(RETRY_OPTS)
   protected async init(config: MongoConfig): Promise<Mongoose> {
+    if (!this.model[config.conId]) this.model[config.conId] = {};
+
     const uri = this.buildUri(config);
     const connectOptions: mongoose.ConnectOptions = {
       user: config.username,
@@ -95,14 +100,17 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     conId: string = DEFAULT_CON_ID,
   ): ReturnModelType<typeof MongoSchema, QueryHelper<T>> {
     if (!this.isConnected(conId)) return null;
-    const model = getModelForClass<typeof MongoSchema, QueryHelper<T>>(schemaClass, {
-      existingConnection: this.getClient(conId),
-    });
+    if (has(this.model, [conId, schemaClass.name])) {
+      return this.model[conId][schemaClass.name];
+    }
 
+    const opts = { existingConnection: this.getClient(conId) };
+    const model = getModelForClass<typeof MongoSchema, QueryHelper<T>>(schemaClass, opts);
     if (this.getConfig(conId).debug) {
       this.logService.info('`%s` Schema `%s` registered', conId, schemaClass.name);
     }
 
+    this.model[conId][schemaClass.name] = model;
     return model;
   }
 

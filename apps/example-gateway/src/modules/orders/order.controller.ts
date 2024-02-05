@@ -14,7 +14,8 @@ import {
   UseInterceptors,
 } from '@joktec/core';
 import { AuthGuard, RoleGuard, Roles } from '../../base';
-import { UserRole } from '../users/models';
+import { UserRole } from '../../models/constants';
+import { Order } from '../../models/entities';
 import {
   OrderCancelInterceptor,
   OrderCheckinInterceptor,
@@ -24,7 +25,7 @@ import {
   OrderRejectInterceptor,
   OrderSubmittedInterceptor,
 } from './hooks';
-import { Order, OrderRejectDto } from './models';
+import { OrderRejectDto } from './models';
 import { OrderService } from './order.service';
 
 const props: IControllerProps<Order> = {

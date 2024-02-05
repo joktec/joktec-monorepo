@@ -1,9 +1,10 @@
 import { BadRequestException, CallHandler, ExecutionContext, Injectable, isEmpty, NestInterceptor } from '@joktec/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Request } from '../../../base';
+import { IRequest } from '../../../app.constant';
+import { OrderStatus } from '../../../models/constants';
+import { Order } from '../../../models/entities';
 import { RoomService } from '../../rooms';
-import { Order, OrderStatus } from '../models';
 import { OrderService } from '../order.service';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class OrderCancelInterceptor implements NestInterceptor {
    * @param next
    */
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const req = context.switchToHttp().getRequest<Request<Order>>();
+    const req = context.switchToHttp().getRequest<IRequest<Order>>();
 
     const reason = req.body.reason;
     if (isEmpty(reason)) throw new BadRequestException('REASON_REQUIRED');

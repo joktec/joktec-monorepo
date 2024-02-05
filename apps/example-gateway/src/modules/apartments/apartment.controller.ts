@@ -1,7 +1,8 @@
 import { BaseController, Controller, IControllerProps } from '@joktec/core';
 import { AuthGuard, RoleGuard } from '../../base';
+import { Apartment } from '../../models/entities';
 import { ApartmentService } from './apartment.service';
-import { Apartment, ApartmentCreateDto, ApartmentUpdateDto } from './models';
+import { ApartmentCreateDto, ApartmentUpdateDto } from './models';
 
 const props: IControllerProps<Apartment> = {
   dto: Apartment,

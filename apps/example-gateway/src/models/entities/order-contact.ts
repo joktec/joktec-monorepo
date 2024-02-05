@@ -1,5 +1,5 @@
 import { Prop, Schema } from '@joktec/mongo';
-import { Address } from '../../users/models';
+import { Address } from './address';
 
 @Schema({ schemaOptions: { _id: false, timestamps: false } })
 export class OrderContact {

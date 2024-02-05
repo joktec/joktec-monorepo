@@ -1,6 +1,6 @@
 import { Injectable } from '@joktec/core';
 import { MongoRepo, MongoService } from '@joktec/mongo';
-import { Session } from './models';
+import { Session } from '../../models/entities';
 
 @Injectable()
 export class SessionRepo extends MongoRepo<Session, string> {

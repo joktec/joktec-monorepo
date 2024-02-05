@@ -9,16 +9,16 @@ import {
   Queue,
 } from '@joktec/core';
 import { Observable } from 'rxjs';
-import { Request } from '../../../base';
-import { User, UserRole } from '../../users/models';
-import { Order } from '../models';
+import { IRequest } from '../../../app.constant';
+import { UserRole } from '../../../models/constants';
+import { Order, User } from '../../../models/entities';
 
 @Injectable()
 export class OrderSubmittedInterceptor implements NestInterceptor {
   constructor(@InjectQueue('order') private orderQueue: Queue) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
-    const req = context.switchToHttp().getRequest<Request<Order>>();
+    const req = context.switchToHttp().getRequest<IRequest<Order>>();
     const loggedUser = req['loggedUser'] as User;
     if (loggedUser.role !== UserRole.USER) {
       throw new ForbiddenException();

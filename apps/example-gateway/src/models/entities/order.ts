@@ -1,10 +1,10 @@
 import { MongoSchema, Prop, PropType, Ref, Schema } from '@joktec/mongo';
-import { IsCdnUrl } from '../../../utils';
-import { Room } from '../../rooms';
-import { User } from '../../users/models';
+import { IsCdnUrl } from '../../utils';
+import { OrderStatus, OrderType, PaymentMethod } from '../constants';
 import { OrderContact } from './order-contact';
 import { OrderTimeline } from './order-timeline';
-import { OrderStatus, OrderType, PaymentMethod } from './order.enum';
+import { Room } from './room';
+import { User } from './user';
 
 @Schema({ collection: 'orders', textSearch: 'title,subhead', paranoid: true })
 export class Order extends MongoSchema {

@@ -11,14 +11,12 @@ import {
 } from './hooks';
 import { OrderConsumer } from './order.consumer';
 import { OrderController } from './order.controller';
-import { OrderRepo } from './order.repo';
 import { OrderService } from './order.service';
 
 @Module({
   controllers: [OrderController],
   imports: [BullModule.registerQueue({ name: 'order' }), RoomModule],
   providers: [
-    OrderRepo,
     OrderService,
     OrderConsumer,
     OrderSubmittedInterceptor,
@@ -29,6 +27,6 @@ import { OrderService } from './order.service';
     OrderConfirmInterceptor,
     OrderRejectInterceptor,
   ],
-  exports: [OrderService, OrderRepo],
+  exports: [OrderService],
 })
 export class OrderModule {}
