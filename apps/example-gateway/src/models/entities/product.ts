@@ -1,4 +1,4 @@
-import { ApiProperty, IsNotEmpty, IsOptional, Max, Min } from '@joktec/core';
+import { ApiProperty, IsNotEmpty, IsOptional, MaxLength, MinLength } from '@joktec/core';
 
 export class Product {
   @IsOptional()
@@ -6,14 +6,14 @@ export class Product {
   id?: string;
 
   @IsNotEmpty()
-  @Min(5)
-  @Max(255)
+  @MinLength(5)
+  @MaxLength(255)
   @ApiProperty({ type: String, required: true, example: 'Book' })
   name!: string;
 
   @IsNotEmpty()
-  @Min(5)
-  @Max(255)
+  @MinLength(5)
+  @MaxLength(255)
   @ApiProperty({ type: String, example: 'Lorem Ipsum' })
   description!: string;
 }

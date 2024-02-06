@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   ConfigService,
-  DeepPartial,
   ExpressRequest,
   ForbiddenException,
   generateOTP,
@@ -18,7 +17,6 @@ import {
   REQUEST,
   ValidatorBuilder,
 } from '@joktec/core';
-import { isEmpty } from 'lodash';
 import moment from 'moment';
 import { OTPStatus, OTPType, SessionStatus, UserStatus } from '../../models/constants';
 import { Otp, User } from '../../models/entities';
@@ -41,8 +39,6 @@ import {
 
 @Injectable()
 export class AuthService {
-  private readonly authCfg: AuthConfig;
-
   constructor(
     @Inject(REQUEST) private request: ExpressRequest,
     private config: ConfigService,
@@ -50,11 +46,10 @@ export class AuthService {
     private otpService: OtpService,
     private sessionService: SessionService,
     private userService: UserService,
-  ) {
-    this.authCfg = this.config.parse(AuthConfig, 'guard');
-  }
+  ) {}
 
   async send(input: SendOtpDto): Promise<Otp> {
+    const authCfg = this.config.parse(AuthConfig, 'guard');
     const [otpList, user] = await Promise.all([
       this.otpService.findLastOtpByPhone(input.phone, input.type),
       this.userService.findByPhone(input.phone),
@@ -76,8 +71,8 @@ export class AuthService {
         privateCode: generateUUID({ prefix: input.type }),
         type: input.type,
         retry: 1,
-        expiredInSeconds: this.authCfg.pending,
-        expired: moment().startOf('ms').add(this.authCfg.pending, 'second').toDate(),
+        expiredInSeconds: authCfg.pending,
+        expired: moment().startOf('ms').add(authCfg.pending, 'second').toDate(),
         status: OTPStatus.ACTIVATED,
       });
     }
@@ -88,14 +83,14 @@ export class AuthService {
     const expired = moment(lastOTP.expired).startOf('ms');
     if (expired <= now) {
       // 2.1. Restrict the number of send OTP
-      if (otpList.length >= this.authCfg.limit) {
+      if (otpList.length >= authCfg.limit) {
         await this.otpService.update(lastOTP._id, { status: OTPStatus.EXPIRED });
         throw new BadRequestException('RESTRICT_SEND_OTP');
       }
 
       // 2.2 Retry send OTP
       const retry: number = lastOTP.retry + 1;
-      const expiredInSeconds: number = retry * this.authCfg.pending;
+      const expiredInSeconds: number = retry * authCfg.pending;
       await this.otpService.update(lastOTP._id, { status: OTPStatus.EXPIRED });
       return this.otpService.create({
         phone: lastOTP.phone,
@@ -141,9 +136,7 @@ export class AuthService {
     const builder = ValidatorBuilder.init();
     const otp = await this.otpService.findByActiveCode(input.activeCode);
     if (!otp || otp?.status !== OTPStatus.VERIFIED) throw new BadRequestException('SESSION_INVALID');
-    if (otp.phone !== input.phone) {
-      builder.add('phone', 'PHONE_NOT_MATCH', input.phone);
-    }
+    if (otp.phone !== input.phone) builder.add('phone', 'PHONE_NOT_MATCH', input.phone);
 
     let inputHashPassword: string = null;
     if (!input.googleId && !input.facebookId) {
@@ -162,7 +155,7 @@ export class AuthService {
       if (existEmail) builder.add('email', 'EMAIL_EXISTED', email);
     }
 
-    if (!isEmpty(builder.isError())) throw builder.build();
+    builder.throw();
     const gravatar: Gravatar = await getGravatar(input.email || otp.email);
     const user = await this.userService.create({
       fullName: input.fullName || gravatar?.fullName || otp.phone,
@@ -177,16 +170,7 @@ export class AuthService {
     });
 
     await this.otpService.update(otp._id, { status: OTPStatus.SUCCESS });
-    return this.createTokenAndUpdate(
-      {
-        sub: user._id,
-        jti: generateUUID({ prefix: 'REGISTER' }),
-        userId: user._id,
-        phone: user.phone,
-        email: user.email,
-      },
-      { createdBy: user._id, updatedBy: user._id },
-    );
+    return this.createTokenAndUpdate(user, 'REGISTER');
   }
 
   async login(input: LoginDto): Promise<TokeResponseDto> {
@@ -195,26 +179,14 @@ export class AuthService {
     if (user.status === UserStatus.DISABLED) throw new ForbiddenException('USER_DISABLED');
     if (!user.hashPassword) throw new BadRequestException('PASSWORD_NOT_SETUP');
     if (!matchPassword(input.password, user.hashPassword)) throw new BadRequestException('PASSWORD_INVALID');
-    return this.createTokenAndUpdate({
-      sub: user._id,
-      jti: generateUUID({ prefix: 'PASSWORD' }),
-      userId: user._id,
-      phone: user.phone,
-      email: user.email,
-    });
+    return this.createTokenAndUpdate(user, 'PASSWORD');
   }
 
   async loginSSO(input: LoginSsoDto): Promise<TokeResponseDto> {
     const user = await this.userService.findByUId(input.ssoId, input.platform);
     if (!user) throw new NotFoundException('USER_NOT_FOUND');
     if (user.status === UserStatus.DISABLED) throw new ForbiddenException('USER_DISABLED');
-    return this.createTokenAndUpdate({
-      sub: user._id,
-      jti: generateUUID({ prefix: 'SSO' }),
-      userId: user._id,
-      phone: user.phone,
-      email: user.email,
-    });
+    return this.createTokenAndUpdate(user, 'SSO');
   }
 
   async reset(input: ResetDto): Promise<TokeResponseDto> {
@@ -235,18 +207,10 @@ export class AuthService {
     if (input.password !== input.confirmedPassword) {
       builder.add('confirmedPassword', 'CONFIRMED_PASSWORD_NOT_MATCH', input.confirmedPassword);
     }
-    if (!isEmpty(builder.isError())) throw builder.build();
+    builder.throw();
 
-    return this.createTokenAndUpdate(
-      {
-        sub: user._id,
-        jti: generateUUID({ prefix: 'RESET' }),
-        userId: user._id,
-        phone: user.phone,
-        email: user.email,
-      },
-      { hashPassword: hashPassword(input.password) },
-    );
+    user.hashPassword = hashPassword(input.password);
+    return this.createTokenAndUpdate(user, 'RESET');
   }
 
   async refresh(input: RefreshTokenDto): Promise<TokeResponseDto> {
@@ -268,17 +232,21 @@ export class AuthService {
     if (user._id.toString() !== session.userId.toString()) throw new BadRequestException('TOKEN_OWNER_INVALID');
 
     await this.sessionService.update(session._id, { status: SessionStatus.DISABLED, revokedAt: new Date() });
-    return this.createTokenAndUpdate({
-      sub: rfTokenDecode.sub,
-      jti: generateUUID({ prefix: 'REFRESH' }),
-      userId: rfTokenDecode.userId,
-      phone: rfTokenDecode.phone,
-      email: rfTokenDecode.email,
-    });
+    return this.createTokenAndUpdate(user, 'REFRESH');
   }
 
-  private async createTokenAndUpdate(payload: JwtPayload, userBody: DeepPartial<User> = {}): Promise<TokeResponseDto> {
+  private async createTokenAndUpdate(user: User, loginMethod: string): Promise<TokeResponseDto> {
     const ua: IUserAgent = this.request.userAgent;
+    const issuer = this.config.get<string>('gateway.swagger.server', 'http://localhost:9010');
+    const payload: JwtPayload = {
+      iss: issuer,
+      sub: user._id,
+      aud: [issuer],
+      jti: generateUUID({ prefix: loginMethod }),
+      userId: user._id,
+      phone: user.phone,
+      email: user.email,
+    };
     const token = await this.jwtService.sign(payload);
     await this.sessionService.create({
       tokenId: payload.jti,
@@ -296,12 +264,12 @@ export class AuthService {
       engine: ua.engine,
     });
 
-    const body: DeepPartial<User> = { ...userBody };
-    if (payload.jti.startsWith('REGISTER')) {
-      Object.assign(userBody, { createdBy: payload.sub, updatedBy: payload.sub });
+    if (loginMethod === 'REGISTER') {
+      user.createdBy = user._id;
+      user.updatedBy = user._id;
     }
 
-    const profile = await this.userService.update(payload.sub, body);
+    const profile = await this.userService.update(user._id, user);
     return { ...token, profile };
   }
 }

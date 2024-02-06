@@ -44,7 +44,6 @@ import {
 } from '../exceptions';
 import { Jwt, JwtPayload } from '../guards';
 import { GatewayMetric } from '../infras';
-import { QueryInterceptor } from '../interceptors';
 import { LogService } from '../logger';
 import {
   BaseListResponse,
@@ -153,7 +152,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.LIST))
     @UsePipes(...toArray(props.pipes?.paginate))
-    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.paginate))
+    @UseInterceptors(...toArray(props.hooks?.paginate))
     @HttpResponse(HttpStatus.OK)
     @applyDecorators(...combineDecorators.paginate)
     async paginate(@Query() query: IBaseRequest<typeof queryDto>): Promise<PaginationDto> {
@@ -167,7 +166,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiExcludeEndpoint(someIncludes(excludes, ControllerExclude.READ, ControllerExclude.GET))
     @ApiParam({ name: 'id' })
     @UsePipes(...toArray(props.pipes?.detail))
-    @UseInterceptors(QueryInterceptor, ...toArray(props.hooks?.detail))
+    @UseInterceptors(...toArray(props.hooks?.detail))
     @HttpResponse(HttpStatus.OK)
     @applyDecorators(...combineDecorators.detail)
     async detail(@Param('id') id: ID, @Query() query: IBaseRequest<typeof queryDto>): Promise<T> {

@@ -12,12 +12,10 @@ export class CustomExceptionFilter extends GatewayExceptionsFilter {
 
   minify(host: ArgumentsHost, errorBody: IResponseDto): IResponseDto {
     const error = super.minify(host, errorBody);
-    this.logger.info('error %j', error);
-    const i18n = I18nContext.current();
+    const i18n = I18nContext.current(host);
     if (i18n) {
-      const lang = i18n.lang;
-      this.logger.info('Lang: %s', lang);
       error.message = i18n.t(error.message);
+      error.title = i18n.t(error.title);
     }
     return error;
   }

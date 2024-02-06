@@ -29,9 +29,10 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
     const errorBody: IResponseDto = {
       timestamp: new Date(),
       success: false,
-      error: this.transformErrorData(exception),
-      errorCode: this.transformErrorCode(exception),
+      error: this.transformError(exception),
       message: this.transformMessage(exception),
+      title: get(exception, 'title', 'Error'),
+      code: get(exception, 'code', 0),
     };
 
     const miniError = this.minify(host, errorBody);
@@ -47,6 +48,36 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
     }
   }
 
+  private transformStatus(exception: Error): number {
+    if (has(exception, 'status')) return get(exception, 'status');
+    if (exception instanceof HttpException) return exception.getStatus();
+    if (exception instanceof RpcException) {
+      const error = exception.getError();
+      return isString(error) ? ExceptionMessage.INTERNAL_SERVER_ERROR : (error as any).status;
+    }
+    return HttpStatus.INTERNAL_SERVER_ERROR;
+  }
+
+  private transformError(exception: Error): any {
+    if (has(exception, 'data')) return get(exception, 'data');
+    if (exception instanceof HttpException) return exception.getResponse();
+    if (exception instanceof RpcException) return exception.getError();
+    return exception;
+  }
+
+  private transformMessage(exception: Error): string {
+    if (exception instanceof HttpException) {
+      const error = exception.getResponse();
+      return isString(error) ? error : exception.message;
+    }
+    if (exception instanceof RpcException) {
+      const error = exception.getError();
+      return isString(error) ? error : (error as any).message;
+    }
+    if (exception instanceof Exception && exception?.message) return exception.message;
+    return ExceptionMessage.INTERNAL_SERVER_ERROR;
+  }
+
   public debug(exception: Error) {
     const status = this.transformStatus(exception);
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
@@ -60,41 +91,6 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
     }
   }
 
-  public transformStatus(exception: Error): number {
-    if (has(exception, 'status')) return get(exception, 'status');
-    if (exception instanceof HttpException) return exception.getStatus();
-    if (exception instanceof RpcException) {
-      const error = exception.getError();
-      return isString(error) ? ExceptionMessage.INTERNAL_SERVER_ERROR : (error as any).status;
-    }
-    return HttpStatus.INTERNAL_SERVER_ERROR;
-  }
-
-  public transformErrorData(exception: Error): any {
-    if (has(exception, 'data')) return get(exception, 'data');
-    if (exception instanceof HttpException) return exception.getResponse();
-    if (exception instanceof RpcException) return exception.getError();
-    return exception;
-  }
-
-  public transformErrorCode(exception: Error): number {
-    if (has(exception, 'status')) return get(exception, 'status');
-    return HttpStatus.INTERNAL_SERVER_ERROR;
-  }
-
-  public transformMessage(exception: Error): string {
-    if (exception instanceof HttpException) {
-      const error = exception.getResponse();
-      return isString(error) ? error : exception.message;
-    }
-    if (exception instanceof RpcException) {
-      const error = exception.getError();
-      return isString(error) ? error : (error as any).message;
-    }
-    if (exception instanceof Exception && exception?.message) return exception.message;
-    return ExceptionMessage.INTERNAL_SERVER_ERROR;
-  }
-
   public minify(host: ArgumentsHost, errorBody: IResponseDto): IResponseDto {
     const req = host.switchToHttp().getRequest<ExpressRequest>();
     const res = host.switchToHttp().getResponse<ExpressResponse>();
@@ -106,7 +102,6 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
       if (!isEmpty(res.locals.query)) errorBody.query = res.locals.query;
       if (!isEmpty(res.locals.params)) errorBody.params = res.locals.params;
     }
-
     return errorBody;
   }
 }

@@ -2,7 +2,7 @@ import { isArray, isBoolean, isEmpty, isNaN, isNil, isPlainObject, isString, uni
 import pluralize from 'pluralize';
 import slug from 'slug';
 import UAParser from 'ua-parser-js';
-import { ExpressRequest, IUserAgent } from '../base';
+import { IUserAgent } from '../base';
 
 /**
  * Recursively flattens the keys of an object and returns an array of strings
@@ -131,7 +131,7 @@ export function objectToQueryString(queryParameters: { [key: string]: any }): st
 }
 
 /**
- * Combines a host with paths and parameters to create a valid URL string
+ * Combines a host with paths and parameters to create a valid URL   string
  * @param {string} host - The base URL to use
  * @param {object} parts - An object containing paths and/or parameters to add to the URL
  * @param {string[]} parts.paths - An array of path segments to add to the URL
@@ -188,10 +188,7 @@ export function toRoute(path: string): string {
   return `/${path}`;
 }
 
-export function parseLang(request: ExpressRequest): string[] {
-  const acceptLanguage: string = request.headers['accept-language'];
-  if (!acceptLanguage) return [];
-
+export function resolverLanguage(acceptLanguage: string): string[] {
   const regex = /((([a-zA-Z]+(-[a-zA-Z0-9]+){0,2})|\*)(;q=[0-1](\.[0-9]+)?)?)*/g;
   const strings = acceptLanguage.match(regex);
   const languages = strings

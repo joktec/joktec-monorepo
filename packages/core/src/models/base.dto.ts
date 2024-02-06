@@ -18,8 +18,9 @@ export type KeyOf<T extends Entity = {}> = Extract<keyof T, string>;
 export interface IResponseDto<T = any> {
   timestamp: Date;
   success: boolean;
-  errorCode?: number;
-  message?: string;
+  message: string;
+  title?: string;
+  code?: number;
   data?: T;
 
   error?: any;
