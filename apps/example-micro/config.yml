@@ -1,5 +1,3 @@
-$schema: ../../tools/types/config.schema.json
-
 micro:
   port: 8010
   httpEnable: true
