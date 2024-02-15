@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { buildError } from '../validation.utils';
+import { buildError, isClass } from '../validation.utils';
 
 describe('buildError function', () => {
   it('should correctly build error object for flat errors array', () => {
@@ -71,5 +71,28 @@ describe('buildError function', () => {
     expect(result).toEqual({
       email: ['Email must be a valid email address'],
     });
+  });
+});
+
+class MyClass {
+  private constructor() {}
+}
+
+describe('isClass function', () => {
+  it('should detect MyClass is class and return true', () => {
+    const result = isClass(MyClass);
+    expect(result).toEqual(true);
+  });
+
+  it('should detect anonymous function is not class and return false', () => {
+    const myFunction = () => {};
+    const result = isClass(myFunction);
+    expect(result).toEqual(false);
+  });
+
+  it('should detect function is not class and return false', () => {
+    const myFunction = function abc() {};
+    const result = isClass(myFunction);
+    expect(result).toEqual(false);
   });
 });

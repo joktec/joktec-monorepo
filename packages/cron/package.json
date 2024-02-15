@@ -48,9 +48,9 @@
   "dependencies": {
     "@joktec/core": "0.0.106",
     "@joktec/mysql": "0.0.108",
-    "@nestjs/common": "^10.2.8",
-    "@nestjs/core": "^10.2.8",
-    "@nestjs/schedule": "^4.0.0",
+    "@nestjs/common": "^10.3.3",
+    "@nestjs/core": "^10.3.3",
+    "@nestjs/schedule": "^4.0.1",
     "async": "^3.2.5",
     "async-retry": "^1.3.3",
     "lodash": "^4.17.21",

@@ -34,10 +34,11 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.9.14",
+    "@grpc/grpc-js": "^1.10.0",
     "@grpc/proto-loader": "^0.7.10",
-    "@joktec/core": "0.0.105",
-    "@joktec/mysql": "0.0.107",
+    "@joktec/core": "0.0.106",
+    "@joktec/mysql": "0.0.108",
+    "amqplib": "^0.10.3",
     "amqp-connection-manager": "^4.1.14",
     "ioredis": "^5.3.2"
   },

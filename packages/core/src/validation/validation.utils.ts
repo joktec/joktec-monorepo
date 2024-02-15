@@ -1,21 +1,6 @@
 import { ValidationError } from 'class-validator';
 import { IValidationProperty } from './validation.exception';
 
-// TODO: Remove
-export function isCountryCode(value: string): boolean {
-  return /^\+[0-9]{1,3}$/.test(value);
-}
-
-// TODO: Remove
-export function isPhone(value: any): boolean {
-  return /^[1-9][0-9]{8}$/.test(value);
-}
-
-// TODO: Remove
-export function isOtp(value: string): boolean {
-  return /^\+[0-9]{6}$/.test(value);
-}
-
 /**
  * Builds an object containing validation errors for the given array of `ValidationError` objects,
  * including any errors for child properties.
@@ -39,4 +24,14 @@ export function buildError(errors: ValidationError[], parentKey: string = ''): I
     }
   }
   return result;
+}
+
+export function isClass(variable: any): boolean {
+  if (typeof variable !== 'function') return false;
+  try {
+    variable();
+    return false;
+  } catch (error) {
+    return /^Class constructor/.test(error.message);
+  }
 }

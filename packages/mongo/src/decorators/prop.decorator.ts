@@ -29,6 +29,7 @@ import {
   StringPropOptions,
   StringProps,
 } from './props';
+import mongoose from 'mongoose';
 
 export type TypegooseProp =
   | BasePropOptions
@@ -42,7 +43,8 @@ export type TypegooseProp =
   | VirtualOptions;
 
 export type IPropOptions<T = any> = TypegooseProp & {
-  type?: Clazz | readonly [Clazz] | DeferredFunc<Clazz> | DeferredFunc<unknown> | unknown;
+  // type?: Clazz | readonly [Clazz] | DeferredFunc<Clazz> | DeferredFunc<unknown> | unknown;
+  customType?: Clazz | readonly [Clazz] | DeferredFunc<Clazz> | DeferredFunc<unknown> | unknown;
   hidden?: boolean;
   nested?: boolean;
   example?: T | Clazz<T>;
@@ -75,13 +77,12 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
 
     let isArrayType: boolean = false;
     if (opts.type) {
-      const typeFunction = isFunction(opts.type) ? opts.type : isArray(opts.type) ? opts.type[0] : opts.type;
-      decorators.push(Type(typeFunction));
+      let typeFunction = isFunction(opts.type) ? opts.type : isArray(opts.type) ? opts.type[0] : opts.type;
+      if (typeFunction instanceof mongoose.Types.ObjectId) typeFunction = designType;
+      decorators.push(Type(isFunction(typeFunction) ? typeFunction : () => typeFunction));
 
       isArrayType = isArray(opts.type) || kind === PropType.ARRAY;
-      designType = isArrayType ? opts.type[0] : opts.type;
-      if (isArrayType && kind !== PropType.ARRAY) kind = PropType.ARRAY;
-
+      designType = isArray(opts.type) ? opts.type[0] : opts.type;
       swaggerOptions.type = typeFunction;
       swaggerOptions.isArray = isArrayType;
     }
