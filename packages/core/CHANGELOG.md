@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.108](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.107...@joktec/core@0.0.108) (2024-03-12)
+
+**Note:** Version bump only for package @joktec/core
+
+
+
+
+
 ## [0.0.107](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.106...@joktec/core@0.0.107) (2024-03-12)
 
 **Note:** Version bump only for package @joktec/core
