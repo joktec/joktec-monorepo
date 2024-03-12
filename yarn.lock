@@ -3086,6 +3086,50 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
+"@joktec/alert@^0.0.105":
+  version "0.0.105"
+  resolved "https://registry.yarnpkg.com/@joktec/alert/-/alert-0.0.105.tgz#7d675351350baf62b40ed1fc235c79c4261e4d12"
+  integrity sha512-KuBH24UN4UZPOHyMdVp31eEjH+RLdrLPz8nH85Blcia89Him4rwgB/xEyYBaub0v5MDpCAPCbiWeCuRpN+LjqQ==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    "@slack/webhook" "^7.0.1"
+    lodash "^4.17.21"
+    node-telegram-bot-api "^0.64.0"
+    request "^2.88.2"
+    telegraf "^4.15.0"
+
+"@joktec/arango@^0.0.104":
+  version "0.0.104"
+  resolved "https://registry.yarnpkg.com/@joktec/arango/-/arango-0.0.104.tgz#be2809f2fcdd7beb167c629446d9bd0fa1fb5091"
+  integrity sha512-Y0J+FMlu44Fmat2okUhTdmUvBm65DBmEUKWA4S8eqHH033U+MKJrMCFGNK7K2hNttYYP922oLujszfJr94oDPA==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    arangojs "^8.6.0"
+
+"@joktec/bigquery@^0.0.104":
+  version "0.0.104"
+  resolved "https://registry.yarnpkg.com/@joktec/bigquery/-/bigquery-0.0.104.tgz#5f96d79a2a2a0bd73b738b4e56430306c5ebe361"
+  integrity sha512-qoonY3hEhBUgcuFpevF/zHw4yVlRfFwTan7NRziaJtxkEYomzu40TLLkxNt81j5ypK5fTrqJk18RdX9gws0fZg==
+  dependencies:
+    "@google-cloud/bigquery" "^7.3.0"
+    "@joktec/core" "0.0.106"
+    lodash "^4.17.21"
+    moment "^2.29.4"
+
+"@joktec/cacher@^0.0.50":
+  version "0.0.50"
+  resolved "https://registry.yarnpkg.com/@joktec/cacher/-/cacher-0.0.50.tgz#6a9c7151dae360f064da450974db17f171a3ec08"
+  integrity sha512-mZDl0kX3ipSna89h7kI8DOs19HWnk7626qFuMOri72T5rYnQMloF1n0+2s2wUL9m/pcM2ZUrUOXGXL3PSQI0tg==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    dot-object "^2.1.4"
+    ioredis "^5.3.2"
+    lodash "^4.17.21"
+    memcache-client "^1.0.5"
+    node-cache "^5.1.2"
+    node-persist "^3.1.3"
+    object-hash "^3.0.0"
+
 "@joktec/core@0.0.100":
   version "0.0.100"
   resolved "https://registry.yarnpkg.com/@joktec/core/-/core-0.0.100.tgz#0feef3b89d4311e768f5fd4ee045d456ca9efc99"
@@ -3156,6 +3200,227 @@
     type-cacheable "^4.1.2"
     ua-parser-js "^1.0.36"
     uuid "^9.0.1"
+
+"@joktec/core@0.0.106", "@joktec/core@^0.0.106":
+  version "0.0.106"
+  resolved "https://registry.yarnpkg.com/@joktec/core/-/core-0.0.106.tgz#d92fc9f79b8d43fb2e5d29217d6340e953d6b951"
+  integrity sha512-6z0oLtdk0Z7ZqjyFmPueQZG98yJf5yOdtJ/EjgsMReQbs99WjHqSSUozKOYQuZrUDi+prDZ0xhT7wxriW+5kKw==
+  dependencies:
+    "@bull-board/api" "^5.8.2"
+    "@bull-board/express" "^5.8.2"
+    "@bull-board/ui" "^5.8.2"
+    "@burakbey/pino-mongodb" "^1.0.1"
+    "@grpc/proto-loader" "^0.7.9"
+    "@nestjs/bull" "^10.0.1"
+    "@nestjs/common" "^10.2.8"
+    "@nestjs/config" "^3.1.1"
+    "@nestjs/core" "^10.2.8"
+    "@nestjs/cqrs" "^10.2.6"
+    "@nestjs/graphql" "^12.0.9"
+    "@nestjs/mapped-types" "^2.0.2"
+    "@nestjs/microservices" "^10.2.8"
+    "@nestjs/platform-express" "^10.2.8"
+    "@nestjs/serve-static" "^4.0.0"
+    "@nestjs/swagger" "^7.1.14"
+    "@nestjs/terminus" "^10.1.1"
+    "@nestjs/testing" "^10.2.8"
+    "@nestjs/throttler" "^5.0.1"
+    "@willsoto/nestjs-prometheus" "5.3.0"
+    async "^3.2.4"
+    async-retry "^1.3.3"
+    backoff "^2.5.0"
+    bcryptjs "^2.4.3"
+    bull "^4.11.3"
+    class-transformer "^0.5.1"
+    class-validator "^0.14.0"
+    crypto "^1.0.1"
+    csurf "^1.11.0"
+    dataloader "^2.2.2"
+    dot-object "^2.1.4"
+    express "^4.18.2"
+    express-basic-auth "^1.2.1"
+    geoip-lite "^1.4.7"
+    graphql "^16.8.0"
+    hbs "^4.2.0"
+    helmet "^7.0.0"
+    i18n "^0.15.1"
+    js-yaml "4.1.0"
+    jsonwebtoken "^9.0.2"
+    lodash "^4.17.21"
+    merge-deep "^3.0.3"
+    moment "^2.29.4"
+    ms "^2.1.3"
+    multer "^1.4.5-lts.1"
+    nestjs-pino "^3.4.0"
+    opossum "^8.1.1"
+    pino "^8.15.1"
+    pino-cloudwatch "^0.7.0"
+    pino-fluentd "^0.2.4"
+    pino-http "^8.5.0"
+    pino-loki "^2.1.3"
+    pino-pretty "^10.2.0"
+    pino-stackdriver "^3.0.0"
+    pluralize "^8.0.0"
+    prom-client "^14.2.0"
+    qs "^6.11.2"
+    reflect-metadata "^0.1.13"
+    request-ip "^3.3.0"
+    retry "^0.13.1"
+    rxjs "^7.8.1"
+    slug "^8.2.3"
+    swagger-ui-express "^5.0.0"
+    type-cacheable "^4.1.2"
+    ua-parser-js "^1.0.36"
+    uuid "^9.0.1"
+
+"@joktec/cron@^0.0.110":
+  version "0.0.110"
+  resolved "https://registry.yarnpkg.com/@joktec/cron/-/cron-0.0.110.tgz#07a18f1398f78673ed483564a197bf33dd0e1972"
+  integrity sha512-7iHwRqlMmrgZUnP4N61v7x8Izp4MraUQ+RZUZF2Y6sTA+T6U4Y2X8wdIj7Dir1nVdMksAEl/Y4W66PSenbiZIQ==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    "@joktec/mysql" "0.0.108"
+    "@nestjs/common" "^10.2.8"
+    "@nestjs/core" "^10.2.8"
+    "@nestjs/schedule" "^4.0.0"
+    async "^3.2.5"
+    async-retry "^1.3.3"
+    lodash "^4.17.21"
+    moment "^2.29.4"
+    moment-timezone "^0.5.43"
+    reflect-metadata "^0.1.13"
+
+"@joktec/elastic@^0.0.107":
+  version "0.0.107"
+  resolved "https://registry.yarnpkg.com/@joktec/elastic/-/elastic-0.0.107.tgz#3242a3da8156f86076a5b55675f6270aa7795488"
+  integrity sha512-vFMGD30FbMTh+9wV9mIVhZTCMPE+LZC0AB/k6e/g6v/LHS27Cpx9TQ8kYQw/LZh1NBYi8mfg86L1hJSwyfPocg==
+  dependencies:
+    "@elastic/elasticsearch" "^8.10.0"
+    "@joktec/core" "0.0.106"
+    "@joktec/http" "0.0.108"
+    lodash "^4.17.21"
+    merge-deep "^3.0.3"
+
+"@joktec/file@^0.0.104":
+  version "0.0.104"
+  resolved "https://registry.yarnpkg.com/@joktec/file/-/file-0.0.104.tgz#d7e339aec5c92726f43c8b373cf470292cd58c30"
+  integrity sha512-GxKopALvxQYUAmdVmUJMjSDTYPI/U0gOAjnmXDs8nFOsCChbNzDqX3sa0ASYL23V6cK3LWTFIQnJ71nblFOyUw==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    fs "^0.0.1-security"
+    fs-extra "^11.1.1"
+    lodash "^4.17.21"
+    rxjs "^7.8.1"
+
+"@joktec/firebase@^0.0.24":
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/@joktec/firebase/-/firebase-0.0.24.tgz#4d49853ec99b6f46074dbfce437c201da31a22fb"
+  integrity sha512-Ghsq0gqwaEJrgbABH1bufUvhlQh6BpVP2woY8/bYE+PA4TdfCzzFHWRXyqZvRO5LcjQz8GWTLfO0Y8ne62Uepg==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    firebase-admin "^11.11.0"
+    lodash "^4.17.21"
+    rxjs "^7.8.1"
+
+"@joktec/http@0.0.108", "@joktec/http@^0.0.108":
+  version "0.0.108"
+  resolved "https://registry.yarnpkg.com/@joktec/http/-/http-0.0.108.tgz#903675aa38b7c0515b58ec549e8622c3951da6bc"
+  integrity sha512-HMD/s8YgPe7r9z8W9oFWa4XinFhwqNyd4GAVNqJzBxqjCMxyEKTz/VLXMjxOibnFipKENPnUMpTTvwbjqnV5kw==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    axios "^1.3.5"
+    axios-curlirize "~1.3.7"
+    form-data "^4.0.0"
+    http-proxy-agent "^5.0.0"
+    http-status-codes "^2.2.0"
+    https-proxy-agent "^5.0.1"
+    lodash "^4.17.21"
+    merge-deep "^3.0.3"
+    qs "^6.11.0"
+    retry-axios "^2.3.0"
+    rxjs "^7.8.1"
+
+"@joktec/kafka@^0.0.104":
+  version "0.0.104"
+  resolved "https://registry.yarnpkg.com/@joktec/kafka/-/kafka-0.0.104.tgz#fe6f8b3a5cfd454af19aaba36cac779ee086ac17"
+  integrity sha512-r8Ip45nEidZvQkTAiZH+zDTtz4ULDpSXxewCddRKfIYh331yIms7nS5zfAsBRkcz6ex1de1zc49d97ac6wbHZA==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    kafkajs "^2.2.4"
+    lodash "^4.17.21"
+
+"@joktec/mailer@^0.0.105":
+  version "0.0.105"
+  resolved "https://registry.yarnpkg.com/@joktec/mailer/-/mailer-0.0.105.tgz#e3ce087b935623d1eca0c3884af104e26cf5486e"
+  integrity sha512-uj8qDYDaWuDoTpF5khzwtqB+6H/VoOIJd1gx70VzCync+fAKFyNd9iWbcaEGq+poGi/u6y8ZD96Hrex3LuK7VQ==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    ejs "^3.1.9"
+    handlebars "^4.7.8"
+    lodash "^4.17.21"
+    nodemailer "^6.9.7"
+    preview-email "^3.0.19"
+    pug "^3.0.2"
+
+"@joktec/mongo@^0.0.141":
+  version "0.0.141"
+  resolved "https://registry.yarnpkg.com/@joktec/mongo/-/mongo-0.0.141.tgz#793d054a7aa72972324f260ecde84454e2b53aa1"
+  integrity sha512-oksXbk3uPxL8/G2+SDd6wsKIPGNXder6SInAjpGsGoZx5tovhVa4wlQ7tpg1CbwJaQKfNcTJ4ubIkcrMwwLESg==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    "@typegoose/typegoose" "^12.0.0"
+    dot-object "^2.1.4"
+    lodash "^4.17.21"
+    moment "^2.29.4"
+    mongoose "^8.0.3"
+
+"@joktec/mysql@0.0.108", "@joktec/mysql@^0.0.108":
+  version "0.0.108"
+  resolved "https://registry.yarnpkg.com/@joktec/mysql/-/mysql-0.0.108.tgz#283bc8a73773ef4d04b16d1ee7028b202a4a3849"
+  integrity sha512-d3yKmXwFirL2JTIK20EYcvYLOUscPI8k17+b6pwtwhEStLBc3zaE8LJiIq0aEt+yerBKVTUxVwzExCt9Q1XJiQ==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    lodash "^4.17.21"
+    mysql "2.18.1"
+    mysql2 "^3.6.3"
+    reflect-metadata "*"
+    sequelize "^6.34.0"
+    sequelize-typescript "^2.1.5"
+
+"@joktec/notifier@^0.0.104":
+  version "0.0.104"
+  resolved "https://registry.yarnpkg.com/@joktec/notifier/-/notifier-0.0.104.tgz#d7c6cbd971e91b2fcc884f83998650a532660a52"
+  integrity sha512-3Uw5yyifZRkcze4dEryDCnGMWttO7iXp3d9uPguhGpNnpCBsE7t/i3jzdxhH8tM4FxRQBtBziD0qhkc9M3NUng==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    lodash "^4.17.21"
+    merge-deep "^3.0.3"
+    node-pushnotifications "^2.1.0"
+    web-push "^3.6.6"
+
+"@joktec/rabbit@^0.0.104":
+  version "0.0.104"
+  resolved "https://registry.yarnpkg.com/@joktec/rabbit/-/rabbit-0.0.104.tgz#2a40837fd1ad9cd4fe2ab2c12e5996edc805899d"
+  integrity sha512-AGgb+NAW4cIEfQ7KnsegN/EdAvMycDlEfBEXeFuI1FGtaTEHUpwsBuQetxLitrgIAkSEIuVvWxRgfhwMAiCBGg==
+  dependencies:
+    "@joktec/core" "0.0.106"
+    amqplib "^0.10.3"
+    lodash "^4.17.21"
+    object-hash "^3.0.0"
+
+"@joktec/storage@^0.0.107":
+  version "0.0.107"
+  resolved "https://registry.yarnpkg.com/@joktec/storage/-/storage-0.0.107.tgz#67daefdb1a802059b8f93b824980ff2cc5f6fb3f"
+  integrity sha512-D23GwCt6QZH8XwEgXFvEIgVwwSG/+KoxllTu2pRa/iDqapSvIkrq1pnWigM2gmNgvXYkWPb2v5WgES1MSa7lFA==
+  dependencies:
+    "@aws-sdk/client-s3" "^3.451.0"
+    "@aws-sdk/s3-request-presigner" "^3.451.0"
+    "@joktec/core" "0.0.106"
+    image-downloader "^4.3.0"
+    lodash "^4.17.21"
+    merge-deep "^3.0.3"
+    mime-types "^2.1.35"
+    url-parse "^1.5.10"
 
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
@@ -3619,7 +3884,7 @@
     multer "1.4.4-lts.1"
     tslib "2.6.2"
 
-"@nestjs/schedule@^4.0.1":
+"@nestjs/schedule@^4.0.0", "@nestjs/schedule@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@nestjs/schedule/-/schedule-4.0.1.tgz#beb69f974e7adc96fd799f555ba0121c10d2d61b"
   integrity sha512-cz2FNjsuoma+aGsG0cMmG6Dqg/BezbBWet1UTHtAuu6d2mXNTVcmoEQM2DIVG5Lfwb2hfSE2yZt8Moww+7y+mA==
@@ -5047,6 +5312,17 @@
   dependencies:
     "@tufjs/canonical-json" "2.0.0"
     minimatch "^9.0.3"
+
+"@typegoose/typegoose@^12.0.0":
+  version "12.2.0"
+  resolved "https://registry.yarnpkg.com/@typegoose/typegoose/-/typegoose-12.2.0.tgz#c1aeba14f80ae94069000a9a2db0128c1e35b8fe"
+  integrity sha512-6gC5aIfccXw4IZOMe3oSef63M6leDyMvuycfwzQdVi8M9C5UnpaV8tO1xzmxiOxUHDST0GdDW/aWCCX6MtOQxg==
+  dependencies:
+    lodash "^4.17.20"
+    loglevel "^1.9.1"
+    reflect-metadata "^0.2.1"
+    semver "^7.6.0"
+    tslib "^2.6.2"
 
 "@typegoose/typegoose@^12.1.0":
   version "12.1.0"
@@ -13122,6 +13398,11 @@ loglevel@^1.8.1:
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.8.1.tgz#5c621f83d5b48c54ae93b6156353f555963377b4"
   integrity sha512-tCRIJM51SHjAayKwC+QAg8hT8vg6z7GSgLJKGvzuPb1Wc+hLzqtuVLxp6/HzSPOozuK+8ErAhy7U/sVzw8Dgfg==
 
+loglevel@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.9.1.tgz#d63976ac9bcd03c7c873116d41c2a85bafff1be7"
+  integrity sha512-hP3I3kCrDIMuRwAwHltphhDM1r8i55H33GgqjXbrisuJhF4kRhW1dNuxsRklp4bXl8DSdLaNLuiL4A/LWRfxvg==
+
 long@4.0.0, long@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/long/-/long-4.0.0.tgz#9a7b71cfb7d361a194ea555241c92f7468d5bf28"
@@ -13916,6 +14197,19 @@ mongoose@*:
     bson "^5.0.1"
     kareem "2.5.1"
     mongodb "5.1.0"
+    mpath "0.9.0"
+    mquery "5.0.0"
+    ms "2.1.3"
+    sift "16.0.1"
+
+mongoose@^8.0.3:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-8.2.1.tgz#c64466c8c2ddc8da95adf20513085ca9defe8301"
+  integrity sha512-UgZZbXSJH0pdU936qj3FyVI+sBsMoGowFnL5R/RYrA50ayn6+ZYdVr8ehsRgNxRcMYwoNld5XzHIfkFRJTePEw==
+  dependencies:
+    bson "^6.2.0"
+    kareem "2.5.1"
+    mongodb "6.3.0"
     mpath "0.9.0"
     mquery "5.0.0"
     ms "2.1.3"
@@ -17002,6 +17296,13 @@ semver@^7.0.0, semver@^7.1.1, semver@^7.3.4, semver@^7.3.5, semver@^7.3.7, semve
   version "7.3.8"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.3.8.tgz#07a78feafb3f7b32347d725e33de7e2a2df67798"
   integrity sha512-NB1ctGL5rlHrPJtFDVIVzTyQylMLu9N9VICA6HSFJo8MCGVTMW6gfpicwKmmK/dAjTOrqu5l63JJOpDSrAis3A==
+  dependencies:
+    lru-cache "^6.0.0"
+
+semver@^7.6.0:
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-7.6.0.tgz#1a46a4db4bffcccd97b743b5005c8325f23d4e2d"
+  integrity sha512-EnwXhrlwXMk9gKu5/flx5sv/an57AkRplG3hTK68W7FRDN+k+OWBj65M7719OkA82XLBxrcX0KSHj+X5COhOVg==
   dependencies:
     lru-cache "^6.0.0"
 

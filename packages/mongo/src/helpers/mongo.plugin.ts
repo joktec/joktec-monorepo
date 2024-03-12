@@ -12,7 +12,6 @@ import {
   SlugPlugin,
   StrictReferencePlugin,
   TransformPlugin,
-  UniquePlugin,
 } from '../plugins';
 
 export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
@@ -47,7 +46,6 @@ export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
     plugins.push(plugin(LocalePlugin, i18nOption));
   }
 
-  plugins.push(plugin(UniquePlugin, {}));
   plugins.push(plugin(TransformPlugin));
   return plugins;
 }

@@ -174,7 +174,7 @@ export abstract class CronWorker<C extends CronModel> implements OnModuleInit {
     }
 
     // update new an existed crons
-    await this.cronRepo.batchUpsert(newCrons);
+    await this.cronRepo.bulkCreate(newCrons);
     const runCrons = newCrons.filter(c => c.status != CronStatus.DONE).sort(c => moment(c.date).unix());
     if (!runCrons.length) {
       this.logService.info('All crons are done');
