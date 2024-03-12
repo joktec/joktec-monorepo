@@ -31,8 +31,8 @@ export function buildIndex(options: ISchemaOptions): ClassDecorator[] {
   }
 
   if (options?.textSearch) {
-    const fields: mongoose.IndexDefinition = options.textSearch.split(',').reduce((obj, curr) => {
-      obj[curr] = 'text';
+    const fields: mongoose.IndexDefinition = options.textSearch.split(',').reduce((obj, path) => {
+      obj[path] = 'text';
       return obj;
     }, {});
     indexes.push({ fields });

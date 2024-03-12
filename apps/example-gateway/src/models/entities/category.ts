@@ -2,25 +2,23 @@ import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
 import { IsCdnUrl } from '../../utils';
 import { CategoryStatus, CategoryType } from '../constants';
 import { CategoryWhiteLabel } from './category-white-label';
+import { I18nText, I18nTransform } from './i18n-text';
 
-@Schema({
-  collection: 'categories',
-  textSearch: 'title,subhead',
-  unique: 'code',
-  paranoid: true,
-  i18n: { locales: ['en', 'vi'], fallback: true },
-})
+@Schema({ collection: 'categories', textSearch: '$**', unique: ['code'], paranoid: true })
 export class Category extends MongoSchema {
   @Prop({ required: true, trim: true, uppercase: true, immutable: true, example: 'LF07PPCCCD' })
   code!: string;
 
-  @Prop({ required: [true, 'TITLE_REQUIRED'], i18n: true, example: 'Passport' })
-  title!: string;
+  @Prop({ required: [true, 'TITLE_REQUIRED'], example: 'Passport' })
+  @I18nTransform()
+  title!: I18nText;
 
-  @Prop({ default: null, i18n: true })
+  @Prop({ default: null })
+  @I18nTransform()
   subhead?: string;
 
   @Prop({ default: null })
+  @I18nTransform()
   description?: string;
 
   @Prop({ required: true, enum: CategoryType, example: CategoryType.CATALOG })
@@ -43,7 +41,7 @@ export class Category extends MongoSchema {
   @Prop({ default: 0, unsigned: true })
   commission!: number;
 
-  @Prop({ default: null, i18n: true })
+  @Prop({ default: null })
   whiteLabel?: CategoryWhiteLabel;
 
   @Prop({ type: String, ref: () => Category, default: null, strictRef: true })

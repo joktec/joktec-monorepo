@@ -1,7 +1,8 @@
 import { Client } from '@joktec/core';
+import { Magika } from 'magika';
 import { FileConfig } from './file.config';
 
-export interface FileClient extends Client<FileConfig> {
+export interface FileClient extends Client<FileConfig, Magika> {
   getSize(conId: string): Promise<number>;
 
   deleteDir(mkdir: boolean, conId: string): Promise<void>;

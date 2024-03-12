@@ -13,8 +13,8 @@ import {
 } from '@joktec/core';
 import { ApiPropertyOptions } from '@nestjs/swagger';
 import { prop, PropType, Severity } from '@typegoose/typegoose';
-import { BasePropOptions, DeferredFunc, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
-import { isArray, isBoolean, isFunction, isNil, isUndefined, last, omit, unset } from 'lodash';
+import { BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
+import { isArray, isBoolean, isFunction, isNil, isUndefined, last, unset } from 'lodash';
 import {
   ArrayPropOptions,
   ArrayProps,
@@ -29,7 +29,6 @@ import {
   StringPropOptions,
   StringProps,
 } from './props';
-import mongoose from 'mongoose';
 
 export type TypegooseProp =
   | BasePropOptions
@@ -43,8 +42,6 @@ export type TypegooseProp =
   | VirtualOptions;
 
 export type IPropOptions<T = any> = TypegooseProp & {
-  // type?: Clazz | readonly [Clazz] | DeferredFunc<Clazz> | DeferredFunc<unknown> | unknown;
-  customType?: Clazz | readonly [Clazz] | DeferredFunc<Clazz> | DeferredFunc<unknown> | unknown;
   hidden?: boolean;
   nested?: boolean;
   example?: T | Clazz<T>;
@@ -77,8 +74,7 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
 
     let isArrayType: boolean = false;
     if (opts.type) {
-      let typeFunction = isFunction(opts.type) ? opts.type : isArray(opts.type) ? opts.type[0] : opts.type;
-      if (typeFunction instanceof mongoose.Types.ObjectId) typeFunction = designType;
+      const typeFunction = isFunction(opts.type) ? opts.type : isArray(opts.type) ? opts.type[0] : opts.type;
       decorators.push(Type(isFunction(typeFunction) ? typeFunction : () => typeFunction));
 
       isArrayType = isArray(opts.type) || kind === PropType.ARRAY;
@@ -121,7 +117,8 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
     else if (designType === Date) decorators.push(...DateProps(opts, swaggerOptions));
     else if (designType === Boolean) decorators.push(...BoolProps(opts, swaggerOptions));
 
-    const mongooseOpts = omit(opts, ['type']);
+    const mongooseOpts = { ...opts };
+    if (mongooseOpts.ref) delete mongooseOpts.type;
     applyDecorators(prop(mongooseOpts, kind), ...decorators, ApiProperty(swaggerOptions))(target, propertyKey);
   };
 };

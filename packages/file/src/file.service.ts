@@ -1,5 +1,6 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
 import fs from 'fs-extra';
+import { Magika } from 'magika';
 import moment from 'moment';
 import { FileClient } from './file.client';
 import { FileConfig } from './file.config';
@@ -7,13 +8,15 @@ import { FileMetric } from './file.metric';
 import { calculateSize, removePath } from './file.utils';
 
 @Injectable()
-export class FileService extends AbstractClientService<FileConfig> implements FileClient {
+export class FileService extends AbstractClientService<FileConfig, Magika> implements FileClient {
   constructor() {
     super('file', FileConfig);
   }
 
   async init(_: FileConfig): Promise<any> {
-    return null;
+    const magika = new Magika();
+    await magika.load();
+    return magika;
   }
 
   async start(_: any, conId: string = DEFAULT_CON_ID): Promise<void> {

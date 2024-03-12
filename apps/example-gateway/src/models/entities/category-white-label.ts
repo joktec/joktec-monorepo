@@ -2,6 +2,7 @@ import { IsHexColor } from '@joktec/core';
 import { Prop, PropType, Schema } from '@joktec/mongo';
 import { IsCdnUrl } from '../../utils';
 import { CategoryPlaceholder } from './category-placeholder';
+import { I18nText, I18nTransform } from './i18n-text';
 
 @Schema({ schemaOptions: { _id: false, timestamps: false } })
 export class CategoryWhiteLabel {
@@ -30,8 +31,9 @@ export class CategoryWhiteLabel {
   @IsCdnUrl()
   ownerBanner?: string;
 
-  @Prop({ default: null, i18n: true, example: 'Thông tin thú cưng' })
-  formTitle?: string;
+  @Prop({ default: null, example: 'Thông tin thú cưng' })
+  @I18nTransform()
+  formTitle?: I18nText;
 
   @Prop({ default: null, example: 'Bạn thất lạc thú cưng gì?' })
   formLabel?: string;

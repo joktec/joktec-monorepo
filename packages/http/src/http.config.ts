@@ -11,6 +11,7 @@ import {
   IsString,
   IsTypes,
   LogService,
+  toBool,
 } from '@joktec/core';
 import { AxiosBasicCredentials, AxiosError, AxiosProxyConfig } from 'axios';
 import mergeDeep from 'merge-deep';
@@ -115,6 +116,7 @@ export class HttpConfig extends ClientConfig {
     mergeDeep(this, {
       ...props,
       headers: Object.assign({ accept: 'application/json' }, props?.headers),
+      curlirize: toBool(props.curlirize, false),
     });
     if (props.proxy) this.proxy = new HttpProxyConfig(props.proxy);
   }

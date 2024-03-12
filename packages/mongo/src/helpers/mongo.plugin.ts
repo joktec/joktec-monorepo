@@ -1,6 +1,6 @@
 import { toArray } from '@joktec/core';
 import { plugin } from '@typegoose/typegoose';
-import { first, get } from 'lodash';
+import { get, head } from 'lodash';
 import { ISchemaOptions } from '../decorators';
 import { ObjectId } from '../models';
 import {
@@ -8,10 +8,12 @@ import {
   LocalePlugin,
   ParanoidOptions,
   ParanoidPlugin,
+  SlugOptions,
+  SlugPlugin,
   StrictReferencePlugin,
   TransformPlugin,
+  UniquePlugin,
 } from '../plugins';
-import { SlugOptions, SlugPlugin } from '../plugins/slug.plugin';
 
 export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
   const plugins = toArray(options.plugins).map(p => plugin(p.mongoosePlugin, p.options));
@@ -38,14 +40,14 @@ export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
   }
 
   if (options.i18n) {
-    const i18nOption: LocaleOptions = { locales: ['en'], fallback: false };
-    if (typeof options?.i18n === 'object') Object.assign(i18nOption, options.i18n);
+    const i18nOption: LocaleOptions = Object.assign({ locales: ['en'], fallback: false }, options.i18n);
     if (!i18nOption.locales.includes(i18nOption.default || '')) {
-      i18nOption.default = first(i18nOption.locales);
+      i18nOption.default = head(i18nOption.locales);
     }
     plugins.push(plugin(LocalePlugin, i18nOption));
   }
 
+  plugins.push(plugin(UniquePlugin, {}));
   plugins.push(plugin(TransformPlugin));
   return plugins;
 }
