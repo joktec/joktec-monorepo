@@ -2,7 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/co
 import { RpcException } from '@nestjs/microservices';
 import { isPlainObject } from 'lodash';
 import { Observable, throwError } from 'rxjs';
-import { HttpStatus } from '../../constants';
+import { HttpStatus } from '../../models';
 import { Exception } from '../exception';
 import { ExceptionMessage } from '../exception-message';
 

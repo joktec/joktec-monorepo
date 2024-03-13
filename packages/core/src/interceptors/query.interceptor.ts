@@ -1,8 +1,7 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { has, head, set } from 'lodash';
 import { Observable } from 'rxjs';
-import { ExpressRequest, ExpressResponse } from '../base';
-import { IBaseRequest } from '../models';
+import { ExpressRequest, ExpressResponse, IBaseRequest } from '../models';
 import { nullKeysToObject, resolverLanguage, toInt } from '../utils';
 
 @Injectable()

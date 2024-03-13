@@ -2,7 +2,7 @@ import { isArray, isBoolean, isEmpty, isNaN, isNil, isPlainObject, isString, uni
 import pluralize from 'pluralize';
 import slug from 'slug';
 import UAParser from 'ua-parser-js';
-import { IUserAgent } from '../base';
+import { IUserAgent } from '../models';
 
 /**
  * Recursively flattens the keys of an object and returns an array of strings

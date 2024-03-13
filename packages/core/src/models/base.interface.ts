@@ -1,12 +1,6 @@
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
-import { ConfigService } from '../config';
-import { JwtPayload } from '../guards';
-import { LogService } from '../logger';
 import { DeepPartial, Entity, IBaseRequest, ICondition, ILanguage, IListResponseDto, IResponseDto } from '../models';
-
-export type IControllerMethod = 'paginate' | 'detail' | 'create' | 'update' | 'delete';
-
-export type ICacheStrategy = { [key in IControllerMethod]?: MethodDecorator };
+import { ConfigService, JwtPayload, LogService } from '../modules';
 
 export interface IBaseController<T, ID> {
   configService?: ConfigService;

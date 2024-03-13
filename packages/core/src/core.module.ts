@@ -1,7 +1,6 @@
 import { Global, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService, initConfig } from './config';
 import { GatewayModule, MicroModule } from './infras';
-import { createPinoHttp, LoggerModule } from './logger';
+import { ConfigModule, ConfigService, createPinoHttp, initConfig, LoggerModule } from './modules';
 
 @Global()
 @Module({

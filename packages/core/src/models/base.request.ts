@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { Constructor, Entity, IDateType, IPrimaryType, IZeroType, KeyOf } from './base.dto';
 
 /** A union of primitive data types that are allowed in a MongoDB query. */
@@ -98,20 +99,31 @@ export interface IBaseRequest<T extends Entity = {}> {
 export const BaseListRequest = <T extends Entity>(dto: Constructor<T>) => {
   class BaseRequest implements IBaseRequest<T> {
     @Field({})
-    @ApiPropertyOptional({})
+    @ApiPropertyOptional({ type: String })
     select?: string;
 
     @Field({})
-    @ApiPropertyOptional({})
+    @ApiPropertyOptional({ type: String })
     keyword?: string;
 
     @Field({})
-    @ApiPropertyOptional({})
+    @ApiPropertyOptional({ type: Number })
+    @Type(() => Number)
     page?: number;
 
     @Field({})
-    @ApiPropertyOptional({})
+    @ApiPropertyOptional({ type: Number })
+    @Type(() => Number)
     offset?: number;
+
+    @Field({})
+    @ApiPropertyOptional({ type: Number })
+    @Type(() => Number)
+    limit?: number;
+
+    @Field({})
+    @ApiPropertyOptional({ type: String })
+    language?: ILanguage;
   }
 
   return BaseRequest;

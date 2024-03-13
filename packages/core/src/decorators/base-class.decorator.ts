@@ -1,8 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { union } from 'lodash';
-import { ConfigService } from '../config';
-import { LogService } from '../logger';
 import { Clazz, InjectType } from '../models';
+import { ConfigService, LogService } from '../modules';
 
 export type CallbackClassOptions = {
   className: string;

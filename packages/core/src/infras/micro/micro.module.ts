@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { MetricModule } from '../../metric';
+import { MetricModule } from '../../modules';
 import { MicroController } from './micro.controller';
 import { microLatency, MicroMetric, totalMicroCounter } from './micro.metric';
 

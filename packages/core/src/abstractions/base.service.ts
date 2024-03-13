@@ -1,17 +1,16 @@
 import { Inject, OnModuleInit } from '@nestjs/common';
-import { ExpressRequest, REQUEST } from '../base';
-import { ConfigService } from '../config';
-import { JwtPayload } from '../guards';
-import { LogService } from '../logger';
+import { REQUEST } from '../base';
 import {
   DeepPartial,
   Entity,
+  ExpressRequest,
   IBaseRepository,
   IBaseRequest,
   IBaseService,
   ICondition,
   IListResponseDto,
 } from '../models';
+import { ConfigService, JwtPayload, LogService } from '../modules';
 import { cloneInstance } from '../utils';
 
 export abstract class BaseService<T extends Entity, ID = string, REQ extends IBaseRequest<T> = IBaseRequest<T>>

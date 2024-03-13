@@ -1,7 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { ApplicationMiddlewares } from '../../base';
-import { ConfigService } from '../../config';
-import { LogService } from '../../logger';
+import { ConfigService, LogService } from '../../modules';
 import { toArray } from '../../utils';
 import { MicroConfig } from './micro.config';
 

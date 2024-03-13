@@ -2,11 +2,9 @@ import { Inject, OnModuleInit, Type } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { startCase } from 'lodash';
 import { firstValueFrom } from 'rxjs';
-import { ConfigService } from '../config';
 import { MethodNotAllowedException } from '../exceptions';
-import { JwtPayload } from '../guards';
-import { LogService } from '../logger';
 import { Constructor, DeepPartial, Entity, IBaseRequest, IBaseService, IListResponseDto } from '../models';
+import { ConfigService, JwtPayload, LogService } from '../modules';
 import { toSingular } from '../utils';
 
 export interface IMicroClientProps<T extends Entity> {

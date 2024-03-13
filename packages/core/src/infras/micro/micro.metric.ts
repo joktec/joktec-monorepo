@@ -3,11 +3,9 @@ import { InjectMetric, makeCounterProvider, makeGaugeProvider } from '@willsoto/
 import { Counter, Gauge } from 'prom-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { ExpressRequest } from '../../base';
-import { LogService } from '../../logger';
+import { LogService } from '../../modules';
 import { getTimeString } from '../../utils';
 
-const ExcludePaths = ['/swagger', '/bulls', '/metrics'];
 const MICRO_LATENCY_METRIC = 'micro_call_latency';
 const MICRO_TOTAL_METRIC = 'micro_call_total';
 
@@ -39,9 +37,6 @@ export class MicroMetric implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest<ExpressRequest>();
-    if (ExcludePaths.includes(request.path)) return next.handle();
-
     const startedAt = new Date().getTime();
     const service = (context.getClass() as any).serviceName ?? context.getClass().name;
     const method = context.getHandler().name;

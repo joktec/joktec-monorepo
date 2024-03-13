@@ -6,13 +6,14 @@ import {
   NestInterceptor,
   NestModule,
   PipeTransform,
+  Logger as NestLogger,
 } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { isFunction, isNil, omit } from 'lodash';
 import { Logger } from 'nestjs-pino';
-import { ConfigService } from '../config';
 import { GatewayConfig, GatewayService, MicroConfig, MicroService } from '../infras';
+import { ConfigService } from '../modules';
 
 export type Module = NestModule;
 export type ApplicationMiddlewares = {
@@ -59,8 +60,9 @@ export class Application {
     opts?: ApplicationOptions,
     bootstrap?: (app?: INestApplication, opts?: ApplicationMiddlewares) => Promise<void>,
   ): Promise<void> {
+    const nestLogger = new NestLogger(Application.name);
     const appOpts: NestApplicationOptions = omit(opts, ['guards', 'pipes', 'interceptors', 'filters']);
-    const app = await NestFactory.create<NestExpressApplication>(module, { logger: console, ...appOpts });
+    const app = await NestFactory.create<NestExpressApplication>(module, { logger: nestLogger, ...appOpts });
 
     const logger = app.get(Logger);
     app.useLogger(logger);

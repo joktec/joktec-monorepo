@@ -3,13 +3,11 @@ import { InjectMetric, makeCounterProvider, makeHistogramProvider } from '@wills
 import { Counter, Histogram } from 'prom-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { ExpressRequest } from '../../base';
-import { HttpStatus } from '../../constants';
 import { Exception } from '../../exceptions';
-import { LogService } from '../../logger';
+import { ExpressRequest, HttpStatus } from '../../models';
+import { LogService } from '../../modules';
 import { getTimeString } from '../../utils';
 
-const ExcludePaths = ['/swagger', '/bulls', '/metrics'];
 const GATEWAY_DURATION_METRIC = 'http_call_duration';
 const GATEWAY_TOTAL_METRIC = 'http_call_total';
 
@@ -42,8 +40,6 @@ export class GatewayMetric implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<ExpressRequest>();
-    if (ExcludePaths.includes(request.path)) return next.handle();
-
     const path = `${request.method} ${request.route?.path ?? request.path}`;
     const duration = this.gatewayDurationMetric.startTimer({ path });
 

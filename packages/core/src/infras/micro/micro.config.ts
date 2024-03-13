@@ -1,17 +1,17 @@
 import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
-import { toBool, toInt } from '../../utils';
-import { IsTypes } from '../../validation';
 import {
   GrpcTransport,
-  Transporter,
-  parseTransports,
-  TcpTransport,
-  RmqTransport,
-  RedisTransport,
+  KafkaTransport,
   MqttTransport,
   NatsTransport,
-  KafkaTransport,
-} from '../transporters';
+  parseTransports,
+  RedisTransport,
+  RmqTransport,
+  TcpTransport,
+  Transporter,
+} from '../../models';
+import { toBool, toInt } from '../../utils';
+import { IsTypes } from '../../validation';
 
 export class MicroConfig {
   @IsInt()

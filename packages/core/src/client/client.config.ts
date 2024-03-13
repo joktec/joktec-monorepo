@@ -1,4 +1,4 @@
-import { RetryOptions } from '../retry';
+import { RetryOptions } from '../decorators';
 import { toBool, toInt } from '../utils';
 import {
   buildError,

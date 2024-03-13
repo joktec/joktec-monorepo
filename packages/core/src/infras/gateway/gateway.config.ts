@@ -1,7 +1,7 @@
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { HelmetOptions } from 'helmet';
-import { SwaggerConfig } from '../../swagger';
+import { SwaggerConfig } from '../../decorators';
 import { IsTypes } from '../../validation';
 
 export class StaticConfig {

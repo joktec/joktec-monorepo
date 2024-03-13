@@ -1,14 +1,13 @@
 import { Inject, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { isEmpty } from 'lodash';
 import mergeDeep from 'merge-deep';
-import { ConfigService } from '../config';
 import { ExceptionMessage } from '../exceptions';
-import { LogService } from '../logger';
 import { Constructor } from '../models';
 import { sleep, toArray } from '../utils';
 import { Client } from './client';
 import { ClientConfig, DEFAULT_CON_ID } from './client.config';
 import { InvalidClientConfigException } from './client.exception';
+import { ConfigService, LogService } from '../modules';
 
 export abstract class AbstractClientService<IConfig extends ClientConfig, IClient = any>
   implements Client<IConfig, IClient>, OnModuleInit, OnModuleDestroy

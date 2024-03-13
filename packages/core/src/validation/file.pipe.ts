@@ -1,9 +1,8 @@
 import path from 'path';
 import { FileValidator, ParseFilePipe, ParseFilePipeBuilder } from '@nestjs/common';
 import { Express } from 'express';
-import { ExpressRequest } from '../base';
-import { HttpStatus } from '../constants';
 import { BadRequestException, ExceptionMessage } from '../exceptions';
+import { ExpressRequest, HttpStatus } from '../models';
 
 export const FilePipe = (options?: {
   fileType?: string;

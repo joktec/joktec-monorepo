@@ -12,12 +12,10 @@ import basicAuth from 'express-basic-auth';
 import { lookup } from 'geoip-lite';
 import helmet from 'helmet';
 import requestIp from 'request-ip';
-import { ApplicationMiddlewares, ExpressRequest, ExpressResponse } from '../../base';
-import { BullConfig } from '../../bull';
-import { ConfigService } from '../../config';
-import { HttpRequestHeader } from '../../constants';
-import { LogService } from '../../logger';
-import { SwaggerConfig, SwaggerSecurity } from '../../swagger';
+import { ApplicationMiddlewares } from '../../base';
+import { SwaggerConfig, SwaggerSecurity } from '../../decorators';
+import { ExpressRequest, ExpressResponse, HttpRequestHeader } from '../../models';
+import { BullConfig, ConfigService, LogService } from '../../modules';
 import { joinUrl, parseUA, toArray } from '../../utils';
 import { GatewayConfig } from './gateway.config';
 
