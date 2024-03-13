@@ -5,7 +5,6 @@ import {
   ApiParam,
   BaseController,
   Controller,
-  ControllerExclude,
   ExpressRequest,
   IControllerProps,
   Param,
@@ -30,13 +29,11 @@ import { OrderService } from './order.service';
 
 const props: IControllerProps<Order> = {
   dto: Order,
-  excludes: [ControllerExclude.DELETE],
-  bearer: AuthGuard,
-  guards: RoleGuard,
-  hooks: {
-    create: [OrderSubmittedInterceptor],
-    update: [OrderEditableInterceptor],
-  },
+  guards: [AuthGuard, RoleGuard],
+  useBearer: true,
+  create: { hooks: [OrderSubmittedInterceptor] },
+  update: { hooks: [OrderEditableInterceptor] },
+  delete: { disable: true },
 };
 
 @Controller('orders')

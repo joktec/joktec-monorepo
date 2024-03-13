@@ -7,8 +7,8 @@ import { ApartmentCreateDto, ApartmentUpdateDto } from './models';
 const props: IControllerProps<Apartment> = {
   dto: Apartment,
   customDto: { createDto: ApartmentCreateDto, updatedDto: ApartmentUpdateDto },
-  bearer: AuthGuard,
-  guards: RoleGuard,
+  guards: [AuthGuard, RoleGuard],
+  useBearer: true,
 };
 
 @Controller('apartments')

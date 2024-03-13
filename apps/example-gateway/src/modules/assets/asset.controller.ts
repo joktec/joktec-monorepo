@@ -8,7 +8,6 @@ import {
   BaseListResponse,
   Body,
   Controller,
-  ControllerExclude,
   FilesInterceptor,
   IControllerProps,
   Jwt,
@@ -26,9 +25,9 @@ import { AssetPresigned, AssetPresignedDto } from './models';
 
 const props: IControllerProps<Asset> = {
   dto: Asset,
-  excludes: [ControllerExclude.CREATE],
-  bearer: AuthGuard,
-  guards: RoleGuard,
+  guards: [AuthGuard, RoleGuard],
+  useBearer: true,
+  create: { disable: true },
 };
 
 @Controller('assets')

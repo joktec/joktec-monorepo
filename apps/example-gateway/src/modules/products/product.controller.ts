@@ -5,8 +5,8 @@ import { ProductService } from './product.service';
 
 const props: IControllerProps<Product> = {
   dto: Product,
-  bearer: AuthGuard,
-  guards: RoleGuard,
+  guards: [AuthGuard, RoleGuard],
+  useBearer: true,
 };
 
 @Controller('products')

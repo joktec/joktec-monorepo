@@ -5,8 +5,8 @@ import { SettingService } from './setting.service';
 
 const props: IControllerProps<Setting> = {
   dto: Setting,
-  bearer: AuthGuard,
-  guards: RoleGuard,
+  guards: [AuthGuard, RoleGuard],
+  useBearer: true,
 };
 
 @Controller('settings')

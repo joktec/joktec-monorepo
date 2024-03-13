@@ -5,8 +5,8 @@ import { RoomService } from './room.service';
 
 const props: IControllerProps<Room> = {
   dto: Room,
-  bearer: AuthGuard,
-  guards: RoleGuard,
+  guards: [AuthGuard, RoleGuard],
+  useBearer: true,
 };
 
 @Controller('rooms')

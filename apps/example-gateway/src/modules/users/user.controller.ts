@@ -5,8 +5,8 @@ import { UserService } from './user.service';
 
 const props: IControllerProps<User> = {
   dto: User,
-  bearer: AuthGuard,
-  guards: RoleGuard,
+  guards: [AuthGuard, RoleGuard],
+  useBearer: true,
 };
 
 @Controller('users')

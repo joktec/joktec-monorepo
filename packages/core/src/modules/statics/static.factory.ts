@@ -3,7 +3,7 @@ import { ServeStaticModuleOptions } from '@nestjs/serve-static';
 import { GatewayConfig } from '../../infras';
 import { toRoute } from '../../utils';
 import { BullConfig } from '../bull';
-import { ConfigService } from '../config';
+import { ConfigModule, ConfigService } from '../config';
 
 export function initServerStatic(cfg: ConfigService): ServeStaticModuleOptions[] {
   const gatewayConfig = cfg.parse(GatewayConfig, 'gateway');
@@ -19,4 +19,13 @@ export function initServerStatic(cfg: ConfigService): ServeStaticModuleOptions[]
   if (bull?.board?.enable) excludePath.push(bull?.board?.path);
 
   return [{ rootPath: resolve(staticPath), exclude: excludePath.map(toRoute) }];
+}
+
+export function serverStaticFactory() {
+  return {
+    isGlobal: true,
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: (cfg: ConfigService) => initServerStatic(cfg),
+  };
 }

@@ -1,4 +1,4 @@
-import { BaseController, Controller, ControllerExclude, IControllerProps } from '@joktec/core';
+import { BaseController, Controller, IControllerProps } from '@joktec/core';
 import { AuthGuard, RoleGuard } from '../../base';
 import { Session } from '../../models/entities';
 import { SessionQueryInterceptor } from './hooks';
@@ -6,13 +6,13 @@ import { SessionService } from './session.service';
 
 const props: IControllerProps<Session> = {
   dto: Session,
-  excludes: [ControllerExclude.WRITE],
-  bearer: AuthGuard,
-  guards: RoleGuard,
-  hooks: {
-    paginate: [SessionQueryInterceptor],
-    detail: [SessionQueryInterceptor],
-  },
+  guards: [AuthGuard, RoleGuard],
+  useBearer: true,
+  paginate: { hooks: [SessionQueryInterceptor] },
+  detail: { hooks: [SessionQueryInterceptor] },
+  create: { disable: true },
+  update: { disable: true },
+  delete: { disable: true },
 };
 
 @Controller('sessions')
