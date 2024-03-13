@@ -43,9 +43,9 @@
   "dependencies": {
     "@joktec/core": "0.0.109",
     "fs": "^0.0.1-security",
-    "fs-extra": "^11.1.1",
+    "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
-    "magika": "^0.2.5",
+    "magika": "^0.2.12",
     "rxjs": "^7.8.1"
   },
   "lint-staged": {
@@ -75,6 +75,6 @@
   },
   "gitHead": "e9de24817b6963244d65b7d19eed66aa692d2398",
   "devDependencies": {
-    "@types/fs-extra": "^11.0.3"
+    "@types/fs-extra": "^11.0.4"
   }
 }

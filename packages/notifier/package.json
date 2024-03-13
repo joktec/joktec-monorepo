@@ -45,13 +45,13 @@
     "@joktec/core": "0.0.109",
     "lodash": "^4.17.21",
     "merge-deep": "^3.0.3",
-    "node-pushnotifications": "^2.1.0",
-    "web-push": "^3.6.6"
+    "node-pushnotifications": "^2.1.1",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
-    "@types/merge-deep": "^3.0.2",
-    "@types/node-pushnotifications": "^1.0.7",
-    "@types/web-push": "^3.6.2"
+    "@types/merge-deep": "^3.0.3",
+    "@types/node-pushnotifications": "^1.0.8",
+    "@types/web-push": "^3.6.3"
   },
   "lint-staged": {
     "*.ts": [

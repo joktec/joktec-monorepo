@@ -19,6 +19,7 @@ lerna/
 
 # Logs
 log*/
+!logger/
 *.log
 
 # Unit test / Coverage reports

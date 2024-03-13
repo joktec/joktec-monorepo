@@ -44,14 +44,14 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.109",
-    "@slack/webhook": "^7.0.1",
+    "@slack/webhook": "^7.0.2",
     "lodash": "^4.17.21",
-    "node-telegram-bot-api": "^0.64.0",
+    "node-telegram-bot-api": "^0.65.1",
     "request": "^2.88.2",
-    "telegraf": "^4.15.0"
+    "telegraf": "^4.16.3"
   },
   "devDependencies": {
-    "@types/node-telegram-bot-api": "^0.63.0"
+    "@types/node-telegram-bot-api": "^0.64.3"
   },
   "lint-staged": {
     "*.ts": [
