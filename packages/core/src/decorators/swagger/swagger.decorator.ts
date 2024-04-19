@@ -39,13 +39,15 @@ export const ApiSchema: ApiSchemaDecorator = ({ name }) => {
   };
 };
 
-export function ApiDisableEndpoint(disable: boolean = false): MethodDecorator {
+export function ApiNotAllowedEndpoint(disable?: boolean): MethodDecorator {
   return function (target: any, propertyKey: string | symbol, descriptor: PropertyDescriptor) {
-    const originalMethod = descriptor.value;
-    descriptor.value = function (...args: any[]) {
-      if (disable) throw new MethodNotAllowedException();
-      return originalMethod.apply(this, args);
-    };
+    if (disable) {
+      const originalMethod = descriptor.value;
+      descriptor.value = function (...args: any[]) {
+        if (disable) throw new MethodNotAllowedException();
+        return originalMethod.apply(this, args);
+      };
+    }
     return descriptor;
   };
 }

@@ -14,8 +14,8 @@ export class CustomExceptionFilter extends GatewayExceptionsFilter {
     const error = super.minify(host, errorBody);
     const i18n = I18nContext.current(host);
     if (i18n) {
-      error.message = i18n.t(error.message);
-      error.title = i18n.t(error.title);
+      // error.message = i18n.t(error.message);
+      // error.title = i18n.t(error.title);
     }
     return error;
   }

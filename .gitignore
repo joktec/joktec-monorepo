@@ -21,6 +21,9 @@ lerna/
 log*/
 !logger/
 *.log
+!logstash*
+!log-socket*
+!log-transport*
 
 # Unit test / Coverage reports
 coverage/

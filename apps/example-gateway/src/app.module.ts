@@ -33,6 +33,7 @@ import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
       fallbackLanguage: 'vi',
       loaderOptions: { path: path.join(__dirname, '/i18n/'), watch: true },
       typesOutputPath: path.join(__dirname, '../src/i18n/i18n.generated.ts'),
+      logging: false,
       resolvers: [
         { use: QueryResolver, options: ['lang', 'language'] },
         new HeaderResolver(['x-lang']),

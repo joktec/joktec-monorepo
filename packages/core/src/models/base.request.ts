@@ -1,14 +1,9 @@
-import { Field } from '@nestjs/graphql';
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { Constructor, Entity, IDateType, IPrimaryType, IZeroType, KeyOf } from './base.dto';
+import { Entity, IDateType, IPrimaryType, IZeroType, KeyOf } from './base.dto';
 
 /** A union of primitive data types that are allowed in a MongoDB query. */
 export type IDataType = IZeroType | IPrimaryType | IDateType;
-export type IBindingType = IDataType | IDataType[];
 
 /** A union of MongoDB query operators that can be used to specify more complex conditions */
-export type IOperator = `$$${string}`;
 export type ICompare = '$eq' | '$gt' | '$gte' | '$lt' | '$lte' | '$ne';
 export type IArrayOperation = '$in' | '$nin' | '$all';
 export type INotOperation = '$not';
@@ -22,8 +17,7 @@ export type IOpField<T> =
   | { [op in IArrayOperation]?: T[] }
   | { [op in ITextOperation]?: string }
   | { [op in IBoolOperation]?: boolean }
-  | { [op in INotOperation]: IOpField<T> }
-  | { [op in IOperator]?: any };
+  | { [op in INotOperation]: IOpField<T> };
 
 export type ICondition<T extends Entity = {}> = {
   [key in keyof T]?: T[key] extends (infer U extends IDataType)[]
@@ -50,6 +44,8 @@ export type ISort<T extends Entity = {}> = {
 };
 
 type INearOption = { lat: number; lng: number; distance?: number };
+type ICursor<T extends Entity = {}> = '*' | string | { lastCursor: '*' | string; cursorField?: KeyOf<T> };
+
 export type INear<T extends Entity = {}> = {
   [key in keyof T]?: T[key] extends IDataType | IDataType[]
     ? never
@@ -57,21 +53,6 @@ export type INear<T extends Entity = {}> = {
     ? INearOption
     : never;
 };
-
-// export type IPopulate<E, RefType = Entity> = {
-//   [e in keyof E]?: E[e] extends (infer U extends RefType)[]
-//     ? '*' | IPopulateOption<U, RefType>
-//     : E[e] extends RefType
-//     ? '*' | IPopulateOption<E[e], RefType>
-//     : never;
-// };
-// export type IPopulateOption<E, RefType = Entity> = {
-//   select?: string | KeyOf<E>[];
-//   model?: string | Constructor<E> | Entity<E>;
-//   match?: ICondition<E>;
-//   paranoid?: boolean;
-//   populate?: IPopulate<E, RefType>;
-// };
 
 export type IPopulate<T extends Entity = {}> = { [key in keyof T]?: '*' | IPopulateOption };
 export type IPopulateOption<T extends Entity = any> = {
@@ -92,39 +73,7 @@ export interface IBaseRequest<T extends Entity = {}> {
   sort?: ISort<T>;
   near?: INear<T>;
   populate?: IPopulate<T>;
+  cursor?: ICursor<T>;
 
   [key: string]: any;
 }
-
-export const BaseListRequest = <T extends Entity>(dto: Constructor<T>) => {
-  class BaseRequest implements IBaseRequest<T> {
-    @Field({})
-    @ApiPropertyOptional({ type: String })
-    select?: string;
-
-    @Field({})
-    @ApiPropertyOptional({ type: String })
-    keyword?: string;
-
-    @Field({})
-    @ApiPropertyOptional({ type: Number })
-    @Type(() => Number)
-    page?: number;
-
-    @Field({})
-    @ApiPropertyOptional({ type: Number })
-    @Type(() => Number)
-    offset?: number;
-
-    @Field({})
-    @ApiPropertyOptional({ type: Number })
-    @Type(() => Number)
-    limit?: number;
-
-    @Field({})
-    @ApiPropertyOptional({ type: String })
-    language?: ILanguage;
-  }
-
-  return BaseRequest;
-};

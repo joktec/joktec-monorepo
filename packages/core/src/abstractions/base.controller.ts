@@ -5,6 +5,7 @@ import {
   Delete,
   ExceptionFilter,
   Get,
+  HttpCode,
   Inject,
   NestInterceptor,
   OnModuleInit,
@@ -26,13 +27,23 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { set, startCase } from 'lodash';
-import { ApiDisableEndpoint, ApiSchema, ApiUseApiKey, ApiUseBearer } from '../decorators';
+import { ApiNotAllowedEndpoint, ApiSchema, ApiUseApiKey, ApiUseBearer } from '../decorators';
 import { NotFoundException } from '../exceptions';
 import { GatewayMetric } from '../infras';
-import { BaseListResponse, Clazz, Constructor, DeepPartial, Entity, IBaseController, IBaseRequest } from '../models';
+import {
+  BaseListResponse,
+  Clazz,
+  Constructor,
+  DeepPartial,
+  Entity,
+  HttpStatus,
+  IBaseController,
+  IBaseRequest,
+} from '../models';
 import { ConfigService, Jwt, JwtPayload, LogService } from '../modules';
 import { toArray, toBool, toPlural, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
@@ -54,13 +65,13 @@ export interface IControllerProps<T extends Entity> extends IEndpointProps {
   dto: Constructor<T>;
   dtoName?: string;
   customDto?: {
-    queryDto?: Constructor<DeepPartial<T>> | Clazz;
+    queryDto?: Constructor<IBaseRequest<T>> | Clazz;
     createDto?: Constructor<DeepPartial<T>> | Clazz;
     updatedDto?: Constructor<DeepPartial<T>> | Clazz;
   };
   tag?: string;
   metric?: boolean;
-  paginate?: IEndpointProps & { usePost?: boolean };
+  paginate?: IEndpointProps & { search?: boolean };
   detail?: IEndpointProps;
   create?: IEndpointProps;
   update?: IEndpointProps;
@@ -71,11 +82,16 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
   const namePlural = toPlural(nameSingular);
-  const tag = props.tag || toPlural(dtoName);
+  const tag = props.tag || nameSingular;
 
-  const queryDto: Constructor<T | any> = props.customDto?.queryDto || props.dto;
+  class DefaultQueryDto implements IBaseRequest<typeof props.dto> {}
+
+  const queryDto: Constructor<any> = props.customDto?.queryDto || DefaultQueryDto;
   const createDto: Constructor<T | any> = props.customDto?.createDto || props.dto;
   const updatedDto: Constructor<T | any> = props.customDto?.updatedDto || createDto;
+
+  @ApiSchema({ name: `${nameSingular}Query` })
+  class QueryDto extends queryDto {}
 
   @ApiSchema({ name: `${nameSingular}Pagination` })
   class PaginationDto extends BaseListResponse<T>(props.dto) {}
@@ -88,9 +104,9 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
   // Apply Metric
   const controllerHooks = toArray(props.hooks);
-  if (props.metric) controllerHooks.push(GatewayMetric);
+  if (toBool(props.metric, true)) controllerHooks.push(GatewayMetric);
 
-  @ApiTags(tag.toLowerCase())
+  @ApiTags(tag)
   @ApiExcludeController(toBool(props.hidden, false))
   @ApiUseBearer(props.useBearer)
   @ApiUseApiKey(props.useApiKey)
@@ -111,9 +127,10 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
     @Get('/')
     @ApiOperation({ summary: `List ${namePlural}` })
+    @ApiQuery({ type: QueryDto })
     @ApiOkResponse({ type: PaginationDto })
-    @ApiExcludeEndpoint(props.paginate?.hidden || props.paginate?.disable)
-    @ApiDisableEndpoint(props.paginate?.disable)
+    @ApiExcludeEndpoint(toBool(props.paginate?.hidden, false))
+    @ApiNotAllowedEndpoint(toBool(props.paginate?.disable, false))
     @ApiUseBearer(props.paginate?.useBearer)
     @ApiUseApiKey(props.paginate?.useApiKey)
     @UseGuards(...toArray(props.paginate?.guards))
@@ -121,15 +138,16 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UsePipes(...toArray(props.paginate?.pipes))
     @UseFilters(...toArray(props.paginate?.filters))
     @applyDecorators(...toArray(props.paginate?.decorators))
-    async paginate(@Query() query: IBaseRequest<typeof queryDto>): Promise<PaginationDto> {
+    async paginate(@Query() query: QueryDto): Promise<PaginationDto> {
       return this.service.paginate(query);
     }
 
     @Post('/search')
     @ApiOperation({ summary: `Search ${namePlural}` })
+    @ApiBody({ type: QueryDto })
     @ApiOkResponse({ type: PaginationDto })
-    @ApiExcludeEndpoint((props.paginate?.hidden || props.paginate?.disable) && !props.paginate?.usePost)
-    @ApiDisableEndpoint(props.paginate?.disable && !props.paginate?.usePost)
+    @ApiExcludeEndpoint(!toBool(props.paginate?.search, false))
+    @ApiNotAllowedEndpoint(!toBool(props.paginate?.search, false))
     @ApiUseBearer(props.paginate?.useBearer)
     @ApiUseApiKey(props.paginate?.useApiKey)
     @UseGuards(...toArray(props.paginate?.guards))
@@ -137,22 +155,24 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UsePipes(...toArray(props.paginate?.pipes))
     @UseFilters(...toArray(props.paginate?.filters))
     @applyDecorators(...toArray(props.paginate?.decorators))
-    async search(@Body() query: IBaseRequest<typeof queryDto>): Promise<PaginationDto> {
+    @HttpCode(HttpStatus.OK)
+    async search(@Body() query: QueryDto): Promise<PaginationDto> {
       return this.service.paginate(query);
     }
 
     @Get('/:id')
     @ApiParam({ name: 'id' })
+    @ApiQuery({ type: QueryDto })
     @ApiOperation({ summary: `Get ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
-    @ApiExcludeEndpoint(props.paginate?.hidden || props.paginate?.disable)
-    @ApiDisableEndpoint(props.detail?.disable)
+    @ApiExcludeEndpoint(toBool(props.detail?.hidden, false))
+    @ApiNotAllowedEndpoint(toBool(props.detail?.disable, false))
     @ApiUseBearer(props.detail?.useBearer)
     @ApiUseApiKey(props.detail?.useApiKey)
     @UsePipes(...toArray(props.detail?.pipes))
     @UseInterceptors(...toArray(props.detail?.hooks))
     @applyDecorators(...toArray(props.detail?.decorators))
-    async detail(@Param('id') id: ID, @Query() query: IBaseRequest<typeof queryDto>): Promise<T> {
+    async detail(@Param('id') id: ID, @Query() query: QueryDto): Promise<T> {
       set(query, 'condition.id', id);
       const detail = await this.service.findOne(query);
       if (!detail) throw new NotFoundException();
@@ -163,8 +183,8 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `Create ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiBody({ type: CreateDto })
-    @ApiExcludeEndpoint(props.paginate?.hidden || props.paginate?.disable)
-    @ApiDisableEndpoint(props.create?.disable)
+    @ApiExcludeEndpoint(toBool(props.create?.hidden, false))
+    @ApiNotAllowedEndpoint(toBool(props.create?.disable, false))
     @ApiUseBearer(props.create?.useBearer)
     @ApiUseApiKey(props.create?.useApiKey)
     @UsePipes(new BaseValidationPipe(), ...toArray(props.create?.pipes))
@@ -179,8 +199,8 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
     @ApiBody({ type: UpdateDto })
-    @ApiExcludeEndpoint(props.paginate?.hidden || props.paginate?.disable)
-    @ApiDisableEndpoint(props.update?.disable)
+    @ApiExcludeEndpoint(toBool(props.update?.hidden, false))
+    @ApiNotAllowedEndpoint(toBool(props.update?.disable, false))
     @ApiUseBearer(props.update?.useBearer)
     @ApiUseApiKey(props.update?.useApiKey)
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.update?.pipes))
@@ -196,8 +216,8 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `Delete ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
-    @ApiExcludeEndpoint(props.paginate?.hidden || props.paginate?.disable)
-    @ApiDisableEndpoint(props.delete?.disable)
+    @ApiExcludeEndpoint(toBool(props.delete?.hidden, false))
+    @ApiNotAllowedEndpoint(toBool(props.delete?.disable, false))
     @ApiUseBearer(props.delete?.useBearer)
     @ApiUseApiKey(props.delete?.useApiKey)
     @UsePipes(...toArray(props.delete?.pipes))

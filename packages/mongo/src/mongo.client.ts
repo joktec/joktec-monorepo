@@ -2,7 +2,7 @@ import { Client, DeepPartial, IBaseRepository, ICondition, ILanguage } from '@jo
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ClientSession, ClientSessionOptions, Connection, UpdateQuery } from 'mongoose';
 import { QueryHelper } from './helpers';
-import { IMongoAggregation, MongoBulkRequest, MongoSchema } from './models';
+import { IMongoAggregation, IMongoBulkRequest, MongoSchema } from './models';
 import { MongoConfig } from './mongo.config';
 
 export interface MongoClient extends Client<MongoConfig, Connection> {
@@ -25,7 +25,7 @@ export interface IMongoRepository<T extends MongoSchema, ID = string> extends IB
 
   upsert(condition: ICondition<T>, body: DeepPartial<T>, opts?: { language?: ILanguage }): Promise<T>;
 
-  bulkUpsert(docs: DeepPartial<T>[], upsert?: MongoBulkRequest): Promise<any>;
+  bulkUpsert(docs: DeepPartial<T>[], upsert?: IMongoBulkRequest): Promise<any>;
 
   deleteMany(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T[]>;
 }

@@ -27,10 +27,18 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   }
 
   async paginate(query: REQ): Promise<IListResponseDto<T>> {
-    const { items, totalItems } = await this.repository.findAndCount(query);
-    const totalPage = Math.ceil(totalItems / query.limit);
-    const isLastPage = items.length < query.limit;
-    return { items, totalItems, totalPage, isLastPage };
+    const responseDto = await this.repository.paginate(query);
+
+    const { items, total } = responseDto;
+    if (responseDto.currentCursor) {
+      const { prevCursor, currentCursor, nextCursor } = responseDto;
+      return { items, total, prevCursor, currentCursor, nextCursor };
+    }
+
+    const lastPage = Math.ceil(total / query.limit);
+    const nextPage = query.page + 1 > lastPage ? null : query.page + 1;
+    const prevPage = query.page - 1 < 1 ? null : query.page - 1;
+    return { items, total, lastPage, nextPage, prevPage };
   }
 
   async find(query: REQ): Promise<T[]> {

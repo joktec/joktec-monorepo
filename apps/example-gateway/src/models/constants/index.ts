@@ -3,6 +3,7 @@ export * from './asset.enum';
 export * from './category.enum';
 export * from './order.enum';
 export * from './otp.enum';
+export * from './place.enum';
 export * from './room.enum';
 export * from './session.enum';
 export * from './setting.enum';

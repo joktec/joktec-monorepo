@@ -7,3 +7,8 @@ export enum LogFormat {
   PRETTY = 'pretty',
   JSON = 'json',
 }
+
+export enum LogSocketMode {
+  TCP = 'tcp',
+  UDP = 'UDP',
+}

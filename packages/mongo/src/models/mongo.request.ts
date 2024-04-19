@@ -19,8 +19,7 @@ export class ObjectId extends mongoose.Types.ObjectId {
   }
 }
 
-export type MongoBulkRequest = { conditions?: string[]; operator?: string; fields?: string[]; language?: ILanguage };
-
+export type IMongoBulkRequest = { conditions?: string[]; operator?: string; fields?: string[]; language?: ILanguage };
 export type IMongoAggregation = PipelineStage;
 export type IMongoAggregateOptions = AggregateOptions & { language?: ILanguage };
 

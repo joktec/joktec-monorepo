@@ -10,11 +10,11 @@ export class MongoHelper {
     function convert(obj: object) {
       const firstOperator = Object.keys(obj).find(key => String(key).startsWith('$'));
       if (!firstOperator) return obj;
-      if (firstOperator.startsWith('$$')) {
-        const newKey = firstOperator.slice(0, 1);
-        obj[newKey] = obj[firstOperator];
-        delete obj[firstOperator];
-      }
+      // if (firstOperator.startsWith('$$')) {
+      //   const newKey = firstOperator.slice(0, 1);
+      //   obj[newKey] = obj[firstOperator];
+      //   delete obj[firstOperator];
+      // }
       return obj;
     }
 

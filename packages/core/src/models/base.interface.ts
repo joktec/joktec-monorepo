@@ -39,11 +39,17 @@ export interface IBaseService<T, ID, REQ> {
 }
 
 export interface IBaseRepository<T extends Entity, ID> {
+  paginate(query: IBaseRequest<T>): Promise<{
+    items: T[];
+    total: number;
+    prevCursor?: string;
+    currentCursor?: string;
+    nextCursor?: string;
+  }>;
+
   find(query: IBaseRequest<T>): Promise<T[]>;
 
   count(query: IBaseRequest<T>): Promise<number>;
-
-  findAndCount(query: IBaseRequest<T>): Promise<{ items: T[]; totalItems: number }>;
 
   findOne(query: IBaseRequest<T>): Promise<T>;
 

@@ -56,9 +56,9 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async findAndCount(query: IMysqlRequest<T>): Promise<{ items: T[]; totalItems: number }> {
-    const [items, totalItems] = await Promise.all([this.find(query), this.count(query)]);
-    return { items, totalItems };
+  async paginate(query: IMysqlRequest<T>): Promise<{ items: T[]; total: number }> {
+    const [items, total] = await Promise.all([this.find(query), this.count(query)]);
+    return { items, total };
   }
 
   @MysqlCatch

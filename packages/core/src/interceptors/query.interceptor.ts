@@ -1,5 +1,5 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { has, head, set } from 'lodash';
+import { has, head, isNil, set } from 'lodash';
 import { Observable } from 'rxjs';
 import { ExpressRequest, ExpressResponse, IBaseRequest } from '../models';
 import { nullKeysToObject, resolverLanguage, toInt } from '../utils';
@@ -19,8 +19,8 @@ export class QueryInterceptor implements NestInterceptor {
     const offset = toInt(req.query?.offset, (page - 1) * limit);
     const query: IBaseRequest<any> = {
       ...req.query,
-      condition: nullKeysToObject(req.query?.condition),
-      sort: req.query?.sort || { createdAt: 'desc' },
+      condition: nullKeysToObject(req.query?.condition || {}),
+      sort: req.query?.sort || {},
       page,
       limit,
       offset,

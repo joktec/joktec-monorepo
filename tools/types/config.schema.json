@@ -60642,6 +60642,12 @@
         "logStash": {
           "$ref": "#/definitions/LogStashConfig"
         },
+        "cloudWatch": {
+          "$ref": "#/definitions/CloudWatchConfig"
+        },
+        "loki": {
+          "$ref": "#/definitions/LokiConfig"
+        },
         "mongo": {
           "$ref": "#/definitions/PinoMongoConfig"
         }
@@ -60716,6 +60722,59 @@
       "required": [
         "host",
         "port",
+        "enable"
+      ]
+    },
+    "CloudWatchConfig": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "number"
+        },
+        "enable": {
+          "type": "boolean"
+        },
+        "accessKeyId": {
+          "type": "string"
+        },
+        "secretAccessKey": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "host",
+        "port",
+        "enable",
+        "accessKeyId",
+        "secretAccessKey"
+      ]
+    },
+    "LokiConfig": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "enable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "host",
+        "username",
+        "password",
         "enable"
       ]
     },

@@ -41,7 +41,7 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
       case 'graphql':
         return new GraphQLException(errorBody.message, { extensions: { http: { status }, data: miniError } });
       default:
-        this.logger.error(exception, 'Something when wrong');
+        this.logger.error(exception['data'] || exception, exception.message || 'Something when wrong');
         break;
     }
   }
@@ -79,7 +79,7 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
   public debug(exception: Error) {
     const status = this.transformStatus(exception);
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(exception, 'Something when wrong');
+      this.logger.error(exception['data'] || exception, exception.message || 'Something when wrong');
     }
 
     const useFilter = this.cfg.get<boolean>('log.useFilter', false);

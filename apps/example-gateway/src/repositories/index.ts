@@ -3,6 +3,9 @@ import { AssetRepo } from './common/asset.repo';
 import { CategoryRepo } from './common/category.repo';
 import { OrderRepo } from './common/order.repo';
 import { OtpRepo } from './common/otp.repo';
+import { PlaceImageRepo } from './common/place-image.repo';
+import { PlaceReviewRepo } from './common/place-review.repo';
+import { PlaceRepo } from './common/place.repo';
 import { RoomRepo } from './common/room.repo';
 import { SessionRepo } from './common/session.repo';
 import { SettingRepo } from './common/setting.repo';
@@ -18,6 +21,9 @@ export const Repositories = [
   SessionRepo,
   SettingRepo,
   UserRepo,
+  PlaceRepo,
+  PlaceImageRepo,
+  PlaceReviewRepo,
 ];
 
 export * from './repository.module';
@@ -30,3 +36,6 @@ export * from './common/room.repo';
 export * from './common/session.repo';
 export * from './common/setting.repo';
 export * from './common/user.repo';
+export * from './common/place.repo';
+export * from './common/place-review.repo';
+export * from './common/place-image.repo';

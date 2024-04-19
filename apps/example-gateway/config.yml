@@ -24,14 +24,25 @@ transports:
         durable: true
 
 log:
-  level: debug
-  format: pretty
+  level: info
+  format: json
   useFilter: false
-  mongo:
+  # fileDir: .log/app.log
+  socket:
     enable: true
-    uri: mongodb://joktec:joktec123@localhost:27017/?authSource=sample_db
-    database: sample_db
-    collection: logs
+    host: localhost
+    port: 5010
+  transport:
+    enable: true
+    target: pino-mongodb
+    options:
+      uri: mongodb://localhost:27017/?authSource=sample_db
+      database: sample_db
+      collection: logs
+      mongoOptions:
+        auth:
+          username: joktec
+          password: joktec123
 
 bull:
   queue: [ order ]
@@ -62,7 +73,7 @@ mongo:
   database: sample_db
   connectTimeout: 20000
   directConnection: true
-  debug: true
+  debug: false
 
 storage:
   region: ap-southeast-1

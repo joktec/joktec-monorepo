@@ -4,9 +4,16 @@ import { Constructor, Entity } from './base.dto';
 
 export interface IListResponseDto<T extends Entity> {
   items: T[];
-  totalItems: number;
-  totalPage?: number;
-  isLastPage?: boolean;
+  total: number;
+
+  currentPage?: number;
+  prevPage?: number;
+  nextPage?: number;
+  lastPage?: number;
+
+  prevCursor?: string;
+  currentCursor?: string;
+  nextCursor?: string;
 }
 
 export const BaseListResponse = <T extends Entity>(dto: Constructor<T>) => {
@@ -17,15 +24,35 @@ export const BaseListResponse = <T extends Entity>(dto: Constructor<T>) => {
 
     @Field({ defaultValue: 0 })
     @ApiProperty({ default: 0 })
-    totalItems: number;
+    total: number;
 
-    @Field({ nullable: true, defaultValue: 0 })
+    @Field({ nullable: true, defaultValue: null })
     @ApiPropertyOptional()
-    totalPage?: number;
+    currentPage?: number;
 
-    @Field({ nullable: true, defaultValue: false })
+    @Field({ nullable: true, defaultValue: null })
     @ApiPropertyOptional()
-    isLastPage?: boolean;
+    prevPage?: number;
+
+    @Field({ nullable: true, defaultValue: null })
+    @ApiPropertyOptional()
+    nextPage?: number;
+
+    @Field({ nullable: true, defaultValue: null })
+    @ApiPropertyOptional()
+    lastPage?: number;
+
+    @Field({ nullable: true, defaultValue: null })
+    @ApiPropertyOptional()
+    prevCursor?: string;
+
+    @Field({ nullable: true, defaultValue: null })
+    @ApiPropertyOptional()
+    currentCursor?: string;
+
+    @Field({ nullable: true, defaultValue: null })
+    @ApiPropertyOptional()
+    nextCursor?: string;
   }
 
   return BaseListResponse;

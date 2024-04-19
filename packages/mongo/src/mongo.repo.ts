@@ -10,14 +10,22 @@ import {
   plainToInstance,
   toArray,
   toBool,
+  Encrypter,
 } from '@joktec/core';
 import { Inject } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { isArray, isNil, omit, pick } from 'lodash';
+import { cloneDeep, head, isArray, isNil, isObject, last, omit, pick } from 'lodash';
 import { Aggregate, QueryOptions, UpdateQuery } from 'mongoose';
 import { MongoHelper, MongoPipeline, QueryHelper, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
-import { IMongoAggregateOptions, IMongoAggregation, IMongoRequest, MongoBulkRequest, MongoSchema } from './models';
+import {
+  IMongoAggregateOptions,
+  IMongoAggregation,
+  IMongoRequest,
+  IMongoBulkRequest,
+  MongoSchema,
+  ObjectId,
+} from './models';
 import { IMongoRepository } from './mongo.client';
 import { MongoCatch } from './mongo.exception';
 import { MongoService } from './mongo.service';
@@ -28,12 +36,15 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
   private _model: ReturnModelType<typeof MongoSchema, QueryHelper<T>> = null;
+  private readonly encrypter: Encrypter;
 
   protected constructor(
     protected mongoService: MongoService,
     protected schema: typeof MongoSchema,
     protected conId: string = DEFAULT_CON_ID,
-  ) {}
+  ) {
+    this.encrypter = new Encrypter({ secret: 'IN0OE4V8vBoc0tq8ZrnH5Ejkyr0wyboo', iv: '6HhRTF6XQuTk7aNN' });
+  }
 
   async onModuleInit() {
     this.logService.setContext(this.constructor.name);
@@ -109,15 +120,45 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async count(query: IMongoRequest<T>): Promise<number> {
-    const processQuery = omit(query, ['select', 'page', 'limit', 'sort']);
+    const processQuery = omit(cloneDeep(query), ['select', 'page', 'limit', 'sort']);
     const qb = this.qb(processQuery);
     return query.near ? qb.estimatedDocumentCount() : qb.countDocuments();
   }
 
   @MongoCatch
-  async findAndCount(query: IMongoRequest<T>): Promise<{ items: T[]; totalItems: number }> {
-    const [items, totalItems] = await Promise.all([this.find(query), this.count(query)]);
-    return { items, totalItems };
+  async paginate(query: IMongoRequest<T>): Promise<{
+    items: T[];
+    total: number;
+    prevCursor?: string;
+    currentCursor?: string;
+    nextCursor?: string;
+  }> {
+    const findQuery: IMongoRequest<T> = omit(cloneDeep(query), ['cursor']);
+    const countQuery: IMongoRequest<T> = omit(cloneDeep(query), ['select', 'page', 'limit', 'sort', 'cursor']);
+
+    if (!query.cursor) {
+      const [items, total] = await Promise.all([this.find(findQuery), this.count(countQuery)]);
+      return { items, total };
+    }
+
+    const lastCursor = isObject(query.cursor) ? query.cursor.lastCursor : query.cursor || '*';
+    const cursorField = isObject(query.cursor) ? query.cursor.cursorField : '_id';
+
+    findQuery.sort = Object.assign({ [cursorField]: 1 }, findQuery.sort);
+    if (lastCursor && lastCursor !== '*') {
+      let decryptedValue: any = this.encrypter.decrypted(lastCursor);
+      if (ObjectId.isValid(decryptedValue)) decryptedValue = ObjectId.create(decryptedValue);
+      findQuery.condition = Object.assign({ [cursorField]: { $gt: decryptedValue } }, findQuery.condition);
+    }
+
+    const [items, total] = await Promise.all([this.find(findQuery), this.count(countQuery)]);
+    return {
+      items,
+      total,
+      prevCursor: lastCursor === '*' ? null : this.encrypter.encrypted(String(head(items)._id)),
+      currentCursor: lastCursor,
+      nextCursor: items.length < query.limit ? null : this.encrypter.encrypted(String(last(items)._id)),
+    };
   }
 
   @MongoCatch
@@ -189,7 +230,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async bulkUpsert(docs: DeepPartial<T>[], upsert: MongoBulkRequest = {}): Promise<any> {
+  async bulkUpsert(docs: DeepPartial<T>[], upsert: IMongoBulkRequest = {}): Promise<any> {
     const { conditions = ['_id'], fields, operator = '$set' } = upsert;
     const bulkDocs: any[] = docs?.map(doc => {
       return {

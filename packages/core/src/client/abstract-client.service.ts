@@ -1,13 +1,13 @@
 import { Inject, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { isEmpty } from 'lodash';
 import mergeDeep from 'merge-deep';
-import { ExceptionMessage } from '../exceptions';
+import { ExceptionMessage, InternalServerException } from '../exceptions';
 import { Constructor } from '../models';
+import { ConfigService, LogService } from '../modules';
 import { sleep, toArray } from '../utils';
 import { Client } from './client';
 import { ClientConfig, DEFAULT_CON_ID } from './client.config';
 import { InvalidClientConfigException } from './client.exception';
-import { ConfigService, LogService } from '../modules';
 
 export abstract class AbstractClientService<IConfig extends ClientConfig, IClient = any>
   implements Client<IConfig, IClient>, OnModuleInit, OnModuleDestroy
@@ -72,10 +72,16 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
   }
 
   getConfig(conId = DEFAULT_CON_ID): IConfig {
+     if (!this.configs[conId]) {
+      throw new InternalServerException(`\`${this.service}\` config \`${conId}\` does not exist`);
+    }
     return this.configs[conId];
   }
 
   getClient(conId = DEFAULT_CON_ID): IClient {
+    if (!this.clients[conId]) {
+      throw new InternalServerException(`\`${this.service}\` client \`${conId}\` does not exist`);
+    }
     return this.clients[conId];
   }
 

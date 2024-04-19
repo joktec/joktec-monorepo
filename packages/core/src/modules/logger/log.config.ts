@@ -1,10 +1,9 @@
-import { IsBoolean, IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { DestinationStream } from 'pino';
-import { FluentdConfig } from './fluentd/fluentd.config';
+import { toArray } from '../../utils';
+import { LogSocket } from './log-socket.config';
+import { LogTransport } from './log-transport.config';
 import { LogFormat, LogLevel } from './log.enum';
-import { LogStashConfig } from './logstash/logstash.config';
-import { PinoMongoConfig } from './mongodb/pino-mongo.config';
-import { IsTypes } from '../../validation';
 
 export class LogConfig {
   @IsNotEmpty()
@@ -26,23 +25,22 @@ export class LogConfig {
   customStreams?: DestinationStream[] = [];
 
   @IsOptional()
-  @IsTypes(FluentdConfig)
-  fluentd?: FluentdConfig;
+  @IsString()
+  fileDir?: string;
 
   @IsOptional()
-  @IsTypes(LogStashConfig)
-  logStash?: LogStashConfig;
+  socket?: LogSocket | LogSocket[];
 
   @IsOptional()
-  @IsTypes(PinoMongoConfig)
-  mongo?: PinoMongoConfig;
+  transport?: LogTransport | LogTransport[];
 
   constructor(props: LogConfig) {
-    Object.assign(this, props);
-    this.contexts = this.setSearchValue(props?.contexts);
-    if (props.logStash) this.logStash = new LogStashConfig(props?.logStash);
-    if (props.fluentd) this.fluentd = new FluentdConfig(props?.fluentd);
-    if (props.mongo) this.mongo = new PinoMongoConfig(props?.mongo);
+    Object.assign(this, {
+      ...props,
+      contexts: this.setSearchValue(props?.contexts),
+      socket: toArray(props?.socket).map(s => new LogSocket(s)),
+      transport: toArray(props?.transport).map(t => new LogTransport({ ...t, level: t.level || props.level })),
+    });
   }
 
   setSearchValue(contexts: string | string[]): string {
