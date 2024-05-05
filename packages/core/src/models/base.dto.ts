@@ -14,6 +14,7 @@ export type DeepPartial<T extends Entity> = {
   [P in keyof T]?: T[P] extends Entity ? DeepPartial<T[P]> : T[P];
 };
 export type KeyOf<T extends Entity = {}> = Extract<keyof T, string>;
+export type Listable<T = any> = T | Array<T>;
 
 export interface IResponseDto<T = any> {
   timestamp: Date;

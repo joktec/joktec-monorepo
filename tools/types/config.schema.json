@@ -27,49 +27,49 @@
           "$ref": "#/definitions/JwtConfig"
         },
         "alert": {
-          "$ref": "#/definitions/AlertConfig"
+          "$ref": "#/definitions/Listable%3CAlertConfig%3E"
         },
         "arango": {
-          "$ref": "#/definitions/ArangoConfig"
+          "$ref": "#/definitions/Listable%3CArangoConfig%3E"
         },
         "bigquery": {
-          "$ref": "#/definitions/BigQueryConfig"
+          "$ref": "#/definitions/Listable%3CBigQueryConfig%3E"
         },
         "cacher": {
-          "$ref": "#/definitions/CacheConfig"
+          "$ref": "#/definitions/Listable%3CCacheConfig%3E"
         },
         "elastic": {
-          "$ref": "#/definitions/ElasticConfig"
+          "$ref": "#/definitions/Listable%3CElasticConfig%3E"
         },
         "file": {
-          "$ref": "#/definitions/FileConfig"
+          "$ref": "#/definitions/Listable%3CFileConfig%3E"
         },
         "firebase": {
-          "$ref": "#/definitions/FirebaseConfig"
+          "$ref": "#/definitions/Listable%3CFirebaseConfig%3E"
         },
         "http": {
-          "$ref": "#/definitions/HttpConfig"
+          "$ref": "#/definitions/Listable%3CHttpConfig%3E"
         },
         "kafka": {
-          "$ref": "#/definitions/KafkaConfig"
+          "$ref": "#/definitions/Listable%3CKafkaConfig%3E"
         },
         "mailer": {
-          "$ref": "#/definitions/MailerConfig"
+          "$ref": "#/definitions/Listable%3CMailerConfig%3E"
         },
         "mongo": {
-          "$ref": "#/definitions/MongoConfig"
+          "$ref": "#/definitions/Listable%3CMongoConfig%3E"
         },
         "mysql": {
-          "$ref": "#/definitions/MysqlConfig"
+          "$ref": "#/definitions/Listable%3CMysqlConfig%3E"
         },
         "notifier": {
-          "$ref": "#/definitions/NotifierConfig"
+          "$ref": "#/definitions/Listable%3CNotifierConfig%3E"
         },
         "rabbit": {
-          "$ref": "#/definitions/RabbitConfig"
+          "$ref": "#/definitions/Listable%3CRabbitConfig%3E"
         },
         "storage": {
-          "$ref": "#/definitions/StorageConfig"
+          "$ref": "#/definitions/Listable%3CStorageConfig%3E"
         },
         "misc": {
           "type": "object"
@@ -60636,20 +60636,34 @@
             "$ref": "#/definitions/DestinationStream"
           }
         },
-        "fluentd": {
-          "$ref": "#/definitions/FluentdConfig"
+        "fileDir": {
+          "type": "string"
         },
-        "logStash": {
-          "$ref": "#/definitions/LogStashConfig"
+        "socket": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/LogSocket"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LogSocket"
+              }
+            }
+          ]
         },
-        "cloudWatch": {
-          "$ref": "#/definitions/CloudWatchConfig"
-        },
-        "loki": {
-          "$ref": "#/definitions/LokiConfig"
-        },
-        "mongo": {
-          "$ref": "#/definitions/PinoMongoConfig"
+        "transport": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/LogTransport"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LogTransport"
+              }
+            }
+          ]
         }
       }
     },
@@ -60678,11 +60692,14 @@
       "type": "object",
       "properties": {}
     },
-    "FluentdConfig": {
+    "LogSocket": {
       "type": "object",
       "properties": {
         "enable": {
           "type": "boolean"
+        },
+        "mode": {
+          "$ref": "#/definitions/LogSocketMode"
         },
         "host": {
           "type": "string"
@@ -60690,127 +60707,44 @@
         "port": {
           "type": "number"
         },
-        "timeout": {
-          "type": "number"
+        "reconnect": {
+          "type": "boolean"
         },
-        "reconnectInterval": {
-          "type": "number"
-        },
-        "flushInterval": {
+        "reconnectTries": {
           "type": "number"
         }
       },
       "required": [
-        "enable",
         "host",
         "port"
       ]
     },
-    "LogStashConfig": {
-      "type": "object",
-      "properties": {
-        "host": {
-          "type": "string"
-        },
-        "port": {
-          "type": "number"
-        },
-        "enable": {
-          "type": "boolean"
-        }
-      },
-      "required": [
-        "host",
-        "port",
-        "enable"
+    "LogSocketMode": {
+      "type": "string",
+      "enum": [
+        "tcp",
+        "UDP"
       ]
     },
-    "CloudWatchConfig": {
-      "type": "object",
-      "properties": {
-        "host": {
-          "type": "string"
-        },
-        "port": {
-          "type": "number"
-        },
-        "enable": {
-          "type": "boolean"
-        },
-        "accessKeyId": {
-          "type": "string"
-        },
-        "secretAccessKey": {
-          "type": "string"
-        },
-        "region": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "host",
-        "port",
-        "enable",
-        "accessKeyId",
-        "secretAccessKey"
-      ]
-    },
-    "LokiConfig": {
-      "type": "object",
-      "properties": {
-        "host": {
-          "type": "string"
-        },
-        "username": {
-          "type": "string"
-        },
-        "password": {
-          "type": "string"
-        },
-        "enable": {
-          "type": "boolean"
-        }
-      },
-      "required": [
-        "host",
-        "username",
-        "password",
-        "enable"
-      ]
-    },
-    "PinoMongoConfig": {
+    "LogTransport": {
       "type": "object",
       "properties": {
         "enable": {
           "type": "boolean"
         },
-        "uri": {
+        "target": {
           "type": "string"
         },
-        "database": {
-          "type": "string"
+        "level": {
+          "$ref": "#/definitions/LogLevel"
         },
-        "collection": {
-          "type": "string"
-        },
-        "format": {
-          "$ref": "#/definitions/FormatFunction"
+        "options": {
+          "type": "object"
         }
       },
       "required": [
-        "enable",
-        "uri",
-        "database"
+        "target"
       ]
-    },
-    "FormatFunction": {
-      "type": "object",
-      "properties": {
-        "isFunction": {
-          "type": "boolean",
-          "const": true
-        }
-      }
     },
     "BullConfig": {
       "type": "object",
@@ -60877,6 +60811,19 @@
         "expired"
       ]
     },
+    "Listable<AlertConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/AlertConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AlertConfig"
+          }
+        }
+      ]
+    },
     "AlertConfig": {
       "type": "object",
       "properties": {
@@ -60939,6 +60886,19 @@
           "type": "number"
         }
       }
+    },
+    "Listable<ArangoConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ArangoConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ArangoConfig"
+          }
+        }
+      ]
     },
     "ArangoConfig": {
       "type": "object",
@@ -61057,6 +61017,19 @@
       },
       "description": "An arbitrary object with string values representing HTTP headers and their values.\n\nHeader names should always be lowercase."
     },
+    "Listable<BigQueryConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/BigQueryConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BigQueryConfig"
+          }
+        }
+      ]
+    },
     "BigQueryConfig": {
       "type": "object",
       "properties": {
@@ -61102,6 +61075,19 @@
         "projectId",
         "datasetId",
         "location"
+      ]
+    },
+    "Listable<CacheConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/CacheConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CacheConfig"
+          }
+        }
       ]
     },
     "CacheConfig": {
@@ -61170,6 +61156,19 @@
         "local",
         "redis",
         "memcached"
+      ]
+    },
+    "Listable<ElasticConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ElasticConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ElasticConfig"
+          }
+        }
       ]
     },
     "ElasticConfig": {
@@ -61889,6 +61888,19 @@
         "port"
       ]
     },
+    "Listable<FileConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/FileConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FileConfig"
+          }
+        }
+      ]
+    },
     "FileConfig": {
       "type": "object",
       "properties": {
@@ -61913,6 +61925,19 @@
       },
       "required": [
         "directory"
+      ]
+    },
+    "Listable<FirebaseConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/FirebaseConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FirebaseConfig"
+          }
+        }
       ]
     },
     "FirebaseConfig": {
@@ -61976,6 +62001,19 @@
           "type": "string"
         }
       }
+    },
+    "Listable<HttpConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/HttpConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HttpConfig"
+          }
+        }
+      ]
     },
     "HttpConfig": {
       "type": "object",
@@ -62044,6 +62082,19 @@
           "$ref": "#/definitions/HttpProxyConfig"
         }
       }
+    },
+    "Listable<KafkaConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/KafkaConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/KafkaConfig"
+          }
+        }
+      ]
     },
     "KafkaConfig": {
       "type": "object",
@@ -62259,6 +62310,19 @@
           "const": true
         }
       }
+    },
+    "Listable<MailerConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/MailerConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MailerConfig"
+          }
+        }
+      ]
     },
     "MailerConfig": {
       "type": "object",
@@ -62650,6 +62714,19 @@
         }
       }
     },
+    "Listable<MongoConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/MongoConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MongoConfig"
+          }
+        }
+      ]
+    },
     "MongoConfig": {
       "type": "object",
       "properties": {
@@ -62710,6 +62787,19 @@
       },
       "required": [
         "username"
+      ]
+    },
+    "Listable<MysqlConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/MysqlConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MysqlConfig"
+          }
+        }
       ]
     },
     "MysqlConfig": {
@@ -62808,6 +62898,19 @@
         "username",
         "password",
         "database"
+      ]
+    },
+    "Listable<NotifierConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/NotifierConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NotifierConfig"
+          }
+        }
       ]
     },
     "NotifierConfig": {
@@ -63045,6 +63148,19 @@
         }
       }
     },
+    "Listable<RabbitConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/RabbitConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RabbitConfig"
+          }
+        }
+      ]
+    },
     "RabbitConfig": {
       "type": "object",
       "properties": {
@@ -63092,6 +63208,19 @@
         }
       }
     },
+    "Listable<StorageConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/StorageConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StorageConfig"
+          }
+        }
+      ]
+    },
     "StorageConfig": {
       "type": "object",
       "properties": {
@@ -63127,6 +63256,9 @@
         },
         "bucket": {
           "type": "string"
+        },
+        "checkBucket": {
+          "type": "boolean"
         },
         "linkFormat": {
           "type": "string"

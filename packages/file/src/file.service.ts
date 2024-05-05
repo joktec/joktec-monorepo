@@ -13,7 +13,7 @@ export class FileService extends AbstractClientService<FileConfig, Magika> imple
     super('file', FileConfig);
   }
 
-  async init(_: FileConfig): Promise<any> {
+  async init(_: FileConfig): Promise<Magika> {
     const magika = new Magika();
     await magika.load();
     return magika;

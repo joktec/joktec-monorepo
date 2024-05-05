@@ -50,8 +50,8 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
   }
 
   async start(client: S3Client, conId: string = DEFAULT_CON_ID): Promise<void> {
-    const { bucket } = this.getConfig(conId);
-    if (bucket) {
+    const { bucket, checkBucket } = this.getConfig(conId);
+    if (bucket && checkBucket) {
       await this.makeBucket(bucket, conId);
     }
   }

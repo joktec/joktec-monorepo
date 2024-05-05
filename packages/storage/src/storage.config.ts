@@ -28,6 +28,10 @@ export class StorageConfig extends ClientConfig {
   @IsNotEmpty()
   bucket?: string;
 
+  @IsBoolean()
+  @IsOptional()
+  checkBucket?: boolean;
+
   @IsString()
   @IsOptional()
   linkFormat?: string = '';
