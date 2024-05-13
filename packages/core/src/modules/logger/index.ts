@@ -4,4 +4,3 @@ export * from './log-transport.config';
 export * from './log.config';
 export * from './log.enum';
 export * from './log.factory';
-

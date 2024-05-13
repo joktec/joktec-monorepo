@@ -1,7 +1,8 @@
 import { ecsFormat } from '@elastic/ecs-pino-format';
+import dot from 'dot-object';
 import { cloneDeep, isEmpty, omit, pick } from 'lodash';
 import { Params as LoggerParam } from 'nestjs-pino';
-import pino, { DestinationStream, StreamEntry, TransportTargetOptions } from 'pino';
+import pino, { Bindings, DestinationStream, StreamEntry, TransportTargetOptions } from 'pino';
 import { Options as PinoHttpOptions } from 'pino-http';
 import { PrettyOptions } from 'pino-pretty';
 import { toArray, toBool, toInt } from '../../utils';
@@ -12,29 +13,33 @@ import { LogConfig } from './log.config';
 import { LogFormat, LogSocketMode } from './log.enum';
 
 export const createPinoTransport = (transports: LogTransport | LogTransport[]): DestinationStream[] => {
-  return toArray(transports).filter(transport => transport.enable).map(transport => {
-    return pino.transport({
-      target: transport.target,
-      level: transport.level,
-      options: { ...transport.options },
-    } as TransportTargetOptions);
-  });
+  return toArray(transports)
+    .filter(transport => transport.enable)
+    .map(transport => {
+      return pino.transport({
+        target: transport.target,
+        level: transport.level,
+        options: { ...transport.options },
+      } as TransportTargetOptions);
+    });
 };
 
 export const createPinoSocket = (sockets: LogSocket | LogSocket[]): DestinationStream[] => {
-  return toArray(sockets).filter(socket => socket.enable).map(socket => {
-    return pino.transport({
-      target: 'pino-socket',
-      options: {
-        mode: socket.mode || LogSocketMode.TCP,
-        address: socket.host || '127.0.0.1',
-        port: toInt(socket.port, 514),
-        reconnect: toBool(socket.reconnect, true),
-        reconnectTries: toInt(socket.reconnectTries, Infinity),
-        ...socket,
-      },
+  return toArray(sockets)
+    .filter(socket => socket.enable)
+    .map(socket => {
+      return pino.transport({
+        target: 'pino-socket',
+        options: {
+          mode: socket.mode || LogSocketMode.TCP,
+          address: socket.host || '127.0.0.1',
+          port: toInt(socket.port, 514),
+          reconnect: toBool(socket.reconnect, true),
+          reconnectTries: toInt(socket.reconnectTries, Infinity),
+          ...socket,
+        },
+      });
     });
-  });
 };
 
 export const createPinoHttp = async (
@@ -81,7 +86,13 @@ export const createPinoHttp = async (
         enabled: true,
         autoLogging: false,
         formatters: {
-          ...pinoConfig.formatters,
+          level: (label, number): Record<string, any> => {
+            return { log: { level: label } };
+          },
+          bindings: (bindings: Bindings): Record<string, any> => {
+            const escObject = useJson ? pinoConfig.formatters.bindings(bindings) : cloneDeep(bindings);
+            return dot.object(escObject);
+          },
           log: (object: Record<string, any>): Record<string, any> => {
             const escObject = useJson ? pinoConfig.formatters.log(object) : cloneDeep(object);
             const args = omit(escObject, ['context', 'err', 'error']);

@@ -72,7 +72,7 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
   }
 
   getConfig(conId = DEFAULT_CON_ID): IConfig {
-     if (!this.configs[conId]) {
+    if (!this.configs[conId]) {
       throw new InternalServerException(`\`${this.service}\` config \`${conId}\` does not exist`);
     }
     return this.configs[conId];

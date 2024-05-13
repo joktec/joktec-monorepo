@@ -3944,14 +3944,6 @@
     cron "3.1.6"
     uuid "9.0.1"
 
-"@nestjs/schedule@^4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@nestjs/schedule/-/schedule-4.0.2.tgz#573061b152e174f1bf590f5ec00a2c400e8bbee8"
-  integrity sha512-po9oauE7fO0CjhDKvVC2tzEgjOUwhxYoIsXIVkgfu+xaDMmzzpmXY2s1LT4oP90Z+PaTtPoAHmhslnYmo4mSZg==
-  dependencies:
-    cron "3.1.7"
-    uuid "9.0.1"
-
 "@nestjs/serve-static@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@nestjs/serve-static/-/serve-static-4.0.1.tgz#287b8b059602705184980b4c8c24b62cc24d26c1"
@@ -5728,13 +5720,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/cron@^2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@types/cron/-/cron-2.4.0.tgz#884d7866187d26291df206c09805d06b147986e4"
-  integrity sha512-5bBaAkqvSFBX8JMi/xCofNzG5E594TNsApMz68dLd/sQYz/HGQqgcxGHTRjOvD4G3Y+YF1Oo3S7QdCvKt1KAJQ==
-  dependencies:
-    cron "*"
-
 "@types/csurf@^1.11.3":
   version "1.11.3"
   resolved "https://registry.yarnpkg.com/@types/csurf/-/csurf-1.11.3.tgz#4c071ffcef1612d71431a0fd4e39ed5e0ec0d6ed"
@@ -5924,11 +5909,6 @@
   version "3.3.3"
   resolved "https://registry.yarnpkg.com/@types/luxon/-/luxon-3.3.3.tgz#b2e20a9536f91ab3e6e7895c91883e1a7ad49a6e"
   integrity sha512-/BJF3NT0pRMuxrenr42emRUF67sXwcZCd+S1ksG/Fcf9O7C3kKCY4uJSbKBE4KDUIYr3WMsvfmWD8hRjXExBJQ==
-
-"@types/luxon@~3.4.0":
-  version "3.4.2"
-  resolved "https://registry.yarnpkg.com/@types/luxon/-/luxon-3.4.2.tgz#e4fc7214a420173cea47739c33cdf10874694db7"
-  integrity sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==
 
 "@types/mailparser@*":
   version "3.4.4"
@@ -8235,6 +8215,11 @@ commander@^4.0.0:
   resolved "https://registry.yarnpkg.com/commander/-/commander-4.1.1.tgz#9fd602bd936294e9e9ef46a3f4d6964044b18068"
   integrity sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==
 
+commander@^6.1.0:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
+  integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
+
 commander@^8.0.0:
   version "8.3.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-8.3.0.tgz#4837ea1b2da67b9c616a67afbb0fafee567bca66"
@@ -8600,14 +8585,6 @@ cron-parser@^4.2.1:
   integrity sha512-guZNLMGUgg6z4+eGhmHGw7ft+v6OQeuHzd1gcLxCo9Yg/qoxmG3nindp2/uwGCLizEisf2H0ptqeVXeoCpP6FA==
   dependencies:
     luxon "^3.0.1"
-
-cron@*, cron@3.1.7, cron@^3.1.7:
-  version "3.1.7"
-  resolved "https://registry.yarnpkg.com/cron/-/cron-3.1.7.tgz#3423d618ba625e78458fff8cb67001672d49ba0d"
-  integrity sha512-tlBg7ARsAMQLzgwqVxy8AZl/qlTc5nibqYwtNGoCrd+cV+ugI+tvZC1oT/8dFH8W455YrywGykx/KMmAqOr7Jw==
-  dependencies:
-    "@types/luxon" "~3.4.0"
-    luxon "~3.4.0"
 
 cron@3.1.6:
   version "3.1.6"
@@ -9083,6 +9060,14 @@ dot-object@^2.1.4:
   dependencies:
     commander "^4.0.0"
     glob "^7.1.5"
+
+dot-object@^2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/dot-object/-/dot-object-2.1.5.tgz#0ff0f1bff42c47ff06272081b208658c0a0231c2"
+  integrity sha512-xHF8EP4XH/Ba9fvAF2LDd5O3IITVolerVV6xvkxoM8zlGEiCUrggpAnHyOoKJKCrhvPcGATFAUwIujj7bRG5UA==
+  dependencies:
+    commander "^6.1.0"
+    glob "^7.1.6"
 
 dot-prop@^5.1.0:
   version "5.3.0"
