@@ -1,7 +1,7 @@
 {
   "name": "@joktec/core",
   "description": "JokTec - Core library",
-  "version": "0.0.111",
+  "version": "0.0.112",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
