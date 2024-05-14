@@ -2760,18 +2760,6 @@
     tunnel-agent "^0.6.0"
     uuid "^8.3.2"
 
-"@elastic/ecs-helpers@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@elastic/ecs-helpers/-/ecs-helpers-2.1.1.tgz#8a375b307c33a959938d9ae8f9abb466eb9fb3bf"
-  integrity sha512-ItoNazMnYdlUCmkBYTXc3SG6PF7UlVTbvMdHPvXkfTMPdwGv2G1Xtp5CjDHaGHGOZSwaDrW4RSCXvA/lMSU+rg==
-
-"@elastic/ecs-pino-format@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@elastic/ecs-pino-format/-/ecs-pino-format-1.5.0.tgz#48610e06e939b50bfa3629da0d2fcb1c74a69a20"
-  integrity sha512-7MMVmT50ucEl7no8mUgCIl+pffBVNRl36uZi0vmalWa2xPWISBxM9k9WSP/WTgOkmGj9G35e5g3UfCS1zxshBg==
-  dependencies:
-    "@elastic/ecs-helpers" "^2.1.1"
-
 "@elastic/elasticsearch@^8.12.2":
   version "8.12.2"
   resolved "https://registry.yarnpkg.com/@elastic/elasticsearch/-/elasticsearch-8.12.2.tgz#7a241f739a509cc59faee85f79a4c9e9e5ba9128"

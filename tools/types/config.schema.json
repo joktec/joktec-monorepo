@@ -60611,9 +60611,6 @@
         "level": {
           "$ref": "#/definitions/LogLevel"
         },
-        "format": {
-          "$ref": "#/definitions/LogFormat"
-        },
         "contexts": {
           "anyOf": [
             {
@@ -60679,13 +60676,6 @@
         "info",
         "debug",
         "trace"
-      ]
-    },
-    "LogFormat": {
-      "type": "string",
-      "enum": [
-        "pretty",
-        "json"
       ]
     },
     "DestinationStream": {

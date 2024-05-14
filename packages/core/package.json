@@ -55,7 +55,6 @@
     "@bull-board/api": "^5.8.2",
     "@bull-board/express": "^5.8.2",
     "@bull-board/ui": "^5.8.2",
-    "@elastic/ecs-pino-format": "^1.5.0",
     "@grpc/proto-loader": "^0.7.9",
     "@nestjs/bull": "^10.1.0",
     "@nestjs/common": "^10.3.3",

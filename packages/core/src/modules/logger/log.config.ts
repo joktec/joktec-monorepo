@@ -3,16 +3,12 @@ import { DestinationStream } from 'pino';
 import { toArray } from '../../utils';
 import { LogSocket } from './log-socket.config';
 import { LogTransport } from './log-transport.config';
-import { LogFormat, LogLevel } from './log.enum';
+import { LogLevel } from './log.enum';
 
 export class LogConfig {
   @IsNotEmpty()
   @IsEnum(LogLevel)
   level?: LogLevel = 'info';
-
-  @IsOptional()
-  @IsEnum(LogFormat)
-  format?: LogFormat = LogFormat.PRETTY;
 
   @IsOptional()
   contexts?: string | string[];

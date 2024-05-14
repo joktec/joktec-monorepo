@@ -1,16 +1,26 @@
-import { ecsFormat } from '@elastic/ecs-pino-format';
-import dot from 'dot-object';
-import { cloneDeep, isEmpty, omit, pick } from 'lodash';
+import { isEmpty, omit } from 'lodash';
 import { Params as LoggerParam } from 'nestjs-pino';
 import pino, { Bindings, DestinationStream, StreamEntry, TransportTargetOptions } from 'pino';
-import { Options as PinoHttpOptions } from 'pino-http';
 import { PrettyOptions } from 'pino-pretty';
 import { toArray, toBool, toInt } from '../../utils';
-import { ConfigService, ENV } from '../config';
+import { ConfigService } from '../config';
 import { LogSocket } from './log-socket.config';
 import { LogTransport } from './log-transport.config';
 import { LogConfig } from './log.config';
-import { LogFormat, LogSocketMode } from './log.enum';
+import { LogLevel, LogSocketMode } from './log.enum';
+
+const createPrettyTransport = (level: LogLevel): DestinationStream => {
+  const options: PrettyOptions = {
+    messageKey: 'message',
+    timestampKey: '@timestamp',
+    translateTime: 'yyyy-mm-dd HH:MM:ss.l o',
+    colorize: true,
+    crlf: true,
+    ignore: 'req,pid,hostname,version',
+    destination: 1,
+  };
+  return pino.transport({ target: 'pino-pretty', level: level, options } as TransportTargetOptions);
+};
 
 export const createPinoTransport = (transports: LogTransport | LogTransport[]): DestinationStream[] => {
   return toArray(transports)
@@ -48,60 +58,41 @@ export const createPinoHttp = async (
 ): Promise<LoggerParam> => {
   const config: LogConfig = configService.parseOrThrow(LogConfig, 'log');
   const appName = configService.get('name').replace('@', '').replace('/', '-');
-  const useJson = configService.get<string>('env') === ENV.PROD || config.format === LogFormat.JSON;
 
-  const streams: DestinationStream[] = [pino.destination(1), ...customStreams];
-  if (useJson && config.fileDir) streams.push(pino.destination({ dest: `./${config.fileDir}` }));
-  if (useJson && config.socket) streams.push(...createPinoSocket(config.socket));
-  if (useJson && config.transport) streams.push(...createPinoTransport(config.transport));
-
-  const ecsPino: PinoHttpOptions = ecsFormat({
-    serviceName: configService.get('name'),
-    serviceVersion: configService.get('version'),
-    serviceEnvironment: configService.get('env'),
-    convertErr: true,
-    convertReqRes: false,
-  });
-
-  const prettyPino: PinoHttpOptions = {
-    name: appName,
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        translateTime: 'yyyy-mm-dd HH:MM:ss.l o',
-        colorize: true,
-        crlf: true,
-        ignore: 'req,pid,hostname',
-      } as PrettyOptions,
-    },
-  };
-
-  const pinoConfig = useJson ? ecsPino : prettyPino;
+  const streams: DestinationStream[] = [createPrettyTransport(config.level), ...customStreams];
+  if (config.fileDir) streams.push(pino.destination({ dest: `./${config.fileDir}` }));
+  if (toArray(config.socket).length) streams.push(...createPinoSocket(config.socket));
+  if (toArray(config.transport).length) streams.push(...createPinoTransport(config.transport));
 
   return {
     pinoHttp: [
       {
-        ...pinoConfig,
+        messageKey: 'message',
+        timestamp: () => `,"@timestamp":"${new Date().toISOString()}"`,
+        name: appName,
         level: config.level,
         enabled: true,
         autoLogging: false,
         formatters: {
           level: (label, number): Record<string, any> => {
-            return { log: { level: label } };
+            return { level: label };
           },
-          bindings: (bindings: Bindings): Record<string, any> => {
-            const escObject = useJson ? pinoConfig.formatters.bindings(bindings) : cloneDeep(bindings);
-            return dot.object(escObject);
+          bindings: (bindings: Bindings) => {
+            const { pid, hostname, name, ...restBindings } = bindings;
+            return {
+              pid,
+              hostname,
+              name,
+              version: configService.get('version'),
+              environment: configService.get('env'),
+              ...restBindings,
+            };
           },
           log: (object: Record<string, any>): Record<string, any> => {
-            const escObject = useJson ? pinoConfig.formatters.log(object) : cloneDeep(object);
-            const args = omit(escObject, ['context', 'err', 'error']);
-            const result: Record<string, any> = { context: escObject.context };
-
-            if (escObject.err) result.err = pick(escObject.err, ['type', 'message', 'stack']);
-            if (escObject.error) result.error = escObject.error;
+            const args = omit(object, ['context', 'error']);
+            const result: Record<string, any> = { context: object.context || 'UnknownContext' };
+            if (result.error) result.error = object.error;
             if (!isEmpty(args)) result.args = args;
-
             return result;
           },
         },

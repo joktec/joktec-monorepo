@@ -17,7 +17,7 @@
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
     "prebuild": "rimraf dist",
-    "dep:upgrade": "ncu -p yarn -u",
+    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
     "build": "npx tsc -p tsconfig.json && node dist/main"
   },
   "dependencies": {
