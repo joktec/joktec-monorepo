@@ -1,7 +1,7 @@
 {
   "name": "@joktec/mongo",
   "description": "JokTec - Mongo Service",
-  "version": "0.0.148",
+  "version": "0.0.149",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
