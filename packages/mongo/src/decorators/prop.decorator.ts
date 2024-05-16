@@ -14,7 +14,7 @@ import {
 import { ApiPropertyOptions } from '@nestjs/swagger';
 import { prop, PropType, Severity } from '@typegoose/typegoose';
 import { BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
-import { isArray, isBoolean, isFunction, isNil, isUndefined, last, unset } from 'lodash';
+import { isArray, isBoolean, isNil, isUndefined, last, unset } from 'lodash';
 import {
   ArrayPropOptions,
   ArrayProps,
@@ -74,8 +74,8 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
 
     let isArrayType: boolean = false;
     if (opts.type) {
-      const typeFunction = isFunction(opts.type) ? opts.type : isArray(opts.type) ? opts.type[0] : opts.type;
-      decorators.push(Type(isFunction(typeFunction) ? typeFunction : () => typeFunction));
+      const typeFunction = isArray(opts.type) ? opts.type[0] : opts.type;
+      decorators.push(Type(() => typeFunction));
 
       isArrayType = isArray(opts.type) || kind === PropType.ARRAY;
       designType = isArray(opts.type) ? opts.type[0] : opts.type;

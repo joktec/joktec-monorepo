@@ -1,6 +1,7 @@
-import { MongoSchema, Prop, Schema } from '@joktec/mongo';
+import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
 import { PropType, Severity } from '@typegoose/typegoose';
 import { PlaceType } from '../constants';
+import { PlaceImageSchema } from './place-image.schema';
 
 @Schema({ collection: 'places', unique: 'sourceId,socialId' })
 export class PlaceSchema extends MongoSchema {
@@ -38,4 +39,12 @@ export class PlaceSchema extends MongoSchema {
 
   @Prop({ default: 0 })
   reviewCount?: number;
+
+  @Prop({
+    type: [PlaceImageSchema],
+    ref: () => PlaceImageSchema,
+    foreignField: 'placeId',
+    localField: '_id',
+  })
+  images?: Ref<PlaceImageSchema>[];
 }

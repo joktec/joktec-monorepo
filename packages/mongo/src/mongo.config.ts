@@ -1,9 +1,19 @@
-import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@joktec/core';
+import {
+  ClientConfig,
+  IsBoolean,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  toBool,
+  toInt,
+  IsObject,
+} from '@joktec/core';
 
 export class MongoConfig extends ClientConfig {
   @IsString()
   @IsOptional()
-  url?: string;
+  uri?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -43,15 +53,11 @@ export class MongoConfig extends ClientConfig {
 
   @IsBoolean()
   @IsOptional()
-  directConnection?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  autoCreate?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
   debug?: boolean;
+
+  @IsObject()
+  @IsOptional()
+  params?: Record<string, any>;
 
   constructor(props: MongoConfig) {
     super(props);
@@ -62,9 +68,8 @@ export class MongoConfig extends ClientConfig {
       retryTimeout: toInt(props.retryTimeout, 20000),
       connectTimeout: toInt(props.connectTimeout, 10000),
       strictQuery: toBool(props.strictQuery, true),
-      directConnection: toBool(props.directConnection, false),
-      autoCreate: toBool(props.autoCreate, true),
       debug: toBool(props.debug, false),
+      params: props.params || {},
     });
   }
 }

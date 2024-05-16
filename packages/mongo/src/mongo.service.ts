@@ -25,9 +25,9 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     const connectOptions: mongoose.ConnectOptions = {
       user: config.username,
       pass: config.password,
-      directConnection: config.directConnection,
+      dbName: config.database,
       connectTimeoutMS: config.connectTimeout,
-      autoCreate: config.autoCreate,
+      ...config.params,
     };
 
     mongoose.set('strictQuery', config.strictQuery);
@@ -55,9 +55,9 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   }
 
   private buildUri(config: MongoConfig): string {
-    if (config.url) return config.url;
-    const protocol = config.replica ? 'mongodb+srv' : 'mongodb';
-    return `${protocol}://${config.host}:${config.port}/${config.database}?authSource=${config.database}`;
+    if (config.uri) return config.uri;
+    const protocol: string = config.replica ? 'mongodb+srv' : 'mongodb';
+    return `${protocol}://${config.host}:${config.port}/${config.database}`;
   }
 
   async start(client: Mongoose, conId: string = DEFAULT_CON_ID): Promise<void> {
