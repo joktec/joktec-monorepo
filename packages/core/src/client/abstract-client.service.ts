@@ -15,6 +15,7 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
   private configs: { [conId: string]: IConfig } = {};
   private clients: { [conId: string]: IClient } = {};
 
+  public context: string = this.constructor.name;
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
 
@@ -23,8 +24,13 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
     protected configClass: Constructor<IConfig>,
   ) {}
 
+  setContext(context: string) {
+    this.context = context;
+    this.logService.setContext(context);
+  }
+
   async onModuleInit(): Promise<void> {
-    this.logService.setContext(this.constructor.name);
+    this.logService.setContext(this.context);
 
     const config: IConfig = this.configService.get<IConfig>(this.service);
     if (isEmpty(config)) {
