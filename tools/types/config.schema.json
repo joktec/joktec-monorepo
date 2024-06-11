@@ -61871,6 +61871,15 @@
         },
         "protocol": {
           "type": "string"
+        },
+        "keepAlive": {
+          "type": "boolean"
+        },
+        "timeout": {
+          "type": "number"
+        },
+        "maxSockets": {
+          "type": "number"
         }
       },
       "required": [
@@ -62735,7 +62744,7 @@
         "retry": {
           "$ref": "#/definitions/RetryOptions"
         },
-        "url": {
+        "uri": {
           "type": "string"
         },
         "host": {
@@ -62765,14 +62774,11 @@
         "strictQuery": {
           "type": "boolean"
         },
-        "directConnection": {
-          "type": "boolean"
-        },
-        "autoCreate": {
-          "type": "boolean"
-        },
         "debug": {
           "type": "boolean"
+        },
+        "params": {
+          "type": "object"
         }
       },
       "required": [
