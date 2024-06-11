@@ -54,8 +54,23 @@ export class HttpProxyConfig implements AxiosProxyConfig {
   @IsString()
   protocol?: string;
 
+  @IsOptional()
+  @IsBoolean()
+  keepAlive?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  timeout?: number;
+
+  @IsOptional()
+  @IsInt()
+  maxSockets?: number;
+
   constructor(props: HttpProxyConfig) {
-    Object.assign(this, props);
+    Object.assign(this, {
+      ...props,
+      keepAlive: toBool(props?.keepAlive, true),
+    });
   }
 }
 
@@ -64,9 +79,6 @@ export class HttpConfig extends ClientConfig {
   @IsString()
   url?: string;
 
-  /**
-   * HTTP Method
-   */
   @IsOptional()
   @IsEnum(HttpMethod)
   method?: HttpMethod = HttpMethod.GET;

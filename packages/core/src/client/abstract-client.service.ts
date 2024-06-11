@@ -12,10 +12,10 @@ import { InvalidClientConfigException } from './client.exception';
 export abstract class AbstractClientService<IConfig extends ClientConfig, IClient = any>
   implements Client<IConfig, IClient>, OnModuleInit, OnModuleDestroy
 {
+  protected context: string = this.constructor.name;
   private configs: { [conId: string]: IConfig } = {};
   private clients: { [conId: string]: IClient } = {};
 
-  public context: string = this.constructor.name;
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
 
@@ -23,11 +23,6 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
     protected service: string,
     protected configClass: Constructor<IConfig>,
   ) {}
-
-  setContext(context: string) {
-    this.context = context;
-    this.logService.setContext(context);
-  }
 
   async onModuleInit(): Promise<void> {
     this.logService.setContext(this.context);
@@ -89,6 +84,11 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
       throw new InternalServerException(`\`${this.service}\` client \`${conId}\` does not exist`);
     }
     return this.clients[conId];
+  }
+
+  setContext(context: string) {
+    this.context = context;
+    this.logService.setContext(this.context);
   }
 
   protected abstract init(config: IConfig): Promise<IClient>;

@@ -1,5 +1,5 @@
-import { Agent, AgentOptions } from 'http';
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool } from '@joktec/core';
+import { AgentOptions } from 'http';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool, toInt } from '@joktec/core';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import curlirize from 'axios-curlirize';
 import FormData from 'form-data';
@@ -11,7 +11,7 @@ import * as rax from 'retry-axios';
 import { HttpClient } from './http.client';
 import { HttpConfig, HttpProxyConfig } from './http.config';
 import { HttpMetricDecorator } from './http.metric';
-import { HttpFormData, HttpRequest, HttpResponse } from './models';
+import { HttpAgent, HttpFormData, HttpRequest, HttpResponse } from './models';
 
 @Injectable()
 export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance> implements HttpClient {
@@ -21,6 +21,16 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
 
   async init(config: HttpConfig): Promise<AxiosInstance> {
     const myAxiosInstance: AxiosInstance = axios.create();
+
+    // Add a request interceptor
+    myAxiosInstance.interceptors.request.use(
+      requestConfig => {
+        this.logService.setContext(this.context);
+        return requestConfig;
+      },
+      error => Promise.reject(error),
+    );
+
     config.onRetryAttempt(this.logService);
     myAxiosInstance.defaults.raxConfig = { instance: myAxiosInstance, ...config.raxConfig };
     rax.attach(myAxiosInstance);
@@ -43,15 +53,13 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     // Implement
   }
 
-  buildAgent(opt: AgentOptions = { keepAlive: true }, proxy?: HttpProxyConfig): Agent {
-    if (!proxy) return new Agent(opt);
-    const proxyBody = {
-      host: proxy.host,
-      port: proxy.port,
-      auth: `${proxy.auth.username}:${proxy.auth.password}`,
+  buildAgent(opt: AgentOptions & HttpProxyConfig): HttpAgent {
+    const proxyBody: any = { host: opt.host, port: toInt(opt.port) };
+    if (opt.auth) proxyBody.auth = `${opt.auth.username}:${opt.auth.password}`;
+    return {
+      httpAgent: new HttpProxyAgent({ ...opt, ...proxyBody }),
+      httpsAgent: new HttpsProxyAgent({ ...opt, ...proxyBody }),
     };
-    if (proxy?.protocol === 'https') return new HttpsProxyAgent({ ...opt, ...proxyBody });
-    return new HttpProxyAgent({ ...opt, ...proxyBody });
   }
 
   @HttpMetricDecorator()
@@ -63,6 +71,10 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
       },
       curlirize: toBool(config.curlirize, clientConfig.curlirize),
     });
+
+    const proxy = clientConfig.proxy || config.proxy || null;
+    if (proxy) Object.assign(cf, this.buildAgent(proxy));
+
     return this.getClient(conId).request<T>(cf);
   }
 
@@ -85,6 +97,9 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
       },
       curlirize: toBool(config.curlirize, clientConfig.curlirize),
     });
+
+    const proxy = clientConfig.proxy || config.proxy || null;
+    if (proxy) Object.assign(cf, this.buildAgent(proxy));
 
     return this.getClient(conId).request<T>(cf);
   }
