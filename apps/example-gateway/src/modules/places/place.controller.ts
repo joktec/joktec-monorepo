@@ -1,5 +1,4 @@
 import { BaseController, Controller, IControllerProps, Post } from '@joktec/core';
-import { AuthGuard, RoleGuard } from '../../base';
 import { PlaceSchema } from '../../models/schemas';
 import { PlaceDto, PlaceQuery } from './models';
 import { PlaceService } from './place.service';

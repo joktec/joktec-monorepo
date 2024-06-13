@@ -18,12 +18,9 @@ lerna/
 .npm/
 
 # Logs
-log*/
-!logger/
+log/
+logs/
 *.log
-!logstash*
-!log-socket*
-!log-transport*
 
 # Unit test / Coverage reports
 coverage/

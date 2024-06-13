@@ -4,8 +4,13 @@ import {
   APP_FILTER,
   APP_INTERCEPTOR,
   BullModule,
-  CoreModule,
+  ConfigModule,
+  ConfigService,
+  createPinoHttp,
+  GatewayModule,
+  initConfig,
   JwtModule,
+  LoggerModule,
   Module,
   ResponseInterceptor,
 } from '@joktec/core';
@@ -20,7 +25,13 @@ import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
 
 @Module({
   imports: [
-    CoreModule,
+    ConfigModule.forRoot({ isGlobal: true, load: [initConfig] }),
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (cfg: ConfigService) => createPinoHttp(cfg),
+    }),
+    GatewayModule,
     HttpModule,
     JwtModule,
     MailerModule,

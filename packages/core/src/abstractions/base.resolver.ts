@@ -2,9 +2,9 @@ import { Inject, OnModuleInit, Type } from '@nestjs/common';
 import { Args, Mutation, ObjectType, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
 import { BaseListResponse, Constructor, Entity, IBaseController, IBaseRequest } from '../models';
+import { ConfigService, Jwt, JwtPayload, LogService } from '../modules';
 import { toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';
-import { ConfigService, Jwt, JwtPayload, LogService } from '../modules';
 
 export interface IBaseResolverProps<T extends Entity> {
   dto: Constructor<T>;

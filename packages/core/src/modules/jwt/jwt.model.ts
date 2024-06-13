@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 
+export type JwtType = 'ACCESS' | 'REFRESH';
+
 export interface JwtPayload extends jwt.JwtPayload {
   /**
    * (Issuer) Claim: Identifies the principal that issued the JWT.
@@ -35,6 +37,11 @@ export interface JwtPayload extends jwt.JwtPayload {
    * (JWT ID) Claim: Provides a unique identifier for the JWT.
    */
   jti?: string;
+
+  /**
+   * (JWT Type) Detect access token or refresh token
+   */
+  type?: JwtType;
 
   [key: string]: any;
 }
