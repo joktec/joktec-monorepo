@@ -1,9 +1,9 @@
-import { CoreModule, Global, Module } from '@joktec/core';
+import { Global, Module } from '@joktec/core';
 import { ArangoService } from './arango.service';
 
 @Global()
 @Module({
-  imports: [CoreModule],
+  imports: [],
   providers: [ArangoService],
   exports: [ArangoService],
 })

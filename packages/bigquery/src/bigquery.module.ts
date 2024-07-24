@@ -1,9 +1,9 @@
-import { CoreModule, Global, Module } from '@joktec/core';
+import { Global, Module } from '@joktec/core';
 import { BigQueryService } from './bigquery.service';
 
 @Global()
 @Module({
-  imports: [CoreModule],
+  imports: [],
   providers: [BigQueryService],
   exports: [BigQueryService],
 })

@@ -1,6 +1,6 @@
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
 import { DeepPartial, Entity, IBaseRequest, ICondition, ILanguage, IListResponseDto, IResponseDto } from '../models';
-import { ConfigService, JwtPayload, LogService } from '../modules';
+import { ConfigService, LogService } from '../modules';
 
 export interface IBaseController<T, ID> {
   configService?: ConfigService;
@@ -11,11 +11,11 @@ export interface IBaseController<T, ID> {
 
   detail(id: ID, query: IBaseRequest<T>): Promise<T>;
 
-  create(entity: DeepPartial<T>, payload?: JwtPayload): Promise<T>;
+  create(entity: DeepPartial<T>): Promise<T>;
 
-  update(id: ID, entity: DeepPartial<T>, payload?: JwtPayload): Promise<T>;
+  update(id: ID, entity: DeepPartial<T>): Promise<T>;
 
-  delete(id: ID, payload?: JwtPayload): Promise<T>;
+  delete(id: ID): Promise<T>;
 }
 
 export interface IBaseService<T, ID, REQ> {
@@ -29,13 +29,13 @@ export interface IBaseService<T, ID, REQ> {
 
   findOne(req: REQ): Promise<T>;
 
-  create(entity: DeepPartial<T>, payload?: JwtPayload): Promise<T>;
+  create(entity: DeepPartial<T>): Promise<T>;
 
-  update(id: ID, entity: DeepPartial<T>, payload?: JwtPayload): Promise<T>;
+  update(id: ID, entity: DeepPartial<T>): Promise<T>;
 
-  delete(id: ID, payload?: JwtPayload): Promise<T>;
+  delete(id: ID): Promise<T>;
 
-  restore(id: ID, payload?: JwtPayload): Promise<T>;
+  restore(id: ID): Promise<T>;
 }
 
 export interface IBaseRepository<T extends Entity, ID> {

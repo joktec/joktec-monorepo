@@ -14,7 +14,7 @@ import {
 import { set, startCase } from 'lodash';
 import { MicroMetric } from '../infras';
 import { Constructor, DeepPartial, Entity, IBaseController, IBaseRequest, IListResponseDto } from '../models';
-import { ConfigService, JwtPayload, LogService } from '../modules';
+import { ConfigService, LogService } from '../modules';
 import { toBool, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
 import { BaseService } from './base.service';
@@ -62,12 +62,8 @@ export const ClientController = <T extends Entity, ID>(
 
     @MessagePattern({ cmd: `${nameSingular}.create` }, transport)
     @UsePipes(new BaseValidationPipe())
-    async create(
-      @Payload('entity') entity: T,
-      @Payload('jwt') jwtPayload: JwtPayload,
-      @Ctx() context?: MicroContext,
-    ): Promise<T> {
-      return this.service.create(entity, jwtPayload);
+    async create(@Payload('entity') entity: T, @Ctx() context?: MicroContext): Promise<T> {
+      return this.service.create(entity);
     }
 
     @MessagePattern({ cmd: `${nameSingular}.update` }, transport)
@@ -75,19 +71,14 @@ export const ClientController = <T extends Entity, ID>(
     async update(
       @Payload('id') id: ID,
       @Payload('entity') entity: DeepPartial<T>,
-      @Payload('jwt') jwtPayload: JwtPayload,
       @Ctx() context?: MicroContext,
     ): Promise<T> {
-      return this.service.update(id, entity, jwtPayload);
+      return this.service.update(id, entity);
     }
 
     @MessagePattern({ cmd: `${nameSingular}.delete` }, transport)
-    async delete(
-      @Payload('id') id: ID,
-      @Payload('jwt') jwtPayload: JwtPayload,
-      @Ctx() context?: MicroContext,
-    ): Promise<T> {
-      return this.service.delete(id, jwtPayload);
+    async delete(@Payload('id') id: ID, @Ctx() context?: RmqContext): Promise<T> {
+      return this.service.delete(id);
     }
   }
 

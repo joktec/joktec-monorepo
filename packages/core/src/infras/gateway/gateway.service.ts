@@ -12,11 +12,12 @@ import basicAuth from 'express-basic-auth';
 import { lookup } from 'geoip-lite';
 import helmet from 'helmet';
 import requestIp from 'request-ip';
+import UAParser from 'ua-parser-js';
 import { ApplicationMiddlewares } from '../../base';
 import { SwaggerConfig, SwaggerSecurity } from '../../decorators';
 import { ExpressRequest, ExpressResponse, HttpRequestHeader } from '../../models';
 import { BullConfig, ConfigService, LogService } from '../../modules';
-import { joinUrl, parseUA, toArray } from '../../utils';
+import { joinUrl, toArray } from '../../utils';
 import { GatewayConfig } from './gateway.config';
 
 export class GatewayService {
@@ -33,8 +34,8 @@ export class GatewayService {
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
     app.use((req: ExpressRequest, res: ExpressResponse, next: NextFunction) => {
       const ipAddress = requestIp.getClientIp(req);
-      req.userAgent = parseUA(req.headers['user-agent'] || '');
       req.geoIp = { ipAddress, ...lookup(ipAddress) };
+      req.userAgent = new UAParser(req.headers['user-agent'] || '').getResult();
       next();
     });
 

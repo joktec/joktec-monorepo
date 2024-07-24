@@ -1,9 +1,9 @@
-import { CoreModule, Global, Module } from '@joktec/core';
+import { Global, Module } from '@joktec/core';
 import { AlertService } from './alert.service';
 
 @Global()
 @Module({
-  imports: [CoreModule],
+  imports: [],
   providers: [AlertService],
   exports: [AlertService],
 })

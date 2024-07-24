@@ -1,8 +1,6 @@
 import { isArray, isBoolean, isEmpty, isNaN, isNil, isPlainObject, isString, uniq } from 'lodash';
 import pluralize from 'pluralize';
 import slug from 'slug';
-import UAParser from 'ua-parser-js';
-import { IUserAgent } from '../models';
 
 /**
  * Recursively flattens the keys of an object and returns an array of strings
@@ -39,6 +37,15 @@ export function toInt(n: number | string | boolean, def: number = 0): number {
   if (n === 'false') return 0;
   if (typeof n === 'string' && isNaN(parseInt(n, 10))) return def;
   return n ? parseInt(String(n), 10) : def;
+}
+
+export function toFloat(n: number | string | boolean, def: number = 0): number {
+  if (isNil(n)) return def;
+  if (isBoolean(n)) return n ? 1.0 : 0.0;
+  if (n === 'true') return 1.0;
+  if (n === 'false') return 0.0;
+  if (typeof n === 'string' && isNaN(parseFloat(n))) return def;
+  return n ? parseFloat(String(n)) : def;
 }
 
 /**
@@ -173,13 +180,6 @@ export function nullKeysToObject(obj: { [key: string]: any }): object {
   }
 
   return result;
-}
-
-export function parseUA(userAgent: string): IUserAgent {
-  const extensions = {
-    browser: [[/(okhttp|alamofire)\/([\w.]+)/i], [UAParser.BROWSER.NAME, UAParser.BROWSER.VERSION]],
-  };
-  return new UAParser(userAgent, extensions).getResult();
 }
 
 export function toRoute(path: string): string {

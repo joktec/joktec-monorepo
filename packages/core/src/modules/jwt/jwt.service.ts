@@ -13,7 +13,7 @@ export class JwtService {
   private readonly config: JwtConfig;
 
   constructor(private configService: ConfigService) {
-    this.config = this.configService.parseOrThrow(JwtConfig, 'guard');
+    this.config = this.configService.parseOrThrow(JwtConfig, 'jwt');
   }
 
   async extractToken(req: ExpressRequest): Promise<string> {

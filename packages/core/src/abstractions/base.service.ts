@@ -10,7 +10,7 @@ import {
   ICondition,
   IListResponseDto,
 } from '../models';
-import { ConfigService, JwtPayload, LogService } from '../modules';
+import { ConfigService, LogService } from '../modules';
 import { cloneInstance } from '../utils';
 
 export abstract class BaseService<T extends Entity, ID = string, REQ extends IBaseRequest<T> = IBaseRequest<T>>
@@ -53,32 +53,36 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
     return this.repository.findOne(query);
   }
 
-  async create(entity: DeepPartial<T>, payload?: JwtPayload): Promise<T> {
+  async create(entity: DeepPartial<T>): Promise<T> {
     const language = this.request.query.language;
     const processEntity: DeepPartial<T> = cloneInstance(entity);
-    if (payload) {
-      Object.assign(processEntity, { createdBy: payload.sub, updatedBy: payload.sub });
-    }
     return this.repository.create(processEntity, { language });
   }
 
-  async update(id: ID, entity: DeepPartial<T>, payload?: JwtPayload): Promise<T> {
+  async update(id: ID, entity: DeepPartial<T>): Promise<T> {
     const language = this.request.query.language;
     const condition: ICondition<T> = { id } as object;
     const processEntity: DeepPartial<T> = cloneInstance(entity);
-    if (payload) {
-      Object.assign(processEntity, { updatedBy: payload.sub });
-    }
     return this.repository.update(condition, processEntity, { language });
   }
 
-  async delete(id: ID, payload?: JwtPayload): Promise<T> {
+  async delete(id: ID): Promise<T> {
     const condition: ICondition<T> = { id } as object;
-    return this.repository.delete(condition, { userId: payload?.sub });
+    const opts = { userId: null };
+    if (this.request.payload) {
+      const payload = this.request.payload;
+      Object.assign(opts, { userId: payload.sub });
+    }
+    return this.repository.delete(condition, opts);
   }
 
-  async restore(id: ID, payload?: JwtPayload): Promise<T> {
+  async restore(id: ID): Promise<T> {
     const condition: ICondition<T> = { id } as object;
-    return this.repository.restore(condition, { userId: payload?.sub });
+    const opts = { userId: null };
+    if (this.request.payload) {
+      const payload = this.request.payload;
+      Object.assign(opts, { userId: payload.sub });
+    }
+    return this.repository.restore(condition, opts);
   }
 }

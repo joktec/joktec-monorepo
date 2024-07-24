@@ -44,7 +44,7 @@ import {
   IBaseController,
   IBaseRequest,
 } from '../models';
-import { ConfigService, Jwt, JwtPayload, LogService } from '../modules';
+import { ConfigService, LogService } from '../modules';
 import { toArray, toBool, toPlural, toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
 import { BaseService } from './base.service';
@@ -104,7 +104,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
   // Apply Metric
   const controllerHooks = toArray(props.hooks);
-  if (toBool(props.metric, true)) controllerHooks.push(GatewayMetric);
+  if (toBool(props.metric, false)) controllerHooks.push(GatewayMetric);
 
   @ApiTags(tag)
   @ApiExcludeController(toBool(props.hidden, false))
@@ -190,8 +190,8 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UsePipes(new BaseValidationPipe(), ...toArray(props.create?.pipes))
     @UseInterceptors(...toArray(props.create?.hooks))
     @applyDecorators(...toArray(props.create?.decorators))
-    async create(@Body() entity: CreateDto, @Jwt() payload?: JwtPayload): Promise<T> {
-      return this.service.create(entity, payload);
+    async create(@Body() entity: CreateDto): Promise<T> {
+      return this.service.create(entity);
     }
 
     @Put('/:id')
@@ -206,8 +206,8 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UsePipes(new BaseValidationPipe({ skipMissingProperties: true }), ...toArray(props.update?.pipes))
     @UseInterceptors(...toArray(props.update?.hooks))
     @applyDecorators(...toArray(props.update?.decorators))
-    async update(@Param('id') id: ID, @Body() entity: UpdateDto, @Jwt() payload?: JwtPayload): Promise<T> {
-      const detail = await this.service.update(id, entity, payload);
+    async update(@Param('id') id: ID, @Body() entity: UpdateDto): Promise<T> {
+      const detail = await this.service.update(id, entity);
       if (!detail) throw new NotFoundException();
       return detail;
     }
@@ -223,8 +223,8 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UsePipes(...toArray(props.delete?.pipes))
     @UseInterceptors(...toArray(props.delete?.hooks))
     @applyDecorators(...toArray(props.delete?.decorators))
-    async delete(@Param('id') id: ID, @Jwt() payload?: JwtPayload): Promise<T | null> {
-      const detail = await this.service.delete(id, payload);
+    async delete(@Param('id') id: ID): Promise<T | null> {
+      const detail = await this.service.delete(id);
       if (!detail) throw new NotFoundException();
       return null;
     }

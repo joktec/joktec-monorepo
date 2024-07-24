@@ -2,7 +2,7 @@ import { Inject, OnModuleInit, Type } from '@nestjs/common';
 import { Args, Mutation, ObjectType, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
 import { BaseListResponse, Constructor, Entity, IBaseController, IBaseRequest } from '../models';
-import { ConfigService, Jwt, JwtPayload, LogService } from '../modules';
+import { ConfigService, LogService } from '../modules';
 import { toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';
 
@@ -45,22 +45,21 @@ export const BaseResolver = <T extends Entity, ID>(props: IBaseResolverProps<T>)
     }
 
     @Mutation(() => props.dto, { name: `create${nameSingular}` })
-    async create(@Args('input', { type: () => props.dto }) entity: T, @Jwt() payload?: JwtPayload): Promise<T> {
-      return this.service.create(entity, payload);
+    async create(@Args('input', { type: () => props.dto }) entity: T): Promise<T> {
+      return this.service.create(entity);
     }
 
     @Mutation(() => props.dto, { name: `update${nameSingular}` })
     async update(
       @Args('id', { type: () => String }) id: ID,
       @Args('input', { type: () => props.dto }) entity: T,
-      @Jwt() payload?: JwtPayload,
     ): Promise<T> {
-      return this.service.update(id, entity, payload);
+      return this.service.update(id, entity);
     }
 
     @Mutation(() => props.dto, { name: `delete${nameSingular}` })
-    async delete(@Args('id', { type: () => String }) id: ID, @Jwt() payload?: JwtPayload): Promise<T> {
-      return this.service.delete(id, payload);
+    async delete(@Args('id', { type: () => String }) id: ID): Promise<T> {
+      return this.service.delete(id);
     }
   }
 

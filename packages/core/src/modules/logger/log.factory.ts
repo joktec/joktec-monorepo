@@ -91,7 +91,7 @@ export const createPinoHttp = async (
           log: (object: Record<string, any>): Record<string, any> => {
             const args = omit(object, ['context', 'error']);
             const result: Record<string, any> = { context: object.context || 'UnknownContext' };
-            if (result.error) result.error = object.error;
+            if (object.error) result.error = object.error;
             if (!isEmpty(args)) result.args = args;
             return result;
           },
