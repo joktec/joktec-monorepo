@@ -5,7 +5,7 @@ import { HttpConfig, HttpProxyConfig } from './http.config';
 import { HttpAgent, HttpFormData, HttpRequest, HttpResponse } from './models';
 
 export interface HttpClient extends Client<HttpConfig, AxiosInstance> {
-  buildAgent(opt?: AgentOptions, proxy?: HttpProxyConfig): HttpAgent;
+  buildAgent(opt: AgentOptions & HttpProxyConfig): HttpAgent;
 
   request<T = any>(config: HttpRequest, conId?: string): Promise<HttpResponse<T>>;
 

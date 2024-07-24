@@ -73,7 +73,10 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     });
 
     const proxy = clientConfig.proxy || config.proxy || null;
-    if (proxy) Object.assign(cf, this.buildAgent(proxy));
+    if (proxy) {
+      Object.assign(cf, this.buildAgent(proxy));
+      delete cf.proxy;
+    }
 
     return this.getClient(conId).request<T>(cf);
   }
@@ -99,7 +102,10 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     });
 
     const proxy = clientConfig.proxy || config.proxy || null;
-    if (proxy) Object.assign(cf, this.buildAgent(proxy));
+    if (proxy) {
+      Object.assign(cf, this.buildAgent(proxy));
+      delete cf.proxy;
+    }
 
     return this.getClient(conId).request<T>(cf);
   }
