@@ -1,11 +1,12 @@
-import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
+import { Prop, Ref, Schema } from '@joktec/mongo';
+import { BaseSchema } from '../../base';
 import { IsCdnUrl } from '../../utils';
 import { CategoryStatus, CategoryType } from '../constants';
 import { CategoryWhiteLabel } from './category-white-label';
 import { I18nText, I18nTransform } from './i18n-text';
 
 @Schema({ collection: 'categories', textSearch: '$**', unique: ['code'], paranoid: true })
-export class Category extends MongoSchema {
+export class Category extends BaseSchema {
   @Prop({ required: true, trim: true, uppercase: true, immutable: true, example: 'LF07PPCCCD' })
   code!: string;
 

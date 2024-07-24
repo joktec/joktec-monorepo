@@ -1,5 +1,6 @@
 import path from 'path';
 import { BaseService, DeepPartial, Injectable, JwtPayload, MulterFile, NotImplementedException } from '@joktec/core';
+import { ObjectId } from '@joktec/mongo';
 import {
   StorageOperation,
   StoragePreSignedRequest,
@@ -34,8 +35,8 @@ export class AssetService extends BaseService<Asset, string> {
       title: filename,
       key: path.posix.join(prefix, filename),
       mimeType: contentType,
-      createdBy: payload?.sub,
-      updatedBy: payload?.sub,
+      createdBy: ObjectId.create(payload?.sub),
+      updatedBy: ObjectId.create(payload?.sub),
       ...(await AssetUtils.getSize(compressBuffer)),
     };
 
@@ -57,8 +58,8 @@ export class AssetService extends BaseService<Asset, string> {
       key: path.posix.join(prefix, filename),
       mimeType: contentType,
       status: AssetStatus.PENDING,
-      createdBy: payload?.sub,
-      updatedBy: payload?.sub,
+      createdBy: ObjectId.create(payload?.sub),
+      updatedBy: ObjectId.create(payload?.sub),
     };
 
     try {

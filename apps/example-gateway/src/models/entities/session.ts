@@ -1,10 +1,11 @@
-import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
+import { Prop, Ref, Schema } from '@joktec/mongo';
+import { BaseSchema } from '../../base';
 import { SessionStatus } from '../constants';
 import { SessionBrowser, SessionCPU, SessionDevice, SessionEngine, SessionOs } from './session-device';
 import { User } from './user';
 
 @Schema({ collection: 'sessions', paranoid: true })
-export class Session extends MongoSchema {
+export class Session extends BaseSchema {
   @Prop({ required: true })
   tokenId!: string;
 

@@ -1,10 +1,11 @@
-import { MongoSchema, Prop, PropType, Schema } from '@joktec/mongo';
+import { Prop, PropType, Schema } from '@joktec/mongo';
 import { isEmpty } from 'lodash';
+import { BaseSchema } from '../../base';
 import { IsCdnUrl } from '../../utils';
 import { AssetStatus } from '../constants';
 
 @Schema({ collection: 'assets', textSearch: 'title,subhead', index: 'key', unique: 'etag', paranoid: true })
-export class Asset extends MongoSchema {
+export class Asset extends BaseSchema {
   @Prop({ required: true, example: 'my_filename.png' })
   title!: string;
 

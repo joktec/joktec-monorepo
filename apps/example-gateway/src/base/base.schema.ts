@@ -1,15 +1,9 @@
-import { MongoSchema, Prop } from '@joktec/mongo';
+import { MongoSchema, ObjectId, Prop } from '@joktec/mongo';
 
-export class BaseSchema extends MongoSchema {
-  @Prop({ type: Date, default: new Date(), immutable: true })
-  createdAt?: Date;
-
+export abstract class BaseSchema extends MongoSchema {
   @Prop({ default: null, immutable: true, example: '507f1f77bcf86cd799439011' })
-  createdBy?: string;
-
-  @Prop({ type: Date, default: new Date() })
-  updatedAt?: Date;
+  createdBy?: ObjectId;
 
   @Prop({ default: null, example: '507f1f77bcf86cd799439011' })
-  updatedBy?: string;
+  updatedBy?: ObjectId;
 }

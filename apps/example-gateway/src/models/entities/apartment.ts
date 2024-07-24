@@ -1,4 +1,5 @@
-import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
+import { Prop, Ref, Schema } from '@joktec/mongo';
+import { BaseSchema } from '../../base';
 import { IsCdnUrl } from '../../utils';
 import { ApartmentStatus, ApartmentType } from '../constants';
 import { Location } from './location';
@@ -12,7 +13,7 @@ import { Setting } from './setting';
   paranoid: true,
   unique: 'code',
 })
-export class Apartment extends MongoSchema {
+export class Apartment extends BaseSchema {
   @Prop({ required: true, trim: true, uppercase: true, immutable: true })
   code!: string;
 

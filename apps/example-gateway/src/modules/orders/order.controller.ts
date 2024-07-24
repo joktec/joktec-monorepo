@@ -50,7 +50,7 @@ export class OrderController extends BaseController<Order, string>(props) {
   @Roles(UserRole.USER)
   @UseInterceptors(OrderEditableInterceptor, OrderCancelInterceptor)
   async cancel(@Param('id') id: string, @Req() req: ExpressRequest): Promise<Order> {
-    return this.orderService.update(id, req.body, req.payload);
+    return this.orderService.update(id, req.body);
   }
 
   @Patch('/:id/checkin')
@@ -60,7 +60,7 @@ export class OrderController extends BaseController<Order, string>(props) {
   @Roles(UserRole.USER)
   @UseInterceptors(OrderCheckinInterceptor)
   async checkin(@Param('id') id: string, @Req() req: ExpressRequest): Promise<Order> {
-    return this.orderService.update(id, req.body, req.payload);
+    return this.orderService.update(id, req.body);
   }
 
   @Patch('/:id/checkout')
@@ -70,7 +70,7 @@ export class OrderController extends BaseController<Order, string>(props) {
   @Roles(UserRole.USER)
   @UseInterceptors(OrderCheckoutInterceptor)
   async checkout(@Param('id') id: string, @Req() req: ExpressRequest): Promise<Order> {
-    return this.orderService.update(id, req.body, req.payload);
+    return this.orderService.update(id, req.body);
   }
 
   @Patch('/:id/confirm')
@@ -80,7 +80,7 @@ export class OrderController extends BaseController<Order, string>(props) {
   @Roles(UserRole.ADMIN)
   @UseInterceptors(OrderConfirmInterceptor)
   async confirm(@Param('id') id: string, @Req() req: ExpressRequest): Promise<Order> {
-    return this.orderService.update(id, req.body, req.payload);
+    return this.orderService.update(id, req.body);
   }
 
   @Patch('/:id/reject')
@@ -91,6 +91,6 @@ export class OrderController extends BaseController<Order, string>(props) {
   @Roles(UserRole.ADMIN)
   @UseInterceptors(OrderRejectInterceptor)
   async reject(@Param('id') id: string, @Req() req: ExpressRequest): Promise<Order> {
-    return this.orderService.update(id, req.body, req.payload);
+    return this.orderService.update(id, req.body);
   }
 }

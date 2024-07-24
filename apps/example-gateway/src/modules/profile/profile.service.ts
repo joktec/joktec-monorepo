@@ -31,7 +31,7 @@ export class ProfileService {
       const existEmail = await this.userService.findByEmail(input.email, user._id);
       if (existEmail) throw new BadRequestException('EMAIL_EXISTED');
     }
-    return this.userService.update(payload.sub, input, payload);
+    return this.userService.update(payload.sub, input);
   }
 
   async changePassword(input: UserPasswordDto, payload: JwtPayload): Promise<UserProfile> {

@@ -1,10 +1,11 @@
-import { MongoSchema, Prop, Schema } from '@joktec/mongo';
+import { Prop, Schema } from '@joktec/mongo';
+import { BaseSchema } from '../../base';
 import { IsCdnUrl } from '../../utils';
 import { UserGender, UserRole, UserStatus } from '../constants';
 import { Address } from './address';
 
 @Schema({ collection: 'users', textSearch: 'fullName,phone,email', unique: ['email', 'phone'], paranoid: true })
-export class User extends MongoSchema {
+export class User extends BaseSchema {
   @Prop({ required: true })
   fullName!: string;
 

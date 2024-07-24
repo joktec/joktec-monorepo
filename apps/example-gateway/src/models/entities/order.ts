@@ -1,4 +1,5 @@
-import { MongoSchema, Prop, PropType, Ref, Schema } from '@joktec/mongo';
+import { Prop, PropType, Ref, Schema } from '@joktec/mongo';
+import { BaseSchema } from '../../base';
 import { IsCdnUrl } from '../../utils';
 import { OrderStatus, OrderType, PaymentMethod } from '../constants';
 import { OrderContact } from './order-contact';
@@ -7,7 +8,7 @@ import { Room } from './room';
 import { User } from './user';
 
 @Schema({ collection: 'orders', textSearch: 'title,subhead', paranoid: true })
-export class Order extends MongoSchema {
+export class Order extends BaseSchema {
   @Prop({ required: true, trim: true, uppercase: true, immutable: true })
   code!: string;
 

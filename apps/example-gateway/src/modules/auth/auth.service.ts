@@ -17,6 +17,7 @@ import {
   REQUEST,
   ValidatorBuilder,
 } from '@joktec/core';
+import { ObjectId } from '@joktec/mongo';
 import moment from 'moment';
 import { OTPStatus, OTPType, SessionStatus, UserStatus } from '../../models/constants';
 import { Otp, User } from '../../models/entities';
@@ -265,8 +266,8 @@ export class AuthService {
     });
 
     if (loginMethod === 'REGISTER') {
-      user.createdBy = user._id;
-      user.updatedBy = user._id;
+      user.createdBy = ObjectId.create(user._id);
+      user.updatedBy = ObjectId.create(user._id);
     }
 
     const profile = await this.userService.update(user._id, user);

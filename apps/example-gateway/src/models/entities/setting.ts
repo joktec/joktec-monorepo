@@ -1,9 +1,10 @@
-import { MongoSchema, Prop, Ref, Schema } from '@joktec/mongo';
+import { Prop, Ref, Schema } from '@joktec/mongo';
+import { BaseSchema } from '../../base';
 import { IsCdnUrl } from '../../utils';
 import { SettingStatus, SettingType } from '../constants';
 
 @Schema({ collection: 'settings', textSearch: 'title,subhead', paranoid: true })
-export class Setting extends MongoSchema {
+export class Setting extends BaseSchema {
   @Prop({ required: true, trim: true, uppercase: true, immutable: true })
   code!: string;
 
