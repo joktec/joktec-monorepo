@@ -1,4 +1,4 @@
-import { Inject, OnModuleInit, Type, UseInterceptors, UsePipes } from '@nestjs/common';
+import { Inject, OnModuleInit, Type, UsePipes } from '@nestjs/common';
 import {
   Ctx,
   KafkaContext,
@@ -12,10 +12,9 @@ import {
   Transport,
 } from '@nestjs/microservices';
 import { set, startCase } from 'lodash';
-import { MicroMetric } from '../infras';
 import { Constructor, DeepPartial, Entity, IBaseController, IBaseRequest, IListResponseDto } from '../models';
 import { ConfigService, LogService } from '../modules';
-import { toBool, toSingular } from '../utils';
+import { toSingular } from '../utils';
 import { BaseValidationPipe } from '../validation';
 import { BaseService } from './base.service';
 
@@ -24,7 +23,6 @@ export type MicroContext = TcpContext | RedisContext | NatsContext | MqttContext
 export interface IMicroControllerProps<T extends Entity> {
   dto: Constructor<T>;
   dtoName?: string;
-  metric?: boolean;
   transport?: Transport;
 }
 
@@ -81,9 +79,6 @@ export const ClientController = <T extends Entity, ID>(
       return this.service.delete(id);
     }
   }
-
-  const metric = toBool(props.metric, true);
-  if (metric) UseInterceptors(MicroMetric)(Controller);
 
   return Controller;
 };

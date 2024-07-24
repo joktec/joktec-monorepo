@@ -26,12 +26,9 @@ transports:
 log:
   level: info
   format: json
-  useFilter: false
-  # fileDir: .log/app.log
-  socket:
-    enable: true
-    host: localhost
-    port: 5010
+  hideWarning: true
+  hideObject: false
+  hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader ]
   transport:
     enable: true
     target: pino-mongodb
@@ -58,7 +55,7 @@ bull:
 misc:
   cdnUrl: http://127.0.0.1:9000/joktec
 
-guard:
+jwt:
   secretKey: $ecr3tK4y
   refreshKey: refreshKey
   expired: 1 year

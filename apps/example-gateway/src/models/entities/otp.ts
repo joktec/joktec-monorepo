@@ -1,7 +1,7 @@
 import { isEmail, isMobilePhone } from '@joktec/core';
 import { Prop, Schema } from '@joktec/mongo';
 import moment from 'moment';
-import { BaseSchema } from '../../base';
+import { BaseSchema } from '../../base/base.schema';
 import { OTPStatus, OTPType } from '../constants';
 
 @Schema({ collection: 'otpLogs', textSearch: 'fullName,phone,email', paranoid: true })

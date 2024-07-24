@@ -1,5 +1,5 @@
 import { Prop, Ref, Schema } from '@joktec/mongo';
-import { BaseSchema } from '../../base';
+import { BaseSchema } from '../../base/base.schema';
 import { SessionStatus } from '../constants';
 import { SessionBrowser, SessionCPU, SessionDevice, SessionEngine, SessionOs } from './session-device';
 import { User } from './user';

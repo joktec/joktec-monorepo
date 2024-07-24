@@ -1,5 +1,5 @@
 import { Prop, PropType, Ref, Schema } from '@joktec/mongo';
-import { BaseSchema } from '../../base';
+import { BaseSchema } from '../../base/base.schema';
 import { IsCdnUrl } from '../../utils';
 import { OrderStatus, OrderType, PaymentMethod } from '../constants';
 import { OrderContact } from './order-contact';

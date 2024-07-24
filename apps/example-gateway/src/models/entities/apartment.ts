@@ -1,5 +1,5 @@
 import { Prop, Ref, Schema } from '@joktec/mongo';
-import { BaseSchema } from '../../base';
+import { BaseSchema } from '../../base/base.schema';
 import { IsCdnUrl } from '../../utils';
 import { ApartmentStatus, ApartmentType } from '../constants';
 import { Location } from './location';

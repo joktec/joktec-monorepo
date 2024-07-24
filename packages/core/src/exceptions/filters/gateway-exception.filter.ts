@@ -82,8 +82,9 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
       this.logger.error(exception['data'] || exception, exception.message || 'Something when wrong');
     }
 
-    const useFilter = this.cfg.get<boolean>('log.useFilter', false);
-    if (useFilter && status < HttpStatus.INTERNAL_SERVER_ERROR) {
+    const hideWarning = this.cfg.get<boolean>('log.hideWarning', true);
+    if (hideWarning) return;
+    if (status < HttpStatus.INTERNAL_SERVER_ERROR) {
       const msg = this.transformMessage(exception);
       this.logger.error(exception, msg);
     }

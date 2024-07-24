@@ -1,6 +1,6 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { DestinationStream } from 'pino';
 import { toArray } from '../../utils';
+import { IsTypes } from '../../validation';
 import { LogSocket } from './log-socket.config';
 import { LogTransport } from './log-transport.config';
 import { LogLevel } from './log.enum';
@@ -11,14 +11,8 @@ export class LogConfig {
   level?: LogLevel = 'info';
 
   @IsOptional()
+  @IsTypes(['string', 'string[]'])
   contexts?: string | string[];
-
-  @IsOptional()
-  @IsBoolean()
-  useFilter?: boolean = false;
-
-  @IsOptional()
-  customStreams?: DestinationStream[] = [];
 
   @IsOptional()
   @IsString()
@@ -29,6 +23,18 @@ export class LogConfig {
 
   @IsOptional()
   transport?: LogTransport | LogTransport[];
+
+  @IsOptional()
+  @IsTypes(['string', 'string[]'])
+  hideContexts?: string | string[];
+
+  @IsOptional()
+  @IsBoolean()
+  hideObject?: boolean = false;
+
+  @IsOptional()
+  @IsBoolean()
+  hideWarning?: boolean = true;
 
   constructor(props: LogConfig) {
     Object.assign(this, {
@@ -44,5 +50,12 @@ export class LogConfig {
       return contexts.map(context => `context == '${context}'`).join('||');
     }
     return contexts ? `context == '${contexts}'` : contexts;
+  }
+
+  filterLogs(logObject: string | Record<string, any>): boolean {
+    const contexts = toArray<string>(this.hideContexts || []);
+    if (!contexts.length) return true;
+    if (typeof logObject === 'string' && contexts.includes(logObject)) return false;
+    return !(typeof logObject === 'object' && contexts.includes(logObject.context));
   }
 }

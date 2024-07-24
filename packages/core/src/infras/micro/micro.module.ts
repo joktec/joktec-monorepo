@@ -1,13 +1,26 @@
-import { Global, Module } from '@nestjs/common';
+import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 import { MetricModule } from '../../modules';
 import { MicroController } from './micro.controller';
 import { microLatency, MicroMetric, totalMicroCounter } from './micro.metric';
 
+export interface MicroModuleOptions {
+  metric?: boolean;
+}
+
 @Global()
-@Module({
-  imports: [MetricModule],
-  controllers: [MicroController],
-  providers: [MicroMetric, microLatency, totalMicroCounter],
-  exports: [MicroMetric, microLatency, totalMicroCounter],
-})
-export class MicroModule {}
+@Module({})
+export class MicroModule {
+  static forRoot(options: MicroModuleOptions = {}): DynamicModule {
+    const providers: Provider[] = [];
+    const imports: any[] = [];
+    const exports: any[] = [];
+
+    if (options.metric) {
+      imports.push(MetricModule);
+      providers.push(MicroMetric, microLatency, totalMicroCounter);
+      exports.push(MicroMetric, microLatency, totalMicroCounter);
+    }
+
+    return { module: MicroModule, imports, controllers: [MicroController], providers, exports };
+  }
+}

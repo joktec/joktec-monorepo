@@ -2,24 +2,23 @@ import { isEmpty, omit } from 'lodash';
 import { Params as LoggerParam } from 'nestjs-pino';
 import pino, { Bindings, DestinationStream, StreamEntry, TransportTargetOptions } from 'pino';
 import { PrettyOptions } from 'pino-pretty';
-import { toArray, toBool, toInt } from '../../utils';
-import { ConfigService } from '../config';
+import { generateUUID, toArray, toBool, toInt } from '../../utils';
+import { ConfigService, ENV } from '../config';
 import { LogSocket } from './log-socket.config';
 import { LogTransport } from './log-transport.config';
 import { LogConfig } from './log.config';
-import { LogLevel, LogSocketMode } from './log.enum';
+import { LogSocketMode } from './log.enum';
 
-const createPrettyTransport = (level: LogLevel): DestinationStream => {
+const createPrettyTransport = (config: LogConfig): DestinationStream => {
   const options: PrettyOptions = {
-    messageKey: 'message',
-    timestampKey: '@timestamp',
     translateTime: 'yyyy-mm-dd HH:MM:ss.l o',
     colorize: true,
     crlf: true,
-    ignore: 'req,pid,hostname,version',
+    ignore: 'req,pid,hostname,version,environment',
     destination: 1,
+    hideObject: config.hideObject,
   };
-  return pino.transport({ target: 'pino-pretty', level: level, options } as TransportTargetOptions);
+  return pino.transport({ target: 'pino-pretty', level: config.level, options } as TransportTargetOptions);
 };
 
 export const createPinoTransport = (transports: LogTransport | LogTransport[]): DestinationStream[] => {
@@ -59,7 +58,7 @@ export const createPinoHttp = async (
   const config: LogConfig = configService.parseOrThrow(LogConfig, 'log');
   const appName = configService.get('name').replace('@', '').replace('/', '-');
 
-  const streams: DestinationStream[] = [createPrettyTransport(config.level), ...customStreams];
+  const streams: DestinationStream[] = [createPrettyTransport(config), ...customStreams];
   if (config.fileDir) streams.push(pino.destination({ dest: `./${config.fileDir}` }));
   if (toArray(config.socket).length) streams.push(...createPinoSocket(config.socket));
   if (toArray(config.transport).length) streams.push(...createPinoTransport(config.transport));
@@ -67,14 +66,16 @@ export const createPinoHttp = async (
   return {
     pinoHttp: [
       {
-        messageKey: 'message',
-        timestamp: () => `,"@timestamp":"${new Date().toISOString()}"`,
         name: appName,
         level: config.level,
         enabled: true,
         autoLogging: false,
+        genReqId: (req, _) => {
+          if (req.headers['x-request-id']) return req.headers['x-request-id'];
+          return generateUUID({ empty: true });
+        },
         formatters: {
-          level: (label, number): Record<string, any> => {
+          level: (label, _): Record<string, any> => {
             return { level: label };
           },
           bindings: (bindings: Bindings) => {
@@ -84,7 +85,7 @@ export const createPinoHttp = async (
               hostname,
               name,
               version: configService.get('version'),
-              environment: configService.get('env'),
+              environment: configService.get<ENV>('env'),
               ...restBindings,
             };
           },
@@ -94,6 +95,13 @@ export const createPinoHttp = async (
             if (object.error) result.error = object.error;
             if (!isEmpty(args)) result.args = args;
             return result;
+          },
+        },
+        hooks: {
+          logMethod(inputArgs, method) {
+            if (config.filterLogs(inputArgs[0] as any)) {
+              method.apply(this, inputArgs);
+            }
           },
         },
       },

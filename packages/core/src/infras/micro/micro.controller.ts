@@ -1,8 +1,7 @@
-import { Body, Controller, Param, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Param, Post } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../../exceptions';
-import { MicroMetric } from './micro.metric';
 
 @ApiTags('Default')
 @Controller()
@@ -12,7 +11,6 @@ export class MicroController {
   @Post('/micro/:service/:method')
   @ApiBody({ type: Object })
   @ApiResponse({ type: Object })
-  @UseInterceptors(MicroMetric)
   async micro(
     @Param('service') service: string,
     @Param('method') method: string,

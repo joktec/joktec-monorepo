@@ -33,7 +33,6 @@ import {
 import { set, startCase } from 'lodash';
 import { ApiNotAllowedEndpoint, ApiSchema, ApiUseApiKey, ApiUseBearer } from '../decorators';
 import { NotFoundException } from '../exceptions';
-import { GatewayMetric } from '../infras';
 import {
   BaseListResponse,
   Clazz,
@@ -70,7 +69,6 @@ export interface IControllerProps<T extends Entity> extends IEndpointProps {
     updatedDto?: Constructor<DeepPartial<T>> | Clazz;
   };
   tag?: string;
-  metric?: boolean;
   paginate?: IEndpointProps & { search?: boolean };
   detail?: IEndpointProps;
   create?: IEndpointProps;
@@ -104,7 +102,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
   // Apply Metric
   const controllerHooks = toArray(props.hooks);
-  if (toBool(props.metric, false)) controllerHooks.push(GatewayMetric);
 
   @ApiTags(tag)
   @ApiExcludeController(toBool(props.hidden, false))

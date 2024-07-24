@@ -5,10 +5,8 @@ import {
   BaseValidationPipe,
   Body,
   Controller,
-  GatewayMetric,
   LogService,
   Post,
-  UseInterceptors,
   UsePipes,
 } from '@joktec/core';
 import { OTPStatus } from '../../models/constants';
@@ -30,7 +28,6 @@ import {
 @Controller('auth')
 @ApiTags('auth')
 @UsePipes(new BaseValidationPipe())
-@UseInterceptors(GatewayMetric)
 export class AuthController {
   constructor(
     private logger: LogService,

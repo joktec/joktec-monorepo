@@ -1,6 +1,6 @@
 import { MongoSchema, ObjectId, Prop } from '@joktec/mongo';
 
-export abstract class BaseSchema extends MongoSchema {
+export class BaseSchema extends MongoSchema {
   @Prop({ default: null, immutable: true, example: '507f1f77bcf86cd799439011' })
   createdBy?: ObjectId;
 

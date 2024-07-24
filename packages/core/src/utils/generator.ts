@@ -31,7 +31,8 @@ export const generateOTP = (otpLength: number = 6): string => {
  * @param {object} opts
  * @returns {string} UUID
  */
-export function generateUUID(opts?: { prefix?: string }): string {
+export function generateUUID(opts?: { prefix?: string; empty?: boolean }): string {
+  if (opts?.empty) return '00000000-0000-0000-0000-000000000000';
   let result: string = uuidv4();
   if (opts?.prefix) {
     const prefix = snakeCase(opts.prefix).toUpperCase();
