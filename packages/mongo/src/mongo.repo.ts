@@ -2,14 +2,14 @@ import {
   ConfigService,
   DeepPartial,
   DEFAULT_CON_ID,
+  Encrypter,
+  IBaseRequest,
   ICondition,
   Injectable,
   LogService,
   OnModuleInit,
   plainToInstance,
   toArray,
-  Encrypter,
-  IBaseRequest,
 } from '@joktec/core';
 import { Inject } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -19,12 +19,12 @@ import { Aggregate, UpdateQuery } from 'mongoose';
 import { MongoHelper, MongoPipeline, QueryHelper, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
 import {
   IMongoAggregateOptions,
-  IMongoRequest,
+  IMongoBulkOptions,
   IMongoBulkRequest,
+  IMongoOptions,
+  IMongoRequest,
   MongoSchema,
   ObjectId,
-  IMongoOptions,
-  IMongoBulkOptions,
 } from './models';
 import { IMongoRepository } from './mongo.client';
 import { MongoCatch } from './mongo.exception';

@@ -3,11 +3,11 @@ import {
   IsBoolean,
   IsInt,
   IsNotEmpty,
+  IsObject,
   IsOptional,
   IsString,
   toBool,
   toInt,
-  IsObject,
 } from '@joktec/core';
 
 export class MongoConfig extends ClientConfig {

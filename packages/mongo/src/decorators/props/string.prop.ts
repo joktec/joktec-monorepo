@@ -1,15 +1,15 @@
 import {
+  IsEmail,
+  isEmail,
+  IsHexColor,
+  IsMobilePhone,
+  isMobilePhone,
   IsString,
+  IsUrl,
   MaxLength,
   MinLength,
-  IsEmail,
-  ValidationOptions,
-  IsMobilePhone,
   toBool,
-  IsHexColor,
-  isMobilePhone,
-  isEmail,
-  IsUrl,
+  ValidationOptions,
 } from '@joktec/core';
 import { ApiPropertyOptions } from '@nestjs/swagger';
 import { PropOptionsForString } from '@typegoose/typegoose/lib/types';

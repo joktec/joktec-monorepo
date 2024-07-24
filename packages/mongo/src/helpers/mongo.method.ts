@@ -3,7 +3,6 @@ import { queryMethod, types } from '@typegoose/typegoose';
 import { isEmpty, isNil } from 'lodash';
 import { QueryWithHelpers, UpdateWriteOpResult } from 'mongoose';
 import { DELETE_OPTIONS, PARANOID_OPTIONS, RESTORE_OPTIONS } from '../helpers';
-import { ObjectId } from '../models';
 import { ParanoidQueryOptions } from '../plugins';
 
 export interface QueryHelper<T> {
@@ -52,7 +51,6 @@ function destroyOne<T>(
 
   const bodyUpdate = Object.values(paths).reduce((body, schema) => {
     if (schema.options.deletedAt) body[schema.options.deletedAt] = new Date();
-    if (schema.options.deletedBy) body[schema.options.deletedBy] = options?.deletedBy;
     return body;
   }, {});
   return this.findOneAndUpdate(filter, { $set: bodyUpdate }, { ...PARANOID_OPTIONS, ...options });
@@ -71,7 +69,6 @@ function destroyMany<T>(
 
   const bodyUpdate = Object.values(paths).reduce((body, schema) => {
     if (schema.options.deletedAt) body[schema.options.deletedAt] = new Date();
-    if (schema.options.deletedBy) body[schema.options.deletedBy] = options?.deletedBy;
     return body;
   }, {});
   return this.updateMany(filter, { $set: bodyUpdate }, { ...PARANOID_OPTIONS, ...options });
@@ -80,15 +77,13 @@ function destroyMany<T>(
 function restore<T>(
   this: types.QueryHelperThis<any, QueryHelper<T>>,
   filter?: ICondition<T>,
-  options?: ParanoidQueryOptions<T> & { restoredBy?: string | ObjectId | any },
+  options?: ParanoidQueryOptions<T>,
 ): QueryWithHelpers<T, T> {
   const paths = this.model.schema.paths;
   const bodyUpdate: DeepPartial<T> = Object.values(paths).reduce((body, schema) => {
     if (schema.options.deletedAt) body[schema.options.deletedAt] = null;
-    if (schema.options.deletedBy) body[schema.options.deletedBy] = null;
     return body;
   }, {});
-  if (options?.restoredBy) bodyUpdate['updatedBy'] = String(options.restoredBy);
   return this.findOneAndUpdate(filter, { $set: bodyUpdate }, { ...RESTORE_OPTIONS, ...options });
 }
 

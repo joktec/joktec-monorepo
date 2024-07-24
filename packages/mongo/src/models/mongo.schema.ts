@@ -5,7 +5,6 @@ import { QueryWithHelpers, UpdateWriteOpResult } from 'mongoose';
 import { Prop } from '../decorators';
 import { QueryHelper } from '../helpers';
 import { ParanoidQueryOptions } from '../plugins';
-import { ObjectId } from './mongo.request';
 
 export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> {
   @ApiProperty()
@@ -16,14 +15,8 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
   @Prop({ type: Date, default: new Date(), immutable: true })
   createdAt?: Date;
 
-  @Prop({ default: null, immutable: true, example: '507f1f77bcf86cd799439011' })
-  createdBy?: string;
-
   @Prop({ type: Date, default: new Date() })
   updatedAt?: Date;
-
-  @Prop({ default: null, example: '507f1f77bcf86cd799439011' })
-  updatedBy?: string;
 
   public static destroyOne<T>(
     this: ReturnModelType<typeof MongoSchema, QueryHelper<T>>,
@@ -36,7 +29,7 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
   public static restore<T>(
     this: ReturnModelType<typeof MongoSchema>,
     filter: ICondition<T>,
-    options?: ParanoidQueryOptions<T> & { restoredBy?: string | ObjectId | any },
+    options?: ParanoidQueryOptions<T>,
   ): QueryWithHelpers<T, T> {
     return this.findOne().restore(filter, options);
   }

@@ -2,7 +2,6 @@ import { toArray } from '@joktec/core';
 import { plugin } from '@typegoose/typegoose';
 import { get, head } from 'lodash';
 import { ISchemaOptions } from '../decorators';
-import { ObjectId } from '../models';
 import {
   LocaleOptions,
   LocalePlugin,
@@ -24,7 +23,6 @@ export function buildPlugin(options: ISchemaOptions): ClassDecorator[] {
   if (options.paranoid) {
     const paranoidOpts: ParanoidOptions = {
       deletedAt: { name: 'deletedAt', type: Date },
-      deletedBy: { name: 'deletedBy', type: ObjectId },
     };
     if (typeof options?.paranoid === 'object') {
       Object.assign(paranoidOpts, options.paranoid);

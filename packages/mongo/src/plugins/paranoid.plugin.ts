@@ -1,18 +1,14 @@
 import { Clazz, toArray, toBool } from '@joktec/core';
 import { isEmpty, isString } from 'lodash';
 import { PipelineStage, QueryOptions, Schema } from 'mongoose';
-import { ObjectId } from '../models';
 
 export interface ParanoidOptions {
   deletedAt?: { name?: string; type?: Clazz };
-  deletedBy?: { name?: string; type?: Clazz };
 }
 
 export interface ParanoidQueryOptions<T = any> extends QueryOptions<T> {
   paranoid?: boolean;
   force?: boolean;
-  deletedBy?: string | ObjectId | any;
-  restoredBy?: string | ObjectId | any;
 }
 
 function injectFilter(filter: Record<string, any>, key: string, paranoid: boolean = true) {
@@ -59,20 +55,13 @@ function injectMatchPipeline(pipelines: PipelineStage[], key: string, paranoid: 
 
 export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
   const deletedAtKey = opts?.deletedAt?.name || 'deletedAt';
-  const deletedByKey = opts?.deletedBy?.name || 'deletedBy';
 
-  // Add deletedAt and deletedBy
+  // Add deletedAt field
   schema.add({
     [deletedAtKey]: {
       type: opts?.deletedAt?.type || Date,
       default: null,
       deletedAt: deletedAtKey,
-      select: false,
-    },
-    [deletedByKey]: {
-      type: opts?.deletedBy?.type || ObjectId,
-      default: null,
-      deletedBy: deletedByKey,
       select: false,
     },
   });

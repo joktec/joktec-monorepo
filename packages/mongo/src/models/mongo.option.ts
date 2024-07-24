@@ -4,11 +4,8 @@ import { AggregateOptions, MongooseBulkWriteOptions, QueryOptions } from 'mongoo
 
 export interface IMongoOptions<T = any> extends QueryOptions<T> {
   language?: ILanguage;
-
   paranoid?: boolean;
   force?: boolean;
-  deletedBy?: any;
-  restoredBy?: any;
 }
 
 export interface IMongoAggregateOptions extends AggregateOptions {
