@@ -2,9 +2,8 @@ import { ArgumentMetadata, Injectable, Optional, PipeTransform, ValidationPipe }
 import { ClassTransformOptions, instanceToPlain, plainToInstance } from 'class-transformer';
 import { validate, ValidationError, ValidatorOptions } from 'class-validator';
 import { isNil, isObject } from 'lodash';
-import { toBool } from '../utils';
-import { ValidationException } from './validation.exception';
-import { buildError } from './validation.utils';
+import { ValidationException } from '../exceptions';
+import { buildError, toBool } from '../utils';
 
 interface ValidationPipeOptions extends ValidatorOptions {
   transform?: boolean;

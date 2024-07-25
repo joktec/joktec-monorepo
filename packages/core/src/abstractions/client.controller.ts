@@ -14,8 +14,8 @@ import {
 import { set, startCase } from 'lodash';
 import { Constructor, DeepPartial, Entity, IBaseController, IBaseRequest, IListResponseDto } from '../models';
 import { ConfigService, LogService } from '../modules';
+import { BaseValidationPipe } from '../pipes';
 import { toSingular } from '../utils';
-import { BaseValidationPipe } from '../validation';
 import { BaseService } from './base.service';
 
 export type MicroContext = TcpContext | RedisContext | NatsContext | MqttContext | RmqContext | KafkaContext;

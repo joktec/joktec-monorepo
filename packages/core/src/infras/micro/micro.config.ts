@@ -1,4 +1,5 @@
 import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsTypes } from '../../decorators';
 import {
   GrpcTransport,
   KafkaTransport,
@@ -11,7 +12,6 @@ import {
   Transporter,
 } from '../../models';
 import { toBool, toInt } from '../../utils';
-import { IsTypes } from '../../validation';
 
 export class MicroConfig {
   @IsInt()

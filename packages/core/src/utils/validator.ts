@@ -1,5 +1,5 @@
 import { ValidationError } from 'class-validator';
-import { IValidationProperty } from './validation.exception';
+import { IValidationProperty } from '../exceptions';
 
 /**
  * Builds an object containing validation errors for the given array of `ValidationError` objects,

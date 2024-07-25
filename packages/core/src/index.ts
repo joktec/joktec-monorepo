@@ -7,5 +7,5 @@ export * from './infras';
 export * from './interceptors';
 export * from './models';
 export * from './modules';
+export * from './pipes';
 export * from './utils';
-export * from './validation';

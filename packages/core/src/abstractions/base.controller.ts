@@ -44,8 +44,8 @@ import {
   IBaseRequest,
 } from '../models';
 import { ConfigService, LogService } from '../modules';
+import { BaseValidationPipe } from '../pipes';
 import { toArray, toBool, toPlural, toSingular } from '../utils';
-import { BaseValidationPipe } from '../validation';
 import { BaseService } from './base.service';
 
 export interface IEndpointProps {

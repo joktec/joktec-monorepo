@@ -1,6 +1,6 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsTypes } from '../../decorators';
 import { toArray } from '../../utils';
-import { IsTypes } from '../../validation';
 import { LogSocket } from './log-socket.config';
 import { LogTransport } from './log-transport.config';
 import { LogLevel } from './log.enum';

@@ -1,16 +1,7 @@
+import { IsBoolean, IsInt, IsObject, IsOptional, IsString, validateSync, ValidationError } from 'class-validator';
 import { RetryOptions } from '../decorators';
-import { toBool, toInt } from '../utils';
-import {
-  buildError,
-  IsBoolean,
-  IsInt,
-  IsObject,
-  IsOptional,
-  IsString,
-  IValidationProperty,
-  validateSync,
-  ValidationError,
-} from '../validation';
+import { IValidationProperty } from '../exceptions';
+import { buildError, toBool, toInt } from '../utils';
 
 export const DEFAULT_CON_ID: string = 'default';
 

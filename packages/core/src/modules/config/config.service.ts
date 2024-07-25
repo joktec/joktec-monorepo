@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigGetOptions, ConfigService as JsConfigService, NoInferType } from '@nestjs/config';
 import { validateSync, ValidationError, ValidatorOptions } from 'class-validator';
-import { ExceptionMessage } from '../../exceptions';
+import { ExceptionMessage, IValidationProperty } from '../../exceptions';
 import { Constructor } from '../../models';
-import { buildError, IValidationProperty } from '../../validation';
+import { buildError } from '../../utils';
 import { AppConfig, initConfig } from './config';
 import { ConfigException } from './config.exception';
 
