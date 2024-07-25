@@ -60624,15 +60624,6 @@
             }
           ]
         },
-        "useFilter": {
-          "type": "boolean"
-        },
-        "customStreams": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DestinationStream"
-          }
-        },
         "fileDir": {
           "type": "string"
         },
@@ -60661,6 +60652,25 @@
               }
             }
           ]
+        },
+        "hideContexts": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "hideObject": {
+          "type": "boolean"
+        },
+        "hideWarning": {
+          "type": "boolean"
         }
       }
     },
@@ -60677,10 +60687,6 @@
         "debug",
         "trace"
       ]
-    },
-    "DestinationStream": {
-      "type": "object",
-      "properties": {}
     },
     "LogSocket": {
       "type": "object",
