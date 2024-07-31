@@ -26,7 +26,6 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
       user: config.username,
       pass: config.password,
       dbName: config.database,
-      connectTimeoutMS: config.connectTimeout,
       ...config.params,
     };
 

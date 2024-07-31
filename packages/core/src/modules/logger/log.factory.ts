@@ -71,7 +71,10 @@ export const createPinoHttp = async (
         enabled: true,
         autoLogging: false,
         genReqId: (req, _) => {
-          if (req.headers['x-request-id']) return req.headers['x-request-id'];
+          const headerKeys = ['x-request-id', 'postman-token'];
+          for (const key of headerKeys) {
+            if (req.headers[key]) return req.headers[key];
+          }
           return generateUUID({ empty: true });
         },
         formatters: {
@@ -90,9 +93,9 @@ export const createPinoHttp = async (
             };
           },
           log: (object: Record<string, any>): Record<string, any> => {
-            const args = omit(object, ['context', 'error']);
+            const args = omit(object, ['context', 'err']);
             const result: Record<string, any> = { context: object.context || 'UnknownContext' };
-            if (object.error) result.error = object.error;
+            if (object.err) result.err = object.err;
             if (!isEmpty(args)) result.args = args;
             return result;
           },

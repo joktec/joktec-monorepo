@@ -29,7 +29,7 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
       success: false,
       error: this.transformError(exception),
       message: this.transformMessage(exception),
-      title: get(exception, 'title', 'Error'),
+      title: get(exception, 'title', ExceptionMessage.ERROR_TITLE),
       code: get(exception, 'code', 0),
     };
 
@@ -37,11 +37,11 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
     // Return error for each type
     switch (type) {
       case 'http':
-        return res.status(status).json(this.minify(host, miniError));
+        return res.status(status).json(miniError);
       case 'graphql':
         return new GraphQLException(errorBody.message, { extensions: { http: { status }, data: miniError } });
       default:
-        this.logger.error(exception['data'] || exception, exception.message || 'Something when wrong');
+        this.logger.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
         break;
     }
   }
@@ -79,7 +79,7 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
   public debug(exception: Error) {
     const status = this.transformStatus(exception);
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(exception['data'] || exception, exception.message || 'Something when wrong');
+      this.logger.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
     }
 
     const hideWarning = this.cfg.get<boolean>('log.hideWarning', true);

@@ -17,6 +17,10 @@ export class SwaggerLicense {
 }
 
 export class SwaggerAuth {
+  @IsBoolean()
+  @IsOptional()
+  enable?: boolean = true;
+
   @IsString()
   @IsNotEmpty()
   username!: string;

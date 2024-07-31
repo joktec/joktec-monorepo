@@ -82,8 +82,8 @@ export class GatewayService {
       .setLicense(swagger.license?.name, swagger.license?.url)
       .addServer(swagger.server || `http://localhost:${gatewayConfig.port}`);
 
-    const { username, password } = swagger.auth;
-    if (username && password) {
+    const { enable, username, password } = swagger.auth;
+    if (enable && username && password) {
       app.use(`/${swagger.path}`, basicAuth({ challenge: true, users: { [username]: password } }));
     }
 
