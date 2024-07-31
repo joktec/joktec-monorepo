@@ -13,7 +13,8 @@
     "access": "restricted"
   },
   "scripts": {
-    "clean": "rimraf -rf dist node_modules",
+    "clean": "rimraf -rf dist",
+    "purge": "rimraf -rf dist node_modules",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
     "prebuild": "rimraf dist",

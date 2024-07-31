@@ -110,7 +110,7 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
     }
 
     if (opts.immutable) {
-      swaggerOptions.readOnly = true;
+      // swaggerOptions.readOnly = true;
       if (isBoolean(opts.immutable) && swaggerOptions.nullable) {
         opts.immutable = (v: any) => !isNil(v);
       }

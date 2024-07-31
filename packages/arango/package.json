@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "clean": "rimraf -rf dist",
-    "purge": "rimraf -rf node_modules",
+    "purge": "rimraf -rf dist node_modules",
     "prebuild": "yarn clean",
     "build": "nest build -p tsconfig.json",
     "prepublishOnly": "yarn build",

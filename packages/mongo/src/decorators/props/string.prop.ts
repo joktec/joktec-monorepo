@@ -20,8 +20,9 @@ import { IPropOptions } from '../prop.decorator';
 export interface StringPropOptions extends PropOptionsForString {
   i18n?: boolean;
   slug?: string;
-  isEmail?: boolean | [boolean, string] | (IsEmailOptions & { message?: boolean });
-  isPhone?: boolean | [boolean, string] | { locale?: string; strictMode?: boolean; message?: boolean };
+  isString?: boolean | [boolean, string] | { message?: string };
+  isEmail?: boolean | [boolean, string] | (IsEmailOptions & { message?: string });
+  isPhone?: boolean | [boolean, string] | { locale?: string; strictMode?: boolean; message?: string };
   isHexColor?: boolean | [boolean, string];
   isUrl?: boolean | [boolean, string];
 }
@@ -29,10 +30,20 @@ export interface StringPropOptions extends PropOptionsForString {
 export function StringProps(opts: IPropOptions, swagger: ApiPropertyOptions): PropertyDecorator[] {
   const decorators: PropertyDecorator[] = [];
 
-  decorators.push(IsString({ each: swagger.isArray }));
+  const stringOption: ValidationOptions = { each: swagger.isArray };
+  if (!opts.isString) {
+    const parseStringOption: any = isArray(opts.isString)
+      ? { message: opts.isString[1] }
+      : isObject(opts.isString)
+      ? opts.isString
+      : {};
+    stringOption.message = parseStringOption.message;
+  }
+
+  decorators.push(IsString(stringOption));
 
   if (!isNil(opts.minlength)) {
-    const minLength = isNumber(opts.minlength) ? [isNumber(opts.minlength)] : opts.minlength;
+    const minLength = isNumber(opts.minlength) ? [toInt(opts.minlength)] : opts.minlength;
     const validatorOption: ValidationOptions = { each: swagger.isArray };
     if (minLength[1]) validatorOption.message = minLength[1];
     decorators.push(MinLength(minLength[0], validatorOption));
@@ -40,7 +51,7 @@ export function StringProps(opts: IPropOptions, swagger: ApiPropertyOptions): Pr
   }
 
   if (!isNil(opts.maxlength)) {
-    const maxLength = isNumber(opts.maxlength) ? [isNumber(opts.maxlength)] : opts.maxlength;
+    const maxLength = isNumber(opts.maxlength) ? [toInt(opts.maxlength)] : opts.maxlength;
     const validatorOption: ValidationOptions = { each: swagger.isArray };
     if (maxLength[1]) validatorOption.message = maxLength[1];
     decorators.push(MaxLength(maxLength[0], validatorOption));

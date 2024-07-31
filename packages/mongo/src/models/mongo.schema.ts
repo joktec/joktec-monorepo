@@ -12,10 +12,10 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
   @Type(() => String)
   _id: string;
 
-  @Prop({ type: Date, default: new Date(), immutable: true })
+  @Prop({ type: Date, default: () => new Date(), immutable: true })
   createdAt?: Date;
 
-  @Prop({ type: Date, default: new Date() })
+  @Prop({ type: Date, default: () => new Date() })
   updatedAt?: Date;
 
   public static destroyOne<T>(
