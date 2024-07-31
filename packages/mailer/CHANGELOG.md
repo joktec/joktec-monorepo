@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.118](https://github.com/joktec/joktec-monorepo/compare/@joktec/mailer@0.0.117...@joktec/mailer@0.0.118) (2024-07-31)
+
+**Note:** Version bump only for package @joktec/mailer
+
+
+
+
+
 ## [0.0.117](https://github.com/joktec/joktec-monorepo/compare/@joktec/mailer@0.0.116...@joktec/mailer@0.0.117) (2024-07-31)
 
 **Note:** Version bump only for package @joktec/mailer
