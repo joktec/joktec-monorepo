@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.118](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.117...@joktec/core@0.0.118) (2024-07-31)
+
+
+### Bug Fixes
+
+* remove swagger security ([87c0be2](https://github.com/joktec/joktec-monorepo/commit/87c0be281b844eca019d0d9e1df2f3cbf67b65f4))
+
+
+
+
+
 ## [0.0.117](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.116...@joktec/core@0.0.117) (2024-07-31)
 
 
