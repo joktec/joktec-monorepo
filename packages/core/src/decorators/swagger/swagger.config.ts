@@ -1,6 +1,6 @@
 import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { SwaggerUiOptions } from 'swagger-ui-express';
-import { IsTypes } from '../../decorators';
+import { IsTypes } from '../validators';
 
 export class SwaggerLicense {
   @IsString()

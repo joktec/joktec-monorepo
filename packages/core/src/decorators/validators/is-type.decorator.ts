@@ -8,8 +8,8 @@ import {
   ValidationArguments,
   ValidationOptions,
 } from 'class-validator';
-import { Clazz } from '../models';
-import { toArray } from '../utils';
+import { Clazz } from '../../models';
+import { toArray } from '../../utils';
 
 const primitiveTypeValidator = {
   string(value: any, args: ValidationArguments) {

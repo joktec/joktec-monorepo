@@ -1,1 +1,1 @@
-npx ts-json-schema-generator --path 'packages/types/src/joktec.config.ts' -f 'packages/types/tsconfig.json' --type 'JoktecConfig' -o config.schema.json
+npx ts-json-schema-generator --path 'packages/types/src/mc.config.ts' -f 'packages/types/tsconfig.json' --type 'McConfig' -o config.schema.json

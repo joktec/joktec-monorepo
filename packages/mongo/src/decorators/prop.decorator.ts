@@ -54,6 +54,14 @@ export type IPropOptions<T = any> = TypegooseProp & {
   useGQL?: boolean;
 };
 
+export const isRequired = (opts: IPropOptions<any> = {}): boolean => {
+  const required = opts.required;
+  if (!required) return false;
+  if (isBoolean(required)) return required;
+  if (isArray(required)) return required[0];
+  return false;
+};
+
 export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): PropertyDecorator => {
   return (target: object, propertyKey: string | symbol) => {
     let designType = Reflect.getMetadata('design:type', target, propertyKey);
@@ -63,7 +71,7 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
     const decorators: PropertyDecorator[] = [...toArray(opts.decorators)];
     const swaggerOptions: ApiPropertyOptions = {
       type: designType,
-      required: !!opts.required,
+      required: isRequired(opts),
       example: !isUndefined(opts.example) ? opts.example : opts.default,
       enum: opts.enum,
       deprecated: toBool(opts.deprecated, false),
@@ -111,8 +119,10 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
     if (kind === PropType.MAP) opts.allowMixed = Severity.ALLOW;
 
     if (isArrayType) decorators.push(...ArrayProps(opts, swaggerOptions));
-    if (opts.enum) decorators.push(...EnumProps(opts, swaggerOptions));
-    else if (designType === String) decorators.push(...StringProps(opts, swaggerOptions));
+    if (opts.enum) {
+      decorators.push(...EnumProps(opts, swaggerOptions));
+      if (!isRequired(opts)) opts.addNullToEnum = true;
+    } else if (designType === String) decorators.push(...StringProps(opts, swaggerOptions));
     else if (designType === Number) decorators.push(...NumberProps(opts, swaggerOptions));
     else if (designType === Date) decorators.push(...DateProps(opts, swaggerOptions));
     else if (designType === Boolean) decorators.push(...BoolProps(opts, swaggerOptions));

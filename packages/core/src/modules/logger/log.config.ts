@@ -1,5 +1,5 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { IsTypes } from '../../decorators';
+import { IsTypes } from '../../decorators/validators/is-type.decorator';
 import { toArray } from '../../utils';
 import { LogSocket } from './log-socket.config';
 import { LogTransport } from './log-transport.config';
