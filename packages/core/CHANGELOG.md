@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.117](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.116...@joktec/core@0.0.117) (2024-07-31)
+
+
+### Bug Fixes
+
+* core importer ([35f4efb](https://github.com/joktec/joktec-monorepo/commit/35f4efb0e06a08c969b1c32b0d09abc03ec110c9))
+
+
+
+
+
 ## [0.0.116](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.115...@joktec/core@0.0.116) (2024-07-25)
 
 **Note:** Version bump only for package @joktec/core
