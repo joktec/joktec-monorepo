@@ -9,6 +9,7 @@ import {
   MaxLength,
   MinLength,
   toBool,
+  toInt,
   ValidationOptions,
 } from '@joktec/core';
 import { ApiPropertyOptions } from '@nestjs/swagger';
