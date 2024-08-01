@@ -1,11 +1,20 @@
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { HelmetOptions } from 'helmet';
 import { IsTypes, SwaggerConfig } from '../../decorators';
 
 export class StaticConfig {
+  @IsString()
+  @IsNotEmpty()
   staticPath?: string = './public';
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty()
   excludePath?: string[] = [];
+
+  @IsString()
+  @IsNotEmpty()
   viewPath?: string = './views';
 
   constructor(props?: Partial<StaticConfig>) {

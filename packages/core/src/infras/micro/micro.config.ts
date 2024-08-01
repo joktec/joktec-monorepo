@@ -11,34 +11,29 @@ import {
   TcpTransport,
   Transporter,
 } from '../../models';
-import { toBool, toInt } from '../../utils';
 
 export class MicroConfig {
   @IsInt()
   @IsNotEmpty()
-  port?: number;
+  port?: number = 8010;
 
   @IsBoolean()
   @IsOptional()
-  inheritAppConfig?: boolean;
+  inheritAppConfig?: boolean = true;
 
   @IsBoolean()
   @IsOptional()
-  httpEnable?: boolean;
+  httpEnable?: boolean = false;
 
   @IsOptional()
   @IsArray()
   @IsTypes([TcpTransport, GrpcTransport, RmqTransport, RedisTransport, MqttTransport, NatsTransport, KafkaTransport], {
     each: true,
   })
-  transports?: Transporter[];
+  transports?: Transporter[] = [];
 
   constructor(props: Partial<MicroConfig>) {
-    Object.assign(this, {
-      port: toInt(props.port, 8010),
-      inheritAppConfig: toBool(props.inheritAppConfig, true),
-      httpEnable: toBool(props.httpEnable, false),
-    });
+    Object.assign(this, props);
     this.transports = parseTransports(props.transports).map(transport => {
       if (transport instanceof TcpTransport || transport instanceof GrpcTransport) {
         transport.options = { ...transport.options, port: props.port ?? this.port };
