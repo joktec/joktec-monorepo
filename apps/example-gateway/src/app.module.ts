@@ -7,12 +7,14 @@ import {
   ConfigModule,
   ConfigService,
   createPinoHttp,
-  GatewayMetric,
+  GatewayMetricMiddleware,
   GatewayModule,
   initConfig,
   JwtModule,
   LoggerModule,
+  MiddlewareConsumer,
   Module,
+  NestModule,
 } from '@joktec/core';
 import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
@@ -55,9 +57,12 @@ import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
   providers: [
     UserRepo,
     SessionRepo,
-    { provide: APP_INTERCEPTOR, useClass: GatewayMetric },
     { provide: APP_INTERCEPTOR, useClass: CustomExpressInterceptor },
     { provide: APP_FILTER, useClass: CustomExceptionFilter },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(GatewayMetricMiddleware).forRoutes('*');
+  }
+}
