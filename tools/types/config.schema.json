@@ -62769,6 +62769,9 @@
         },
         "params": {
           "type": "object"
+        },
+        "syncModel": {
+          "type": "boolean"
         }
       },
       "required": [
