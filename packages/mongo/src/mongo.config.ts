@@ -55,6 +55,10 @@ export class MongoConfig extends ClientConfig {
   @IsOptional()
   params?: Record<string, any>;
 
+  @IsBoolean()
+  @IsOptional()
+  syncModel?: boolean = true;
+
   constructor(props: MongoConfig) {
     super(props);
     Object.assign(this, {

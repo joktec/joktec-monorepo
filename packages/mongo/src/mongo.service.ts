@@ -114,6 +114,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   }
 
   public async syncModel(model: ReturnModelType<any>, conId: string = DEFAULT_CON_ID) {
+    if (!this.getConfig(conId).syncModel) return;
     const diffIndexes = await model.diffIndexes();
     if (diffIndexes.toCreate.length || diffIndexes.toDrop.length) {
       await model.syncIndexes({ continueOnError: true });
