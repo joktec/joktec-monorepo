@@ -76,6 +76,11 @@ export interface IControllerProps<T extends Entity> extends IEndpointProps {
   delete?: IEndpointProps;
 }
 
+const isHideEndpoint = (opts?: IEndpointProps): boolean => {
+  if (toBool(opts?.disable, false)) return true;
+  return toBool(opts?.hidden, false);
+};
+
 export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>): Type<IBaseController<T, ID>> => {
   const dtoName = props.dtoName || props.dto.name;
   const nameSingular = startCase(toSingular(dtoName));
@@ -126,7 +131,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `List ${namePlural}` })
     @ApiQuery({ type: QueryDto })
     @ApiOkResponse({ type: PaginationDto })
-    @ApiExcludeEndpoint(toBool(props.paginate?.hidden, false))
+    @ApiExcludeEndpoint(isHideEndpoint(props.paginate))
     @ApiNotAllowedEndpoint(toBool(props.paginate?.disable, false))
     @ApiUseBearer(props.paginate?.useBearer)
     @ApiUseApiKey(props.paginate?.useApiKey)
@@ -162,7 +167,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiQuery({ type: QueryDto })
     @ApiOperation({ summary: `Get ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
-    @ApiExcludeEndpoint(toBool(props.detail?.hidden, false))
+    @ApiExcludeEndpoint(isHideEndpoint(props.detail))
     @ApiNotAllowedEndpoint(toBool(props.detail?.disable, false))
     @ApiUseBearer(props.detail?.useBearer)
     @ApiUseApiKey(props.detail?.useApiKey)
@@ -180,7 +185,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `Create ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiBody({ type: CreateDto })
-    @ApiExcludeEndpoint(toBool(props.create?.hidden, false))
+    @ApiExcludeEndpoint(isHideEndpoint(props.create))
     @ApiNotAllowedEndpoint(toBool(props.create?.disable, false))
     @ApiUseBearer(props.create?.useBearer)
     @ApiUseApiKey(props.create?.useApiKey)
@@ -196,7 +201,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
     @ApiBody({ type: UpdateDto })
-    @ApiExcludeEndpoint(toBool(props.update?.hidden, false))
+    @ApiExcludeEndpoint(isHideEndpoint(props.update))
     @ApiNotAllowedEndpoint(toBool(props.update?.disable, false))
     @ApiUseBearer(props.update?.useBearer)
     @ApiUseApiKey(props.update?.useApiKey)
@@ -213,7 +218,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @ApiOperation({ summary: `Delete ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiParam({ name: 'id' })
-    @ApiExcludeEndpoint(toBool(props.delete?.hidden, false))
+    @ApiExcludeEndpoint(isHideEndpoint(props.delete))
     @ApiNotAllowedEndpoint(toBool(props.delete?.disable, false))
     @ApiUseBearer(props.delete?.useBearer)
     @ApiUseApiKey(props.delete?.useApiKey)
