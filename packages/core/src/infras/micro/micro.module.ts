@@ -1,7 +1,8 @@
 import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 import { MetricModule } from '../../modules';
 import { MicroController } from './micro.controller';
-import { microLatency, MicroMetric, totalMicroCounter } from './micro.metric';
+import { MicroMetricInterceptor } from './micro.interceptor';
+import { microLatency, totalMicroCounter } from './micro.metric';
 
 export interface MicroModuleOptions {
   metric?: boolean;
@@ -17,8 +18,8 @@ export class MicroModule {
 
     if (options.metric) {
       imports.push(MetricModule);
-      providers.push(MicroMetric, microLatency, totalMicroCounter);
-      exports.push(MicroMetric, microLatency, totalMicroCounter);
+      providers.push(MicroMetricInterceptor, microLatency, totalMicroCounter);
+      exports.push(MicroMetricInterceptor, microLatency, totalMicroCounter);
     }
 
     return { module: MicroModule, imports, controllers: [MicroController], providers, exports };

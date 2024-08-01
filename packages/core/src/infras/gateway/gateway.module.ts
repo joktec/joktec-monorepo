@@ -2,7 +2,8 @@ import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
 import { MetricModule, StaticModule } from '../../modules';
 import { serverStaticFactory } from '../../modules/statics/static.factory';
 import { GatewayController } from './gateway.controller';
-import { gatewayDuration, GatewayMetric, gatewayTotal } from './gateway.metric';
+import { GatewayMetricInterceptor } from './gateway.interceptor';
+import { gatewayDuration, gatewayTotal } from './gateway.metric';
 
 export interface GatewayModuleOptions {
   metric?: boolean;
@@ -23,8 +24,8 @@ export class GatewayModule {
 
     if (options.metric) {
       imports.push(MetricModule);
-      providers.push(GatewayMetric, gatewayDuration, gatewayTotal);
-      exports.push(GatewayMetric, gatewayDuration, gatewayTotal);
+      providers.push(GatewayMetricInterceptor, gatewayDuration, gatewayTotal);
+      exports.push(GatewayMetricInterceptor, gatewayDuration, gatewayTotal);
     }
 
     return { module: GatewayModule, imports, controllers: [GatewayController], providers, exports };
