@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.124](https://github.com/joktec/joktec-monorepo/compare/@joktec/http@0.0.123...@joktec/http@0.0.124) (2024-08-01)
+
+**Note:** Version bump only for package @joktec/http
+
+
+
+
+
 ## [0.0.123](https://github.com/joktec/joktec-monorepo/compare/@joktec/http@0.0.122...@joktec/http@0.0.123) (2024-07-31)
 
 **Note:** Version bump only for package @joktec/http
