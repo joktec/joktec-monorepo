@@ -125,7 +125,10 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
     onModuleInit() {
       this.logService.setContext(this.constructor.name);
+      this.afterModuleInit();
     }
+
+    protected afterModuleInit() {}
 
     @Get('/')
     @ApiOperation({ summary: `List ${namePlural}` })

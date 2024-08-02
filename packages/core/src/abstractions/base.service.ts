@@ -24,7 +24,10 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
 
   onModuleInit() {
     this.logService.setContext(this.constructor.name);
+    this.afterModuleInit();
   }
+
+  protected afterModuleInit() {}
 
   async paginate(query: REQ): Promise<IListResponseDto<T>> {
     const responseDto = await this.repository.paginate(query);

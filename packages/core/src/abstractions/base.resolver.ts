@@ -27,7 +27,10 @@ export const BaseResolver = <T extends Entity, ID>(props: IBaseResolverProps<T>)
 
     onModuleInit() {
       this.logService.setContext(this.constructor.name);
+      this.afterModuleInit();
     }
+
+    protected afterModuleInit() {}
 
     @Query(() => PaginationDto, { name: `list${namePlural}` })
     async paginate(

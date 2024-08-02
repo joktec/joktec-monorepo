@@ -26,7 +26,10 @@ export const ClientService = <T extends Entity, ID = string, REQ extends IBaseRe
 
     onModuleInit() {
       this.logService.setContext(this.constructor.name);
+      this.afterModuleInit();
     }
+
+    protected afterModuleInit() {}
 
     async paginate(req: REQ): Promise<IListResponseDto<T>> {
       const result = this.client.send<IListResponseDto<T>>({ cmd: `${nameSingular}.paginate` }, { req });

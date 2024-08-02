@@ -9,6 +9,7 @@ export {
   REQUEST,
   Reflector,
   repl,
+  ModuleRef,
 } from '@nestjs/core';
 export {
   ClientsModule,
@@ -20,6 +21,13 @@ export {
   ClientProxy,
   EventPattern,
   ClientProxyFactory,
+  Ctx,
+  TcpContext,
+  RedisContext,
+  NatsContext,
+  MqttContext,
+  RmqContext,
+  KafkaContext,
 } from '@nestjs/microservices';
 export {
   ArgumentMetadata,

@@ -41,7 +41,10 @@ export const ClientController = <T extends Entity, ID>(
 
     onModuleInit() {
       this.logService.setContext(this.constructor.name);
+      this.afterModuleInit();
     }
+
+    protected afterModuleInit() {}
 
     @MessagePattern({ cmd: `${nameSingular}.paginate` }, transport)
     async paginate(@Payload('req') req: IBaseRequest<T>, @Ctx() context?: MicroContext): Promise<IListResponseDto<T>> {
