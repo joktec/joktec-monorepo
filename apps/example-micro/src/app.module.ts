@@ -1,4 +1,5 @@
 import {
+  APP_FILTER,
   ConfigModule,
   ConfigService,
   createPinoHttp,
@@ -11,6 +12,7 @@ import {
   NestModule,
 } from '@joktec/core';
 import { MysqlModule } from '@joktec/mysql';
+import { CustomExceptionFilter } from './common';
 import { ProductModule } from './modules';
 
 @Module({
@@ -25,6 +27,7 @@ import { ProductModule } from './modules';
     MysqlModule,
     ProductModule,
   ],
+  providers: [{ provide: APP_FILTER, useClass: CustomExceptionFilter }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
