@@ -57,13 +57,13 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   }
 
   async create(entity: DeepPartial<T>): Promise<T> {
-    const language = this.request.query.language;
+    const language = this.request?.query?.language;
     const processEntity: DeepPartial<T> = cloneInstance(entity);
     return this.repository.create(processEntity, { language });
   }
 
   async update(id: ID, entity: DeepPartial<T>): Promise<T> {
-    const language = this.request.query.language;
+    const language = this.request?.query?.language;
     const condition: ICondition<T> = { id } as object;
     const processEntity: DeepPartial<T> = cloneInstance(entity);
     return this.repository.update(condition, processEntity, { language });

@@ -100,6 +100,12 @@ export const createPinoHttp = async (
             return result;
           },
         },
+        serializers: {
+          req(req) {
+            req.body = req.raw.body;
+            return req;
+          },
+        },
         hooks: {
           logMethod(inputArgs, method) {
             if (config.filterLogs(inputArgs[0] as any)) {
