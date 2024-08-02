@@ -1,5 +1,5 @@
 import { Prop, Ref, Schema } from '@joktec/mongo';
-import { BaseSchema } from '../../base/base.schema';
+import { BaseSchema } from '../../common/base.schema';
 import { IsCdnUrl } from '../../utils';
 import { CategoryStatus, CategoryType } from '../constants';
 import { CategoryWhiteLabel } from './category-white-label';

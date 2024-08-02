@@ -13,7 +13,6 @@ export {
 export {
   ClientsModule,
   MessagePattern,
-  RpcException,
   Transport,
   Payload,
   GrpcMethod,

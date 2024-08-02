@@ -12,7 +12,7 @@ import {
   Req,
   UseInterceptors,
 } from '@joktec/core';
-import { AuthGuard, RoleGuard, Roles } from '../../base';
+import { AuthGuard, RoleGuard, Roles } from '../../common';
 import { UserRole } from '../../models/constants';
 import { Order } from '../../models/entities';
 import {

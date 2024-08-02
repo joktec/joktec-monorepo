@@ -36,6 +36,10 @@ export class LogConfig {
   @IsBoolean()
   hideWarning?: boolean = true;
 
+  @IsOptional()
+  @IsBoolean()
+  hideFilter?: boolean = true;
+
   constructor(props: LogConfig) {
     Object.assign(this, {
       ...props,

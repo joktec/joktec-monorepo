@@ -1,6 +1,6 @@
 import { Cacheable, CacheEvict, CachePut, CacheTtlSeconds } from '@joktec/cacher';
 import { BaseController, Controller, DEFAULT_CON_ID, IControllerProps } from '@joktec/core';
-import { AuthGuard, RoleGuard } from '../../base';
+import { AuthGuard, RoleGuard } from '../../common';
 import { Category } from '../../models/entities';
 import { CategoryService } from './category.service';
 import { CategoryDto } from './models';

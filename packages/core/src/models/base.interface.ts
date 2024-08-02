@@ -65,6 +65,16 @@ export interface IBaseRepository<T extends Entity, ID> {
 }
 
 export interface IExceptionFilter extends ExceptionFilter {
+  transformStatus(exception: Error): number;
+
+  transformError(exception: Error): any;
+
+  transformMessage(exception: Error): string;
+
+  transformTitle(exception: Error): string;
+
+  transformCode(exception: Error): number;
+
   debug(exception: Error): void;
 
   minify(host: ArgumentsHost, errorBody: IResponseDto): IResponseDto;

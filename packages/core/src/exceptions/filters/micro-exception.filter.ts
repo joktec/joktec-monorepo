@@ -1,51 +1,101 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
-import { isPlainObject } from 'lodash';
+import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { BaseRpcExceptionFilter, RpcException } from '@nestjs/microservices';
+import { get, has, isString } from 'lodash';
+import { PinoLogger } from 'nestjs-pino';
 import { Observable, throwError } from 'rxjs';
-import { HttpStatus } from '../../models';
-import { Exception } from '../exception';
+import { HttpStatus, IExceptionFilter, IResponseDto } from '../../models';
+import { Exception, IExceptionMessage } from '../exception';
 import { ExceptionMessage } from '../exception-message';
+import { MicroRpcException } from '../micro-rpc.exception';
 
 @Catch()
-export class MicroExceptionFilter implements ExceptionFilter {
-  catch(exception: any, host: ArgumentsHost): Observable<RpcException> {
-    if (exception instanceof Exception || exception instanceof RpcException) {
-      return throwError(() => exception.getError());
-    }
+export class MicroExceptionFilter extends BaseRpcExceptionFilter implements IExceptionFilter {
+  constructor(
+    protected cfg: ConfigService,
+    protected logger: PinoLogger,
+  ) {
+    super();
+    this.logger.setContext(MicroExceptionFilter.name);
+  }
 
+  catch(exception: any, _: ArgumentsHost): Observable<RpcException> {
+    // Build error dto
+    this.debug(exception);
+    const status: number = this.transformStatus(exception);
+    const errorData: any = this.transformError(exception);
+    const msg: IExceptionMessage = {
+      message: this.transformMessage(exception),
+      title: this.transformTitle(exception),
+      code: this.transformCode(exception),
+    };
+
+    // Convert to MicroRpcException and throw it
+    const baseException = new Exception(msg, status, errorData);
+    return throwError(() => new MicroRpcException(baseException));
+  }
+
+  transformStatus(exception: Error): number {
+    if (has(exception, 'error.status')) return get(exception, 'error.status');
+    if (has(exception, 'status')) return get(exception, 'status');
+    if (exception instanceof HttpException) return exception.getStatus();
+    if (exception instanceof RpcException) {
+      const error = exception.getError();
+      return isString(error) ? ExceptionMessage.INTERNAL_SERVER_ERROR : (error as any).status;
+    }
+    return HttpStatus.INTERNAL_SERVER_ERROR;
+  }
+
+  transformError(exception: Error): any {
+    if (has(exception, 'error.data')) return get(exception, 'error.data');
+    if (has(exception, 'data')) return get(exception, 'data');
+    if (exception instanceof HttpException) return exception.getResponse();
+    if (exception instanceof RpcException) return exception.getError();
+    return exception;
+  }
+
+  transformMessage(exception: Error): string {
+    if (has(exception, 'error.message')) return get(exception, 'error.message');
     if (exception instanceof HttpException) {
-      const errorResponse = exception.getResponse();
-      const resMessage = typeof errorResponse === 'string' ? errorResponse : (errorResponse as any).message;
-      const error = new RpcException({
-        status: exception.getStatus(),
-        message: resMessage || exception.message,
-        data: exception.getResponse(),
-      });
-      return throwError(() => error);
+      const error = exception.getResponse();
+      return isString(error) ? error : exception.message;
+    }
+    if (exception instanceof RpcException) {
+      const error = exception.getError();
+      return isString(error) ? error : (error as any).message;
+    }
+    if (exception instanceof Exception && exception?.message) return exception.message;
+    return get(exception, 'message', ExceptionMessage.INTERNAL_SERVER_ERROR);
+  }
+
+  transformTitle(exception: Error): string {
+    if (has(exception, 'error.title')) return get(exception, 'error.title');
+    if (has(exception, 'title')) return get(exception, 'title');
+    return ExceptionMessage.ERROR_TITLE;
+  }
+
+  transformCode(exception: Error): number {
+    if (has(exception, 'error.code')) return get(exception, 'error.code');
+    if (has(exception, 'code')) return get(exception, 'code');
+    return 0;
+  }
+
+  debug(exception: Error) {
+    const status = this.transformStatus(exception);
+    if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
+      this.logger.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
     }
 
-    if (exception instanceof Error && exception.message) {
-      return throwError(
-        () =>
-          new RpcException({
-            status: HttpStatus.INTERNAL_SERVER_ERROR,
-            message: exception.message || ExceptionMessage.INTERNAL_SERVER_ERROR,
-            data: exception.stack,
-          }),
-      );
+    const hideWarning = this.cfg.get<boolean>('log.hideWarning', true);
+    if (hideWarning) return;
+    if (status < HttpStatus.INTERNAL_SERVER_ERROR) {
+      const msg = this.transformMessage(exception);
+      this.logger.error(exception, msg);
     }
+  }
 
-    if (isPlainObject(exception)) {
-      return throwError(() => new RpcException(exception));
-    }
-
-    return throwError(
-      () =>
-        new RpcException({
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          message: ExceptionMessage.INTERNAL_SERVER_ERROR,
-          data: exception.stack,
-        }),
-    );
+  minify(host: ArgumentsHost, errorBody: IResponseDto): IResponseDto {
+    if (errorBody.data) delete errorBody.data;
+    return errorBody;
   }
 }

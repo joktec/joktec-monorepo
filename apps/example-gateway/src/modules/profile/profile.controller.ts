@@ -15,7 +15,7 @@ import {
   UseGuards,
   UsePipes,
 } from '@joktec/core';
-import { AuthGuard, RoleGuard } from '../../base';
+import { AuthGuard, RoleGuard } from '../../common';
 import { UserFcmDto, UserLogoutDto, UserPasswordDto, UserProfile, UserProfileDto, UserRevokeDto } from './models';
 import { ProfileService } from './profile.service';
 

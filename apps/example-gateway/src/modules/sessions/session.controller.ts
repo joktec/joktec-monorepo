@@ -1,5 +1,5 @@
 import { BaseController, Controller, IControllerProps } from '@joktec/core';
-import { AuthGuard, RoleGuard } from '../../base';
+import { AuthGuard, RoleGuard } from '../../common';
 import { Session } from '../../models/entities';
 import { SessionQueryInterceptor } from './hooks';
 import { SessionService } from './session.service';

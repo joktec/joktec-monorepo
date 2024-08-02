@@ -17,7 +17,7 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@joktec/core';
-import { AuthGuard, RoleGuard } from '../../base';
+import { AuthGuard, RoleGuard } from '../../common';
 import { Asset } from '../../models/entities';
 import { AssetService } from './asset.service';
 import { fileFilter, MAX_TOTAL_FILE } from './asset.utils';

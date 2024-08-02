@@ -20,7 +20,7 @@ import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
 import { MailerModule } from '@joktec/mailer';
 import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
-import { CustomExceptionFilter, CustomExpressInterceptor } from './base';
+import { CustomExceptionFilter, CustomExpressInterceptor } from './common';
 import { MainModule } from './modules/main.module';
 import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
 

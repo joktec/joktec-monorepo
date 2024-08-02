@@ -1,5 +1,6 @@
 import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BaseExceptionFilter } from '@nestjs/core';
 import { GraphQLException } from '@nestjs/graphql/dist/exceptions';
 import { RpcException } from '@nestjs/microservices';
 import { get, has, isEmpty, isString } from 'lodash';
@@ -9,11 +10,12 @@ import { Exception } from '../exception';
 import { ExceptionMessage } from '../exception-message';
 
 @Catch()
-export class GatewayExceptionsFilter implements IExceptionFilter {
+export class GatewayExceptionsFilter extends BaseExceptionFilter implements IExceptionFilter {
   constructor(
     protected cfg: ConfigService,
     protected logger: PinoLogger,
   ) {
+    super();
     this.logger.setContext(GatewayExceptionsFilter.name);
   }
 
@@ -29,8 +31,8 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
       success: false,
       error: this.transformError(exception),
       message: this.transformMessage(exception),
-      title: get(exception, 'title', ExceptionMessage.ERROR_TITLE),
-      code: get(exception, 'code', 0),
+      title: this.transformTitle(exception),
+      code: this.transformCode(exception),
     };
 
     const miniError = this.minify(host, errorBody);
@@ -46,7 +48,8 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
     }
   }
 
-  private transformStatus(exception: Error): number {
+  transformStatus(exception: Error): number {
+    if (has(exception, 'error.status')) return get(exception, 'error.status');
     if (has(exception, 'status')) return get(exception, 'status');
     if (exception instanceof HttpException) return exception.getStatus();
     if (exception instanceof RpcException) {
@@ -56,14 +59,16 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
     return HttpStatus.INTERNAL_SERVER_ERROR;
   }
 
-  private transformError(exception: Error): any {
+  transformError(exception: Error): any {
+    if (has(exception, 'error.data')) return get(exception, 'error.data');
     if (has(exception, 'data')) return get(exception, 'data');
     if (exception instanceof HttpException) return exception.getResponse();
     if (exception instanceof RpcException) return exception.getError();
     return exception;
   }
 
-  private transformMessage(exception: Error): string {
+  transformMessage(exception: Error): string {
+    if (has(exception, 'error.message')) return get(exception, 'error.message');
     if (exception instanceof HttpException) {
       const error = exception.getResponse();
       return isString(error) ? error : exception.message;
@@ -73,10 +78,22 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
       return isString(error) ? error : (error as any).message;
     }
     if (exception instanceof Exception && exception?.message) return exception.message;
-    return ExceptionMessage.INTERNAL_SERVER_ERROR;
+    return get(exception, 'message', ExceptionMessage.INTERNAL_SERVER_ERROR);
   }
 
-  public debug(exception: Error) {
+  transformTitle(exception: Error): string {
+    if (has(exception, 'error.title')) return get(exception, 'error.title');
+    if (has(exception, 'title')) return get(exception, 'title');
+    return ExceptionMessage.ERROR_TITLE;
+  }
+
+  transformCode(exception: Error): number {
+    if (has(exception, 'error.code')) return get(exception, 'error.code');
+    if (has(exception, 'code')) return get(exception, 'code');
+    return 0;
+  }
+
+  debug(exception: Error) {
     const status = this.transformStatus(exception);
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
       this.logger.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
@@ -90,7 +107,7 @@ export class GatewayExceptionsFilter implements IExceptionFilter {
     }
   }
 
-  public minify(host: ArgumentsHost, errorBody: IResponseDto): IResponseDto {
+  minify(host: ArgumentsHost, errorBody: IResponseDto): IResponseDto {
     const req = host.switchToHttp().getRequest<ExpressRequest>();
     const res = host.switchToHttp().getResponse<ExpressResponse>();
     if (errorBody.data) delete errorBody.data;

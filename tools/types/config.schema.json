@@ -60658,6 +60658,9 @@
         },
         "hideWarning": {
           "type": "boolean"
+        },
+        "hideFilter": {
+          "type": "boolean"
         }
       }
     },

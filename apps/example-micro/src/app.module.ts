@@ -1,11 +1,9 @@
 import {
-  APP_FILTER,
   ConfigModule,
   ConfigService,
   createPinoHttp,
   initConfig,
   LoggerModule,
-  MicroExceptionFilter,
   MicroMetricMiddleware,
   MicroModule,
   MiddlewareConsumer,
@@ -27,7 +25,6 @@ import { ProductModule } from './modules';
     MysqlModule,
     ProductModule,
   ],
-  providers: [{ provide: APP_FILTER, useValue: MicroExceptionFilter }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

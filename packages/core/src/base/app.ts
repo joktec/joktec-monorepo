@@ -23,10 +23,10 @@ export type ApplicationMiddlewares = {
   filters?: ExceptionFilter[];
 };
 export type ApplicationMiddlewareFactory = {
-  guards?: CanActivate[] | ((app: INestApplication) => CanActivate[]);
-  pipes?: PipeTransform[] | ((app: INestApplication) => PipeTransform[]);
-  interceptors?: NestInterceptor[] | ((app: INestApplication) => NestInterceptor[]);
-  filters?: ExceptionFilter[] | ((app: INestApplication) => ExceptionFilter[]);
+  guards?: CanActivate[] | ((app: INestApplication) => CanActivate[] | Promise<CanActivate[]>);
+  pipes?: PipeTransform[] | ((app: INestApplication) => PipeTransform[] | Promise<PipeTransform[]>);
+  interceptors?: NestInterceptor[] | ((app: INestApplication) => NestInterceptor[] | Promise<NestInterceptor[]>);
+  filters?: ExceptionFilter[] | ((app: INestApplication) => ExceptionFilter[] | Promise<ExceptionFilter[]>);
 };
 export type ApplicationOptions = NestApplicationOptions & ApplicationMiddlewareFactory;
 
@@ -75,10 +75,10 @@ export class Application {
 
     const config = app.get(ConfigService);
     const middlewares: ApplicationMiddlewares = {
-      guards: isFunction(opts?.guards) ? opts?.guards(app) : opts?.guards,
-      pipes: isFunction(opts?.pipes) ? opts?.pipes(app) : opts?.pipes,
-      interceptors: isFunction(opts?.interceptors) ? opts?.interceptors(app) : opts?.interceptors,
-      filters: isFunction(opts?.filters) ? opts?.filters(app) : opts?.filters,
+      guards: isFunction(opts?.guards) ? await opts?.guards(app) : opts?.guards,
+      pipes: isFunction(opts?.pipes) ? await opts?.pipes(app) : opts?.pipes,
+      interceptors: isFunction(opts?.interceptors) ? await opts?.interceptors(app) : opts?.interceptors,
+      filters: isFunction(opts?.filters) ? await opts?.filters(app) : opts?.filters,
     };
 
     if (!isNil(bootstrap)) {

@@ -4,7 +4,7 @@ import { ProductService } from './product.service';
 
 const props: IMicroControllerProps<Product> = {
   dto: Product,
-  transport: Transport.RMQ,
+  transport: Transport.REDIS,
 };
 
 @Controller('product')

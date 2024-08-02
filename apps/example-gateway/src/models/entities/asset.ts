@@ -1,6 +1,6 @@
 import { Prop, PropType, Schema } from '@joktec/mongo';
 import { isEmpty } from 'lodash';
-import { BaseSchema } from '../../base/base.schema';
+import { BaseSchema } from '../../common/base.schema';
 import { IsCdnUrl } from '../../utils';
 import { AssetStatus } from '../constants';
 

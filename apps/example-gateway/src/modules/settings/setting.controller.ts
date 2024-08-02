@@ -1,5 +1,5 @@
 import { BaseController, Controller, IControllerProps } from '@joktec/core';
-import { AuthGuard, RoleGuard } from '../../base';
+import { AuthGuard, RoleGuard } from '../../common';
 import { Setting } from '../../models/entities';
 import { SettingService } from './setting.service';
 
