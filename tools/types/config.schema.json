@@ -63276,7 +63276,7 @@
         "sslEnabled": {
           "type": "boolean"
         },
-        "s3ForcePathStyle": {
+        "forcePathStyle": {
           "type": "boolean"
         },
         "partSize": {

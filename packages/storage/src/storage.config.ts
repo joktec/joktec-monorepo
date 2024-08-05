@@ -66,7 +66,7 @@ export class StorageConfig extends ClientConfig {
 
   @IsBoolean()
   @IsOptional()
-  s3ForcePathStyle?: boolean = false;
+  forcePathStyle?: boolean = false;
 
   @IsInt()
   @IsOptional()

@@ -68,7 +68,7 @@ storage:
   bucket: joktec
   endpoint: http://127.0.0.1:9000
   useSSL: false
-  s3ForcePathStyle: true
+  forcePathStyle: true
   linkFormat: http://127.0.0.1:9000/joktec/<key>
 
 http:
