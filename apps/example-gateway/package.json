@@ -44,7 +44,7 @@
     "@joktec/mailer": "^0.0.128",
     "@joktec/mongo": "^0.0.165",
     "@joktec/firebase": "^0.0.47",
-    "@joktec/storage": "^0.0.130",
+    "@joktec/storage": "^0.0.131",
     "nestjs-i18n": "^10.4.0",
     "byte-length": "^1.0.2",
     "gravatar": "^1.8.2",

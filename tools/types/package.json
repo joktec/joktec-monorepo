@@ -38,7 +38,7 @@
     "@joktec/mysql": "^0.0.131",
     "@joktec/notifier": "^0.0.127",
     "@joktec/rabbit": "^0.0.127",
-    "@joktec/storage": "^0.0.130",
+    "@joktec/storage": "^0.0.131",
     "ts-json-schema-generator": "^1.5.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.4.5"
