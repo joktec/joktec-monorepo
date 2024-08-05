@@ -44,7 +44,7 @@ export class ExpressInterceptor<T = any> implements NestInterceptor<T, ExpressRe
     };
 
     if (!query.language) {
-      const language = resolverLanguage(req.headers['accept-language']);
+      const language = resolverLanguage(req.headers['accept-language'] || '');
       query.language = head(language) || '*';
     }
 
