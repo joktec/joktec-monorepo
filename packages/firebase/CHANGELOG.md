@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.48](https://github.com/joktec/joktec-monorepo/compare/@joktec/firebase@0.0.47...@joktec/firebase@0.0.48) (2024-08-05)
+
+**Note:** Version bump only for package @joktec/firebase
+
+
+
+
+
 ## [0.0.47](https://github.com/joktec/joktec-monorepo/compare/@joktec/firebase@0.0.46...@joktec/firebase@0.0.47) (2024-08-05)
 
 **Note:** Version bump only for package @joktec/firebase
