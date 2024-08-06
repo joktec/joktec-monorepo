@@ -37,7 +37,7 @@ export const SendEmailMetric = () => {
 
       try {
         const value: MailerSendResponse = await method(...args);
-        services.pinoLogger.debug('`%s` Mailer sent success', conId);
+        services.pinoLogger.info(value, '`%s` Mailer sent success', conId);
         mailerMetricService.track(MailerMetricType.SEND, SendStatus.SUCCESS, conId);
         return value;
       } catch (error) {
