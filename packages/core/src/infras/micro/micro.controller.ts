@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableException } from '../../exceptions';
@@ -7,6 +7,12 @@ import { ExceptionMessage, MethodNotAllowedException, ServiceUnavailableExceptio
 @Controller()
 export class MicroController {
   constructor(private moduleRef: ModuleRef) {}
+
+  @Get('health')
+  @ApiResponse({ type: Object })
+  async healthCheck() {
+    return { status: 'ok' };
+  }
 
   @Post('/micro/:service/:method')
   @ApiBody({ type: Object })
