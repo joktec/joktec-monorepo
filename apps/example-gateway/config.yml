@@ -3,6 +3,7 @@ gateway:
   swagger:
     enable: true
     server: http://localhost:9010
+    security: [ bearer ]
     auth:
       username: admin
       password: p4ssw0rd

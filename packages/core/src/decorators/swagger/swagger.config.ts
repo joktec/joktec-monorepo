@@ -1,6 +1,14 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { SwaggerUiOptions } from 'swagger-ui-express';
 import { IsTypes } from '../validators';
+
+export enum SwaggerSecurity {
+  BASIC = 'basic',
+  BEARER = 'bearer',
+  OAUTH2 = 'oAuth2',
+  COOKIE = 'cookie',
+  APIKEY = 'apiKey',
+}
 
 export class SwaggerLicense {
   @IsString()
@@ -69,6 +77,11 @@ export class SwaggerConfig {
   @IsTypes(SwaggerLicense)
   @IsOptional()
   license?: SwaggerLicense;
+
+  @IsArray()
+  @IsEnum(SwaggerSecurity, { each: true })
+  @IsOptional()
+  security?: SwaggerSecurity[] = [SwaggerSecurity.BEARER];
 
   constructor(props: Partial<SwaggerConfig>) {
     Object.assign(this, props);

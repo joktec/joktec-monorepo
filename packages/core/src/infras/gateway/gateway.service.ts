@@ -14,8 +14,8 @@ import helmet from 'helmet';
 import requestIp from 'request-ip';
 import UAParser from 'ua-parser-js';
 import { ApplicationMiddlewares } from '../../base';
-import { SwaggerConfig } from '../../decorators';
-import { ExpressRequest, ExpressResponse } from '../../models';
+import { SwaggerConfig, SwaggerSecurity } from '../../decorators';
+import { ExpressRequest, ExpressResponse, HttpRequestHeader } from '../../models';
 import { BullConfig, ConfigService, LogService } from '../../modules';
 import { joinUrl, toArray } from '../../utils';
 import { GatewayConfig } from './gateway.config';
@@ -81,6 +81,19 @@ export class GatewayService {
       .setVersion(swagger.version || config.get('version'))
       .setLicense(swagger.license?.name, swagger.license?.url)
       .addServer(swagger.server || `http://localhost:${gatewayConfig.port}`);
+
+    swagger.security?.map(security => {
+      if (security === SwaggerSecurity.BASIC) options.addBasicAuth();
+      if (security === SwaggerSecurity.BEARER) options.addBearerAuth();
+      if (security === SwaggerSecurity.OAUTH2) options.addOAuth2();
+      if (security === SwaggerSecurity.COOKIE) options.addCookieAuth('optional-session-id');
+      if (security === SwaggerSecurity.APIKEY) {
+        options.addApiKey(
+          { type: 'apiKey', in: 'header', name: HttpRequestHeader.X_API_KEY },
+          HttpRequestHeader.X_API_KEY,
+        );
+      }
+    });
 
     const { enable, username, password } = swagger.auth;
     if (enable && username && password) {
