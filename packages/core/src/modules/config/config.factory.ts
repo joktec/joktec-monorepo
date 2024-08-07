@@ -22,17 +22,17 @@ export class AppConfig {
   [key: string]: any;
 }
 
-const YAML_CONFIG_FILENAME: string = 'config.yml';
-const PACKAGE_CONFIG_FILENAME: string = 'package.json';
-const DOPPLER_CONFIG_FILENAME: string = 'doppler.yaml';
-
-export const initConfig = (): AppConfig => {
+export const initConfig = (
+  yamlFile: string = 'config.yml',
+  packageFile: string = 'package.json',
+  dopplerFile: string = 'doppler.yaml',
+): AppConfig => {
   const env: ENV = (process.env['NODE_ENV'] ?? ENV.DEV) as ENV;
-  const appCfg = load(readFileSync(YAML_CONFIG_FILENAME, 'utf8')) as object;
+  const appCfg = load(readFileSync(yamlFile, 'utf8')) as object;
   const paths: string[] = flattenKeys(appCfg, null).filter(key => !key.startsWith('$'));
 
   let dopplerSecret: object = {};
-  if (existsSync(DOPPLER_CONFIG_FILENAME)) {
+  if (existsSync(dopplerFile)) {
     dopplerSecret = JSON.parse(execSync('doppler secrets download --no-file --format json', { encoding: 'utf-8' }));
   }
 
@@ -45,10 +45,10 @@ export const initConfig = (): AppConfig => {
       if (isBoolean(originValue)) overrideValue = toBool(overrideValue, originValue);
     }
     set(appCfg, path, overrideValue);
-    process.env[envKey] = get(appCfg, path);
+    process.env[envKey] = overrideValue;
   }
 
-  const pkg = JSON.parse(readFileSync(PACKAGE_CONFIG_FILENAME, 'utf8'));
+  const pkg = JSON.parse(readFileSync(packageFile, 'utf8'));
   const pkgCfg = pick(pkg, ['name', 'description', 'version']);
 
   return { env, isProd: env === ENV.PROD, ...appCfg, ...pkgCfg };
