@@ -59797,6 +59797,12 @@
         },
         "license": {
           "$ref": "#/definitions/SwaggerLicense"
+        },
+        "security": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SwaggerSecurity"
+          }
         }
       }
     },
@@ -59871,6 +59877,16 @@
       },
       "required": [
         "url"
+      ]
+    },
+    "SwaggerSecurity": {
+      "type": "string",
+      "enum": [
+        "basic",
+        "bearer",
+        "oAuth2",
+        "cookie",
+        "apiKey"
       ]
     },
     "CorsOptions": {
