@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.170](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.169...@joktec/mongo@0.0.170) (2024-08-08)
+
+
+### Bug Fixes
+
+* mongo prop for object id ([b44af35](https://github.com/joktec/joktec-monorepo/commit/b44af35964c47b7f6383b750743b10de011899ef))
+
+
+
+
+
 ## [0.0.169](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.168...@joktec/mongo@0.0.169) (2024-08-07)
 
 **Note:** Version bump only for package @joktec/mongo
