@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/core';
 import { isObject, isString } from 'lodash';
 
@@ -38,7 +39,8 @@ export class NotifierFcm {
 
   getCredential() {
     if (isString(this.credential)) {
-      return { appName: this.appName, serviceAccountKey: require(this.credential) };
+      const json = JSON.parse(fs.readFileSync(this.credential, 'utf8'));
+      return { appName: this.appName, serviceAccountKey: json };
     }
     return { appName: this.appName, credential: this.credential };
   }
