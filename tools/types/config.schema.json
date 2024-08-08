@@ -63026,25 +63026,11 @@
         "ca": {
           "type": "array",
           "items": {
-            "anyOf": [
-              {
-                "$ref": "#/definitions/global.Buffer"
-              },
-              {
-                "type": "string"
-              }
-            ]
+            "type": "string"
           }
         },
         "pfx": {
-          "anyOf": [
-            {
-              "$ref": "#/definitions/global.Buffer"
-            },
-            {
-              "type": "string"
-            }
-          ]
+          "type": "string"
         },
         "passphrase": {
           "type": "string"
@@ -63112,46 +63098,6 @@
           "type": "string"
         }
       }
-    },
-    "global.Buffer": {
-      "type": "object",
-      "properties": {
-        "BYTES_PER_ELEMENT": {
-          "type": "number"
-        },
-        "buffer": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "byteLength": {
-                  "type": "number"
-                }
-              },
-              "required": [
-                "byteLength"
-              ]
-            },
-            {}
-          ]
-        },
-        "byteLength": {
-          "type": "number"
-        },
-        "byteOffset": {
-          "type": "number"
-        },
-        "length": {
-          "type": "number"
-        }
-      },
-      "required": [
-        "BYTES_PER_ELEMENT",
-        "buffer",
-        "byteLength",
-        "byteOffset",
-        "length"
-      ]
     },
     "NotifierAdm": {
       "type": "object",
