@@ -76,16 +76,16 @@ describe('MongoHelper class', () => {
     });
 
     it('should not modify a simple condition', () => {
-      const condition = {
-        status: 'activated',
-        $text: { $search: 'Tìm đồ' },
-        parentId: new ObjectId('656c096ad77a68cf9c495e28'),
-      };
       const result = MongoHelper.parseFilter({
         status: 'activated',
         $text: { $search: 'Tìm đồ' },
-        parentId: ObjectId.create('656c096ad77a68cf9c495e28'),
+        parentId: '656c096ad77a68cf9c495e28',
       });
+      const condition = {
+        status: 'activated',
+        $text: { $search: 'Tìm đồ' },
+        parentId: ObjectId.create('656c096ad77a68cf9c495e28'),
+      };
       expect(result).toEqual(condition);
     });
 
