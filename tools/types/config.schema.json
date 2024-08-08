@@ -62939,6 +62939,9 @@
         "retry": {
           "$ref": "#/definitions/RetryOptions"
         },
+        "fcm": {
+          "$ref": "#/definitions/NotifierFcm"
+        },
         "gcm": {
           "$ref": "#/definitions/NotifierGcm"
         },
@@ -62959,13 +62962,54 @@
         }
       }
     },
+    "NotifierFcm": {
+      "type": "object",
+      "properties": {
+        "appName": {
+          "type": "string"
+        },
+        "credential": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/NotifierFcmCredential"
+            }
+          ]
+        }
+      },
+      "required": [
+        "appName"
+      ]
+    },
+    "NotifierFcmCredential": {
+      "type": "object",
+      "properties": {
+        "projectId": {
+          "type": "string"
+        },
+        "clientEmail": {
+          "type": "string"
+        },
+        "privateKey": {
+          "type": "string"
+        }
+      }
+    },
     "NotifierGcm": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string"
+        },
+        "phonegap": {
+          "type": "boolean"
         }
-      }
+      },
+      "required": [
+        "id"
+      ]
     },
     "NotifierApn": {
       "type": "object",
@@ -63118,7 +63162,11 @@
         "client_secret": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "client_id",
+        "client_secret"
+      ]
     },
     "NotifierWns": {
       "type": "object",
@@ -63138,23 +63186,38 @@
         "notificationMethod": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "client_id",
+        "client_secret",
+        "accessToken"
+      ]
     },
     "NotifierMpns": {
       "type": "object",
       "properties": {
         "options": {
-          "type": "object",
-          "properties": {
-            "client_id": {
-              "type": "string"
-            },
-            "client_secret": {
-              "type": "string"
-            }
-          }
+          "$ref": "#/definitions/NotifierMpnsOption"
         }
-      }
+      },
+      "required": [
+        "options"
+      ]
+    },
+    "NotifierMpnsOption": {
+      "type": "object",
+      "properties": {
+        "client_id": {
+          "type": "string"
+        },
+        "client_secret": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id",
+        "client_secret"
+      ]
     },
     "Listable<RabbitConfig>": {
       "anyOf": [

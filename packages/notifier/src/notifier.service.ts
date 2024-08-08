@@ -1,6 +1,6 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import PushNotifications from 'node-pushnotifications';
-import { NotifierRegIds, NotifierRequest, NotifierResponse } from './models';
+import { NotifierRequest, NotifierResponse } from './models';
 import { NotifierClient, NotifierInstance } from './notifier.client';
 import { NotifierConfig } from './notifier.config';
 
@@ -14,7 +14,10 @@ export class NotifierService extends AbstractClientService<NotifierConfig, Notif
 
   @Retry(RETRY_OPTS)
   protected async init(config: NotifierConfig): Promise<NotifierInstance> {
-    return new PushNotifications({ ...config });
+    return new PushNotifications({
+      ...config,
+      fcm: config.fcm.getCredential(),
+    } as any);
   }
 
   async start(client: NotifierInstance, conId: string = DEFAULT_CON_ID): Promise<void> {
@@ -25,7 +28,7 @@ export class NotifierService extends AbstractClientService<NotifierConfig, Notif
     // Do nothing
   }
 
-  send(regIds: NotifierRegIds, req: NotifierRequest, conId: string = DEFAULT_CON_ID): Promise<NotifierResponse> {
-    return this.getClient(conId).send(regIds, req);
+  send(req: NotifierRequest, conId: string = DEFAULT_CON_ID): Promise<NotifierResponse[]> {
+    return this.getClient(conId).send(req.regIds, req.data);
   }
 }
