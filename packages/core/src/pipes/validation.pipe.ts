@@ -1,15 +1,17 @@
-import { ArgumentMetadata, Injectable, Optional, PipeTransform, ValidationPipe } from '@nestjs/common';
+import {
+  ArgumentMetadata,
+  Injectable,
+  Optional,
+  Paramtype,
+  PipeTransform,
+  ValidationPipe,
+  ValidationPipeOptions,
+} from '@nestjs/common';
 import { ClassTransformOptions, instanceToPlain, plainToInstance } from 'class-transformer';
 import { validate, ValidationError, ValidatorOptions } from 'class-validator';
 import { isNil, isObject } from 'lodash';
 import { ValidationException } from '../exceptions';
-import { buildError, toBool } from '../utils';
-
-interface ValidationPipeOptions extends ValidatorOptions {
-  transform?: boolean;
-  transformOptions?: ClassTransformOptions;
-  validateCustomDecorators?: boolean;
-}
+import { buildError, toArray, toBool } from '../utils';
 
 export const DEFAULT_PIPE_OPTIONS: ValidationPipeOptions = {
   transform: true,
@@ -24,17 +26,23 @@ export class BaseValidationPipe extends ValidationPipe implements PipeTransform 
   protected transformOptions: ClassTransformOptions;
   protected validatorOptions: ValidationPipeOptions;
   protected validateCustomDecorators: boolean;
+  private readonly metadataTypes: Paramtype[];
 
-  constructor(@Optional() options?: ValidationPipeOptions) {
+  constructor(@Optional() options?: ValidationPipeOptions & { metadataTypes?: Paramtype[] }) {
     super(Object.assign({}, DEFAULT_PIPE_OPTIONS, options));
 
     this.validatorOptions = Object.assign({}, DEFAULT_PIPE_OPTIONS, options);
     this.isTransformEnabled = toBool(this.validatorOptions.transform, true);
     this.transformOptions = this.validatorOptions.transformOptions;
     this.validateCustomDecorators = toBool(this.validatorOptions.validateCustomDecorators, false);
+    this.metadataTypes = toArray(options?.metadataTypes);
   }
 
   async transform(value: any, metadata: ArgumentMetadata) {
+    if (this.metadataTypes.length && !this.metadataTypes.includes(metadata.type)) {
+      return value;
+    }
+
     const { metatype } = metadata;
     if (!metatype || !this.toValidate(metadata)) {
       return this.isTransformEnabled ? this.transformPrimitive(value, metadata) : value;

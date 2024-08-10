@@ -11,4 +11,6 @@ export {
   ParseEnumPipe,
   ParseFilePipe,
   ValidationPipe,
+  ValidationPipeOptions,
+  Paramtype,
 } from '@nestjs/common';
