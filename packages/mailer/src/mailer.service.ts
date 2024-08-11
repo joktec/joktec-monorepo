@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { posix } from 'path';
+import path from 'path';
 import { AbstractClientService, DEFAULT_CON_ID, Retry } from '@joktec/core';
 import ejs from 'ejs';
 import handlebars from 'handlebars';
@@ -68,9 +68,9 @@ export class MailerService extends AbstractClientService<MailerConfig, Mailer> i
   async compile(req: MailerSendTemplate, conId: string = DEFAULT_CON_ID): Promise<string> {
     const config = this.getConfig(conId);
 
-    const templatePath = posix.join(config.template.dir, req.name);
+    const templatePath = path.join(config.template.dir, req.name);
     if (!fs.existsSync(templatePath)) {
-      throw new MailerException('TEMPLATE_PATH_NOT_FOUND', templatePath);
+      throw new MailerException('TEMPLATE_PATH_NOT_FOUND: %s', templatePath);
     }
     const templateContent = fs.readFileSync(templatePath, 'utf8');
 

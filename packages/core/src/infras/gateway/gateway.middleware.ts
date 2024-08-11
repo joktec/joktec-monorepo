@@ -17,8 +17,9 @@ export class GatewayMetricMiddleware implements NestMiddleware {
   }
 
   use(req: Request, res: Response, next: NextFunction): void {
-    const path = `${req.method} ${req.route?.path ?? req.path}`;
-    const duration = this.gatewayDurationMetric.startTimer({ path });
+    const { method, baseUrl, path, originalUrl } = req;
+    const metricPath = `${method} ${baseUrl + path}`;
+    const duration = this.gatewayDurationMetric.startTimer({ path: metricPath });
 
     res.on('finish', () => {
       const elapsedTime = duration();
@@ -26,8 +27,8 @@ export class GatewayMetricMiddleware implements NestMiddleware {
       const statusCode = res.statusCode;
 
       if (statusCode >= 200 && statusCode < 300) {
-        this.gatewayTotalMetric.inc({ path, status: GatewayStatus.SUCCESS, statusCode });
-        this.logger.info('http: %s (%s) %s', path, timeString, statusCode);
+        this.gatewayTotalMetric.inc({ path: metricPath, status: GatewayStatus.SUCCESS, statusCode });
+        this.logger.info('http: %s (%s) %s', originalUrl, timeString, statusCode);
       } else {
         let className: string = 'Unknown';
         try {
@@ -37,11 +38,11 @@ export class GatewayMetricMiddleware implements NestMiddleware {
           this.logger.debug('Error to get className');
         }
 
-        this.gatewayTotalMetric.inc({ path, status: GatewayStatus.FAILED, statusCode, className });
+        this.gatewayTotalMetric.inc({ path: metricPath, status: GatewayStatus.FAILED, statusCode, className });
         if (statusCode >= 400 && statusCode < 500) {
-          this.logger.warn('http: %s (%s) %s', path, timeString, statusCode);
+          this.logger.warn('http: %s (%s) %s', originalUrl, timeString, statusCode);
         } else {
-          this.logger.error('http: %s (%s) %s', path, timeString, statusCode);
+          this.logger.error('http: %s (%s) %s', originalUrl, timeString, statusCode);
         }
       }
     });
