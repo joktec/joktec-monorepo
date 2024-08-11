@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.135](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.134...@joktec/core@0.0.135) (2024-08-11)
+
+
+### Bug Fixes
+
+* metric and mailer ([1355c8a](https://github.com/joktec/joktec-monorepo/commit/1355c8afdbd10b32ec0d68a4aa89056430aeede8))
+
+
+
+
+
 ## [0.0.134](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.133...@joktec/core@0.0.134) (2024-08-10)
 
 **Note:** Version bump only for package @joktec/core
