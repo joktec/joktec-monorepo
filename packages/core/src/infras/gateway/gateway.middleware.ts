@@ -18,6 +18,11 @@ export class GatewayMetricMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction): void {
     const { method, baseUrl, path, originalUrl } = req;
+    if (originalUrl === '/health' || originalUrl === '/metric') {
+      next();
+      return;
+    }
+
     const metricPath = `${method} ${baseUrl + path}`;
     const duration = this.gatewayDurationMetric.startTimer({ path: metricPath });
 
