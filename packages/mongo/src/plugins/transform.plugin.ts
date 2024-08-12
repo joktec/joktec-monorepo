@@ -53,10 +53,10 @@ export const TransformPlugin = (schema: Schema) => {
     function (next) {
       // Intercept options
       if (this.getOptions()) {
-        const options = this.getOptions();
-        if (options.sort) options.sort = MongoHelper.parseSort(options.sort);
-        if (options.projection) options.projection = MongoHelper.parseProjection(options.projection as any);
-        this.setOptions(options);
+        // const options = this.getOptions();
+        // if (options.sort) options.sort = MongoHelper.parseSort(options.sort);
+        // if (options.projection) options.projection = MongoHelper.parseProjection(options.projection as any);
+        // this.setOptions(options);
       }
 
       // Intercept filter
