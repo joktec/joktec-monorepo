@@ -33,7 +33,7 @@ export class GatewayMetricMiddleware implements NestMiddleware {
 
       if (statusCode >= 200 && statusCode < 300) {
         this.gatewayTotalMetric.inc({ path: metricPath, status: GatewayStatus.SUCCESS, statusCode });
-        this.logger.info('http: %s (%s) %s', originalUrl, timeString, statusCode);
+        this.logger.info('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
       } else {
         let className: string = 'Unknown';
         try {
@@ -45,9 +45,9 @@ export class GatewayMetricMiddleware implements NestMiddleware {
 
         this.gatewayTotalMetric.inc({ path: metricPath, status: GatewayStatus.FAILED, statusCode, className });
         if (statusCode >= 400 && statusCode < 500) {
-          this.logger.warn('http: %s (%s) %s', originalUrl, timeString, statusCode);
+          this.logger.warn('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
         } else {
-          this.logger.error('http: %s (%s) %s', originalUrl, timeString, statusCode);
+          this.logger.error('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
         }
       }
     });
