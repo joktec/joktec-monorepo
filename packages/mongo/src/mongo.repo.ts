@@ -3,16 +3,15 @@ import {
   DeepPartial,
   DEFAULT_CON_ID,
   Encrypter,
-  IBaseRequest,
   ICondition,
+  Inject,
   Injectable,
   LogService,
   OnModuleInit,
   plainToInstance,
   toArray,
+  Reflector,
 } from '@joktec/core';
-import { Inject } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { cloneDeep, head, isArray, isNil, isObject, last, omit, pick } from 'lodash';
 import { Aggregate, UpdateQuery } from 'mongoose';
@@ -166,7 +165,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async aggregate<U = T>(query: IBaseRequest<T>, options?: IMongoAggregateOptions): Promise<U[]> {
+  async aggregate<U = T>(query: IMongoRequest<T>, options?: IMongoAggregateOptions): Promise<U[]> {
     return this.pipeline(query, options).exec();
   }
 
