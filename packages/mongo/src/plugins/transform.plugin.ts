@@ -1,7 +1,7 @@
 import { toArray } from '@joktec/core';
 import dot from 'dot-object';
 import { get } from 'lodash';
-import mongoose, { PipelineStage, PopulateOptions, Schema } from 'mongoose';
+import { PipelineStage, PopulateOptions, Schema } from 'mongoose';
 import { MongoHelper } from '../helpers';
 
 type IPopulateOptions = string | PopulateOptions;
@@ -87,9 +87,8 @@ export const TransformPlugin = (schema: Schema) => {
     },
   );
 
-  schema.pre('aggregate', async function (next) {
-    const admin = mongoose.connection.db.admin();
-    const { version } = await admin.serverStatus();
+  schema.pre('aggregate', function (next, opts) {
+    const version = opts?.version || this.options?.version || '5.0.0';
     const mongoVersion = version.split('.').map(Number);
 
     const pipelines: PipelineStage[] = [];
