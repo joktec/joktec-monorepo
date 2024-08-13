@@ -23,8 +23,11 @@ export class MicroMetricInterceptor implements NestInterceptor {
     const method = context.getHandler().name;
     const serviceName = `${service}#${method}`;
 
-    this.totalCallLatency.inc({ service: serviceName });
+    if (method === 'healthCheck') {
+      return next.handle();
+    }
 
+    this.totalCallLatency.inc({ service: serviceName });
     return next.handle().pipe(
       tap(_ => {
         const elapsedTime = new Date().getTime() - startedAt;

@@ -21,8 +21,13 @@ export class GatewayMetricInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest<ExpressRequest>();
-    const path = `${request.method} ${request.route?.path ?? request.path}`;
-    const duration = this.gatewayDurationMetric.startTimer({ path });
+    const { method, baseUrl, path, originalUrl } = request;
+    if (originalUrl === '/health' || originalUrl === '/metric') {
+      return next.handle().pipe();
+    }
+
+    const metricPath = `${method} ${baseUrl + path}`;
+    const duration = this.gatewayDurationMetric.startTimer({ metricPath });
 
     return next.handle().pipe(
       tap(_ => {
@@ -30,8 +35,8 @@ export class GatewayMetricInterceptor implements NestInterceptor {
         const timeString = getTimeString(elapsedTime);
         const statusCode = context.switchToHttp().getResponse().statusCode;
 
-        this.gatewayTotalMetric.inc({ path, status: GatewayStatus.SUCCESS, statusCode });
-        this.logger.info('http: %s (%s) %s', path, timeString, statusCode);
+        this.gatewayTotalMetric.inc({ path: metricPath, status: GatewayStatus.SUCCESS, statusCode });
+        this.logger.info('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
       }),
       catchError(err => {
         const elapsedTime = duration();
@@ -50,9 +55,9 @@ export class GatewayMetricInterceptor implements NestInterceptor {
 
         this.gatewayTotalMetric.inc({ path, status: GatewayStatus.FAILED, statusCode, className });
         if (statusCode >= HttpStatus.BAD_REQUEST && statusCode < HttpStatus.INTERNAL_SERVER_ERROR) {
-          this.logger.warn('http: %s (%s) %s', path, timeString, statusCode);
+          this.logger.warn('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
         } else {
-          this.logger.error('http: %s (%s) %s', path, timeString, statusCode);
+          this.logger.error('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
         }
 
         return throwError(() => err);

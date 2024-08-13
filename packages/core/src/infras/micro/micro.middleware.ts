@@ -22,8 +22,12 @@ export class MicroMetricMiddleware implements NestMiddleware {
     const method = req.method;
     const serviceName = `${service}#${method}`;
 
-    this.totalCallLatency.inc({ service: serviceName });
+    if (method === 'healthCheck') {
+      next();
+      return;
+    }
 
+    this.totalCallLatency.inc({ service: serviceName });
     res.on('finish', () => {
       const elapsedTime = new Date().getTime() - startedAt;
       const timeString = getTimeString(elapsedTime);
