@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.179](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.178...@joktec/mongo@0.0.179) (2024-08-13)
+
+
+### Bug Fixes
+
+* mongo auto index ([5e74a8d](https://github.com/joktec/joktec-monorepo/commit/5e74a8dc0f069ce7a5394d089b7107572c3e7a7d))
+
+
+
+
+
 ## [0.0.178](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.177...@joktec/mongo@0.0.178) (2024-08-13)
 
 **Note:** Version bump only for package @joktec/mongo
