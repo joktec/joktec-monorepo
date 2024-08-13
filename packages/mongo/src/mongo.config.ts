@@ -45,10 +45,6 @@ export class MongoConfig extends ClientConfig {
 
   @IsBoolean()
   @IsOptional()
-  strictQuery?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
   debug?: boolean;
 
   @IsObject()
@@ -57,7 +53,11 @@ export class MongoConfig extends ClientConfig {
 
   @IsBoolean()
   @IsOptional()
-  syncModel?: boolean = true;
+  strictQuery?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  autoIndex?: boolean;
 
   constructor(props: MongoConfig) {
     super(props);
@@ -67,6 +67,7 @@ export class MongoConfig extends ClientConfig {
       replica: toBool(props.replica, false),
       retryTimeout: toInt(props.retryTimeout, 20000),
       strictQuery: toBool(props.strictQuery, true),
+      autoIndex: toBool(props.autoIndex, true),
       debug: toBool(props.debug, false),
       params: props.params || {},
     });

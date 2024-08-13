@@ -30,6 +30,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     };
 
     mongoose.set('strictQuery', config.strictQuery);
+    mongoose.set('autoIndex', config.autoIndex);
     if (config.debug) {
       mongoose.set('debug', (collectionName: string, methodName: string, ...methodArgs: any[]) => {
         const args = methodArgs.map(arg => JSON.stringify(arg)).join(', ');
@@ -114,7 +115,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   }
 
   public async syncModel(model: ReturnModelType<any>, conId: string = DEFAULT_CON_ID) {
-    if (!this.getConfig(conId).syncModel) return;
+    if (!this.getConfig(conId).autoIndex) return;
     const diffIndexes = await model.diffIndexes();
     if (diffIndexes.toCreate.length || diffIndexes.toDrop.length) {
       await model.syncIndexes({ continueOnError: true });
