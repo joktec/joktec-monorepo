@@ -13,7 +13,7 @@ import {
   Reflector,
 } from '@joktec/core';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { cloneDeep, head, isArray, isNil, isObject, last, omit, pick } from 'lodash';
+import { head, isArray, isNil, isObject, last, omit, pick } from 'lodash';
 import { Aggregate, UpdateQuery } from 'mongoose';
 import { MongoHelper, MongoPipeline, QueryHelper, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
 import {
@@ -113,7 +113,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async count(query: IMongoRequest<T>, options: IMongoOptions<T> = {}): Promise<number> {
-    const processQuery = omit(cloneDeep(query), ['select', 'page', 'limit', 'sort']);
+    const processQuery = omit(query, ['select', 'page', 'limit', 'offset', 'sort', 'cursor']);
     const qb = this.qb(processQuery, options);
     return query.near ? qb.estimatedDocumentCount() : qb.countDocuments();
   }
@@ -123,8 +123,8 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     query: IMongoRequest<T>,
     options: IMongoOptions<T> = {},
   ): Promise<{ items: T[]; total: number; prevCursor?: string; currentCursor?: string; nextCursor?: string }> {
-    const findQuery: IMongoRequest<T> = omit(cloneDeep(query), ['cursor']);
-    const countQuery: IMongoRequest<T> = omit(cloneDeep(query), ['select', 'page', 'limit', 'sort', 'cursor']);
+    const findQuery: IMongoRequest<T> = omit(query, ['cursor']);
+    const countQuery: IMongoRequest<T> = omit(query, ['select', 'page', 'limit', 'offset', 'sort', 'cursor']);
 
     if (!query.cursor) {
       const [items, total] = await Promise.all([this.find(findQuery, options), this.count(countQuery, options)]);
