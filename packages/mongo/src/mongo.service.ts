@@ -76,6 +76,11 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     }
   }
 
+  public async getVersion(conId: string = DEFAULT_CON_ID): Promise<string> {
+    const serverInfo = await this.getClient(conId).db.admin().serverInfo();
+    return serverInfo.version;
+  }
+
   async stop(client: Mongoose, conId: string = DEFAULT_CON_ID): Promise<void> {
     await client.close(true);
     this.logService.error('`%s` MongoDB connection has been terminated', conId);

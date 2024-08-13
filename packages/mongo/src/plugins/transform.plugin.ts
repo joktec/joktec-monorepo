@@ -1,7 +1,7 @@
 import { toArray } from '@joktec/core';
 import dot from 'dot-object';
 import { get } from 'lodash';
-import { PipelineStage, PopulateOptions, Schema } from 'mongoose';
+import mongoose, { PipelineStage, PopulateOptions, Schema } from 'mongoose';
 import { MongoHelper } from '../helpers';
 
 type IPopulateOptions = string | PopulateOptions;
@@ -87,11 +87,29 @@ export const TransformPlugin = (schema: Schema) => {
     },
   );
 
-  schema.pre('aggregate', function (next) {
+  schema.pre('aggregate', async function (next) {
+    const admin = mongoose.connection.db.admin();
+    const { version } = await admin.serverStatus();
+    const mongoVersion = version.split('.').map(Number);
+
     const pipelines: PipelineStage[] = [];
     while (this.pipeline().length) pipelines.push(this.pipeline().shift());
     pipelines.map(pipeline => {
       if ('$lookup' in pipeline) {
+        if (mongoVersion[0] < 5) {
+          const lookupStage = pipeline['$lookup'];
+          if (lookupStage.localField && lookupStage.foreignField) {
+            pipeline = {
+              $lookup: {
+                from: lookupStage.from,
+                let: { localFieldVar: `$${lookupStage.localField}` },
+                pipeline: [{ $match: { $expr: { $eq: [`$${lookupStage.foreignField}`, '$$localFieldVar'] } } }],
+                as: lookupStage.as,
+              },
+            };
+          }
+        }
+
         if (!pipeline.$lookup.pipeline?.length) {
           delete pipeline.$lookup.pipeline;
         }
