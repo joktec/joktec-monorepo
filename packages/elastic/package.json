@@ -40,7 +40,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.12.2",
+    "@elastic/elasticsearch": "^8.15.0",
     "@joktec/core": "0.0.137",
     "@joktec/http": "0.0.139",
     "lodash": "^4.17.21",

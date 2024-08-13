@@ -1,6 +1,6 @@
 import { ClientConfig, IsNotEmpty, IsObject, IsOptional, IsString, IsTypes, toBool, toInt } from '@joktec/core';
 import { CollectionImportOptions } from 'arangojs/collection';
-import { Headers, LoadBalancingStrategy } from 'arangojs/connection';
+import { LoadBalancingStrategy } from 'arangojs/connection';
 
 export class BasicCredentials {
   @IsString()

@@ -60968,7 +60968,7 @@
           "type": "object"
         },
         "headers": {
-          "$ref": "#/definitions/Headers"
+          "type": "object"
         },
         "precaptureStackTraces": {
           "type": "boolean"
@@ -61011,13 +61011,6 @@
         "ONE_RANDOM"
       ],
       "description": "Determines the behavior when multiple URLs are used:\n\n- `\"NONE\"`: No load balancing. All requests will be handled by the first   URL in the list until a network error is encountered. On network error,   arangojs will advance to using the next URL in the list.\n\n- `\"ONE_RANDOM\"`: Randomly picks one URL from the list initially, then   behaves like `\"NONE\"`.\n\n- `\"ROUND_ROBIN\"`: Every sequential request uses the next URL in the list."
-    },
-    "Headers": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
-      },
-      "description": "An arbitrary object with string values representing HTTP headers and their values.\n\nHeader names should always be lowercase."
     },
     "Listable<BigQueryConfig>": {
       "anyOf": [

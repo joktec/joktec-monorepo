@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.137",
-    "amqplib": "^0.10.3",
+    "amqplib": "^0.10.4",
     "lodash": "^4.17.21",
     "object-hash": "^3.0.0"
   },
