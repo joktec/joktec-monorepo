@@ -71,6 +71,7 @@ mongo:
   connectTimeout: 20000
   directConnection: true
   debug: false
+  syncModel: true
 
 storage:
   region: ap-southeast-1
