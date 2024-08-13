@@ -1,7 +1,7 @@
 import { toArray } from '@joktec/core';
 import { index } from '@typegoose/typegoose';
 import { IndexOptions } from '@typegoose/typegoose/lib/types';
-import { assign, get, union } from 'lodash';
+import { get, union } from 'lodash';
 import mongoose from 'mongoose';
 import { IIndexOptions, ISchemaOptions } from '../decorators';
 
@@ -48,7 +48,8 @@ export function buildIndex(options: ISchemaOptions): ClassDecorator[] {
   return union(indexes, options.customIndexes).map(idx => {
     idx.options = { ...defOptions, ...idx.options };
     if (paranoid) {
-      assign(idx.options.partialFilterExpression, { [paranoid]: { $type: 'null' } });
+      // TODO: Fix later - This cause error when search text
+      // Object.assign(idx.options.partialFilterExpression, { [paranoid]: { $type: 'null' } });
     }
     return index(idx.fields, idx.options);
   });
