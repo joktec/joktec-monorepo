@@ -62773,16 +62773,16 @@
         "retryTimeout": {
           "type": "number"
         },
-        "strictQuery": {
-          "type": "boolean"
-        },
         "debug": {
           "type": "boolean"
         },
         "params": {
           "type": "object"
         },
-        "syncModel": {
+        "strictQuery": {
+          "type": "boolean"
+        },
+        "autoIndex": {
           "type": "boolean"
         }
       },
