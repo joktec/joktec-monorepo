@@ -28,6 +28,10 @@ export class LocalStore implements ICacheStore {
     this.logger.info('Local cache have been stopped.');
   }
 
+  getStore(): LocalStorage {
+    return this.client;
+  }
+
   async keys(keyPattern: string): Promise<string[]> {
     const regex = wildcardToRegExp(keyPattern);
     const keys = await this.client.keys();

@@ -39,6 +39,10 @@ export class MemcachedStore implements ICacheStore {
     this.logger.info('Memcached cache have been stopped.');
   }
 
+  getStore(): MemcacheClient {
+    return this.client;
+  }
+
   async keys(keyPattern: string): Promise<string[]> {
     return [];
   }

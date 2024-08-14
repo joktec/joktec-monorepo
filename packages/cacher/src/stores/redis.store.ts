@@ -37,6 +37,10 @@ export class RedisStore implements ICacheStore {
     this.logger.info('Redis cache have been stopped.');
   }
 
+  getStore(): Redis {
+    return this.client;
+  }
+
   async keys(keyPattern: string): Promise<string[]> {
     return this.client.keys(keyPattern);
   }

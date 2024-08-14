@@ -6,6 +6,8 @@ export interface ICacheStore {
 
   disconnect(): Promise<void>;
 
+  getStore(): any;
+
   keys(keyPattern: string): Promise<string[]>;
 
   setItem(key: string, value: string, expiry?: number): Promise<any>;

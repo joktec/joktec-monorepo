@@ -1,5 +1,7 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
+import Redis from 'ioredis';
 import { isNull } from 'lodash';
+import { MemcacheClient } from 'memcache-client';
 import { CacheClient, ICacheStore } from './cache.client';
 import { CacheConfig, CacheType } from './cache.config';
 import { DelCacheMetric, GetCacheMetric, SetCacheMetric } from './cache.metric';
@@ -29,10 +31,14 @@ export class CacheService extends AbstractClientService<CacheConfig, ICacheStore
     await client.disconnect();
   }
 
-  async keys(key: string, opts?: { namespace?: string }, conId?: string): Promise<string[]> {
+  async keys(key: string, opts?: { namespace?: string }, conId: string = DEFAULT_CON_ID): Promise<string[]> {
     const { namespace = DEFAULT_CON_ID } = opts;
     const keyPattern = namespace ? `${namespace}:${key}` : key;
     return this.getClient(conId).keys(keyPattern);
+  }
+
+  getStore(conId: string = DEFAULT_CON_ID): Redis | MemcacheClient | LocalStore {
+    return this.getClient(conId).getStore();
   }
 
   @SetCacheMetric()
