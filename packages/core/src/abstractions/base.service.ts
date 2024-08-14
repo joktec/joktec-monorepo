@@ -29,6 +29,13 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
 
   protected afterModuleInit() {}
 
+  public transformPaginate(items: T[], total: number, page: number, limit: number): IListResponseDto<T> {
+    const lastPage = Math.ceil(total / limit);
+    const nextPage = page + 1 > lastPage ? null : page + 1;
+    const prevPage = page - 1 < 1 ? null : page - 1;
+    return { items, total, lastPage, nextPage, prevPage };
+  }
+
   async paginate(query: REQ): Promise<IListResponseDto<T>> {
     const responseDto = await this.repository.paginate(query);
 
@@ -38,10 +45,7 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
       return { items, total, prevCursor, currentCursor, nextCursor };
     }
 
-    const lastPage = Math.ceil(total / query.limit);
-    const nextPage = query.page + 1 > lastPage ? null : query.page + 1;
-    const prevPage = query.page - 1 < 1 ? null : query.page - 1;
-    return { items, total, lastPage, nextPage, prevPage };
+    return this.transformPaginate(items, total, query.page, query.limit);
   }
 
   async find(query: REQ): Promise<T[]> {
