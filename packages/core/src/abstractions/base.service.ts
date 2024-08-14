@@ -29,7 +29,7 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
 
   protected afterModuleInit() {}
 
-  public transformPaginate(items: T[], total: number, page: number, limit: number): IListResponseDto<T> {
+  public transformPaginate<DTO = T>(items: DTO[], total: number, page: number, limit: number): IListResponseDto<DTO> {
     if (!items.length) return { items, total, lastPage: null, nextPage: null, prevPage: null };
     const lastPage = Math.ceil(total / limit);
     const nextPage = page + 1 > lastPage ? null : page + 1;
