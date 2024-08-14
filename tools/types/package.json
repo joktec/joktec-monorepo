@@ -25,7 +25,7 @@
     "@joktec/alert": "^0.0.141",
     "@joktec/arango": "^0.0.140",
     "@joktec/bigquery": "^0.0.140",
-    "@joktec/cacher": "^0.0.86",
+    "@joktec/cacher": "^0.0.88",
     "@joktec/core": "^0.0.142",
     "@joktec/cron": "^0.0.146",
     "@joktec/elastic": "^0.0.143",

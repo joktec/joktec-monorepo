@@ -49,6 +49,8 @@ export class GatewayService {
     GatewayService.setUpViewEngine(app);
     GatewayService.setupSecurity(app);
 
+    if (middlewares.beforeInit) await middlewares.beforeInit(app);
+
     const gatewayName = config.get('description', 'Gateway');
     await app.listen(port, () => {
       const baseUrl = `http://localhost:${port}`;
@@ -67,6 +69,8 @@ export class GatewayService {
         );
       }
     });
+
+    if (middlewares.afterInit) await middlewares.afterInit(app);
   }
 
   private static setupSwagger(app: NestExpressApplication): boolean {

@@ -6,29 +6,33 @@ import {
   NestInterceptor,
   NestModule,
   PipeTransform,
-  // Logger as NestLogger,
 } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { isFunction, isNil, omit } from 'lodash';
+import { isFunction } from 'lodash';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
 import { GatewayConfig, GatewayService, MicroConfig, MicroService } from '../infras';
 import { ConfigService } from '../modules';
 
 export type Module = NestModule;
+
 export type ApplicationMiddlewares = {
   guards?: CanActivate[];
   pipes?: PipeTransform[];
   interceptors?: NestInterceptor[];
   filters?: ExceptionFilter[];
+  beforeInit?: (app?: INestApplication) => void | Promise<void>;
+  afterInit?: (app?: INestApplication) => void | Promise<void>;
 };
+
 export type ApplicationMiddlewareFactory = {
   guards?: CanActivate[] | ((app: INestApplication) => CanActivate[] | Promise<CanActivate[]>);
   pipes?: PipeTransform[] | ((app: INestApplication) => PipeTransform[] | Promise<PipeTransform[]>);
   interceptors?: NestInterceptor[] | ((app: INestApplication) => NestInterceptor[] | Promise<NestInterceptor[]>);
   filters?: ExceptionFilter[] | ((app: INestApplication) => ExceptionFilter[] | Promise<ExceptionFilter[]>);
+  beforeInit?: (app?: INestApplication) => void | Promise<void>;
+  afterInit?: (app?: INestApplication) => void | Promise<void>;
 };
-export type ApplicationOptions = NestApplicationOptions & ApplicationMiddlewareFactory;
 
 export class Application {
   static initTrackingProcessEvent(logger: Logger) {
@@ -57,15 +61,10 @@ export class Application {
 
   static async bootstrap(
     module: any,
-    opts?: ApplicationOptions,
-    bootstrap?: (app?: INestApplication, opts?: ApplicationMiddlewares) => Promise<void>,
+    opts: NestApplicationOptions = {},
+    factory: ApplicationMiddlewareFactory = {},
   ): Promise<void> {
-    const appOpts: NestApplicationOptions = omit(opts, ['guards', 'pipes', 'interceptors', 'filters']);
-    const app = await NestFactory.create<NestExpressApplication>(module, {
-      // logger: new NestLogger(Application.name),
-      bufferLogs: true,
-      ...appOpts,
-    });
+    const app = await NestFactory.create<NestExpressApplication>(module, { bufferLogs: true, ...opts });
 
     const logger = app.get(Logger);
     app.useLogger(logger);
@@ -75,16 +74,12 @@ export class Application {
 
     const config = app.get(ConfigService);
     const middlewares: ApplicationMiddlewares = {
-      guards: isFunction(opts?.guards) ? await opts?.guards(app) : opts?.guards,
-      pipes: isFunction(opts?.pipes) ? await opts?.pipes(app) : opts?.pipes,
-      interceptors: isFunction(opts?.interceptors) ? await opts?.interceptors(app) : opts?.interceptors,
-      filters: isFunction(opts?.filters) ? await opts?.filters(app) : opts?.filters,
+      ...factory,
+      guards: isFunction(factory.guards) ? await factory.guards(app) : factory.guards,
+      pipes: isFunction(factory.pipes) ? await factory.pipes(app) : factory.pipes,
+      interceptors: isFunction(factory.interceptors) ? await factory.interceptors(app) : factory.interceptors,
+      filters: isFunction(factory.filters) ? await factory.filters(app) : factory.filters,
     };
-
-    if (!isNil(bootstrap)) {
-      await bootstrap(app, middlewares);
-      return;
-    }
 
     const gatewayConfig = config.get<GatewayConfig>('gateway');
     if (gatewayConfig) {

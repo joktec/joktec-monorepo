@@ -28,6 +28,8 @@ export class MicroService {
         logger.info('App connecting transport %s: %j', transport.transport, transport.options);
       });
 
+    if (middlewares.beforeInit) await middlewares.beforeInit(app);
+
     await app.startAllMicroservices().then(() => {
       logger.info(`🚀 Service %s (%s) is running all microservices`, description, name);
     });
@@ -37,5 +39,7 @@ export class MicroService {
         logger.info(`🚀 Service %s (%s) is running on %s`, description, name, baseUrl);
       });
     }
+
+    if (middlewares.afterInit) await middlewares.afterInit(app);
   }
 }
