@@ -4,5 +4,6 @@ export * from './cache.config';
 export * from './cache.metric';
 export * from './cache.utils';
 export * from './models';
+export * from './stores';
 export * from './decorators';
 export * from './interceptors';
