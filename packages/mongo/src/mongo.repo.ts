@@ -208,7 +208,11 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async upsert(condition: ICondition<T>, body: DeepPartial<T>, options: IMongoOptions<T> = {}): Promise<T> {
+  async upsert(
+    condition: ICondition<T>,
+    body: DeepPartial<T> & UpdateQuery<T>,
+    options: IMongoOptions<T> = {},
+  ): Promise<T> {
     const transformBody: T = this.transform(body) as T;
     const _options = Object.assign({}, UPSERT_OPTIONS, options);
     const doc = await this.qb({ condition }, _options).findOneAndUpdate(transformBody).exec();
@@ -217,7 +221,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async bulkUpsert(
-    docs: DeepPartial<T>[],
+    docs: (DeepPartial<T> & UpdateQuery<T>)[],
     upsert: IMongoBulkRequest = {},
     options: IMongoBulkOptions = {},
   ): Promise<any> {

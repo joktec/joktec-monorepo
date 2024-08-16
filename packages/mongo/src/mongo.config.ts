@@ -1,14 +1,4 @@
-import {
-  ClientConfig,
-  IsBoolean,
-  IsInt,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  toBool,
-  toInt,
-} from '@joktec/core';
+import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@joktec/core';
 
 export class MongoConfig extends ClientConfig {
   @IsString()
@@ -47,9 +37,9 @@ export class MongoConfig extends ClientConfig {
   @IsOptional()
   debug?: boolean;
 
-  @IsObject()
+  @IsString()
   @IsOptional()
-  params?: Record<string, any>;
+  params?: string;
 
   @IsBoolean()
   @IsOptional()
@@ -69,7 +59,6 @@ export class MongoConfig extends ClientConfig {
       strictQuery: toBool(props.strictQuery, true),
       autoIndex: toBool(props.autoIndex, true),
       debug: toBool(props.debug, false),
-      params: props.params || {},
     });
   }
 }
