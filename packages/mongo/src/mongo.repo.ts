@@ -76,7 +76,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
     if (query?.near) qb.center(query.near);
     if (query?.keyword) qb.search(query.keyword);
-    qb.where(Object.assign({}, query.condition));
+    qb.where(Object.assign({}, query?.condition || {}));
     if (query?.select) qb.select(query.select as any);
     if (query?.sort) qb.sort(MongoHelper.parseSort(query.sort));
     if (query?.offset) qb.skip(query.offset);
