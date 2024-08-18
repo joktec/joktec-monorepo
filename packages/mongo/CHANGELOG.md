@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.190](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.189...@joktec/mongo@0.0.190) (2024-08-18)
+
+
+### Bug Fixes
+
+* mongo default condition ([5dbf0bc](https://github.com/joktec/joktec-monorepo/commit/5dbf0bcae8d68aa90ecdfa49f9397a439d66b643))
+
+
+
+
+
 ## [0.0.189](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.188...@joktec/mongo@0.0.189) (2024-08-18)
 
 
