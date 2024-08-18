@@ -42,7 +42,7 @@
     "@joktec/cacher": "^0.0.89",
     "@joktec/http": "^0.0.145",
     "@joktec/mailer": "^0.0.143",
-    "@joktec/mongo": "^0.0.188",
+    "@joktec/mongo": "^0.0.189",
     "@joktec/firebase": "^0.0.61",
     "@joktec/storage": "^0.0.145",
     "nestjs-i18n": "^10.4.0",
