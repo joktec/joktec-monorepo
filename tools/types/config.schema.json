@@ -62777,7 +62777,7 @@
           "type": "boolean"
         },
         "params": {
-          "type": "object"
+          "type": "string"
         },
         "strictQuery": {
           "type": "boolean"

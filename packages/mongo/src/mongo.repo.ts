@@ -73,7 +73,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   protected qb(query?: IMongoRequest<T>, options: IMongoOptions<T> = {}) {
     if (!query?.condition) return this.model.find<T>().lean();
 
-    const qb = this.model.find<T>();
+    const qb = this.model.find<T>().where({});
     qb.setOptions({ ...options, language: query?.language || '*' });
 
     if (query?.near) qb.center(query.near);
