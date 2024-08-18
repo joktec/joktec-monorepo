@@ -71,14 +71,12 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   protected qb(query?: IMongoRequest<T>, options: IMongoOptions<T> = {}) {
-    if (!query?.condition) return this.model.find<T>().lean();
-
-    const qb = this.model.find<T>().where({});
+    const qb = this.model.find<T>();
     qb.setOptions({ ...options, language: query?.language || '*' });
 
     if (query?.near) qb.center(query.near);
     if (query?.keyword) qb.search(query.keyword);
-    if (query?.condition) qb.where(query.condition);
+    qb.where(Object.assign({}, query.condition));
     if (query?.select) qb.select(query.select as any);
     if (query?.sort) qb.sort(MongoHelper.parseSort(query.sort));
     if (query?.offset) qb.skip(query.offset);
