@@ -29,13 +29,15 @@ export class JwtService {
     const { secretKey, refreshKey, expired } = this.config;
     const expiresIn: number = ms(expired) / 1000;
 
+    const accessPayload: JwtPayload = { type: 'ACCESS', ...payload };
     const jwtToken: JwtToken = {
-      accessToken: jwt.sign(payload, secretKey, { expiresIn }),
+      accessToken: jwt.sign(accessPayload, secretKey, { expiresIn }),
       expiredAt: moment().add(expiresIn, 'seconds').toDate(),
     };
 
     if (refreshKey) {
-      jwtToken.refreshToken = jwt.sign(payload, refreshKey, { expiresIn: expiresIn * 2 });
+      const refreshPayload: JwtPayload = { type: 'REFRESH', ...payload };
+      jwtToken.refreshToken = jwt.sign(refreshPayload, refreshKey, { expiresIn: expiresIn * 2 });
     }
 
     return jwtToken;
