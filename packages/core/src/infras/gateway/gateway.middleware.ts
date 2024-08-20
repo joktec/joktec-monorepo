@@ -27,7 +27,7 @@ export class GatewayMetricMiddleware implements NestMiddleware {
     const duration = this.gatewayDurationMetric.startTimer({ path: metricPath });
 
     res.on('finish', () => {
-      const elapsedTime = duration();
+      const elapsedTime = duration() * 1000.0;
       const timeString = getTimeString(elapsedTime);
       const statusCode = res.statusCode;
 

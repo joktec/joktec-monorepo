@@ -37,8 +37,8 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.11.1",
     "@grpc/proto-loader": "^0.7.13",
-    "@joktec/core": "0.0.143",
-    "@joktec/mysql": "0.0.145",
+    "@joktec/core": "0.0.145",
+    "@joktec/mysql": "0.0.147",
     "amqplib": "^0.10.4",
     "amqp-connection-manager": "^4.1.14",
     "ioredis": "^5.4.1"
