@@ -1,3 +1,5 @@
+import { Clazz } from '@joktec/core';
+
 export interface CacheModel<T> {
   conId?: string;
   namespace?: string;
@@ -19,6 +21,7 @@ export interface CacheableOption {
   key?: string;
   expiry?: number;
   conId?: string;
+  transform?: Clazz;
 }
 
 export interface CacheEvictOption {

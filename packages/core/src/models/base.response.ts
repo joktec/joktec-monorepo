@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { Constructor, Entity } from './base.dto';
 
 export interface IListResponseDto<T extends Entity> {
@@ -20,6 +21,7 @@ export const BaseListResponse = <T extends Entity>(dto: Constructor<T>) => {
   class BaseListResponse implements IListResponseDto<T> {
     @Field(() => [dto], { defaultValue: [] })
     @ApiProperty({ type: [dto], default: [] })
+    @Type(() => dto)
     items: T[];
 
     @Field({ defaultValue: 0 })
