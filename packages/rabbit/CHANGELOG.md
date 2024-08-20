@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.143](https://github.com/joktec/joktec-monorepo/compare/@joktec/rabbit@0.0.142...@joktec/rabbit@0.0.143) (2024-08-20)
+
+**Note:** Version bump only for package @joktec/rabbit
+
+
+
+
+
 ## [0.0.142](https://github.com/joktec/joktec-monorepo/compare/@joktec/rabbit@0.0.141...@joktec/rabbit@0.0.142) (2024-08-19)
 
 **Note:** Version bump only for package @joktec/rabbit
