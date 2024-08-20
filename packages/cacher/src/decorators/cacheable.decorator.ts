@@ -5,6 +5,7 @@ import {
   Entity,
   Reflector,
   SetMetadata,
+  plainToInstance,
 } from '@joktec/core';
 import { CacheService } from '../cache.service';
 import { generateCacheKey } from '../cache.utils';
@@ -15,7 +16,7 @@ export const Cacheable = <T = Entity>(namespace: string, cacheableOptions?: Cach
   return BaseMethodDecorator(
     async (options: CallbackMethodOptions): Promise<T> => {
       const { method, args, services, params } = options;
-      const { key, expiry = CacheTtlSeconds.ONE_MINUTE, conId = DEFAULT_CON_ID } = cacheableOptions || {};
+      const { key, expiry = CacheTtlSeconds.ONE_MINUTE, conId = DEFAULT_CON_ID, transform } = cacheableOptions || {};
 
       const reflector: Reflector = services.reflector;
       const cacheService: CacheService = services.cacheService;
@@ -34,12 +35,12 @@ export const Cacheable = <T = Entity>(namespace: string, cacheableOptions?: Cach
 
       const cachedValue: T = await cacheService.get<T>(cacheKey, { namespace }, conId);
       if (cachedValue) {
-        return cachedValue;
+        return transform ? plainToInstance(transform, cachedValue) : cachedValue;
       }
 
       const valueToCache: T = await method(...args);
       await cacheService.set<T>(cacheKey, valueToCache, { namespace, expiry }, conId);
-      return valueToCache;
+      return transform ? plainToInstance(transform, valueToCache) : valueToCache;
     },
     [CacheService, Reflector],
   );
