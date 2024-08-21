@@ -20,6 +20,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { UseFilters } from '@nestjs/common/decorators/core';
+import { PartialType } from '@nestjs/mapped-types';
 import {
   ApiBody,
   ApiExcludeController,
@@ -91,7 +92,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
   const queryDto: Constructor<any> = props.customDto?.queryDto || DefaultQueryDto;
   const createDto: Constructor<T | any> = props.customDto?.createDto || props.dto;
-  const updatedDto: Constructor<T | any> = props.customDto?.updatedDto || createDto;
+  const updatedDto: Constructor<T | any> = props.customDto?.updatedDto || PartialType(createDto);
 
   @ApiSchema({ name: `${nameSingular}Query` })
   class QueryDto extends queryDto {}
