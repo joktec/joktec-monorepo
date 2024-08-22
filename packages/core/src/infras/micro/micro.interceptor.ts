@@ -1,5 +1,5 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { InjectMetric, makeGaugeProvider } from '@willsoto/nestjs-prometheus';
+import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Counter, Gauge } from 'prom-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
@@ -31,18 +31,19 @@ export class MicroMetricInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(_ => {
         const elapsedTime = new Date().getTime() - startedAt;
-        this.latencyMetric.set({ service: serviceName, status: MicroStatus.SUCCESS }, elapsedTime);
-
         const timeString = getTimeString(elapsedTime);
-        this.logger.info('micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
+        const args: any = { path: serviceName, responseTime: timeString, statusCode: null, elapsedTime };
+
+        this.latencyMetric.set({ service: serviceName, status: MicroStatus.SUCCESS }, elapsedTime);
+        this.logger.info(args, 'micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
       }),
       catchError(err => {
-        const duration = new Date().getTime() - startedAt;
-        this.latencyMetric.set({ service: serviceName, status: err.status }, duration);
+        const elapsedTime = new Date().getTime() - startedAt;
+        const timeString = getTimeString(elapsedTime);
+        const args: any = { path: serviceName, responseTime: timeString, statusCode: null, elapsedTime };
 
-        const timeString = getTimeString(duration);
-        this.logger.warn('micro: %s (%s) %s', serviceName, timeString, err.status);
-
+        this.latencyMetric.set({ service: serviceName, status: err.status }, elapsedTime);
+        this.logger.warn(args, 'micro: %s (%s) %s', serviceName, timeString, err.status);
         return throwError(() => err);
       }),
     );
