@@ -31,19 +31,17 @@ export class GatewayMetricInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap(_ => {
-        const elapsedTime = duration();
+        const elapsedTime = duration() * 1000.0;
         const timeString = getTimeString(elapsedTime);
         const statusCode = context.switchToHttp().getResponse().statusCode;
-        const args: any = { path: metricPath, responseTime: timeString, statusCode, elapsedTime };
 
         this.gatewayTotalMetric.inc({ path: metricPath, status: GatewayStatus.SUCCESS, statusCode });
-        this.logger.info(args, 'http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
+        this.logger.info('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
       }),
       catchError(err => {
-        const elapsedTime = duration();
+        const elapsedTime = duration() * 1000.0;
         const timeString = getTimeString(elapsedTime);
         let statusCode = context.switchToHttp().getResponse().statusCode;
-        const args: any = { path: metricPath, responseTime: timeString, statusCode, elapsedTime };
 
         if (err instanceof Exception) statusCode = err.status;
 
@@ -57,9 +55,9 @@ export class GatewayMetricInterceptor implements NestInterceptor {
 
         this.gatewayTotalMetric.inc({ path, status: GatewayStatus.FAILED, statusCode, className });
         if (statusCode >= HttpStatus.BAD_REQUEST && statusCode < HttpStatus.INTERNAL_SERVER_ERROR) {
-          this.logger.warn(args, 'http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
+          this.logger.warn('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
         } else {
-          this.logger.error(args, 'http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
+          this.logger.error('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
         }
 
         return throwError(() => err);

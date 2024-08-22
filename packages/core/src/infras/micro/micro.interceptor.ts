@@ -31,19 +31,17 @@ export class MicroMetricInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(_ => {
         const elapsedTime = new Date().getTime() - startedAt;
-        const timeString = getTimeString(elapsedTime);
-        const args: any = { path: serviceName, responseTime: timeString, statusCode: null, elapsedTime };
-
         this.latencyMetric.set({ service: serviceName, status: MicroStatus.SUCCESS }, elapsedTime);
-        this.logger.info(args, 'micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
+
+        const timeString = getTimeString(elapsedTime);
+        this.logger.info('micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
       }),
       catchError(err => {
         const elapsedTime = new Date().getTime() - startedAt;
-        const timeString = getTimeString(elapsedTime);
-        const args: any = { path: serviceName, responseTime: timeString, statusCode: null, elapsedTime };
-
         this.latencyMetric.set({ service: serviceName, status: err.status }, elapsedTime);
-        this.logger.warn(args, 'micro: %s (%s) %s', serviceName, timeString, err.status);
+
+        const timeString = getTimeString(elapsedTime);
+        this.logger.warn('micro: %s (%s) %s', serviceName, timeString, err.status);
         return throwError(() => err);
       }),
     );

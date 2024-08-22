@@ -32,14 +32,14 @@ export class MicroMetricMiddleware implements NestMiddleware {
       const elapsedTime = new Date().getTime() - startedAt;
       const timeString = getTimeString(elapsedTime);
       const statusCode = res.statusCode;
-      const args: any = { path: serviceName, responseTime: timeString, statusCode, elapsedTime };
 
+      req['responseTime'] = elapsedTime;
       if (statusCode >= 200 && statusCode < 300) {
         this.latencyMetric.set({ service: serviceName, status: MicroStatus.SUCCESS }, elapsedTime);
-        this.logger.info(args, 'micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
+        this.logger.info('micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
       } else {
         this.latencyMetric.set({ service: serviceName, status: statusCode }, elapsedTime);
-        this.logger.warn(args, 'micro: %s (%s) %s', serviceName, timeString, statusCode);
+        this.logger.warn('micro: %s (%s) %s', serviceName, timeString, statusCode);
       }
     });
 
