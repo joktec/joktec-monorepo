@@ -9,11 +9,11 @@ import { GATEWAY_DURATION_METRIC, GATEWAY_TOTAL_METRIC, GatewayStatus } from './
 @Injectable()
 export class GatewayMetricMiddleware implements NestMiddleware {
   constructor(
-    private logger: LogService,
+    private logService: LogService,
     @InjectMetric(GATEWAY_DURATION_METRIC) private gatewayDurationMetric: Histogram<string>,
     @InjectMetric(GATEWAY_TOTAL_METRIC) private gatewayTotalMetric: Counter<string>,
   ) {
-    this.logger.setContext(GatewayMetricMiddleware.name);
+    this.logService.setContext(GatewayMetricMiddleware.name);
   }
 
   use(req: Request, res: Response, next: NextFunction): void {
@@ -34,21 +34,21 @@ export class GatewayMetricMiddleware implements NestMiddleware {
       req['responseTime'] = elapsedTime;
       if (statusCode >= 200 && statusCode < 300) {
         this.gatewayTotalMetric.inc({ path: metricPath, status: GatewayStatus.SUCCESS, statusCode });
-        this.logger.info('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
+        this.logService.info('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
       } else {
         let className: string = 'Unknown';
         try {
           const stack = new Error().stack?.split(/\r\n|\r|\n/);
           className = stack[1].split(/\b(\s)/)[2];
         } catch (error) {
-          this.logger.debug('Error to get className');
+          this.logService.debug('Error to get className');
         }
 
         this.gatewayTotalMetric.inc({ path: metricPath, status: GatewayStatus.FAILED, statusCode, className });
         if (statusCode >= 400 && statusCode < 500) {
-          this.logger.warn('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
+          this.logService.warn('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
         } else {
-          this.logger.error('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
+          this.logService.error('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
         }
       }
     });

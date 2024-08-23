@@ -12,11 +12,11 @@ import { ExceptionMessage } from '../exception-message';
 @Catch()
 export class GatewayExceptionsFilter extends BaseExceptionFilter implements IExceptionFilter {
   constructor(
-    protected cfg: ConfigService,
-    protected logger: PinoLogger,
+    protected configService: ConfigService,
+    protected logService: PinoLogger,
   ) {
     super();
-    this.logger.setContext(GatewayExceptionsFilter.name);
+    this.logService.setContext(GatewayExceptionsFilter.name);
   }
 
   catch(exception: any, host: ArgumentsHost) {
@@ -43,7 +43,7 @@ export class GatewayExceptionsFilter extends BaseExceptionFilter implements IExc
       case 'graphql':
         return new GraphQLException(errorBody.message, { extensions: { http: { status }, data: miniError } });
       default:
-        this.logger.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
+        this.logService.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
         break;
     }
   }
@@ -96,14 +96,14 @@ export class GatewayExceptionsFilter extends BaseExceptionFilter implements IExc
   debug(exception: Error) {
     const status = this.transformStatus(exception);
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
+      this.logService.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
     }
 
-    const hideWarning = this.cfg.get<boolean>('log.hideWarning', true);
+    const hideWarning = this.configService.get<boolean>('log.hideWarning', true);
     if (hideWarning) return;
     if (status < HttpStatus.INTERNAL_SERVER_ERROR) {
       const msg = this.transformMessage(exception);
-      this.logger.error(exception, msg);
+      this.logService.error(exception, msg);
     }
   }
 
@@ -111,7 +111,7 @@ export class GatewayExceptionsFilter extends BaseExceptionFilter implements IExc
     const req = host.switchToHttp().getRequest<ExpressRequest>();
     const res = host.switchToHttp().getResponse<ExpressResponse>();
     if (errorBody.data) delete errorBody.data;
-    const isProd: boolean = this.cfg.get<boolean>('isProd', false);
+    const isProd: boolean = this.configService.get<boolean>('isProd', false);
     if (!isProd) {
       Object.assign(errorBody, { path: req.url, method: req.method });
       if (!isEmpty(res.locals.body)) errorBody.body = res.locals.body;

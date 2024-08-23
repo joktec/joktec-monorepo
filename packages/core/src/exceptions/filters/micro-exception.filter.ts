@@ -12,11 +12,11 @@ import { MicroRpcException } from '../micro-rpc.exception';
 @Catch()
 export class MicroExceptionFilter extends BaseRpcExceptionFilter implements IExceptionFilter {
   constructor(
-    protected cfg: ConfigService,
-    protected logger: PinoLogger,
+    protected configService: ConfigService,
+    protected logService: PinoLogger,
   ) {
     super();
-    this.logger.setContext(MicroExceptionFilter.name);
+    this.logService.setContext(MicroExceptionFilter.name);
   }
 
   catch(exception: any, _: ArgumentsHost): Observable<RpcException> {
@@ -83,14 +83,14 @@ export class MicroExceptionFilter extends BaseRpcExceptionFilter implements IExc
   debug(exception: Error) {
     const status = this.transformStatus(exception);
     if (status >= HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
+      this.logService.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
     }
 
-    const hideWarning = this.cfg.get<boolean>('log.hideWarning', true);
+    const hideWarning = this.configService.get<boolean>('log.hideWarning', true);
     if (hideWarning) return;
     if (status < HttpStatus.INTERNAL_SERVER_ERROR) {
       const msg = this.transformMessage(exception);
-      this.logger.error(exception, msg);
+      this.logService.error(exception, msg);
     }
   }
 

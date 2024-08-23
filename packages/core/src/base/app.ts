@@ -72,7 +72,7 @@ export class Application {
 
     Application.initTrackingProcessEvent(logger);
 
-    const config = app.get(ConfigService);
+    const configService = app.get(ConfigService);
     const middlewares: ApplicationMiddlewares = {
       ...factory,
       guards: isFunction(factory.guards) ? await factory.guards(app) : factory.guards,
@@ -81,13 +81,13 @@ export class Application {
       filters: isFunction(factory.filters) ? await factory.filters(app) : factory.filters,
     };
 
-    const gatewayConfig = config.get<GatewayConfig>('gateway');
+    const gatewayConfig = configService.get<GatewayConfig>('gateway');
     if (gatewayConfig) {
       await GatewayService.bootstrap(app, middlewares);
       return;
     }
 
-    const microConfig = config.get<MicroConfig>('micro');
+    const microConfig = configService.get<MicroConfig>('micro');
     if (microConfig) {
       await MicroService.bootstrap(app, middlewares);
       return;

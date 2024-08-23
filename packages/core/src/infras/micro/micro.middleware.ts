@@ -9,11 +9,11 @@ import { MICRO_LATENCY_METRIC, MICRO_TOTAL_METRIC, MicroStatus } from './micro.m
 @Injectable()
 export class MicroMetricMiddleware implements NestMiddleware {
   constructor(
-    private logger: LogService,
+    private logService: LogService,
     @InjectMetric(MICRO_LATENCY_METRIC) private latencyMetric: Gauge<string>,
     @InjectMetric(MICRO_TOTAL_METRIC) private totalCallLatency: Counter<string>,
   ) {
-    this.logger.setContext(MicroMetricMiddleware.name);
+    this.logService.setContext(MicroMetricMiddleware.name);
   }
 
   use(req: Request, res: Response, next: NextFunction): void {
@@ -36,10 +36,10 @@ export class MicroMetricMiddleware implements NestMiddleware {
       req['responseTime'] = elapsedTime;
       if (statusCode >= 200 && statusCode < 300) {
         this.latencyMetric.set({ service: serviceName, status: MicroStatus.SUCCESS }, elapsedTime);
-        this.logger.info('micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
+        this.logService.info('micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
       } else {
         this.latencyMetric.set({ service: serviceName, status: statusCode }, elapsedTime);
-        this.logger.warn('micro: %s (%s) %s', serviceName, timeString, statusCode);
+        this.logService.warn('micro: %s (%s) %s', serviceName, timeString, statusCode);
       }
     });
 

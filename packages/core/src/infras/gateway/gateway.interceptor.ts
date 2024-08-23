@@ -12,11 +12,11 @@ import { GATEWAY_DURATION_METRIC, GATEWAY_TOTAL_METRIC, GatewayStatus } from './
 @Injectable()
 export class GatewayMetricInterceptor implements NestInterceptor {
   constructor(
-    private logger: LogService,
+    private logService: LogService,
     @InjectMetric(GATEWAY_DURATION_METRIC) private gatewayDurationMetric: Histogram<string>,
     @InjectMetric(GATEWAY_TOTAL_METRIC) private gatewayTotalMetric: Counter<string>,
   ) {
-    this.logger.setContext(GatewayMetricInterceptor.name);
+    this.logService.setContext(GatewayMetricInterceptor.name);
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -36,7 +36,7 @@ export class GatewayMetricInterceptor implements NestInterceptor {
         const statusCode = context.switchToHttp().getResponse().statusCode;
 
         this.gatewayTotalMetric.inc({ path: metricPath, status: GatewayStatus.SUCCESS, statusCode });
-        this.logger.info('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
+        this.logService.info('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
       }),
       catchError(err => {
         const elapsedTime = duration() * 1000.0;
@@ -50,14 +50,14 @@ export class GatewayMetricInterceptor implements NestInterceptor {
           const stack = err.stack?.split(/\r\n|\r|\n/);
           className = stack[1].split(/\b(\s)/)[2];
         } catch (error) {
-          this.logger.debug('Error to get className');
+          this.logService.debug('Error to get className');
         }
 
         this.gatewayTotalMetric.inc({ path, status: GatewayStatus.FAILED, statusCode, className });
         if (statusCode >= HttpStatus.BAD_REQUEST && statusCode < HttpStatus.INTERNAL_SERVER_ERROR) {
-          this.logger.warn('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
+          this.logService.warn('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
         } else {
-          this.logger.error('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
+          this.logService.error('http: [%s] %s (%s) %s', method, originalUrl, timeString, statusCode);
         }
 
         return throwError(() => err);

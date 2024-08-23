@@ -47,8 +47,8 @@ export const TransportProxyFactory = (provideName: string, transportName: string
   return {
     provide: provideName,
     inject: [ConfigService],
-    useFactory: async (cfg: ConfigService) => {
-      const transports: Partial<Transporter>[] = cfg.get('transports');
+    useFactory: async (configService: ConfigService) => {
+      const transports: Partial<Transporter>[] = configService.get('transports');
       const transport: Transporter = head(parseTransports(transports).filter(t => t.name === transportName));
       return ClientProxyFactory.create(transport.getOptions() as any);
     },

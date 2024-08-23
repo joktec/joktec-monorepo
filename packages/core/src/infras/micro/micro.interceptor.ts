@@ -10,11 +10,11 @@ import { MICRO_LATENCY_METRIC, MICRO_TOTAL_METRIC, MicroStatus } from './micro.m
 @Injectable()
 export class MicroMetricInterceptor implements NestInterceptor {
   constructor(
-    private logger: LogService,
+    private logService: LogService,
     @InjectMetric(MICRO_LATENCY_METRIC) private latencyMetric: Gauge<string>,
     @InjectMetric(MICRO_TOTAL_METRIC) private totalCallLatency: Counter<string>,
   ) {
-    this.logger.setContext(MicroMetricInterceptor.name);
+    this.logService.setContext(MicroMetricInterceptor.name);
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -34,14 +34,14 @@ export class MicroMetricInterceptor implements NestInterceptor {
         this.latencyMetric.set({ service: serviceName, status: MicroStatus.SUCCESS }, elapsedTime);
 
         const timeString = getTimeString(elapsedTime);
-        this.logger.info('micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
+        this.logService.info('micro: %s (%s) %s', serviceName, timeString, MicroStatus.SUCCESS);
       }),
       catchError(err => {
         const elapsedTime = new Date().getTime() - startedAt;
         this.latencyMetric.set({ service: serviceName, status: err.status }, elapsedTime);
 
         const timeString = getTimeString(elapsedTime);
-        this.logger.warn('micro: %s (%s) %s', serviceName, timeString, err.status);
+        this.logService.warn('micro: %s (%s) %s', serviceName, timeString, err.status);
         return throwError(() => err);
       }),
     );

@@ -30,7 +30,7 @@ export class GrpcTransport extends BaseTransport {
   }
 
   getOptions(): NestGrpcOptions {
-    // `${config.get('env') == ENV.DEV ? 'src' : 'dist'}/**/*.proto`; // TODO: env
+    // `${configService.get('env') == ENV.DEV ? 'src' : 'dist'}/**/*.proto`; // TODO: env
     const filePattern = this.options.filePattern ?? `src/**/*.proto`;
     const protoPath = glob.sync(filePattern);
     const packages = protoPath.map(

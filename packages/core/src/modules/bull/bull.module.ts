@@ -9,8 +9,8 @@ import { BullConfig } from './bull.config';
     NestBullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (cfg: ConfigService): BullRootModuleOptions => {
-        const bullCfg = cfg.parse(BullConfig, 'bull');
+      useFactory: (configService: ConfigService): BullRootModuleOptions => {
+        const bullCfg = configService.parse(BullConfig, 'bull');
         return { redis: { ...bullCfg } };
       },
     }),

@@ -22,11 +22,11 @@ import { GatewayConfig } from './gateway.config';
 
 export class GatewayService {
   static async bootstrap(app: NestExpressApplication, middlewares?: ApplicationMiddlewares): Promise<void> {
-    const config = app.get(ConfigService);
-    const logger = await app.resolve(LogService);
-    logger.setContext(GatewayService.name);
+    const configService = app.get(ConfigService);
+    const logService = await app.resolve(LogService);
+    logService.setContext(GatewayService.name);
 
-    const gatewayConfig = config.parseOrThrow(GatewayConfig, 'gateway');
+    const gatewayConfig = configService.parseOrThrow(GatewayConfig, 'gateway');
     const { port, contextPath } = gatewayConfig;
 
     app.setGlobalPrefix(contextPath);
@@ -51,19 +51,19 @@ export class GatewayService {
 
     if (middlewares.beforeInit) await middlewares.beforeInit(app);
 
-    const gatewayName = config.get('description', 'Gateway');
+    const gatewayName = configService.get('description', 'Gateway');
     await app.listen(port, () => {
       const baseUrl = `http://localhost:${port}`;
-      logger.info(`🚀 Application %s is running on %s`, gatewayName, joinUrl(baseUrl, { paths: [contextPath] }));
+      logService.info(`🚀 Application %s is running on %s`, gatewayName, joinUrl(baseUrl, { paths: [contextPath] }));
 
       if (useSwagger) {
-        const swagger = config.parse(SwaggerConfig, 'gateway.swagger');
-        logger.info(`📕️ Access API Document at %s`, joinUrl(baseUrl, { paths: [contextPath, swagger.path] }));
+        const swagger = configService.parse(SwaggerConfig, 'gateway.swagger');
+        logService.info(`📕️ Access API Document at %s`, joinUrl(baseUrl, { paths: [contextPath, swagger.path] }));
       }
 
       if (useBullBoard) {
-        const bull = config.parse(BullConfig, 'bull');
-        logger.info(
+        const bull = configService.parse(BullConfig, 'bull');
+        logService.info(
           `🎯 Access bull dashboard at %s. Make sure Redis is running by default`,
           joinUrl(baseUrl, { paths: [contextPath, bull.board.path] }),
         );
@@ -74,15 +74,15 @@ export class GatewayService {
   }
 
   private static setupSwagger(app: NestExpressApplication): boolean {
-    const config = app.get(ConfigService);
-    const gatewayConfig = config.parse(GatewayConfig, 'gateway');
+    const configService = app.get(ConfigService);
+    const gatewayConfig = configService.parse(GatewayConfig, 'gateway');
     if (!gatewayConfig.swagger.enable) return false;
 
     const { swagger } = gatewayConfig;
     const options = new DocumentBuilder()
-      .setTitle(swagger.title || config.get('name'))
-      .setDescription(swagger.description || config.get('description'))
-      .setVersion(swagger.version || config.get('version'))
+      .setTitle(swagger.title || configService.get('name'))
+      .setDescription(swagger.description || configService.get('description'))
+      .setVersion(swagger.version || configService.get('version'))
       .setLicense(swagger.license?.name, swagger.license?.url)
       .addServer(swagger.server || `http://localhost:${gatewayConfig.port}`);
 
@@ -121,8 +121,8 @@ export class GatewayService {
   }
 
   private static setUpBullBoard(app: NestExpressApplication): boolean {
-    const config = app.get(ConfigService);
-    const bull = config.parse(BullConfig, 'bull');
+    const configService = app.get(ConfigService);
+    const bull = configService.parse(BullConfig, 'bull');
 
     const queues = bull.queue?.map(q => {
       const { host, port, password } = bull;
@@ -147,8 +147,8 @@ export class GatewayService {
   }
 
   private static setUpViewEngine(app: NestExpressApplication) {
-    const config = app.get(ConfigService);
-    const gatewayConfig = config.parse(GatewayConfig, 'gateway');
+    const configService = app.get(ConfigService);
+    const gatewayConfig = configService.parse(GatewayConfig, 'gateway');
     if (!gatewayConfig?.static) return false;
 
     const { staticPath, viewPath } = gatewayConfig.static;
@@ -165,8 +165,8 @@ export class GatewayService {
    * @private
    */
   private static setupSecurity(app: NestExpressApplication) {
-    const config = app.get(ConfigService);
-    const gatewayConfig = config.parse(GatewayConfig, 'gateway');
+    const configService = app.get(ConfigService);
+    const gatewayConfig = configService.parse(GatewayConfig, 'gateway');
     if (gatewayConfig?.csrf) app.use(csurf());
     if (gatewayConfig?.cors) app.enableCors(gatewayConfig.cors);
     if (gatewayConfig?.helmet) app.use(helmet(gatewayConfig.helmet));

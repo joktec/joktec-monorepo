@@ -21,20 +21,20 @@ export const Breaker = (
     CircuitBreaker.isOurError(new Error()); // $ExpectType boolean
 
     descriptor.value = async function (...args: any[]) {
-      const logger: LogService = this.logService;
-      logger.setContext(Breaker.name);
+      const logService: LogService = this.logService;
+      logService.setContext(Breaker.name);
       try {
         if (isEmpty(breaker)) {
           const configService: ConfigService = this.configService;
           const option: BreakerConfig = isObject(opts) ? opts : configService.get<BreakerConfig>(opts as string) || {};
           breaker = new CircuitBreaker(newMethod, option);
-          logger.debug(option, '`%s` breaker opts', propertyKey);
-          logger.info('`%s` breaker is created', propertyKey);
+          logService.debug(option, '`%s` breaker opts', propertyKey);
+          logService.info('`%s` breaker is created', propertyKey);
         }
-        logger.debug(breaker.toJSON(), '`%s` breaker current state is', propertyKey);
+        logService.debug(breaker.toJSON(), '`%s` breaker current state is', propertyKey);
         return await breaker.fire(this, args);
       } catch (error) {
-        logger.error(error, '`%s` breaker error', propertyKey);
+        logService.error(error, '`%s` breaker error', propertyKey);
         return fallback(error);
       }
     };

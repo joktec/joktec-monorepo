@@ -5,8 +5,8 @@ import { toRoute } from '../../utils';
 import { BullConfig } from '../bull';
 import { ConfigModule, ConfigService } from '../config';
 
-export function initServerStatic(cfg: ConfigService): ServeStaticModuleOptions[] {
-  const gatewayConfig = cfg.parse(GatewayConfig, 'gateway');
+export function initServerStatic(configService: ConfigService): ServeStaticModuleOptions[] {
+  const gatewayConfig = configService.parse(GatewayConfig, 'gateway');
   if (!gatewayConfig?.static) return [];
 
   const { staticPath, excludePath } = gatewayConfig.static;
@@ -15,7 +15,7 @@ export function initServerStatic(cfg: ConfigService): ServeStaticModuleOptions[]
   const { swagger } = gatewayConfig;
   if (swagger?.enable) excludePath.push(swagger.path);
 
-  const bull = cfg.parse(BullConfig, 'bull');
+  const bull = configService.parse(BullConfig, 'bull');
   if (bull?.board?.enable) excludePath.push(bull?.board?.path);
 
   return [{ rootPath: resolve(staticPath), exclude: excludePath.map(toRoute) }];
@@ -26,6 +26,6 @@ export function serverStaticFactory() {
     isGlobal: true,
     imports: [ConfigModule],
     inject: [ConfigService],
-    useFactory: (cfg: ConfigService) => initServerStatic(cfg),
+    useFactory: (configService: ConfigService) => initServerStatic(configService),
   };
 }
