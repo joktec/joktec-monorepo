@@ -72,7 +72,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   protected qb(query?: IMongoRequest<T>, options: IMongoOptions<T> = {}) {
     const qb = this.model.find<T>();
-    qb.setOptions({ ...options, language: query?.language || '*' });
+    qb.setOptions({ ...options });
 
     if (query?.near) qb.center(query.near);
     if (query?.keyword) qb.search(query.keyword);
@@ -89,7 +89,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   protected pipeline(query?: IMongoRequest<T>, options?: IMongoAggregateOptions): Aggregate<Array<any>> {
     const aggregations = this.model.aggregate();
 
-    if (options) aggregations.option({ ...options, language: query?.language || '*' });
+    if (options) aggregations.option({ ...options });
     if (query?.near) MongoPipeline.near(query.near).map(near => aggregations.near(near));
     if (query?.keyword) aggregations.match(MongoPipeline.search(query.keyword));
     if (query?.condition) aggregations.match(MongoPipeline.match(query.condition));

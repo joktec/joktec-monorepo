@@ -1,6 +1,13 @@
 import { Clazz, toArray, toBool } from '@joktec/core';
-import { isEmpty, isString } from 'lodash';
-import { PipelineStage, QueryOptions, Schema } from 'mongoose';
+import { isEmpty, isObject, isString } from 'lodash';
+import { QueryOptions, Schema } from 'mongoose';
+import {
+  IMongoFacetPipeline,
+  IMongoLookupPipeline,
+  IMongoMergePipeline,
+  IMongoPipeline,
+  IMongoUnionWithPipeline,
+} from '../models';
 
 export interface ParanoidOptions {
   deletedAt?: { name?: string; type?: Clazz };
@@ -16,32 +23,46 @@ function injectFilter(filter: Record<string, any>, key: string, paranoid: boolea
   return Object.assign(filter, { [key]: null });
 }
 
-function rejectPipeline(pipelines: PipelineStage[]): Exclude<PipelineStage, PipelineStage.Merge | PipelineStage.Out>[] {
-  const result: Exclude<PipelineStage, PipelineStage.Merge | PipelineStage.Out>[] = [];
-  pipelines.map(p => {
-    if ('$merge' in p) return;
-    if ('$out' in p) return;
-    result.push(p);
-  });
-  return result;
-}
-
-function injectMatchPipeline(pipelines: PipelineStage[], key: string, paranoid: boolean = true): PipelineStage[] {
-  const newPipelines: PipelineStage[] = [];
+function injectMatchPipeline(pipelines: IMongoPipeline[], key: string, paranoid: boolean = true): IMongoPipeline[] {
+  const newPipelines: IMongoPipeline[] = [];
   for (const pipeline of toArray(pipelines)) {
-    if ('$match' in pipeline) injectFilter(pipeline.$match, key, paranoid);
-    if ('$lookup' in pipeline) {
-      const lookupPipelines = injectMatchPipeline(pipeline.$lookup.pipeline, key, paranoid);
-      if (lookupPipelines.length) pipeline.$lookup.pipeline = rejectPipeline(lookupPipelines);
+    if ('$match' in pipeline) {
+      injectFilter(pipeline.$match, key, paranoid);
     }
+
+    if ('$lookup' in pipeline) {
+      const subPipelines = injectMatchPipeline(pipeline.$lookup.pipeline, key, paranoid);
+      if (subPipelines.length) {
+        pipeline.$lookup.pipeline = subPipelines.map(subPipeline => subPipeline as IMongoLookupPipeline);
+      }
+    }
+
     if ('$unionWith' in pipeline) {
       const unionWith = isString(pipeline.$unionWith) ? { coll: pipeline.$unionWith } : pipeline.$unionWith;
-      const unionWithPipes = injectMatchPipeline(unionWith.pipeline, key, paranoid);
-      if (unionWithPipes.length) {
-        unionWith.pipeline = rejectPipeline(unionWithPipes);
+      const subPipelines = injectMatchPipeline(unionWith.pipeline, key, paranoid);
+      if (subPipelines.length) {
+        unionWith.pipeline = subPipelines.map(subPipeline => subPipeline as IMongoUnionWithPipeline);
         pipeline.$unionWith = unionWith;
       }
     }
+
+    if ('$facet' in pipeline) {
+      const fields = Object.keys(pipeline.$facet);
+      for (const field of fields) {
+        const subPipelines = injectMatchPipeline(pipeline.$facet[field], key, paranoid);
+        if (subPipelines.length) {
+          pipeline.$facet[field] = subPipelines.map(subPipeline => subPipeline as IMongoFacetPipeline);
+        }
+      }
+    }
+
+    if ('$merge' in pipeline && isObject(pipeline['$merge'].whenMatched)) {
+      const subPipelines = injectMatchPipeline(pipeline['$merge'].whenMatched, key, paranoid);
+      if (subPipelines.length) {
+        pipeline['$merge'].whenMatched = subPipelines.map(subPipeline => subPipeline as IMongoMergePipeline);
+      }
+    }
+
     newPipelines.push(pipeline);
   }
 
@@ -94,7 +115,7 @@ export const ParanoidPlugin = (schema: Schema, opts?: ParanoidOptions) => {
   // Aggregate
   schema.pre('aggregate', function (next, options: ParanoidQueryOptions) {
     const paranoid = toBool(options?.paranoid, true);
-    const pipelines: PipelineStage[] = injectMatchPipeline(this.pipeline(), deletedAtKey, paranoid);
+    const pipelines: IMongoPipeline[] = injectMatchPipeline(this.pipeline(), deletedAtKey, paranoid);
     while (this.pipeline().length) this.pipeline().shift();
     while (pipelines.length) this.pipeline().push(pipelines.shift());
     next();

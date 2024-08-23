@@ -19,8 +19,6 @@ import { IsEmailOptions } from 'validator/lib/isEmail';
 import { IPropOptions } from '../prop.decorator';
 
 export interface StringPropOptions extends PropOptionsForString {
-  i18n?: boolean;
-  slug?: string;
   isString?: boolean | [boolean, string] | { message?: string };
   isEmail?: boolean | [boolean, string] | (IsEmailOptions & { message?: string });
   isPhone?: boolean | [boolean, string] | { locale?: string; strictMode?: boolean; message?: string };
