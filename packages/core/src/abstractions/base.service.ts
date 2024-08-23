@@ -1,9 +1,7 @@
 import { Inject, OnModuleInit } from '@nestjs/common';
-import { REQUEST } from '../base';
 import {
   DeepPartial,
   Entity,
-  ExpressRequest,
   IBaseRepository,
   IBaseRequest,
   IBaseService,
@@ -16,7 +14,6 @@ import { cloneInstance } from '../utils';
 export abstract class BaseService<T extends Entity, ID = string, REQ extends IBaseRequest<T> = IBaseRequest<T>>
   implements OnModuleInit, IBaseService<T, ID, REQ>
 {
-  @Inject(REQUEST) public request: ExpressRequest;
   @Inject() public readonly logService: LogService;
   @Inject() public readonly configService: ConfigService;
 
@@ -62,35 +59,23 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   }
 
   async create(entity: DeepPartial<T>): Promise<T> {
-    const language = this.request?.query?.language;
     const processEntity: DeepPartial<T> = cloneInstance(entity);
-    return this.repository.create(processEntity, { language });
+    return this.repository.create(processEntity);
   }
 
   async update(id: ID, entity: DeepPartial<T>): Promise<T> {
-    const language = this.request?.query?.language;
     const condition: ICondition<T> = { id } as object;
     const processEntity: DeepPartial<T> = cloneInstance(entity);
-    return this.repository.update(condition, processEntity, { language });
+    return this.repository.update(condition, processEntity);
   }
 
   async delete(id: ID): Promise<T> {
     const condition: ICondition<T> = { id } as object;
-    const opts = { userId: null };
-    if (this.request.payload) {
-      const payload = this.request.payload;
-      Object.assign(opts, { userId: payload.sub });
-    }
-    return this.repository.delete(condition, opts);
+    return this.repository.delete(condition);
   }
 
   async restore(id: ID): Promise<T> {
     const condition: ICondition<T> = { id } as object;
-    const opts = { userId: null };
-    if (this.request.payload) {
-      const payload = this.request.payload;
-      Object.assign(opts, { userId: payload.sub });
-    }
-    return this.repository.restore(condition, opts);
+    return this.repository.restore(condition);
   }
 }

@@ -1,6 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
-import { has, head, set } from 'lodash';
+import { head } from 'lodash';
 import { catchError, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ExpressRequest, ExpressResponse, IBaseRequest, IResponseDto } from '../models';
@@ -46,10 +46,6 @@ export class ExpressInterceptor<T = any> implements NestInterceptor<T, ExpressRe
     if (!query.language) {
       const language = resolverLanguage(req.headers['accept-language'] || '');
       query.language = head(language) || '*';
-    }
-
-    if (has(req.params, 'id')) {
-      set(query, 'condition.id', req.params.id);
     }
 
     return query;

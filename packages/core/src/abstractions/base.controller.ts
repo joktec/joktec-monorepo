@@ -31,7 +31,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { set, startCase } from 'lodash';
+import { startCase } from 'lodash';
 import { ApiNotAllowedEndpoint, ApiSchema, ApiUseApiKey, ApiUseBearer } from '../decorators';
 import { NotFoundException } from '../exceptions';
 import {
@@ -179,8 +179,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
     @UseInterceptors(...toArray(props.detail?.hooks))
     @applyDecorators(...toArray(props.detail?.decorators))
     async detail(@Param('id') id: ID, @Query() query: QueryDto): Promise<T> {
-      set(query, 'condition.id', id);
-      const detail = await this.service.findOne(query);
+      const detail = await this.service.findById(id, query);
       if (!detail) throw new NotFoundException();
       return detail;
     }

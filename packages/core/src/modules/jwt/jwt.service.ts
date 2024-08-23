@@ -46,8 +46,7 @@ export class JwtService {
   async verify(token: string): Promise<JwtPayload> {
     try {
       const res = jwt.verify(token, this.config.secretKey, { complete: true });
-      const payload = res.payload as JwtPayload;
-      return { ...payload, userId: payload.userId || payload.sub } as JwtPayload;
+      return res.payload as JwtPayload;
     } catch (err) {
       if (err.name === 'TokenExpiredError') throw new UnauthorizedException(ExceptionMessage.TOKEN_EXPIRED);
       if (err.name === 'NotBeforeError') throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN_FORMAT);
@@ -62,8 +61,7 @@ export class JwtService {
 
     try {
       const res = jwt.verify(token, this.config.refreshKey, { ignoreExpiration: true, complete: true });
-      const payload = res.payload as JwtPayload;
-      return { ...payload, userId: payload.userId || payload.sub } as JwtPayload;
+      return res.payload as JwtPayload;
     } catch (err) {
       throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
     }
@@ -72,8 +70,7 @@ export class JwtService {
   async decode(token: string): Promise<JwtPayload> {
     try {
       const res = jwt.decode(token, { complete: true });
-      const payload = res.payload as JwtPayload;
-      return { ...payload, userId: payload.userId || payload.sub } as JwtPayload;
+      return res.payload as JwtPayload;
     } catch (err) {
       throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
     }

@@ -1,5 +1,5 @@
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
-import { DeepPartial, Entity, IBaseRequest, ICondition, ILanguage, IListResponseDto, IResponseDto } from '../models';
+import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto, IResponseDto } from '../models';
 import { ConfigService, LogService } from '../modules';
 
 export interface IBaseController<T, ID> {
@@ -55,13 +55,13 @@ export interface IBaseRepository<T extends Entity, ID> {
 
   findById(id: ID, query?: IBaseRequest<T>): Promise<T>;
 
-  create(body: DeepPartial<T>, opts?: { language?: ILanguage }): Promise<T>;
+  create(body: DeepPartial<T>, opts?: Record<string, any>): Promise<T>;
 
-  update(condition: ICondition<T>, body: DeepPartial<T>, opts?: { language?: ILanguage }): Promise<T>;
+  update(condition: ICondition<T>, body: DeepPartial<T>, opts?: Record<string, any>): Promise<T>;
 
-  delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: any }): Promise<T>;
+  delete(condition: ICondition<T>, opts?: Record<string, any> & { force?: boolean }): Promise<T>;
 
-  restore(condition: ICondition<T>, opts?: { userId?: any }): Promise<T>;
+  restore(condition: ICondition<T>, opts?: Record<string, any>): Promise<T>;
 }
 
 export interface IExceptionFilter extends ExceptionFilter {
