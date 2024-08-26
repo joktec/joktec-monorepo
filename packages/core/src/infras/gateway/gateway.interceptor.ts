@@ -20,9 +20,10 @@ export class GatewayMetricInterceptor implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const skipPath = ['/health', '/metrics', '/bulls', '/swagger', '/swagger-json', '/favicon.ico'];
     const request = context.switchToHttp().getRequest<ExpressRequest>();
     const { method, baseUrl, path, originalUrl } = request;
-    if (originalUrl === '/health' || originalUrl === '/metric') {
+    if (skipPath.includes(originalUrl)) {
       return next.handle().pipe();
     }
 

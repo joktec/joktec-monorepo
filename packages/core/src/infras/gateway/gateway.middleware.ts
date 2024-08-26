@@ -17,8 +17,9 @@ export class GatewayMetricMiddleware implements NestMiddleware {
   }
 
   use(req: Request, res: Response, next: NextFunction): void {
+    const skipPath = ['/health', '/metrics', '/bulls', '/swagger', '/swagger-json', '/favicon.ico'];
     const { method, baseUrl, path, originalUrl } = req;
-    if (originalUrl === '/health' || originalUrl === '/metrics') {
+    if (skipPath.includes(originalUrl)) {
       next();
       return;
     }
