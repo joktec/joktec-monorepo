@@ -18,7 +18,7 @@ export class GatewayMetricMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction): void {
     const { method, baseUrl, path, originalUrl } = req;
-    if (originalUrl === '/health' || originalUrl === '/metric') {
+    if (originalUrl === '/health' || originalUrl === '/metrics') {
       next();
       return;
     }
