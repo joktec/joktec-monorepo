@@ -1,7 +1,7 @@
 import { makeCounterProvider, makeHistogramProvider } from '@willsoto/nestjs-prometheus';
 
-export const GATEWAY_DURATION_METRIC = 'http_call_duration';
-export const GATEWAY_TOTAL_METRIC = 'http_call_total';
+export const GATEWAY_DURATION_METRIC = 'gateway_call_duration';
+export const GATEWAY_TOTAL_METRIC = 'gateway_call_total';
 
 export enum GatewayStatus {
   SUCCESS = 'SUCCESS',
