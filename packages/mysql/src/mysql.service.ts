@@ -1,11 +1,9 @@
-import { writeFileSync } from 'fs';
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { pick } from 'lodash';
 import { Model, ModelCtor, Sequelize } from 'sequelize-typescript';
 import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
 import { MysqlClient } from './mysql.client';
 import { MysqlConfig } from './mysql.config';
-const sequelizeErd = require('sequelize-erd');
 
 const RETRY_OPTS = 'mysql.retry';
 
@@ -58,31 +56,5 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
       this.getClient(conId).addModels([model]);
     }
     return model;
-  }
-
-  /**
-   * See more: https://www.npmjs.com/package/sequelize-erd
-   * @param conId
-   */
-  public async exportDiagram(conId: string = DEFAULT_CON_ID): Promise<void> {
-    const config = this.getConfig(conId);
-    const svg = await sequelizeErd({
-      source: this.getClient(conId),
-      format: 'json', // See available options below
-      engine: 'circo', // See available options below
-      arrowShapes: {
-        // Any of the below 4 options formatted ['startShape', 'endShape']. If excluded, the default is used.
-        BelongsToMany: ['crow', 'crow'], // Default: ['none', 'crow']
-        BelongsTo: ['inv', 'crow'], // Default: ['crow', 'none']
-        HasMany: ['crow', 'inv'], // Default: ['none', 'crow']
-        HasOne: ['dot', 'dot'], // Default: ['none', 'none']
-      },
-      arrowSize: 1.2, // Default: 0.6
-      lineWidth: 1, // Default: 0.75
-      color: 'green3', // Default: 'black'
-    });
-
-    const filename = `${config.database}_erd.svg`;
-    writeFileSync(filename, svg);
   }
 }
