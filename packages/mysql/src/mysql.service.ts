@@ -1,7 +1,6 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { pick } from 'lodash';
-import { Model, ModelCtor, Sequelize } from 'sequelize-typescript';
-import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
+import { Model, ModelCtor, Sequelize, SequelizeOptions } from 'sequelize-typescript';
 import { MysqlClient } from './mysql.client';
 import { MysqlConfig } from './mysql.config';
 
