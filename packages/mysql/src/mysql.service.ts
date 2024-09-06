@@ -1,11 +1,11 @@
 import { writeFileSync } from 'fs';
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import { pick } from 'lodash';
-import sequelizeErd from 'sequelize-erd';
 import { Model, ModelCtor, Sequelize } from 'sequelize-typescript';
 import { SequelizeOptions } from 'sequelize-typescript/dist/sequelize/sequelize/sequelize-options';
 import { MysqlClient } from './mysql.client';
 import { MysqlConfig } from './mysql.config';
+const sequelizeErd = require('sequelize-erd');
 
 const RETRY_OPTS = 'mysql.retry';
 
