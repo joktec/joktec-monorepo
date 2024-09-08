@@ -1,6 +1,6 @@
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, getTimeString, Inject, Injectable, Retry } from '@joktec/core';
 import { pick } from 'lodash';
-import { Model, ModelCtor, Sequelize, SequelizeOptions } from 'sequelize-typescript';
+import { Model, ModelCtor, Repository, Sequelize, SequelizeOptions } from 'sequelize-typescript';
 import { MysqlClient } from './mysql.client';
 import { MysqlConfig } from './mysql.config';
 
@@ -8,7 +8,7 @@ const RETRY_OPTS = 'mysql.retry';
 
 @Injectable()
 export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> implements MysqlClient {
-  constructor() {
+  constructor(@Inject('MODELS') private models: ModelCtor<any>[]) {
     super('mysql', MysqlConfig);
   }
 
@@ -19,9 +19,12 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
       ...connection,
       dialect: config.dialect,
       dialectOptions: { charset: config.charset, connectTimeout: config.connectTimeout },
+      repositoryMode: true,
+      benchmark: config.debug,
       logging: (sql: string, timing?: number) => {
-        this.logService.debug('SQL statement: %s', sql);
-        this.logService.trace('SQL execute in %j', timing);
+        if (config.debug) {
+          this.logService.info('SQL statement (%s): %s', getTimeString(timing), sql);
+        }
       },
     };
     if (config.slaves?.length) {
@@ -33,9 +36,19 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
   }
 
   async start(client: Sequelize, conId: string = DEFAULT_CON_ID): Promise<void> {
+    const config = this.getConfig(conId);
+
     try {
       await client.authenticate();
       this.logService.info('`%s` Connected to MySQL successfully', conId);
+
+      if (this.models?.length) {
+        client.addModels(this.models);
+        if (config.sync) {
+          await client.sync({ alter: { drop: false } });
+          this.logService.info('`%s` Sync MySQL schema successfully', conId);
+        }
+      }
     } catch (err) {
       this.logService.error(err, '`%s` Error when connecting to MySQL', conId);
     }
@@ -50,10 +63,11 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
     }
   }
 
-  public getModel<T extends Model<T>>(model: ModelCtor<T>, conId: string = DEFAULT_CON_ID): ModelCtor<T> {
-    if (!this.getClient(conId).isDefined(model.name)) {
-      this.getClient(conId).addModels([model]);
-    }
-    return model;
+  public getModel<T extends Model<T>>(model: string | ModelCtor<T>, conId: string = DEFAULT_CON_ID): ModelCtor<T> {
+    return this.getClient(conId).model(model) as ModelCtor<T>;
+  }
+
+  public getRepository<T extends Model<T>>(model: ModelCtor<T>, conId: string = DEFAULT_CON_ID): Repository<T> {
+    return this.getClient(conId).getRepository(model);
   }
 }

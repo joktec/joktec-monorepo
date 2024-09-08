@@ -62853,6 +62853,12 @@
           "items": {
             "$ref": "#/definitions/MysqlSlaveConfig"
           }
+        },
+        "modelPath": {
+          "type": "string"
+        },
+        "debug": {
+          "type": "boolean"
         }
       },
       "required": [

@@ -12,7 +12,7 @@ import {
 } from '@joktec/core';
 import { FindOptions, RestoreOptions } from 'sequelize';
 import { DestroyOptions } from 'sequelize/types/model';
-import { Model, ModelCtor } from 'sequelize-typescript';
+import { Model, ModelCtor, Repository } from 'sequelize-typescript';
 import { MysqlHelper } from './helpers';
 import { IMysqlRequest, MysqlId } from './models';
 import { IMysqlRepository } from './mysql.client';
@@ -32,8 +32,11 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   async onModuleInit() {
     this.logService.setContext(this.constructor.name);
-    this.mysqlService.getModel(this.model, this.conId);
-    await this.model.sync({ alter: { drop: false } });
+    this.model = this.mysqlService.getModel(this.model, this.conId);
+  }
+
+  get repository(): Repository<T> {
+    return this.mysqlService.getRepository(this.model, this.conId);
   }
 
   @MysqlCatch
@@ -112,10 +115,13 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
   }
 
   @MysqlCatch
-  async upsert(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
+  async upsert(body: DeepPartial<T>, onConflicts: (keyof T)[]): Promise<T> {
     const fields: any[] = Object.keys(body);
-    const pk: any = this.model.primaryKeyAttribute;
-    const [row, result] = await this.model.upsert(body as any, { returning: true, fields, conflictFields: [pk] });
+    const [row, result] = await this.model.upsert(body as any, {
+      returning: true,
+      fields,
+      conflictFields: onConflicts,
+    });
     if (!row || !result) return null;
     return row;
   }

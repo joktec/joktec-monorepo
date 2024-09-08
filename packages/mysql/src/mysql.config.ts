@@ -1,4 +1,14 @@
-import { ClientConfig, IsArray, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/core';
+import {
+  ClientConfig,
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsTypes,
+} from '@joktec/core';
 import { pick } from 'lodash';
 import { ConnectionOptions } from 'sequelize/types/sequelize';
 
@@ -80,6 +90,18 @@ export class MysqlConfig extends ClientConfig {
   @IsTypes(MysqlSlaveConfig, { each: true })
   @IsOptional()
   slaves?: MysqlSlaveConfig[] = [];
+
+  @IsOptional()
+  @IsBoolean()
+  debug?: boolean = false;
+
+  @IsOptional()
+  @IsBoolean()
+  benchmark?: boolean = false;
+
+  @IsOptional()
+  @IsBoolean()
+  sync?: boolean = true;
 
   constructor(props: MysqlConfig) {
     super(props);
