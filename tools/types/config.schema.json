@@ -62854,10 +62854,13 @@
             "$ref": "#/definitions/MysqlSlaveConfig"
           }
         },
-        "modelPath": {
-          "type": "string"
-        },
         "debug": {
+          "type": "boolean"
+        },
+        "benchmark": {
+          "type": "boolean"
+        },
+        "sync": {
           "type": "boolean"
         }
       },

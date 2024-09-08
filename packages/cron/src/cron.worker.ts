@@ -67,7 +67,7 @@ export abstract class CronWorker<C extends CronModel> implements OnModuleInit {
 
     await this.processOnCronStartHook(cron);
     nextCron.updatedAt = new Date();
-    await this.cronRepo.upsert({}, nextCron);
+    await this.cronRepo.upsert(nextCron, ['id']);
 
     if (nextCron.status == CronStatus.DONE) {
       await this.processOnCronDoneHook(nextCron);
