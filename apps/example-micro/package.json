@@ -38,7 +38,7 @@
     "@grpc/grpc-js": "^1.11.2",
     "@grpc/proto-loader": "^0.7.13",
     "@joktec/core": "0.0.152",
-    "@joktec/mysql": "0.0.156",
+    "@joktec/mysql": "0.0.158",
     "amqplib": "^0.10.4",
     "amqp-connection-manager": "^4.1.14",
     "ioredis": "^5.4.1"
