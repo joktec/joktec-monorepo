@@ -1,14 +1,14 @@
 import { AbstractClientService, DEFAULT_CON_ID, getTimeString, Inject, Injectable, Retry } from '@joktec/core';
 import { pick } from 'lodash';
 import { Model, ModelCtor, Repository, Sequelize, SequelizeOptions } from 'sequelize-typescript';
-import { MysqlClient } from './mysql.client';
+import { MODEL_REGISTRY_KEY, MysqlClient, MysqlModelRegistry } from './mysql.client';
 import { MysqlConfig } from './mysql.config';
 
 const RETRY_OPTS = 'mysql.retry';
 
 @Injectable()
 export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> implements MysqlClient {
-  constructor(@Inject('MODELS') private models: ModelCtor<any>[]) {
+  constructor(@Inject(MODEL_REGISTRY_KEY) private modelRegistry: MysqlModelRegistry) {
     super('mysql', MysqlConfig);
   }
 
@@ -42,8 +42,8 @@ export class MysqlService extends AbstractClientService<MysqlConfig, Sequelize> 
       await client.authenticate();
       this.logService.info('`%s` Connected to MySQL successfully', conId);
 
-      if (this.models?.length) {
-        client.addModels(this.models);
+      if (this.modelRegistry[conId]) {
+        client.addModels(this.modelRegistry[conId]);
         if (config.sync) {
           await client.sync({ alter: { drop: false } });
           this.logService.info('`%s` Sync MySQL schema successfully', conId);

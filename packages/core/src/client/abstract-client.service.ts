@@ -1,4 +1,4 @@
-import { Inject, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { Inject, OnApplicationBootstrap, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { isEmpty } from 'lodash';
 import mergeDeep from 'merge-deep';
 import { ExceptionMessage, InternalServerException } from '../exceptions';
@@ -10,7 +10,7 @@ import { ClientConfig, DEFAULT_CON_ID } from './client.config';
 import { InvalidClientConfigException } from './client.exception';
 
 export abstract class AbstractClientService<IConfig extends ClientConfig, IClient = any>
-  implements Client<IConfig, IClient>, OnModuleInit, OnModuleDestroy
+  implements Client<IConfig, IClient>, OnModuleInit, OnApplicationBootstrap, OnModuleDestroy
 {
   protected context: string = this.constructor.name;
   private configs: { [conId: string]: IConfig } = {};
@@ -26,7 +26,9 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
 
   async onModuleInit(): Promise<void> {
     this.logService.setContext(this.context);
+  }
 
+  async onApplicationBootstrap(): Promise<void> {
     const config: IConfig = this.configService.get<IConfig>(this.service);
     if (isEmpty(config)) {
       this.logService.warn('%s service not found config!', this.service);

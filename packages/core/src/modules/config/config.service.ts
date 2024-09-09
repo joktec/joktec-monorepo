@@ -4,8 +4,8 @@ import { validateSync, ValidationError, ValidatorOptions } from 'class-validator
 import { ExceptionMessage, IValidationProperty } from '../../exceptions';
 import { Constructor } from '../../models';
 import { buildError } from '../../utils';
-import { AppConfig, initConfig } from './config.factory';
 import { ConfigException } from './config.exception';
+import { AppConfig, initConfig } from './config.factory';
 
 @Injectable()
 export class ConfigService extends JsConfigService implements OnModuleInit {

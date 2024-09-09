@@ -1,26 +1,21 @@
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
-import { getModelForClass, ReturnModelType } from '@typegoose/typegoose';
-import { has } from 'lodash';
+import { AbstractClientService, Clazz, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
+import { getModelForClass, getModelWithString } from '@typegoose/typegoose';
 import mongoose, { ClientSession, ClientSessionOptions, Connection as Mongoose } from 'mongoose';
 import { QueryHelper } from './helpers';
 import { MongoSchema } from './models';
-import { MongoClient } from './mongo.client';
+import { MODEL_REGISTRY_KEY, MongoClient, MongoModelRegistry, MongoType } from './mongo.client';
 import { MongoConfig } from './mongo.config';
 
 const RETRY_OPTS = 'mongo.retry';
 
 @Injectable()
 export class MongoService extends AbstractClientService<MongoConfig, Mongoose> implements MongoClient {
-  private readonly model: { [conId: string]: { [model: string]: any } } = {};
-
-  constructor() {
+  constructor(@Inject(MODEL_REGISTRY_KEY) private modelRegistry: MongoModelRegistry) {
     super('mongo', MongoConfig);
   }
 
   @Retry(RETRY_OPTS)
   protected async init(config: MongoConfig): Promise<Mongoose> {
-    if (!this.model[config.conId]) this.model[config.conId] = {};
-
     let uri = this.buildUri(config);
     if (config.params) uri += `?${config.params}`;
     const connectOptions: mongoose.ConnectOptions = {
@@ -61,24 +56,45 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   }
 
   async start(client: Mongoose, conId: string = DEFAULT_CON_ID): Promise<void> {
-    if (!this.isConnected(conId)) return;
+    this.logService.info('OnStart MongoService');
+    if (client.readyState !== 1) return;
 
-    const serverInfo = await client.db.admin().serverInfo();
-    const version = serverInfo.version;
+    const version = await this.getVersion(conId);
     this.logService.info('`%s` Connected to MongoDB (%s) successfully', conId, version);
-
-    const numericVersion = version.split('.').map(v => parseInt(v));
+    const numericVersion = version.split('.').map((v: string) => parseInt(v));
     if (numericVersion[0] < 5) {
       this.logService.warn(
         `Warning: MongoDB version %s is less than 5.0. Some features may not work correctly. Please consider upgrading MongoDB to version 5.0 or higher`,
         version,
       );
     }
+
+    if (this.modelRegistry[conId]) {
+      for (const schemaClass of Object.values(this.modelRegistry[conId])) {
+        await this.registerModel(schemaClass, conId);
+      }
+    }
   }
 
   public async getVersion(conId: string = DEFAULT_CON_ID): Promise<string> {
     const serverInfo = await this.getClient(conId).db.admin().serverInfo();
     return serverInfo.version;
+  }
+
+  public async registerModel(schemaClass: typeof MongoSchema, conId: string = DEFAULT_CON_ID) {
+    const config = this.getConfig(conId);
+    const opts = { existingConnection: this.getClient(conId) };
+
+    const model = getModelForClass<typeof MongoSchema, QueryHelper<any>>(schemaClass, opts);
+    if (config.debug) this.logService.info('`%s` Schema `%s` registered', conId, schemaClass.name);
+
+    if (config.autoIndex) {
+      const diffIndexes = await model.diffIndexes();
+      if (diffIndexes.toCreate.length || diffIndexes.toDrop.length) {
+        await model.syncIndexes({ continueOnError: true });
+        if (config.debug) this.logService.info('`%s` Schema `%s` sync indexes', conId, model.modelName);
+      }
+    }
   }
 
   async stop(client: Mongoose, conId: string = DEFAULT_CON_ID): Promise<void> {
@@ -100,33 +116,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     return session;
   }
 
-  public getModel<T extends MongoSchema>(
-    schemaClass: typeof MongoSchema,
-    conId: string = DEFAULT_CON_ID,
-  ): ReturnModelType<typeof MongoSchema, QueryHelper<T>> {
-    if (!this.isConnected(conId)) return null;
-    if (has(this.model, [conId, schemaClass.name])) {
-      return this.model[conId][schemaClass.name];
-    }
-
-    const opts = { existingConnection: this.getClient(conId) };
-    const model = getModelForClass<typeof MongoSchema, QueryHelper<T>>(schemaClass, opts);
-    if (this.getConfig(conId).debug) {
-      this.logService.info('`%s` Schema `%s` registered', conId, schemaClass.name);
-    }
-
-    this.model[conId][schemaClass.name] = model;
-    return model;
-  }
-
-  public async syncModel(model: ReturnModelType<any>, conId: string = DEFAULT_CON_ID) {
-    if (!this.getConfig(conId).autoIndex) return;
-    const diffIndexes = await model.diffIndexes();
-    if (diffIndexes.toCreate.length || diffIndexes.toDrop.length) {
-      await model.syncIndexes({ continueOnError: true });
-      if (this.getConfig(conId).debug) {
-        this.logService.info('`%s` Schema `%s` sync indexes', conId, model.modelName);
-      }
-    }
+  public getModel<T extends MongoSchema>(schemaClass: Clazz): MongoType<T> {
+    return getModelWithString(schemaClass.name);
   }
 }

@@ -12,10 +12,9 @@ import {
   toArray,
   Reflector,
 } from '@joktec/core';
-import { ReturnModelType } from '@typegoose/typegoose';
 import { head, isArray, isNil, isObject, last, omit, pick } from 'lodash';
 import { Aggregate, UpdateQuery } from 'mongoose';
-import { MongoHelper, MongoPipeline, QueryHelper, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
+import { MongoHelper, MongoPipeline, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
 import {
   IMongoAggregateOptions,
   IMongoBulkOptions,
@@ -25,7 +24,7 @@ import {
   MongoSchema,
   ObjectId,
 } from './models';
-import { IMongoRepository } from './mongo.client';
+import { IMongoRepository, MongoType } from './mongo.client';
 import { MongoCatch } from './mongo.exception';
 import { MongoService } from './mongo.service';
 
@@ -34,7 +33,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   @Inject() protected reflector: Reflector;
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
-  private _model: ReturnModelType<typeof MongoSchema, QueryHelper<T>> = null;
+
   private readonly encrypter: Encrypter;
 
   protected constructor(
@@ -47,20 +46,10 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   async onModuleInit() {
     this.logService.setContext(this.constructor.name);
-    await this.lazyRegister();
   }
 
-  private async lazyRegister() {
-    if (this.mongoService.isConnected(this.conId)) {
-      this._model = this.mongoService.getModel(this.schema, this.conId);
-      await this.mongoService.syncModel(this._model, this.conId);
-      return;
-    }
-    setTimeout(this.lazyRegister.bind(this), 1000);
-  }
-
-  protected get model() {
-    return this._model;
+  protected get model(): MongoType<T> {
+    return this.mongoService.getModel(this.schema);
   }
 
   protected transform(docs: any | any[]): T | T[] {

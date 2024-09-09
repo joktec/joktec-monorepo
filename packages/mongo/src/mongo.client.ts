@@ -1,36 +1,51 @@
-import { Client, DeepPartial, IBaseRepository, IBaseRequest, ICondition } from '@joktec/core';
+import { Client, DeepPartial, IBaseRepository, ICondition } from '@joktec/core';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ClientSession, ClientSessionOptions, Connection, UpdateQuery } from 'mongoose';
 import { QueryHelper } from './helpers';
-import { IMongoAggregateOptions, IMongoBulkOptions, IMongoBulkRequest, IMongoOptions, MongoSchema } from './models';
+import {
+  IMongoAggregateOptions,
+  IMongoBulkOptions,
+  IMongoBulkRequest,
+  IMongoOptions,
+  IMongoRequest,
+  MongoSchema,
+} from './models';
 import { MongoConfig } from './mongo.config';
+
+export const MODEL_REGISTRY_KEY = 'MODEL_REGISTRY_KEY';
+
+export interface MongoModuleOptions {
+  models?: (typeof MongoSchema)[];
+  conId?: string;
+}
+
+export interface MongoModelRegistry {
+  [conId: string]: (typeof MongoSchema)[];
+}
+
+export type MongoType<T extends MongoSchema = MongoSchema> = ReturnModelType<typeof MongoSchema, QueryHelper<T>>;
 
 export interface MongoClient extends Client<MongoConfig, Connection> {
   isConnected(conId?: string): boolean;
 
-  getModel<T extends MongoSchema>(
-    schemaClass: typeof MongoSchema,
-    conId?: string,
-  ): ReturnModelType<typeof MongoSchema, QueryHelper<T>>;
-
-  syncModel(model: ReturnModelType<any>, conId?: string): Promise<void>;
+  getModel<T extends MongoSchema>(schemaClass: typeof MongoSchema): MongoType<T>;
 
   startTransaction(options?: ClientSessionOptions, conId?: string): Promise<ClientSession>;
 }
 
 export interface IMongoRepository<T extends MongoSchema, ID = string> extends IBaseRepository<T, ID> {
   paginate(
-    query: IBaseRequest<T>,
+    query: IMongoRequest<T>,
     opts?: IMongoOptions<T>,
   ): Promise<{ items: T[]; total: number; prevCursor?: string; currentCursor?: string; nextCursor?: string }>;
 
-  find(query: IBaseRequest<T>, opts?: IMongoOptions<T>): Promise<T[]>;
+  find(query: IMongoRequest<T>, opts?: IMongoOptions<T>): Promise<T[]>;
 
-  count(query: IBaseRequest<T>, opts?: IMongoOptions<T>): Promise<number>;
+  count(query: IMongoRequest<T>, opts?: IMongoOptions<T>): Promise<number>;
 
-  findOne(query: IBaseRequest<T>, opts?: IMongoOptions<T>): Promise<T>;
+  findOne(query: IMongoRequest<T>, opts?: IMongoOptions<T>): Promise<T>;
 
-  findById(id: ID, query?: IBaseRequest<T>, opts?: IMongoOptions<T>): Promise<T>;
+  findById(id: ID, query?: IMongoRequest<T>, opts?: IMongoOptions<T>): Promise<T>;
 
   create(body: DeepPartial<T>, opts?: IMongoOptions<T>): Promise<T>;
 
@@ -40,7 +55,7 @@ export interface IMongoRepository<T extends MongoSchema, ID = string> extends IB
 
   restore(condition: ICondition<T>, opts?: IMongoOptions<T>): Promise<T>;
 
-  aggregate<U = T>(query: IBaseRequest<T>, opts?: IMongoAggregateOptions): Promise<U[]>;
+  aggregate<U = T>(query: IMongoRequest<T>, opts?: IMongoAggregateOptions): Promise<U[]>;
 
   upsert(condition: ICondition<T>, body: DeepPartial<T>, opts?: IMongoOptions<T>): Promise<T>;
 

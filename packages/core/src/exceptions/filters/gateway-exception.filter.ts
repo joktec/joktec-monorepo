@@ -43,7 +43,10 @@ export class GatewayExceptionsFilter extends BaseExceptionFilter implements IExc
       case 'graphql':
         return new GraphQLException(errorBody.message, { extensions: { http: { status }, data: miniError } });
       default:
-        this.logService.error(exception['data'] || exception, exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG);
+        this.logService.error(
+          exception['data'] || exception,
+          exception.message || ExceptionMessage.SOMETHING_WHEN_WRONG,
+        );
         break;
     }
   }
