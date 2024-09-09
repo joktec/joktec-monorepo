@@ -7,6 +7,7 @@ import {
   UnauthorizedException,
 } from '@joktec/core';
 import moment from 'moment';
+import { I18nContext } from 'nestjs-i18n';
 import { IRequest } from '../../app.constant';
 import { SessionStatus, UserStatus } from '../../models/constants';
 import { SessionRepo, UserRepo } from '../../repositories';
@@ -25,18 +26,21 @@ export class AuthGuard implements CanActivate {
     req.payload = await this.jwtService.verify(token);
 
     const [session, loggedUser] = await Promise.all([
-      this.sessionRepo.findByTokenId(req.payload.jti),
-      this.userRepo.findById(req.payload.sub),
+      this.sessionRepo.findByPayload(req.payload),
+      this.userRepo.findByPayload(req.payload),
     ]);
 
     if (!session || moment().isSameOrAfter(session?.expiresAt) || session.status === SessionStatus.DISABLED) {
-      throw new UnauthorizedException('SESSION_EXPIRED');
+      throw new UnauthorizedException('auth.SESSION_EXPIRED');
     }
-    if (!loggedUser) throw new UnauthorizedException('USER_NOT_FOUND');
-    if (loggedUser.status === UserStatus.PENDING) throw new ForbiddenException('USER_NOT_ACTIVE');
-    if (loggedUser.status === UserStatus.DISABLED) throw new ForbiddenException('USER_IS_DISABLED');
+    if (!loggedUser) throw new UnauthorizedException('user.USER_NOT_FOUND');
+    if (loggedUser.status === UserStatus.PENDING) throw new ForbiddenException('user.USER_NOT_ACTIVE');
+    if (loggedUser.status === UserStatus.DISABLED) throw new ForbiddenException('user.USER_DISABLED');
 
     req.loggedUser = loggedUser;
+    req.session = session;
+    req.locale = I18nContext.current(context)?.lang || loggedUser.config.language;
+    req.timezone = req.header('accept-timezone') || loggedUser.config.timezone;
     return true;
   }
 }

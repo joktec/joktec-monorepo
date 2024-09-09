@@ -4,97 +4,116 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
+  IsString,
   IsStrongPassword,
   PickType,
 } from '@joktec/core';
-import { AuthPlatform, OTPType } from '../../../models/constants';
-import { User } from '../../../models/entities';
+import { AuthProviderType, OTPType } from '../../../models/constants';
+import { User } from '../../../models/schemas';
 import { PASSWORD_OPTIONS } from '../../../utils';
 
-export class SendOtpDto extends PickType(User, ['phone'] as const) {
-  @IsNotEmpty({ message: 'OTP_TYPE_REQUIRED' })
-  @IsEnum(OTPType, { message: 'OTP_TYPE_INVALID' })
+export class RequestCodeDto extends PickType(User, ['email'] as const) {
+  @IsNotEmpty({ message: 'auth.OTP_TYPE_REQUIRED' })
+  @IsEnum(OTPType, { message: 'auth.OTP_TYPE_INVALID' })
   @ApiProperty({ enum: OTPType })
   type!: OTPType;
 }
 
-export class VerifyOtpDto {
-  @IsNotEmpty({ message: 'OTP_REQUIRED' })
-  @ApiProperty({ example: '123456' })
+export class VerifyCodeDto {
+  @IsNotEmpty({ message: 'auth.OTP_REQUIRED' })
+  @ApiProperty({ example: '123321' })
   publicCode!: string;
 
-  @IsNotEmpty({ message: 'PRIVATE_CODE_REQUIRED' })
-  @ApiProperty({ example: 'XXX' })
+  @IsNotEmpty({ message: 'auth.PRIVATE_CODE_REQUIRED' })
+  @ApiProperty({ example: '1e075969-942c-429c-af79-1d9c53964a5d' })
   privateCode!: string;
 }
 
-export class LoginDto extends PickType(User, ['phone'] as const) {
-  @IsNotEmpty({ message: 'PASSWORD_REQUIRED' })
-  @ApiProperty()
-  password!: string;
-}
-
-export class RegisterDto extends PickType(User, [
-  'phone',
-  'fullName',
-  'email',
-  'googleId',
-  'facebookId',
-  'birthday',
-  'gender',
-] as const) {
-  @IsNotEmpty({ message: 'ACTIVE_CODE_REQUIRED' })
+export class RegisterDto extends PickType(User, ['email', 'nickname', 'avatar'] as const) {
+  @IsString()
+  @IsNotEmpty({ message: 'auth.ACTIVE_CODE_REQUIRED' })
   @ApiProperty()
   activeCode!: string;
 
-  @IsOptional()
-  @ApiPropertyOptional()
-  password?: string;
+  @IsString()
+  @IsNotEmpty()
+  @IsStrongPassword(PASSWORD_OPTIONS, { message: 'auth.PASSWORD_WEEK' })
+  @ApiProperty()
+  password!: string;
 
+  @IsString()
+  @IsNotEmpty()
   @IsOptional()
-  @ApiPropertyOptional()
-  confirmedPassword?: string;
+  @ApiProperty()
+  confirmedPassword!: string;
 
+  @IsString()
   @IsOptional()
   @ApiPropertyOptional()
-  image?: string;
+  fcmToken?: string;
+}
 
+export class LoginDto extends PickType(User, ['email'] as const) {
+  @IsNotEmpty({ message: 'auth.PASSWORD_REQUIRED' })
+  @ApiProperty()
+  password!: string;
+
+  @IsString()
   @IsOptional()
   @ApiPropertyOptional()
-  thumbnail?: string;
+  fcmToken?: string;
 }
 
 export class LoginSsoDto {
-  @IsNotEmpty({ message: 'SSO_UID_REQUIRED' })
-  @ApiProperty()
-  ssoId!: string;
+  @IsNotEmpty()
+  @IsEnum(AuthProviderType)
+  @ApiProperty({ enum: AuthProviderType })
+  providerType!: AuthProviderType;
 
-  @IsEnum(AuthPlatform)
-  @ApiProperty({ enum: AuthPlatform, example: AuthPlatform.GOOGLE })
-  platform!: AuthPlatform;
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  providerToken!: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  fcmToken?: string;
 }
 
-export class ResetDto extends PickType(User, ['phone'] as const) {
-  @IsNotEmpty({ message: 'ACTIVE_CODE_REQUIRED' })
+export class ResetDto extends PickType(User, ['email'] as const) {
+  @IsNotEmpty({ message: 'auth.ACTIVE_CODE_REQUIRED' })
   @ApiProperty()
   activeCode!: string;
 
-  @IsNotEmpty({ message: 'PASSWORD_REQUIRED' })
-  @IsStrongPassword(PASSWORD_OPTIONS, { message: 'PASSWORD_WEEK' })
+  @IsString()
+  @IsNotEmpty()
+  @IsStrongPassword(PASSWORD_OPTIONS, { message: 'auth.PASSWORD_WEEK' })
   @ApiProperty()
   password!: string;
 
-  @IsNotEmpty({ message: 'CONFIRMED_PASSWORD_REQUIRED' })
+  @IsString()
+  @IsNotEmpty({ message: 'auth.CONFIRMED_PASSWORD_REQUIRED' })
   @ApiProperty()
   confirmedPassword!: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  fcmToken?: string;
 }
 
 export class RefreshTokenDto {
-  @IsNotEmpty({ message: 'ACCESS_TOKEN_REQUIRED' })
+  @IsNotEmpty({ message: 'auth.ACCESS_TOKEN_REQUIRED' })
   @ApiProperty()
   accessToken!: string;
 
-  @IsNotEmpty({ message: 'REFRESH_TOKEN_REQUIRED' })
+  @IsNotEmpty({ message: 'auth.REFRESH_TOKEN_REQUIRED' })
   @ApiProperty()
   refreshToken!: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  fcmToken?: string;
 }

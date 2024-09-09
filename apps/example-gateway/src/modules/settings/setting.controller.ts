@@ -1,12 +1,15 @@
 import { BaseController, Controller, IControllerProps } from '@joktec/core';
 import { AuthGuard, RoleGuard } from '../../common';
-import { Setting } from '../../models/entities';
+import { Setting } from '../../models/schemas';
 import { SettingService } from './setting.service';
 
 const props: IControllerProps<Setting> = {
   dto: Setting,
   guards: [AuthGuard, RoleGuard],
   useBearer: true,
+  create: { disable: true },
+  update: { disable: true },
+  delete: { disable: true },
 };
 
 @Controller('settings')

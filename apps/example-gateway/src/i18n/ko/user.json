@@ -1,0 +1,10 @@
+{
+  "USER_NOT_FOUND": "사용자를 찾을 수 없습니다.",
+  "USER_NOT_ACTIVE": "사용자가 활성화되지 않았습니다.",
+  "USER_DISABLED": "사용자가 비활성화되었습니다.",
+  "EMAIL_EXISTED": "이메일이 이미 존재합니다.",
+  "USERNAME_REQUIRED": "사용자 이름은 문자열이어야 합니다",
+  "USERNAME_MIN_LENGTH": "사용자 이름은 10 자 이상이어야 합니다",
+  "USERNAME_MAX_LENGTH": "사용자 이름은 20 자 이하이어야 합니다",
+  "USER_NOT_SET_PASSWORD": "사용자가 비밀번호를 설정하지 않았습니다."
+}

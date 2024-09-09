@@ -4,8 +4,15 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": [
-      "**/*.proto"
-    ],
-    "watchAssets": true
-  }
+      {
+        "include": "**/*.proto",
+        "watchAssets": true
+      },
+      {
+        "include": "i18n/**/*",
+        "watchAssets": true
+      }
+    ]
+  },
+  "entryFile": "main.js"
 }

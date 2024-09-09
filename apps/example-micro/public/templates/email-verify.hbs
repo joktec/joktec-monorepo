@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>{{ title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body style="margin:0; padding:0; font-family:'Apple SD Gothic Neo', Sans-serif;">
+  <!-- Outside area (background) -->
+  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background: #ffffff;">
+    <tr>
+      <td>
+        <!-- Content area (600px - 800px) -->
+        <table border="0" cellpadding="0" cellspacing="0" width="800">
+          <!-- S: LOGO -->
+          <tr>
+            <td style="text-align: right;">
+              <img src="{{ logo }}" style="margin-top: 50px; margin-bottom:28px;" alt="Dispatch Logo" />
+            </td>
+          </tr>
+          <!-- E: LOGO -->
+
+          <!-- S: Header -->
+          <tr>
+            <td>
+              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td style="font-weight: 700; font-size: 30px; line-height: 170%;">
+                    {{ content.heading }}
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 500; font-size: 16px; line-height: 170%; color: #555555; padding-top: 20px; padding-bottom: 60px;">
+                    <font style="display:block; margin-bottom: 20px;">
+                      {{ content.greeting }}
+                      <br />
+                      {{ content.line1 }}
+                    </font>
+                    {{ content.thank }}
+                    <br />
+                    {{ content.signature }}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- E: Header -->
+
+          <!-- S: Contents -->
+          <tr>
+            <td>
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 50px;">
+                <tr>
+                  <td style="font-weight: 700; font-size: 30px; line-height: 170%; width: 55%; text-align: center; height: 122px; background-color: #F3F3F3;">
+                    {{ code }}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <!-- E: Contents -->
+
+          <!-- S: footer -->
+          <tr>
+            <td colspan="2" bgcolor="#F3F3F3" style="padding-top: 20px; padding-bottom: 20px; padding-left: 20px; padding-right: 20px;">
+              <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tbody>
+                <tr>
+                  <div style="display: flex; align-items: center; padding-bottom: 30px; border-bottom: 1px solid #DDDDDD; gap: 8px;">
+                    <img src="https://dev-cdn.picaverse.io/default/images/alert-footer-email.png" style="width: 36px; height: 36px;" />
+                    <p style="color: #777777; margin: 0 5px; font-size: 12px; line-height: 1.7;">
+                      {{ footer.disclaimer1 }}<br />
+                      {{ footer.disclaimer2 }}
+                    </p>
+                  </div>
+                </tr>
+                <tr>
+                  <td style="padding-top: 30px; padding-bottom: 30px; border-bottom: 1px solid #DDDDDD;">
+                    <ul
+                      style="list-style: none; color: #777777; font-weight: 400; font-size: 12px; line-height: 170%; margin-left: 0; margin-top:0; margin-bottom: 0; padding-left: 0; display: inline-block;">
+                      <li style="display: inline-block; width:fit-content; margin-right:48px;">{{ footer.companyName }}</li>
+                      <li style="display: inline-block; width:fit-content; margin-right:75px;">{{ footer.director }}</li>
+                      <li style="display: inline-block; width:fit-content; margin-right:0;">{{ footer.hotline }}</li>
+                      <br />
+                      <li style="display: inline-block; width:fit-content; margin-right:42px;">{{ footer.email }}</li>
+                      <li style="display: inline-block; width:fit-content; margin-right:42px;">{{ footer.tel }}</li>
+                      <li style="display: inline-block; width:fit-content; margin-right:0;">{{ footer.address }}</li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-top: 30px; padding-bottom: 30px;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <thead>
+                      <tr>
+                        <td colspan="3" style="font-weight: 400; font-size: 14px; line-height: 170%; color: #777777; margin-bottom: 16px;">
+                          {{ footer.community }}
+                        </td>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                        <td style="width: 25%;">
+                          <a href="/policy"
+                             style="font-weight: 600; font-size: 14px; line-height: 170%; color: #777777; margin-bottom: 16px; text-decoration: none;">
+                            {{ footer.policy }}
+                          </a>
+                        </td>
+                        <td style="width: 25%;">
+                          <a href="" style="font-weight: 600; font-size: 14px; line-height: 170%; color: #777777; margin-bottom: 16px; text-decoration: none;">
+                            {{ footer.term }}
+                          </a>
+                        </td>
+                        <td style="width: 50%; text-align: right; font-weight: 400; font-size: 14px; line-height: 170%; color: #777777; margin-bottom: 16px;">
+                          {{ footer.copyright }}
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <!-- E: footer -->
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

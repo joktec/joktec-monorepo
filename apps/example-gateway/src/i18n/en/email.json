@@ -1,0 +1,41 @@
+{
+  "FOOTER": {
+    "DISCLAIMER_1": "This email is for outgoing use only, and replies to inquiries will not be processed.",
+    "DISCLAIMER_2": "For inquiries, please use the inquiry form within the app.",
+    "COMPANY_NAME": "X2B Corporation",
+    "DIRECTOR": "CEO Park Soo-hyun",
+    "HOTLINE": "Business Registration Number 848-81-03048",
+    "EMAIL": "Contact: run@x2b.biz",
+    "TEL": "TEL 010-8257-2301",
+    "ADDRESS": "Address: 11 Yeonhui-ro, Mapo-gu, Seoul, 5th floor (Donggyo-dong, Korea Patent Technology Promotion Agency Building)",
+    "COMMUNITY": "Community Guidelines",
+    "POLICY": "Privacy Policy",
+    "TERM": "Terms of Service",
+    "COPYRIGHT": "Copyright ©2023 X2B LTD. All rights reserved."
+  },
+  "VERIFY": {
+    "SUBJECT": "Email Verification",
+    "TITLE": "Picabus Email Verification Notice",
+    "CONTENT": {
+      "HEADING": "Email Verification Notice",
+      "GREETING": "Hello, this is Picabus.",
+      "LINE_1": "Please enter the email verification code below to complete your identity verification.",
+      "THANK": "Thank you.",
+      "SIGNATURE": "Sincerely, Picabus."
+    }
+  },
+  "RESET": {
+    "SUBJECT": "Password Reset",
+    "TITLE": "Picabus Password Reset Notice",
+    "CONTENT": {
+      "HEADING": "Password Reset Notice",
+      "GREETING": "Hello, this is Picabus.",
+      "LINE_1": "A new password has been generated for your registered email.",
+      "LINE_2": "Please log in to Picabus using the password below,",
+      "LINE_3": "then go to Profile > Settings > Account Settings > Change Password",
+      "LINE_4": "to update it with a new password.",
+      "THANK": "Thank you.",
+      "SIGNATURE": "Sincerely, Picabus."
+    }
+  }
+}

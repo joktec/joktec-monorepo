@@ -1,11 +1,12 @@
 import { applyDecorators, IsStrongPasswordOptions, linkTransform, Transform } from '@joktec/core';
 import { isArray, isFunction } from 'lodash';
+import { appConfig } from '../app.config';
 
 export const PASSWORD_OPTIONS: IsStrongPasswordOptions = {
   minLength: 6,
-  minLowercase: 1,
-  minUppercase: 1,
-  minNumbers: 1,
+  minLowercase: 0,
+  minUppercase: 0,
+  minNumbers: 0,
   minSymbols: 0,
 };
 
@@ -15,7 +16,7 @@ function getHost(host: string | (() => string) | [(...args: any[]) => string, ..
     const [callback, ...args] = host;
     return callback(args);
   }
-  return host || process.env.MISC_CDN_URL;
+  return host || appConfig.misc.cdnUrl;
 }
 
 export const IsCdnUrl = (

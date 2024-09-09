@@ -1,5 +1,0 @@
-apiVersion: v1
-name: example-micro
-description: JokTec - Example Microservice
-version: 0.1.0
-appVersion: 0.1.0

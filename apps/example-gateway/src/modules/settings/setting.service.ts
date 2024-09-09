@@ -1,5 +1,5 @@
 import { BaseService, Injectable } from '@joktec/core';
-import { Setting } from '../../models/entities';
+import { Setting } from '../../models/schemas';
 import { SettingRepo } from '../../repositories';
 
 @Injectable()

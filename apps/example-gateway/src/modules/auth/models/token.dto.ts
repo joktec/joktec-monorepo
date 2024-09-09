@@ -1,12 +1,10 @@
-import { ApiProperty, ApiPropertyOptional } from '@joktec/core';
-import { UserProfile } from '../../profile';
+import { ApiProperty, ApiPropertyOptional, Expose } from '@joktec/core';
+import { isEmpty, isNil } from 'lodash';
+import { UserProfileResponse } from '../../profile';
 
-export class SendOtpResponse {
+export class SendCodeResponse {
   @ApiPropertyOptional({ type: String })
   privateCode?: string;
-
-  @ApiProperty({ type: String })
-  activeCode?: string;
 
   @ApiPropertyOptional({ type: String, example: 1 })
   retry?: number;
@@ -15,12 +13,18 @@ export class SendOtpResponse {
   expiredInSeconds?: number;
 }
 
-export class VerifyOtpResponse {
+export class VerifyCodeResponse {
   @ApiProperty({ type: String })
   activeCode!: string;
 }
 
 export class TokeResponseDto {
+  @Expose({ toPlainOnly: true })
+  @ApiProperty()
+  get isFirstLogin(): boolean {
+    return isNil(this.profile.nickname) || isEmpty(this.profile.nickname);
+  }
+
   @ApiProperty({ type: String })
   accessToken!: string;
 
@@ -30,6 +34,6 @@ export class TokeResponseDto {
   @ApiProperty({ type: Date })
   expiredAt!: Date;
 
-  @ApiProperty({ type: UserProfile })
-  profile!: UserProfile;
+  @ApiProperty({ type: UserProfileResponse })
+  profile!: UserProfileResponse;
 }

@@ -1,8 +1,8 @@
 import { Cacheable, CacheTtlSeconds } from '@joktec/cacher';
-import { Injectable } from '@joktec/core';
+import { Injectable, JwtPayload } from '@joktec/core';
 import { MongoRepo, MongoService } from '@joktec/mongo';
 import { AUTH_GUARD_NAMESPACE } from '../../app.constant';
-import { Session } from '../../models/entities';
+import { Session } from '../../models/schemas';
 
 @Injectable()
 export class SessionRepo extends MongoRepo<Session, string> {
@@ -10,8 +10,8 @@ export class SessionRepo extends MongoRepo<Session, string> {
     super(mongoService, Session);
   }
 
-  @Cacheable<Session>(`${AUTH_GUARD_NAMESPACE}.session`, { expiry: CacheTtlSeconds.ONE_DAY })
-  async findByTokenId(tokenId: string): Promise<Session> {
-    return this.findOne({ condition: { tokenId } });
+  @Cacheable(`${AUTH_GUARD_NAMESPACE}.session`, { expiry: CacheTtlSeconds.ONE_DAY, transform: Session })
+  async findByPayload(payload: JwtPayload): Promise<Session> {
+    return this.findOne({ condition: { tokenId: payload.jti } });
   }
 }

@@ -1,0 +1,10 @@
+{
+  "USER_NOT_FOUND": "User not found.",
+  "USER_NOT_ACTIVE": "The user is not active.",
+  "USER_DISABLED": "The user is disabled.",
+  "EMAIL_EXISTED": "The email already exists.",
+  "USERNAME_REQUIRED": "username must be a string",
+  "USERNAME_MIN_LENGTH": "username must be longer than or equal to 10 characters",
+  "USERNAME_MAX_LENGTH": "username must be shorter than or equal to 20 characters",
+  "USER_NOT_SET_PASSWORD": "The user has not set a password."
+}

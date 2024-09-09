@@ -1,7 +1,9 @@
-import { BaseService, Injectable } from '@joktec/core';
+import { BaseService, generateOTP, generateUUID, Injectable } from '@joktec/core';
 import moment from 'moment';
+import { appConfig } from '../../app.config';
+import { LOCALE } from '../../app.constant';
 import { OTPStatus, OTPType } from '../../models/constants';
-import { Otp } from '../../models/entities';
+import { Otp } from '../../models/schemas';
 import { OtpRepo } from '../../repositories';
 
 @Injectable()
@@ -10,10 +12,10 @@ export class OtpService extends BaseService<Otp, string> {
     super(otpRepo);
   }
 
-  async findLastOtpByPhone(phone: string, type: OTPType): Promise<Otp[]> {
+  async findLastOtpByEmail(email: string, type: OTPType): Promise<Otp[]> {
     return this.otpRepo.find({
       condition: {
-        phone,
+        email,
         type,
         createdAt: {
           $gte: moment().startOf('date').toDate(),
@@ -34,13 +36,48 @@ export class OtpService extends BaseService<Otp, string> {
     return this.otpRepo.findOne({ condition: { activeCode }, sort: { createdAt: 'desc' } });
   }
 
-  async deleteByPhone(phoneOrEmail: string): Promise<number> {
-    const opts = await this.otpRepo.find({
-      condition: {
-        $or: [{ phone: phoneOrEmail }, { email: phoneOrEmail }],
-      },
+  async createOtp(email: string, type: OTPType, expired: number, locale: string): Promise<Otp> {
+    return this.otpRepo.create({
+      email: email,
+      publicCode: appConfig?.isProd ? generateOTP(6) : '000000',
+      privateCode: generateUUID({ prefix: type }),
+      locale: locale as LOCALE,
+      type,
+      retry: 1,
+      expiredInSeconds: expired,
+      expired: moment().startOf('ms').add(expired, 'second').toDate(),
+      status: OTPStatus.ACTIVATED,
     });
-    const res = await Promise.all(opts.map(o => this.otpRepo.delete({ _id: o._id }, { force: true })));
-    return res.length;
+  }
+
+  async revokeOtp(lastOTP: Otp): Promise<Otp> {
+    return this.otpRepo.update({ _id: lastOTP._id }, { status: OTPStatus.EXPIRED });
+  }
+
+  async extendOtp(lastOTP: Otp, expired: number): Promise<Otp> {
+    await this.revokeOtp(lastOTP);
+    const retry: number = lastOTP.retry + 1;
+    const expiredInSeconds: number = retry * expired;
+    return this.otpRepo.create({
+      email: lastOTP.email,
+      publicCode: appConfig?.isProd ? generateOTP(6) : '000000',
+      privateCode: generateUUID({ prefix: lastOTP.type }),
+      type: lastOTP.type,
+      retry,
+      expiredInSeconds,
+      expired: moment().startOf('ms').add(expiredInSeconds, 'second').toDate(),
+      status: OTPStatus.ACTIVATED,
+    });
+  }
+
+  async confirmOtp(lastOtp: Otp): Promise<Otp> {
+    return this.otpRepo.update(
+      { _id: lastOtp._id },
+      { activeCode: generateUUID({ prefix: lastOtp.type }), status: OTPStatus.VERIFIED },
+    );
+  }
+
+  async finishOtp(lastOtp: Otp): Promise<Otp> {
+    return this.otpRepo.update({ _id: lastOtp._id }, { status: OTPStatus.SUCCESS });
   }
 }

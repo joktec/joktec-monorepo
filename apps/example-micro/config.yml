@@ -1,5 +1,5 @@
 micro:
-  port: 8010
+  port: 9013
   httpEnable: true
   transports:
     - name: RedisTransport
@@ -8,22 +8,81 @@ micro:
         host: localhost
         port: 6379
         password: root
+        db: 0
 
 log:
   level: info
-  useFilter: false
-  format: pretty
-  logStash:
-    host: 51.222.44.17
-    port: 31658
-    enable: false
+  format: json
+  hideWarning: true
+  hideObject: false
+  hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]
+  transport:
+    enable: true
+    target: pino-mongodb
+    options:
+      uri: mongodb://localhost:27017/dispatch?authSource=admin
+      collection: logs
+      mongoOptions:
+        auth:
+          username: root
+          password: root
 
-mysql:
+misc:
+  cdnUrl: http://127.0.0.1:9000/dispatch
+  resizeUrl: http://127.0.0.1:9000/dispatch
+
+mongo:
+  replica: false
   host: localhost
-  port: 3306
+  port: 27017
   username: root
   password: root
-  database: sample_db
+  database: dispatch
+  autoIndex: true
+  params: authSource=admin&directConnection=true&connectTimeoutMS=20000
+  debug: false
+
+storage:
+  region: ap-southeast-1
+  accessKey: accesskey
+  secretKey: secretkey
+  bucket: dispatch
+  endpoint: http://127.0.0.1:9000
+  sslEnabled: false
+  forcePathStyle: true
+  checkBucket: false
+  linkFormat: http://127.0.0.1:9000/dispatch/<key>
+
+cacher:
+  type: redis
+  host: localhost
+  port: 6379
+  password: root
+  database: 0
 
 http:
-  timeout: 18000000
+  timeout: 30000
+
+mailer:
+  host: in-v3.mailjet.com
+  port: 465
+  secure: true
+  auth:
+    user: f60a4b0f93c8f98d86a7e30b1af413a0
+    pass: 79d5ec842ecce822c132a5d37e6eb88c
+  sender: 'Dispatch <no-reply@wishmon.net>'
+  template:
+    dir: ./public/templates
+    preview: false
+    options:
+      engine: hbs
+      strict: true
+
+firebase:
+  credential: './credentials/dispatch-19582-72214dfa4daa.json'
+
+notifier:
+  isAlwaysUseFCM: true
+  fcm:
+    appName: dispatch-19582
+    credential: './credentials/dispatch-19582-72214dfa4daa.json'

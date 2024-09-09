@@ -26,7 +26,7 @@
     "dev": "nest start --watch -p tsconfig.json",
     "build": "nest build -p tsconfig.json",
     "start": "node dist/main",
-    "dep:upgrade": "ncu -p yarn -u",
+    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
     "deploy": "publish-helm --chart-dir ./k8s/chart",
     "test": "echo 'Test done.'",
     "test:watch": "jest --watch",
@@ -35,13 +35,31 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.11.2",
-    "@grpc/proto-loader": "^0.7.13",
     "@joktec/core": "0.0.152",
-    "@joktec/mysql": "0.0.158",
-    "amqplib": "^0.10.4",
-    "amqp-connection-manager": "^4.1.14",
-    "ioredis": "^5.4.1"
+    "@joktec/cacher": "0.0.100",
+    "@joktec/http": "0.0.154",
+    "@joktec/mailer": "0.0.152",
+    "@joktec/mongo": "0.0.200",
+    "@joktec/notifier": "0.0.153",
+    "@joktec/firebase": "0.0.70",
+    "@joktec/storage": "0.0.154",
+    "@nestjs/schedule": "^4.0.1",
+    "byte-length": "^1.0.2",
+    "cron": "^3.1.7",
+    "gravatar": "^1.8.2",
+    "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.45",
+    "nestjs-i18n": "^10.4.0",
+    "rxjs": "^7.8.1",
+    "pino-mongodb": "^4.3.0",
+    "sharp": "^0.32.6",
+    "timezone-enum": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.202",
+    "@types/mime-types": "^2.1.4"
   },
   "lint-staged": {
     "*.ts": [

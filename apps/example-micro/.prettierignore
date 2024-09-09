@@ -1,7 +1,9 @@
-**/*.d.ts
-**/*.js
-**/*.generated.ts
-
+# Ignore node_modules and dist directories
 build/
 dist/
 node_modules/
+
+# Ignore generated files
+**/*.d.ts
+**/*.js
+**/*.generated.ts

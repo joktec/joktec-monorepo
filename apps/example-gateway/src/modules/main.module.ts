@@ -1,34 +1,48 @@
 import { Global, Module } from '@joktec/core';
-import { ApartmentModule } from './apartments';
+import { ArticleModule } from './articles';
+import { ArtistModule } from './artists';
 import { AssetModule } from './assets';
 import { AuthModule } from './auth';
+import { BlockModule } from './blocks';
 import { CategoryModule } from './categories';
-import { OrderModule } from './orders';
+import { CommentModule } from './comments';
+import { ConnectionModule } from './connections';
+import { ContentModule } from './contents';
+import { EmotionModule } from './emotions';
+import { InquiryModule } from './inquiries';
+import { NotificationModule } from './notifications';
 import { OtpModule } from './otpLogs';
-import { PlaceModule } from './places';
-import { ProductModule } from './products';
+import { PostModule } from './posts';
 import { ProfileModule } from './profile';
-import { RoomModule } from './rooms';
+import { ReportModule } from './reports';
 import { SessionModule } from './sessions';
 import { SettingModule } from './settings';
+import { TagModule } from './tags';
 import { UserModule } from './users';
 
 @Global()
 @Module({
   imports: [
-    UserModule,
-    SessionModule,
-    CategoryModule,
-    ProductModule, // Microservice
-    OtpModule,
-    AuthModule,
-    ProfileModule,
-    ApartmentModule,
-    RoomModule,
-    SettingModule,
+    ArticleModule,
+    ArtistModule,
     AssetModule,
-    OrderModule,
-    PlaceModule,
+    AuthModule,
+    BlockModule,
+    CategoryModule,
+    CommentModule,
+    ConnectionModule,
+    ContentModule,
+    EmotionModule,
+    InquiryModule,
+    NotificationModule,
+    OtpModule,
+    PostModule,
+    ProfileModule,
+    ReportModule,
+    SessionModule,
+    SettingModule,
+    TagModule,
+    UserModule,
   ],
 })
 export class MainModule {}

@@ -1,11 +1,11 @@
-import { Global, Module } from '@joktec/core';
+import { Module, TransportProxyFactory } from '@joktec/core';
+import { TRANSPORT } from '../../app.constant';
 import { SessionController } from './session.controller';
 import { SessionService } from './session.service';
 
-@Global()
 @Module({
   controllers: [SessionController],
-  providers: [SessionService],
+  providers: [SessionService, TransportProxyFactory(TRANSPORT.PROXY.USER, TRANSPORT.NAME.REDIS)],
   exports: [SessionService],
 })
 export class SessionModule {}

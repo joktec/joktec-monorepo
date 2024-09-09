@@ -1,65 +1,45 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-  IsArray,
-  IsNotEmpty,
-  IsOptional,
-  IsStrongPassword,
-  OmitType,
-  PickType,
-} from '@joktec/core';
-import { User } from '../../../models/entities';
+import { ApiProperty, IsArray, IsNotEmpty, IsString, IsStrongPassword, PickType } from '@joktec/core';
+import { User } from '../../../models/schemas';
 import { PASSWORD_OPTIONS } from '../../../utils';
 
-export class UserProfile extends OmitType(User, ['hashPassword'] as const) {}
-
 export class UserProfileDto extends PickType(User, [
-  'fullName',
-  'email',
-  'gender',
-  'birthday',
-  'googleId',
-  'facebookId',
+  'nickname',
+  'avatar',
+  'profile',
   'address',
-] as const) {
-  @IsOptional()
-  @ApiPropertyOptional()
-  image?: string;
-
-  @IsOptional()
-  @ApiPropertyOptional()
-  thumbnail?: string;
-}
+  'config',
+  'artistIds',
+] as const) {}
 
 export class UserPasswordDto {
-  @IsOptional()
-  @ApiPropertyOptional()
-  oldPassword?: string;
+  @IsString()
+  @IsNotEmpty({ message: 'auth.OLD_PASSWORD_REQUIRED' })
+  @ApiProperty()
+  oldPassword!: string;
 
-  @IsNotEmpty({ message: 'PASSWORD_REQUIRED' })
-  @IsStrongPassword(PASSWORD_OPTIONS, { message: 'PASSWORD_WEEK' })
+  @IsString()
+  @IsNotEmpty({ message: 'auth.PASSWORD_REQUIRED' })
+  @IsStrongPassword(PASSWORD_OPTIONS, { message: 'auth.PASSWORD_WEEK' })
   @ApiProperty()
   password!: string;
 
-  @IsNotEmpty({ message: 'CONFIRMED_PASSWORD_REQUIRED' })
+  @IsNotEmpty({ message: 'auth.CONFIRMED_PASSWORD_REQUIRED' })
   @ApiProperty()
   confirmedPassword!: string;
 }
 
-export class UserFcmDto {
-  @IsNotEmpty({ message: 'REGISTRATION_ID_REQUIRED' })
-  @ApiProperty()
-  registrationId!: string;
-}
-
-export class UserLogoutDto {
-  @ApiProperty()
-  success!: boolean;
-}
+export class UserSetPasswordDto extends PickType(UserPasswordDto, ['password', 'confirmedPassword'] as const) {}
 
 export class UserRevokeDto {
-  @IsNotEmpty({ message: 'TOKEN_IDS_REQUIRED' })
-  @IsArray({ message: 'TOKEN_IDS_MUST_BE_ARRAY' })
+  @IsNotEmpty({ message: 'auth.TOKEN_IDS_REQUIRED' })
+  @IsArray({ message: 'auth.TOKEN_IDS_MUST_BE_ARRAY' })
   @ApiProperty({ isArray: true, default: [] })
   tokenIds!: string[];
+}
+
+export class UserFcmDto {
+  @IsNotEmpty({ message: 'auth.FCM_TOKEN_REQUIRED' })
+  @IsString()
+  @ApiProperty()
+  fcmToken!: string;
 }

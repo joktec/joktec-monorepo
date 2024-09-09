@@ -3,13 +3,11 @@ import { CacheModule } from '@joktec/cacher';
 import {
   APP_FILTER,
   APP_INTERCEPTOR,
-  BullModule,
   ConfigModule,
   ConfigService,
   createPinoHttp,
   GatewayMetricMiddleware,
   GatewayModule,
-  initConfig,
   JwtModule,
   LoggerModule,
   MiddlewareConsumer,
@@ -18,15 +16,16 @@ import {
 } from '@joktec/core';
 import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
-import { MailerModule } from '@joktec/mailer';
 import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
-import { CustomExceptionFilter, CustomExpressInterceptor } from './common';
+import { appConfigFactory } from './app.config';
+import { DEFAULT_LOCALE } from './app.constant';
+import { CustomExceptionFilter, CustomExpressInterceptor, HeaderMiddleware } from './common';
 import { MainModule } from './modules/main.module';
 import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [initConfig] }),
+    ConfigModule.forRoot({ isGlobal: true, load: [appConfigFactory] }),
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -34,15 +33,13 @@ import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
     }),
     GatewayModule.forRoot({ metric: true, static: true }),
     HttpModule,
-    JwtModule,
-    MailerModule,
-    BullModule,
     FirebaseModule,
+    JwtModule,
     CacheModule,
     RepositoryModule,
     MainModule,
     I18nModule.forRoot({
-      fallbackLanguage: 'vi',
+      fallbackLanguage: DEFAULT_LOCALE,
       loaderOptions: { path: path.join(__dirname, '/i18n/'), watch: true },
       typesOutputPath: path.join(__dirname, '../src/i18n/i18n.generated.ts'),
       logging: false,
@@ -63,6 +60,6 @@ import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(GatewayMetricMiddleware).forRoutes('*');
+    consumer.apply(GatewayMetricMiddleware, HeaderMiddleware).forRoutes('*');
   }
 }

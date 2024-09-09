@@ -1,1 +1,2 @@
-export * from './category.dto';
+export * from './category-filter.dto';
+export * from './category-response.dto';

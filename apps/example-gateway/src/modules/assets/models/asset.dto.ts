@@ -1,5 +1,16 @@
-import { ApiProperty, ApiPropertyOptional, IsNotEmpty, IsOptional } from '@joktec/core';
-import { Asset } from '../../../models/entities';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsUrl,
+  PartialType,
+  PickType,
+} from '@joktec/core';
+import { Asset } from '../../../models/schemas';
 
 export class AssetPresignedDto {
   @IsNotEmpty()
@@ -15,3 +26,15 @@ export class AssetPresigned extends Asset {
   @ApiPropertyOptional()
   presignedUrl?: string;
 }
+
+export class AssetFromUrlDto {
+  @IsNotEmpty()
+  @IsArray()
+  @IsUrl({ protocols: ['http', 'https'] }, { each: true })
+  @ArrayMinSize(1)
+  @ArrayMaxSize(50)
+  @ApiProperty({ isArray: true })
+  urls!: string[];
+}
+
+export class AssetUpdateDto extends PartialType(PickType(Asset, ['tags'] as const)) {}

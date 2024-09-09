@@ -33,33 +33,34 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "node dist/app.seeder",
-    "seed:refresh": "node dist/app.seeder --refresh"
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "^0.0.152",
-    "@joktec/cacher": "^0.0.100",
-    "@joktec/http": "^0.0.154",
-    "@joktec/mailer": "^0.0.152",
-    "@joktec/mongo": "^0.0.200",
-    "@joktec/firebase": "^0.0.70",
-    "@joktec/storage": "^0.0.154",
+    "@joktec/core": "0.0.152",
+    "@joktec/cacher": "0.0.100",
+    "@joktec/http": "0.0.154",
+    "@joktec/mailer": "0.0.152",
+    "@joktec/mongo": "0.0.200",
+    "@joktec/firebase": "0.0.70",
+    "@joktec/storage": "0.0.154",
+    "apple-signin-auth": "^1.7.5",
     "nestjs-i18n": "^10.4.0",
     "byte-length": "^1.0.2",
     "gravatar": "^1.8.2",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
-    "moment": "^2.29.4",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.45",
+    "rxjs": "^7.8.1",
     "pino-mongodb": "^4.3.0",
+    "semver": "^7.6.3",
     "sharp": "^0.32.6"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.3.1",
     "@types/gravatar": "^1.8.6",
     "@types/lodash": "^4.14.202",
     "@types/mime-types": "^2.1.4",
-    "nestjs-seeder": "^0.3.2"
+    "@types/semver": "^7.5.8"
   },
   "lint-staged": {
     "*.ts": [

@@ -10,7 +10,7 @@ export class RoleGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest<IRequest>();
-    if (!req.loggedUser) throw new ForbiddenException('PERMISSION_DENIED');
+    if (!req.loggedUser) throw new ForbiddenException('auth.PERMISSION_DENIED');
 
     const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(RoleGuard.ROLES_KEY, [
       context.getHandler(),
@@ -19,7 +19,7 @@ export class RoleGuard implements CanActivate {
     if (!requiredRoles) return true;
 
     const isActive = requiredRoles.some(role => req.loggedUser.role === role);
-    if (!isActive) throw new ForbiddenException('PERMISSION_DENIED');
+    if (!isActive) throw new ForbiddenException('auth.PERMISSION_DENIED');
     return true;
   }
 }

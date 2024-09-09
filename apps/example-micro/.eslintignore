@@ -3,6 +3,7 @@
 **/dist/**
 **/build/**
 
+# Ignore generated files
 **/*.d.ts
 **/*.js
 **/*.generated.ts

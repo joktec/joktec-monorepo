@@ -1,12 +1,12 @@
 gateway:
-  port: 9010
+  port: 9011
   swagger:
     enable: true
-    server: http://localhost:9010
+    server: http://localhost:9011
     security: [ bearer ]
     auth:
       username: admin
-      password: p4ssw0rd
+      password: admin
 
 transports:
   - name: RedisTransport
@@ -15,101 +15,99 @@ transports:
       host: localhost
       port: 6379
       password: root
-  - name: RabbitTransport
-    transport: rmq
-    options:
-      urls: [ amqp://guest:guest@localhost:5672 ]
-      queue: product_queue
-      queueOptions:
-        durable: true
+      db: 0
 
 log:
   level: info
-  format: json
   hideWarning: true
   hideObject: false
-  hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader ]
+  hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]
   transport:
     enable: true
     target: pino-mongodb
     options:
-      uri: mongodb://localhost:27017/?authSource=sample_db
-      database: sample_db
+      uri: mongodb://localhost:27017/dispatch?authSource=admin
       collection: logs
       mongoOptions:
         auth:
-          username: joktec
-          password: joktec123
-
-bull:
-  queue: [ order ]
-  host: localhost
-  port: 6379
-  password: root
-  board:
-    enable: true
-    path: bulls
-    username: admin
-    password: p4ssw0rd
+          username: root
+          password: root
 
 misc:
-  cdnUrl: http://127.0.0.1:9000/joktec
+  cdnUrl: http://127.0.0.1:9000/dispatch
+  resizeUrl: http://127.0.0.1:9000/dispatch
 
 jwt:
   secretKey: $ecr3tK4y
   refreshKey: refreshKey
-  expired: 1 year
-  pending: 30
+  expired: 30 days
+  pending: 60
   limit: 5
 
+auth:
+  firebase: true
+  kakao:
+    enable: true
+    url: https://kapi.kakao.com
+  naver:
+    enable: true
+    url: https://openapi.naver.com
+  amazon:
+    enable: true
+    url: https://api.amazon.com
+  apple:
+    enable: true
+    url: https://appleid.apple.com
+    audience: com.mega.dispatch
+  facebook:
+    enable: true
+    url: https://graph.facebook.com
+  google:
+    enable: true
+    url: https://www.googleapis.com
+
 mongo:
-  host: localhost
-  port: 27017
-  username: joktec
-  password: joktec123
-  database: sample_db
-  connectTimeout: 20000
-  directConnection: true
-  debug: false
-  syncModel: true
+  - conId: default
+    replica: false
+    host: localhost
+    port: 27017
+    username: root
+    password: root
+    database: dispatch
+    autoIndex: true
+    params: authSource=admin&directConnection=true&connectTimeoutMS=20000
+    debug: true
+  - conId: logConnection
+    replica: false
+    host: localhost
+    port: 27017
+    username: root
+    password: root
+    database: dispatch
+    autoIndex: true
+    params: authSource=admin&directConnection=true&connectTimeoutMS=20000
+    debug: true
 
 storage:
   region: ap-southeast-1
   accessKey: accesskey
   secretKey: secretkey
-  bucket: joktec
+  bucket: dispatch
   endpoint: http://127.0.0.1:9000
   sslEnabled: false
   forcePathStyle: true
-  linkFormat: http://127.0.0.1:9000/joktec/<key>
+  checkBucket: false
+  linkFormat: http://127.0.0.1:9000/dispatch/<key>
 
 cacher:
   type: redis
   host: localhost
   port: 6379
   password: root
+  database: 0
 
 http:
   timeout: 30000
 
-gpt:
-  apiKey: XXX
-
-mailer:
-  service: zoho
-  host: smtppro.zoho.com
-  port: 465
-  secure: true
-  auth:
-    user: test@joktec.com
-    pass: joktec123
-  sender: 'JokTec <support@joktec.com>'
-  template:
-    dir: ./public/templates/preview
-    preview: true
-    options:
-      engine: hbs
-      strict: true
-
 firebase:
-  credential: './credentials/joktec-firebase-adminsdk-s49hk-1e6cd820c7.json'
+  credential: './credentials/dispatch-19582-72214dfa4daa.json'

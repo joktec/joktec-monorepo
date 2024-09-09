@@ -1,6 +1,8 @@
-import { BaseService, ICondition, Injectable, NotImplementedException } from '@joktec/core';
-import { AuthPlatform } from '../../models/constants';
-import { User } from '../../models/entities';
+import { BaseService, ICondition, Injectable, plainToInstance } from '@joktec/core';
+import { UserStatus } from '../../models/constants';
+import { AuthProviderProfile } from '../../models/interfaces';
+import { UserProvider } from '../../models/objects';
+import { User } from '../../models/schemas';
 import { UserRepo } from '../../repositories';
 
 @Injectable()
@@ -9,23 +11,58 @@ export class UserService extends BaseService<User, string> {
     super(userRepo);
   }
 
-  async findByPhone(phone: string): Promise<User> {
-    return this.userRepo.findOne({ condition: { phone } });
+  async getSimpleProfile(id: string) {
+    return this.userRepo.findById(id, {
+      select: [
+        '_id',
+        'address',
+        'artistIds',
+        'avatar',
+        'email',
+        'nickname',
+        'profile',
+        'rank',
+        'wallet',
+        'artists',
+        'config',
+      ],
+      populate: { artists: '*' },
+    });
   }
 
-  async findByEmail(email: string, notUserId?: string): Promise<User> {
+  async findByEmail(email: string): Promise<User> {
     const condition: ICondition<User> = { email };
-    if (notUserId) condition._id = { $ne: notUserId };
     return this.userRepo.findOne({ condition });
   }
 
-  async findByUId(uid: string, platform: AuthPlatform): Promise<User> {
-    if (platform === AuthPlatform.GOOGLE) {
-      return this.userRepo.findOne({ condition: { $and: [{ googleId: { $exists: true } }, { googleId: uid }] } });
+  async checkExistNickname(nickname: string, email: string): Promise<boolean> {
+    const condition: ICondition<User> = { nickname, email: { $ne: email } };
+    return !!(await this.userRepo.findOne({ condition }));
+  }
+
+  async upsertByProvider(providerProfile: AuthProviderProfile, nickname?: string, avatar?: string): Promise<User> {
+    let user = await this.findByEmail(providerProfile.email);
+    if (!user) {
+      user = await this.userRepo.create({
+        email: providerProfile.email,
+        nickname: nickname || '',
+        avatar: avatar || null,
+        status: UserStatus.ACTIVATED,
+        providers: [],
+      });
     }
-    if (platform === AuthPlatform.FACEBOOK) {
-      return this.userRepo.findOne({ condition: { $and: [{ facebookId: { $exists: true } }, { facebookId: uid }] } });
+
+    if (user.providers.every(o => o.providerId !== providerProfile.providerId)) {
+      const userProvider = plainToInstance(UserProvider, {
+        verifiedAt: new Date(),
+        type: providerProfile.type,
+        providerId: providerProfile.providerId,
+        profileName: providerProfile.profileName,
+        profileImage: providerProfile.profileImage,
+      });
+      user = await this.userRepo.update({ _id: user._id }, { $push: { providers: userProvider } });
     }
-    throw new NotImplementedException('PLATFORM_NOT_SUPPORT_SSO');
+
+    return user;
   }
 }
