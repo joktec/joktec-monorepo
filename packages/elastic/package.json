@@ -1,7 +1,7 @@
 {
   "name": "@joktec/elastic",
   "description": "JokTec - ElasticSearch",
-  "version": "0.0.154",
+  "version": "0.0.155",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -41,8 +41,8 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.15.0",
-    "@joktec/core": "0.0.153",
-    "@joktec/http": "0.0.155",
+    "@joktec/core": "0.0.154",
+    "@joktec/http": "0.0.156",
     "lodash": "^4.17.21",
     "merge-deep": "^3.0.3"
   },
