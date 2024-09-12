@@ -13,18 +13,18 @@ import { lookup } from 'geoip-lite';
 import helmet from 'helmet';
 import requestIp from 'request-ip';
 import UAParser from 'ua-parser-js';
-import { ApplicationMiddlewares } from '../../base';
+import { ApplicationMiddlewareFactory, resolveMiddleware } from '../../base';
 import { SwaggerConfig, SwaggerSecurity } from '../../decorators';
 import { ExpressRequest, ExpressResponse, HttpRequestHeader } from '../../models';
 import { BullConfig, ConfigService, LogService } from '../../modules';
-import { joinUrl, toArray } from '../../utils';
+import { joinUrl } from '../../utils';
 import { GatewayConfig } from './gateway.config';
 
-export class GatewayService {
-  static async bootstrap(app: NestExpressApplication, middlewares?: ApplicationMiddlewares): Promise<void> {
+export class GatewayFactory {
+  static async bootstrap(app: NestExpressApplication, middlewares: ApplicationMiddlewareFactory = {}): Promise<void> {
     const configService = app.get(ConfigService);
     const logService = await app.resolve(LogService);
-    logService.setContext(GatewayService.name);
+    logService.setContext(GatewayFactory.name);
 
     const gatewayConfig = configService.parseOrThrow(GatewayConfig, 'gateway');
     const { port, contextPath } = gatewayConfig;
@@ -39,15 +39,15 @@ export class GatewayService {
       next();
     });
 
-    app.useGlobalGuards(...toArray(middlewares?.guards));
-    app.useGlobalPipes(...toArray(middlewares?.pipes));
-    app.useGlobalInterceptors(...toArray(middlewares?.interceptors));
-    app.useGlobalFilters(...toArray(middlewares?.filters));
+    app.useGlobalGuards(...(await resolveMiddleware(app, middlewares?.guards)));
+    app.useGlobalPipes(...(await resolveMiddleware(app, middlewares?.pipes)));
+    app.useGlobalInterceptors(...(await resolveMiddleware(app, middlewares?.interceptors)));
+    app.useGlobalFilters(...(await resolveMiddleware(app, middlewares?.filters)));
 
-    const useSwagger = GatewayService.setupSwagger(app);
-    const useBullBoard = GatewayService.setUpBullBoard(app);
-    GatewayService.setUpViewEngine(app);
-    GatewayService.setupSecurity(app);
+    const useSwagger = GatewayFactory.setupSwagger(app);
+    const useBullBoard = GatewayFactory.setUpBullBoard(app);
+    GatewayFactory.setUpViewEngine(app);
+    GatewayFactory.setupSecurity(app);
 
     if (middlewares.beforeInit) await middlewares.beforeInit(app);
 

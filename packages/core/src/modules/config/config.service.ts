@@ -21,6 +21,10 @@ export class ConfigService extends JsConfigService implements OnModuleInit {
     return this._appConfig;
   }
 
+  exist(propertyPath: string): boolean {
+    return !!this.get(propertyPath, null);
+  }
+
   parse<T extends object = Record<string, any>>(
     clazz: Constructor<T>,
     propertyPath: string,

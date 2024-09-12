@@ -26,7 +26,7 @@ log:
     enable: true
     target: pino-mongodb
     options:
-      uri: mongodb://localhost:27017/dispatch?authSource=admin
+      uri: mongodb://localhost:27017/dispatch_log?authSource=admin
       collection: logs
       mongoOptions:
         auth:
@@ -78,15 +78,7 @@ mongo:
     params: authSource=admin&directConnection=true&connectTimeoutMS=20000
     debug: true
   - conId: logConnection
-    replica: false
-    host: localhost
-    port: 27017
-    username: root
-    password: root
-    database: dispatch
-    autoIndex: true
-    params: authSource=admin&directConnection=true&connectTimeoutMS=20000
-    debug: true
+    database: dispatch_log
 
 storage:
   region: ap-southeast-1

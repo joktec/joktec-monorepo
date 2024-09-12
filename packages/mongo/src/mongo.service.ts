@@ -56,7 +56,6 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
   }
 
   async start(client: Mongoose, conId: string = DEFAULT_CON_ID): Promise<void> {
-    this.logService.info('OnStart MongoService');
     if (client.readyState !== 1) return;
 
     const version = await this.getVersion(conId);

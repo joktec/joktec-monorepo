@@ -5,4 +5,4 @@ export * from './micro.interceptor';
 export * from './micro.metric';
 export * from './micro.middleware';
 export * from './micro.module';
-export * from './micro.service';
+export * from './micro.factory';

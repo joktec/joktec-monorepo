@@ -34,7 +34,7 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
       this.logService.warn('%s service not found config!', this.service);
     }
 
-    const configList: IConfig[] = toArray<IConfig>(config);
+    const configList: IConfig[] = toArray<IConfig>(config).map(cfg => new this.configClass(cfg));
     for (const cfg of configList) {
       const inheritConfig = cfg.inherit ? configList[0] : {};
       await this.clientInit(mergeDeep({}, inheritConfig, cfg));

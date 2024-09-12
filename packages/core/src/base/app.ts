@@ -11,18 +11,17 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { isFunction } from 'lodash';
 import { Logger, LoggerErrorInterceptor } from 'nestjs-pino';
-import { GatewayConfig, GatewayService, MicroConfig, MicroService } from '../infras';
-import { ConfigService } from '../modules';
+import { GatewayFactory, MicroFactory } from '../infras';
+import { ConfigService, LogService } from '../modules';
 
 export type Module = NestModule;
 
-export type ApplicationMiddlewares = {
-  guards?: CanActivate[];
-  pipes?: PipeTransform[];
-  interceptors?: NestInterceptor[];
-  filters?: ExceptionFilter[];
-  beforeInit?: (app?: INestApplication) => void | Promise<void>;
-  afterInit?: (app?: INestApplication) => void | Promise<void>;
+export const resolveMiddleware = async <T>(
+  app: INestApplication,
+  args: T[] | ((app: INestApplication) => T[] | Promise<T[]>),
+): Promise<T[]> => {
+  if (!args) return [];
+  return isFunction(args) ? await args(app) : args;
 };
 
 export type ApplicationMiddlewareFactory = {
@@ -35,25 +34,25 @@ export type ApplicationMiddlewareFactory = {
 };
 
 export class Application {
-  static initTrackingProcessEvent(logger: Logger) {
-    logger.log(`🚀 Init app tracking process event`);
+  static initTrackingProcessEvent(logger: LogService) {
+    logger.info(`🚀 Init app tracking process event`);
     const signalsNames: NodeJS.Signals[] = ['SIGTERM', 'SIGINT', 'SIGHUP'];
     signalsNames.forEach(signalName =>
       process.on(signalName, signal => {
-        logger.log(`🚨 Retrieved signal: ${signal}, application terminated`);
+        logger.info(`🚨 Retrieved signal: ${signal}, application terminated`);
         process.exit(0);
       }),
     );
 
     process.on('uncaughtException', (error: Error) => {
-      logger.error({ err: error }, `🚨 Uncaught Promise Exception with error`);
+      logger.error(error, `🚨 Uncaught Promise Exception with error`);
       process.exit(1);
     });
 
     process.on('unhandledRejection', (reason, promise) => {
       logger.error(`🚨 Unhandled Promise Rejection, reason: ${reason}`);
       promise.catch((err: Error) => {
-        logger.error({ err }, `🚨 Unhandled Promise Rejection with error`);
+        logger.error(err, `🚨 Unhandled Promise Rejection with error`);
         process.exit(1);
       });
     });
@@ -70,27 +69,22 @@ export class Application {
     app.useLogger(logger);
     app.useGlobalInterceptors(new LoggerErrorInterceptor());
 
-    Application.initTrackingProcessEvent(logger);
-
     const configService = app.get(ConfigService);
-    const middlewares: ApplicationMiddlewares = {
-      ...factory,
-      guards: isFunction(factory.guards) ? await factory.guards(app) : factory.guards,
-      pipes: isFunction(factory.pipes) ? await factory.pipes(app) : factory.pipes,
-      interceptors: isFunction(factory.interceptors) ? await factory.interceptors(app) : factory.interceptors,
-      filters: isFunction(factory.filters) ? await factory.filters(app) : factory.filters,
-    };
+    const logService = await app.resolve(LogService);
+    logService.setContext(Application.name);
+    Application.initTrackingProcessEvent(logService);
 
-    const gatewayConfig = configService.get<GatewayConfig>('gateway');
-    if (gatewayConfig) {
-      await GatewayService.bootstrap(app, middlewares);
+    if (configService.exist('gateway')) {
+      await GatewayFactory.bootstrap(app, factory);
       return;
     }
 
-    const microConfig = configService.get<MicroConfig>('micro');
-    if (microConfig) {
-      await MicroService.bootstrap(app, middlewares);
+    if (configService.exist('micro')) {
+      await MicroFactory.bootstrap(app, factory);
       return;
     }
+
+    logService.info(`🚨 Not found config, application terminated`);
+    process.exit(1);
   }
 }
