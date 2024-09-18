@@ -42,11 +42,12 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
   }
 
   protected async clientInit(config: IConfig, first: boolean = true) {
-    const { conId = DEFAULT_CON_ID } = config;
+    const cfg = new this.configClass(config);
+    const { conId = DEFAULT_CON_ID } = cfg;
     const beginMessage = first ? 'initializing...' : 're-initializing...';
     const endMessage = first ? 'initialized' : 're-initialized';
 
-    this.configs[conId] = this.validateConfig(config);
+    this.configs[conId] = this.validateConfig(cfg);
     if (!first && this.configs[conId].initTimeout > 0) {
       const second = Math.round(this.configs[conId].initTimeout / 1000);
       this.logService.debug('`%s` %s is delayed after %s second(s)', conId, this.service, second);
