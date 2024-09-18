@@ -79,7 +79,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId>
 
   @MysqlCatch
   async findById(id: ID, query: IMysqlRequest<T>): Promise<T> {
-    query.condition = { _id: id } as any;
+    query.condition = { [this.model.primaryKeyAttribute]: id } as any;
     const options: FindOptions = MysqlHelper.parseFilter(query);
     if (query.select) options.attributes = toArray(query.select, { split: ',' });
     return this.model.findOne(options);
