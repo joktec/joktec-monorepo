@@ -10,6 +10,7 @@ import {
   toArray,
   toBool,
 } from '@joktec/core';
+import { OnApplicationBootstrap } from '@nestjs/common';
 import { FindOptions, RestoreOptions } from 'sequelize';
 import { DestroyOptions } from 'sequelize/types/model';
 import { Model, ModelCtor, Repository } from 'sequelize-typescript';
@@ -20,7 +21,9 @@ import { MysqlCatch } from './mysql.exception';
 import { MysqlService } from './mysql.service';
 
 @Injectable()
-export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMysqlRepository<T, ID>, OnModuleInit {
+export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId>
+  implements IMysqlRepository<T, ID>, OnModuleInit, OnApplicationBootstrap
+{
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
 
@@ -32,6 +35,9 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId> implements IMy
 
   async onModuleInit() {
     this.logService.setContext(this.constructor.name);
+  }
+
+  onApplicationBootstrap() {
     this.model = this.mysqlService.getModel(this.model, this.conId);
   }
 
