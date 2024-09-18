@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.155](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.154...@joktec/core@0.0.155) (2024-09-18)
+
+
+### Bug Fixes
+
+* core client ([fb98d96](https://github.com/joktec/joktec-monorepo/commit/fb98d96212cbdc9e00a17d98fd829560037b54bf))
+
+
+
+
+
 ## [0.0.154](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.153...@joktec/core@0.0.154) (2024-09-12)
 
 **Note:** Version bump only for package @joktec/core
