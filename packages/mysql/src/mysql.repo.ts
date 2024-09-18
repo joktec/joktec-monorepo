@@ -87,7 +87,7 @@ export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId>
 
   @MysqlCatch
   async create(body: Model<T>): Promise<T> {
-    return this.model.create(body as any);
+    return this.model.build(body as any, { isNewRecord: true }).save();
   }
 
   @MysqlCatch
