@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.162](https://github.com/joktec/joktec-monorepo/compare/@joktec/mysql@0.0.161...@joktec/mysql@0.0.162) (2024-09-18)
+
+
+### Bug Fixes
+
+* core client ([47bbf88](https://github.com/joktec/joktec-monorepo/commit/47bbf883caa452be110a7292256fcbc4ea41f7d9))
+
+
+
+
+
 ## [0.0.161](https://github.com/joktec/joktec-monorepo/compare/@joktec/mysql@0.0.160...@joktec/mysql@0.0.161) (2024-09-18)
 
 **Note:** Version bump only for package @joktec/mysql
