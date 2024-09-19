@@ -15,13 +15,13 @@ import { FindOptions, RestoreOptions } from 'sequelize';
 import { DestroyOptions } from 'sequelize/types/model';
 import { Model, ModelCtor, Repository } from 'sequelize-typescript';
 import { MysqlHelper } from './helpers';
-import { IMysqlRequest, MysqlId } from './models';
+import { IMysqlRequest, MysqlId, MysqlModel } from './models';
 import { IMysqlRepository } from './mysql.client';
 import { MysqlCatch } from './mysql.exception';
 import { MysqlService } from './mysql.service';
 
 @Injectable()
-export abstract class MysqlRepo<T extends Model<T>, ID = MysqlId>
+export abstract class MysqlRepo<T extends MysqlModel<T>, ID = MysqlId>
   implements IMysqlRepository<T, ID>, OnModuleInit, OnApplicationBootstrap
 {
   @Inject() protected configService: ConfigService;

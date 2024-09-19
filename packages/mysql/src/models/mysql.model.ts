@@ -1,7 +1,10 @@
 import { ApiProperty, Field } from '@joktec/core';
 import { CreatedAt, DeletedAt, Model, UpdatedAt } from 'sequelize-typescript';
 
-export class MysqlModel<T> extends Model<T> {
+export class MysqlModel<
+  TModelAttributes extends {} = any,
+  TCreationAttributes extends {} = TModelAttributes,
+> extends Model<TModelAttributes, TCreationAttributes> {
   id?: number | any;
 
   @CreatedAt
