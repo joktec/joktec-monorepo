@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError, NotBeforeError, TokenExpiredError } from 'jsonwebtoken';
 import moment from 'moment';
 import ms from 'ms';
 import { ExceptionMessage, InternalServerException, UnauthorizedException } from '../../exceptions';
@@ -48,9 +48,7 @@ export class JwtService {
       const res = jwt.verify(token, this.config.secretKey, { complete: true });
       return res.payload as JwtPayload;
     } catch (err) {
-      if (err.name === 'TokenExpiredError') throw new UnauthorizedException(ExceptionMessage.TOKEN_EXPIRED);
-      if (err.name === 'NotBeforeError') throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN_FORMAT);
-      throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
+      this.handleError(err);
     }
   }
 
@@ -63,7 +61,7 @@ export class JwtService {
       const res = jwt.verify(token, this.config.refreshKey, { ignoreExpiration: true, complete: true });
       return res.payload as JwtPayload;
     } catch (err) {
-      throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
+      this.handleError(err);
     }
   }
 
@@ -72,7 +70,25 @@ export class JwtService {
       const res = jwt.decode(token, { complete: true });
       return res.payload as JwtPayload;
     } catch (err) {
-      throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err);
+      this.handleError(err);
     }
+  }
+
+  private handleError(err: any) {
+    if (err instanceof TokenExpiredError) {
+      const data = { name: err.name, message: err.message, expiredAt: err.expiredAt };
+      throw new UnauthorizedException(ExceptionMessage.TOKEN_EXPIRED, data);
+    }
+
+    if (err instanceof NotBeforeError) {
+      const data = { name: err.name, message: err.message, notBefore: err.date };
+      throw new UnauthorizedException(ExceptionMessage.TOKEN_EXPIRED, data);
+    }
+
+    if (err instanceof JsonWebTokenError) {
+      throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, { name: err.name, message: err.message });
+    }
+
+    throw new UnauthorizedException(ExceptionMessage.INVALID_TOKEN, err.inner || err);
   }
 }
