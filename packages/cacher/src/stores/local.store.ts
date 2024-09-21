@@ -39,7 +39,7 @@ export class LocalStore implements ICacheStore {
   }
 
   async setItem(key: string, value: string, expiry: number): Promise<any> {
-    await this.client.set(key, value, { ttl: expiry });
+    await this.client.set(key, value, { ttl: expiry * 1000 });
   }
 
   async getItem(key: string): Promise<string> {
