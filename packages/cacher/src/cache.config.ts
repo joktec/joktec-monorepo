@@ -26,7 +26,7 @@ export class CacheConfig extends ClientConfig {
 
   @IsString({ groups: [CacheType.LOCAL] })
   @IsNotEmpty({ groups: [CacheType.LOCAL] })
-  cacheDir?: string;
+  cacheDir?: string = './.cacher';
 
   @IsString({ groups: [CacheType.REDIS, CacheType.MEMCACHED] })
   @IsNotEmpty({ groups: [CacheType.REDIS, CacheType.MEMCACHED] })

@@ -7,8 +7,8 @@ export interface IListResponseDto<T extends Entity> {
   items: T[];
   total: number;
 
-  currentPage?: number;
   prevPage?: number;
+  currPage?: number;
   nextPage?: number;
   lastPage?: number;
 
@@ -30,11 +30,11 @@ export const BaseListResponse = <T extends Entity>(dto: Constructor<T>) => {
 
     @Field({ nullable: true, defaultValue: null })
     @ApiPropertyOptional()
-    currentPage?: number;
-
-    @Field({ nullable: true, defaultValue: null })
-    @ApiPropertyOptional()
     prevPage?: number;
+
+    @Field({ nullable: true, defaultValue: 1 })
+    @ApiPropertyOptional()
+    currPage?: number;
 
     @Field({ nullable: true, defaultValue: null })
     @ApiPropertyOptional()
