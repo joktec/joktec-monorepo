@@ -40,7 +40,7 @@
     "@joktec/cacher": "0.0.106",
     "@joktec/http": "0.0.159",
     "@joktec/mailer": "0.0.157",
-    "@joktec/mongo": "0.0.206",
+    "@joktec/mongo": "0.0.207",
     "@joktec/firebase": "0.0.75",
     "@joktec/storage": "0.0.159",
     "apple-signin-auth": "^1.7.5",

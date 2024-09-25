@@ -68,7 +68,7 @@ export function buildIndex(target: any, options: ISchemaOptions): ClassDecorator
     indexes.push(idx);
   }
 
-  toArray(options.customIndexes).map(idx => {
+  toArray(options?.customIndexes).map(idx => {
     idx.options = { background: true, partialFilterExpression: {}, ...idx.options };
     if (paranoid) injectParanoid(idx, paranoid);
     indexes.push(idx);
