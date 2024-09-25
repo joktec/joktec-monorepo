@@ -33,10 +33,6 @@ export class MongoConfig extends ClientConfig {
   @IsOptional()
   retryTimeout?: number;
 
-  @IsBoolean()
-  @IsOptional()
-  debug?: boolean;
-
   @IsString()
   @IsOptional()
   params?: string;
@@ -58,7 +54,6 @@ export class MongoConfig extends ClientConfig {
       retryTimeout: toInt(props.retryTimeout, 20000),
       strictQuery: toBool(props.strictQuery, true),
       autoIndex: toBool(props.autoIndex, true),
-      debug: toBool(props.debug, false),
     });
   }
 }

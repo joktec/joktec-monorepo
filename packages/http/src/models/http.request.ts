@@ -11,6 +11,7 @@ export interface HttpRequest extends AxiosRequestConfig {
   httpsAgent?: Agent;
   serializer?: boolean;
   curlirize?: boolean;
+  throwError?: boolean;
 
   [key: string]: any;
 }

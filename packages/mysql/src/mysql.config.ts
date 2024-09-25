@@ -93,10 +93,6 @@ export class MysqlConfig extends ClientConfig {
 
   @IsOptional()
   @IsBoolean()
-  debug?: boolean = false;
-
-  @IsOptional()
-  @IsBoolean()
   benchmark?: boolean = false;
 
   @IsOptional()

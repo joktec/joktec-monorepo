@@ -26,12 +26,17 @@ export class ClientConfig {
   @IsObject()
   retry?: RetryOptions;
 
+  @IsOptional()
+  @IsBoolean()
+  debug?: boolean;
+
   constructor(props: ClientConfig) {
     Object.assign(this, {
       ...props,
       conId: props?.conId ?? DEFAULT_CON_ID,
       inherit: toBool(props.inherit, true),
       initTimeout: toInt(props.initTimeout, 3000),
+      debug: toBool(props.debug, false),
     });
   }
 

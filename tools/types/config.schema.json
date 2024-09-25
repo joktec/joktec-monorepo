@@ -60844,6 +60844,9 @@
         "retry": {
           "$ref": "#/definitions/RetryOptions"
         },
+        "debug": {
+          "type": "boolean"
+        },
         "chatId": {
           "type": "string"
         },
@@ -60919,6 +60922,9 @@
         },
         "retry": {
           "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
         },
         "url": {
           "anyOf": [
@@ -61043,6 +61049,9 @@
         "retry": {
           "$ref": "#/definitions/RetryOptions"
         },
+        "debug": {
+          "type": "boolean"
+        },
         "keyFilename": {
           "type": "string"
         },
@@ -61102,6 +61111,9 @@
         },
         "retry": {
           "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
         },
         "type": {
           "$ref": "#/definitions/CacheType"
@@ -61183,6 +61195,9 @@
         },
         "retry": {
           "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
         },
         "url": {
           "type": "string"
@@ -61923,6 +61938,9 @@
         "retry": {
           "$ref": "#/definitions/RetryOptions"
         },
+        "debug": {
+          "type": "boolean"
+        },
         "directory": {
           "type": "string"
         }
@@ -61961,6 +61979,9 @@
         },
         "retry": {
           "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
         },
         "credential": {
           "anyOf": [
@@ -62036,6 +62057,9 @@
         },
         "retry": {
           "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
         },
         "url": {
           "type": "string"
@@ -62117,6 +62141,9 @@
         },
         "retry": {
           "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
         },
         "brokers": {
           "type": "array",
@@ -62345,6 +62372,9 @@
         },
         "retry": {
           "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
         },
         "host": {
           "type": "string"
@@ -62749,6 +62779,9 @@
         "retry": {
           "$ref": "#/definitions/RetryOptions"
         },
+        "debug": {
+          "type": "boolean"
+        },
         "uri": {
           "type": "string"
         },
@@ -62772,9 +62805,6 @@
         },
         "retryTimeout": {
           "type": "number"
-        },
-        "debug": {
-          "type": "boolean"
         },
         "params": {
           "type": "string"
@@ -62821,6 +62851,9 @@
         "retry": {
           "$ref": "#/definitions/RetryOptions"
         },
+        "debug": {
+          "type": "boolean"
+        },
         "dialect": {
           "$ref": "#/definitions/Dialect"
         },
@@ -62853,9 +62886,6 @@
           "items": {
             "$ref": "#/definitions/MysqlSlaveConfig"
           }
-        },
-        "debug": {
-          "type": "boolean"
         },
         "benchmark": {
           "type": "boolean"
@@ -62940,6 +62970,9 @@
         },
         "retry": {
           "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
         },
         "fcm": {
           "$ref": "#/definitions/NotifierFcm"
@@ -63198,6 +63231,9 @@
         "retry": {
           "$ref": "#/definitions/RetryOptions"
         },
+        "debug": {
+          "type": "boolean"
+        },
         "hostname": {
           "type": "string"
         },
@@ -63257,6 +63293,9 @@
         },
         "retry": {
           "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
         },
         "region": {
           "type": "string"

@@ -66,13 +66,23 @@ export const HttpMetricDecorator = () =>
       } catch (err) {
         duration();
         httpMetric.trackStatus('FAILED', path, err);
-        if (err.response?.data) {
-          const { status, data } = err.response;
+
+        if (err instanceof AxiosError) {
           const msg = '`%s` http request to %s error with status %s';
-          services.pinoLogger.error({ data }, msg, conId, path, status);
-        } else {
-          services.pinoLogger.error(err, '`%s` http request to %s error', conId, path);
+          if (err.response?.data) {
+            const { status, data } = err.response;
+            services.pinoLogger.error({ data }, msg, conId, path, status);
+          } else if (httpConfig.debug) {
+            services.pinoLogger.error(err, msg, conId, path, err.response.status);
+          } else {
+            services.pinoLogger.error(msg, conId, path, err.response.status);
+          }
+
+          if (config.throwError) throw httpExceptionHandler(err);
+          return err.response;
         }
+
+        services.pinoLogger.error(err, '`%s` http request to %s cause exception', conId, path);
         throw httpExceptionHandler(err);
       }
     },
