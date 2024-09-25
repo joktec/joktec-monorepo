@@ -16,7 +16,8 @@ import { ApiPropertyOptions } from '@nestjs/swagger';
 import { prop, PropType, Severity } from '@typegoose/typegoose';
 import { BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
 import { isArray, isBoolean, isNil, isUndefined, last, unset } from 'lodash';
-import { isObjectIdType } from '../helpers';
+import { ObjectId } from '../models';
+import { PROP_DESIGN_TYPE_KEY } from '../mongo.constant';
 import {
   ArrayPropOptions,
   ArrayProps,
@@ -56,12 +57,16 @@ export type IPropOptions<T = any> = TypegooseProp & {
   useGQL?: boolean;
 };
 
-export const isRequired = (opts: IPropOptions<any> = {}): boolean => {
+const isRequired = (opts: IPropOptions<any> = {}): boolean => {
   const required = opts.required;
   if (!required) return false;
   if (isBoolean(required)) return required;
   if (isArray(required)) return required[0];
   return false;
+};
+
+const isObjectIdType = (designType: any): boolean => {
+  return designType === ObjectId || designType === ObjectId.prototype.constructor;
 };
 
 export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): PropertyDecorator => {
@@ -134,5 +139,6 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
     const mongooseOpts = { ...opts };
     if (mongooseOpts.ref) delete mongooseOpts.type;
     applyDecorators(prop(mongooseOpts, kind), ...decorators, ApiProperty(swaggerOptions))(target, propertyKey);
+    Reflect.defineMetadata(PROP_DESIGN_TYPE_KEY, designType, target, propertyKey);
   };
 };

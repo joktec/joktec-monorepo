@@ -4,13 +4,16 @@ import { IndexOptions } from '@typegoose/typegoose/lib/types';
 import { get } from 'lodash';
 import mongoose from 'mongoose';
 import { IIndexOptions, ISchemaOptions } from '../decorators';
-import { isObjectIdType } from './mongo.utils';
 
 function injectParanoid(indexOption: IIndexOptions, paranoidKey: string = 'deletedAt') {
+  if (!indexOption.options.partialFilterExpression) {
+    indexOption.options.partialFilterExpression = {};
+  }
+  if (indexOption.options.sparse) delete indexOption.options.sparse;
   Object.assign(indexOption.options.partialFilterExpression, { [paranoidKey]: { $type: 'null' } });
 }
 
-export function buildIndex(target: any, options: ISchemaOptions): ClassDecorator[] {
+export function buildIndex(options: ISchemaOptions): ClassDecorator[] {
   const deletedAt: string = get(options, 'paranoid.deletedAt.name', 'deletedAt');
   const paranoid: string = options?.paranoid ? deletedAt : null;
 
@@ -31,21 +34,19 @@ export function buildIndex(target: any, options: ISchemaOptions): ClassDecorator
 
   if (options?.unique) {
     toArray(options.unique).map(key => {
-      const opts: IndexOptions = { unique: true, background: true, partialFilterExpression: {} };
+      const partialFilterExpression: Record<string, any> = {};
+      const opts: IndexOptions = { unique: true, background: true, sparse: true };
       const fields: mongoose.IndexDefinition = {};
       key.split(',').map(field => {
         fields[field] = 1;
-
-        const type = Reflect.getMetadata('design:type', target.prototype, field);
-        const $type = [];
-        if (type === String) $type.push('string');
-        if (type === Number) $type.push('number');
-        if (isObjectIdType(type)) $type.push('objectId');
-        opts.partialFilterExpression[field] = { $type };
+        partialFilterExpression[field] = { $exists: true, $type: ['string', 'number', 'date', 'objectId'] };
       });
 
       const idx: IIndexOptions = { fields, options: opts };
-      if (options.paranoid) injectParanoid(idx, paranoid);
+      if (options.paranoid) {
+        idx.options.partialFilterExpression = partialFilterExpression;
+        injectParanoid(idx, paranoid);
+      }
       indexes.push(idx);
     });
   }
@@ -69,7 +70,7 @@ export function buildIndex(target: any, options: ISchemaOptions): ClassDecorator
   }
 
   toArray(options?.customIndexes).map(idx => {
-    idx.options = { background: true, partialFilterExpression: {}, ...idx.options };
+    idx.options = { background: true, ...idx.options };
     if (paranoid) injectParanoid(idx, paranoid);
     indexes.push(idx);
   });

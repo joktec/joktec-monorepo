@@ -60,7 +60,7 @@ export const Schema = (options: ISchemaOptions = {}): ClassDecorator => {
       ],
       buildQueryMethod(),
       buildPlugin(options),
-      buildIndex(target, options),
+      buildIndex(options),
     );
     applyDecorators(...decorators)(target);
   };

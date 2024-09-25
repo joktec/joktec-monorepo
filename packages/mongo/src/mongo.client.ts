@@ -12,8 +12,6 @@ import {
 } from './models';
 import { MongoConfig } from './mongo.config';
 
-export const MODEL_REGISTRY_KEY = 'MODEL_REGISTRY_KEY';
-
 export interface MongoModuleOptions {
   models?: (typeof MongoSchema)[];
   conId?: string;

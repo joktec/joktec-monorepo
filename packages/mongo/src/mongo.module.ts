@@ -1,5 +1,6 @@
 import { DEFAULT_CON_ID, DynamicModule, Global, Module, toArray } from '@joktec/core';
-import { MODEL_REGISTRY_KEY, MongoModelRegistry, MongoModuleOptions } from './mongo.client';
+import { MongoModelRegistry, MongoModuleOptions } from './mongo.client';
+import { MODEL_REGISTRY_KEY } from './mongo.constant';
 import { MongoService } from './mongo.service';
 
 @Global()

@@ -3,8 +3,9 @@ import { getModelForClass, getModelWithString } from '@typegoose/typegoose';
 import mongoose, { ClientSession, ClientSessionOptions, Connection as Mongoose } from 'mongoose';
 import { QueryHelper } from './helpers';
 import { MongoSchema } from './models';
-import { MODEL_REGISTRY_KEY, MongoClient, MongoModelRegistry, MongoType } from './mongo.client';
+import { MongoClient, MongoModelRegistry, MongoType } from './mongo.client';
 import { MongoConfig } from './mongo.config';
+import { MODEL_REGISTRY_KEY } from './mongo.constant';
 
 const RETRY_OPTS = 'mongo.retry';
 
@@ -72,6 +73,7 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
       for (const schemaClass of Object.values(this.modelRegistry[conId])) {
         await this.registerModel(schemaClass, conId);
       }
+      this.logService.info('`%s` Register models for Mongoose successfully', conId);
     }
   }
 
