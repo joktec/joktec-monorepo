@@ -8,9 +8,9 @@ import {
   InjectMetric,
   linkTransform,
 } from '@joktec/core';
-import { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { HttpConfig } from './http.config';
-import { httpExceptionHandler } from './http.exception';
+import { HttpClientException } from './http.exception';
 
 export const HTTP_DURATION_SECONDS_METRIC = 'http_duration_seconds';
 export const HTTP_TOTAL_METRIC = 'http_total';
@@ -67,23 +67,34 @@ export const HttpMetricDecorator = () =>
         duration();
         httpMetric.trackStatus('FAILED', path, err);
 
-        if (err instanceof AxiosError) {
-          const msg = '`%s` http request to %s error with status %s';
-          if (err.response?.data) {
-            const { status, data } = err.response;
-            services.pinoLogger.error({ data }, msg, conId, path, status);
-          } else if (httpConfig.debug) {
-            services.pinoLogger.error(err, msg, conId, path, err.response.status);
-          } else {
-            services.pinoLogger.error(msg, conId, path, err.response.status);
+        if (axios.isAxiosError(err) || err instanceof AxiosError) {
+          // The request was made and the server responded with a status code that falls out of the range of 2xx
+          if (err.response) {
+            const msg = '`%s` http request to %s failed with status %s';
+            const { status, data, statusText } = err.response;
+            const { code, message, name } = err;
+
+            const errData = { message, name, code, data };
+            if (!httpConfig.debug) services.pinoLogger.error(errData, msg, conId, path, status);
+            else services.pinoLogger.error({ ...errData, ...err.response }, msg, conId, path, status);
+
+            if (config.throwError) throw new HttpClientException(statusText, err.response);
+            return err.response;
           }
 
-          if (config.throwError) throw httpExceptionHandler(err);
-          return err.response;
+          // The request was made but no response was received `error.request`
+          // is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
+          // [OR] Something happened in setting up the request that triggered an Error
+          if (err.request) {
+            const msg = '`%s` http request to %s error with no response';
+            const { code, message, name, cause } = err;
+            services.pinoLogger.error({ message, name, code, cause }, msg, conId, path);
+            throw new HttpClientException(err.message ?? 'Unknown', err.toJSON());
+          }
         }
 
         services.pinoLogger.error(err, '`%s` http request to %s cause exception', conId, path);
-        throw httpExceptionHandler(err);
+        throw err;
       }
     },
     [HttpMetricService],

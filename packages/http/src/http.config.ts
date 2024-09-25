@@ -1,6 +1,8 @@
 import {
   ClientConfig,
   HttpMethod,
+  Is2DIntArray,
+  IsArray,
   IsBoolean,
   IsEnum,
   IsInt,
@@ -13,15 +15,38 @@ import {
   LogService,
   toBool,
 } from '@joktec/core';
-import { AxiosBasicCredentials, AxiosError, AxiosProxyConfig } from 'axios';
+import { AxiosBasicCredentials, AxiosError, AxiosProxyConfig, type AxiosRequestConfig } from 'axios';
+import axiosRetry, { IAxiosRetryConfig } from 'axios-retry';
 import mergeDeep from 'merge-deep';
-import { RetryConfig } from 'retry-axios';
 
-const defaultRetryConfig: RetryConfig = {
-  retry: 0,
-  retryDelay: 1000,
-  httpMethodsToRetry: [HttpMethod.GET, HttpMethod.POST],
-};
+export class HttpRetryConfig {
+  @IsOptional()
+  @IsInt()
+  retries?: number = 3;
+
+  @IsOptional()
+  @IsBoolean()
+  shouldResetTimeout?: boolean = true;
+
+  @IsOptional()
+  @IsInt()
+  retryDelay?: number = 1000;
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(HttpMethod, { each: true })
+  httpMethodsToRetry?: HttpMethod[] = [];
+
+  @IsOptional()
+  @IsArray()
+  @Is2DIntArray()
+  statusCodesToRetry?: number[][] = [];
+
+  constructor(props?: Partial<HttpRetryConfig>) {
+    Object.assign(this, props);
+    this.statusCodesToRetry = props?.statusCodesToRetry || [];
+  }
+}
 
 class BasicCredentials implements AxiosBasicCredentials {
   @IsString()
@@ -117,7 +142,8 @@ export class HttpConfig extends ClientConfig {
   curlirize?: boolean = false;
 
   @IsOptional()
-  raxConfig?: RetryConfig = defaultRetryConfig;
+  @IsTypes(HttpRetryConfig)
+  retryConfig?: HttpRetryConfig;
 
   @IsOptional()
   @IsTypes(HttpProxyConfig)
@@ -129,14 +155,43 @@ export class HttpConfig extends ClientConfig {
       ...props,
       headers: Object.assign({ accept: 'application/json' }, props?.headers),
       curlirize: toBool(props.curlirize, false),
+      retryConfig: new HttpRetryConfig(props.retryConfig),
     });
     if (props.proxy) this.proxy = new HttpProxyConfig(props.proxy);
   }
 
-  onRetryAttempt(log: LogService) {
-    this.raxConfig.onRetryAttempt = (err: AxiosError<any, any>) => {
-      const { method, url, raxConfig } = err.config;
-      log.error('%s %s error, currentRetryAttempt: %s', method, url, raxConfig.currentRetryAttempt);
+  getRetryConfig(log: LogService): IAxiosRetryConfig {
+    const { retryConfig } = this;
+    return {
+      retries: retryConfig.retries,
+      shouldResetTimeout: retryConfig.shouldResetTimeout,
+      validateResponse: null,
+      retryDelay: (retryCount: number, _: AxiosError) => retryConfig.retryDelay * retryCount,
+      retryCondition: (error: AxiosError): boolean => {
+        const { status } = error;
+        const { method } = error.config;
+        const { httpMethodsToRetry, statusCodesToRetry } = retryConfig;
+
+        if (!httpMethodsToRetry?.length && !statusCodesToRetry?.length) {
+          return axiosRetry.isNetworkOrIdempotentRequestError(error);
+        }
+
+        const isNetworkError = axiosRetry.isNetworkError(error);
+        const isMethodRetryable = httpMethodsToRetry?.length ? httpMethodsToRetry.includes(method as HttpMethod) : true;
+        const isStatusRetryable = statusCodesToRetry?.length
+          ? statusCodesToRetry.some(([min, max]) => status >= min && status <= max)
+          : true;
+
+        return isNetworkError || (isMethodRetryable && isStatusRetryable);
+      },
+      onRetry: (retryCount: number, err: AxiosError, _: AxiosRequestConfig) => {
+        const { method, url } = err.config;
+        log.error('%s %s error, retry count: %s', method, url, retryCount);
+      },
+      onMaxRetryTimesExceeded: (err: AxiosError, retryCount: number) => {
+        const { method, url } = err.config;
+        log.error('%s %s error, reach max retry times exceeded. Last count: %s', method, url, retryCount);
+      },
     };
   }
 }

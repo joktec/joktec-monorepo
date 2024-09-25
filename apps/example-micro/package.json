@@ -43,7 +43,7 @@
     "@joktec/notifier": "0.0.159",
     "@joktec/firebase": "0.0.76",
     "@joktec/storage": "0.0.160",
-    "@nestjs/schedule": "^4.0.1",
+    "@nestjs/schedule": "^4.1.1",
     "byte-length": "^1.0.2",
     "cron": "^3.1.7",
     "gravatar": "^1.8.2",
@@ -51,14 +51,14 @@
     "mime-types": "^2.1.35",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
-    "nestjs-i18n": "^10.4.0",
+    "nestjs-i18n": "^10.4.9",
     "rxjs": "^7.8.1",
     "pino-mongodb": "^4.3.0",
-    "sharp": "^0.32.6",
+    "sharp": "^0.33.5",
     "timezone-enum": "^1.0.4"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.202",
+    "@types/lodash": "^4.17.9",
     "@types/mime-types": "^2.1.4"
   },
   "lint-staged": {

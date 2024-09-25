@@ -2,12 +2,12 @@ import { AgentOptions } from 'http';
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool, toInt } from '@joktec/core';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import curlirize from 'axios-curlirize';
+import axiosRetry from 'axios-retry';
 import FormData from 'form-data';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import mergeDeep from 'merge-deep';
 import qs from 'qs';
-import * as rax from 'retry-axios';
 import { HttpClient } from './http.client';
 import { HttpConfig, HttpProxyConfig } from './http.config';
 import { HttpMetricDecorator } from './http.metric';
@@ -20,9 +20,7 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
   }
 
   async init(config: HttpConfig): Promise<AxiosInstance> {
-    const myAxiosInstance: AxiosInstance = axios.create();
-
-    // Add a request interceptor
+    const myAxiosInstance: AxiosInstance = axios.create({ ...config });
     myAxiosInstance.interceptors.request.use(
       requestConfig => {
         this.logService.setContext(this.context);
@@ -30,11 +28,15 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
       },
       error => Promise.reject(error),
     );
+    return myAxiosInstance;
+  }
 
-    config.onRetryAttempt(this.logService);
-    myAxiosInstance.defaults.raxConfig = { instance: myAxiosInstance, ...config.raxConfig };
-    rax.attach(myAxiosInstance);
-    curlirize(myAxiosInstance, (result, err) => {
+  async start(client: AxiosInstance, conId: string = DEFAULT_CON_ID): Promise<void> {
+    const config = this.getConfig(conId);
+
+    axiosRetry(client, config.getRetryConfig(this.logService));
+
+    curlirize(client as any, (result, err) => {
       const { command } = result;
       if (err) {
         this.logService.error(err, 'Curlirize error:\n%s', command);
@@ -42,11 +44,6 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
       }
       this.logService.info('Curlirize:\n%s', command);
     });
-    return myAxiosInstance;
-  }
-
-  async start(client: AxiosInstance, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // Implement
   }
 
   async stop(client: AxiosInstance, conId: string = DEFAULT_CON_ID): Promise<void> {
@@ -70,6 +67,7 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
         encode: (params: Record<string, any>) => qs.stringify(params, { arrayFormat: 'brackets' }),
       },
       curlirize: toBool(config.curlirize, clientConfig.curlirize),
+      'axios-retry': config.axiosRetry,
     });
 
     const proxy = clientConfig.proxy || config.proxy || null;
@@ -99,6 +97,7 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
         encode: (params: Record<string, any>) => qs.stringify(params, { arrayFormat: 'brackets' }),
       },
       curlirize: toBool(config.curlirize, clientConfig.curlirize),
+      'axios-retry': config.axiosRetry,
     });
 
     const proxy = clientConfig.proxy || config.proxy || null;

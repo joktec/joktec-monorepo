@@ -42,10 +42,13 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.158",
+    "@tensorflow/tfjs-core": "^4.21.0",
+    "@tensorflow/tfjs-data": "^4.17.0",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
     "magika": "^0.2.13",
+    "seedrandom": "^3.0.5",
     "rxjs": "^7.8.1"
   },
   "lint-staged": {

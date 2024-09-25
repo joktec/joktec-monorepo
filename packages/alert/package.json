@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.158",
-    "@slack/webhook": "^7.0.2",
+    "@slack/webhook": "^7.0.3",
     "lodash": "^4.17.21",
     "node-telegram-bot-api": "^0.66.0",
     "request": "^2.88.2",

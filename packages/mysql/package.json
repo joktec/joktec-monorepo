@@ -49,14 +49,14 @@
     "@joktec/core": "0.0.158",
     "lodash": "^4.17.21",
     "mysql": "2.18.1",
-    "mysql2": "^3.11.0",
+    "mysql2": "^3.11.3",
     "reflect-metadata": "*",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {
     "@types/mysql": "^2.15.26",
-    "@types/validator": "^13.12.0"
+    "@types/validator": "^13.12.2"
   },
   "lint-staged": {
     "*.ts": [

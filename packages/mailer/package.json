@@ -48,13 +48,13 @@
     "ejs": "^3.1.10",
     "handlebars": "^4.7.8",
     "lodash": "^4.17.21",
-    "nodemailer": "^6.9.14",
-    "preview-email": "^3.0.20",
+    "nodemailer": "^6.9.15",
+    "preview-email": "^3.1.0",
     "pug": "^3.0.3"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",
-    "@types/nodemailer": "^6.4.15",
+    "@types/nodemailer": "^6.4.16",
     "@types/preview-email": "^3.0.4",
     "@types/pug": "^2.0.10"
   },

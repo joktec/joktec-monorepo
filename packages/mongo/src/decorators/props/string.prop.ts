@@ -34,8 +34,8 @@ export function StringProps(opts: IPropOptions, swagger: ApiPropertyOptions): Pr
     const parseStringOption: any = isArray(opts.isString)
       ? { message: opts.isString[1] }
       : isObject(opts.isString)
-      ? opts.isString
-      : {};
+        ? opts.isString
+        : {};
     stringOption.message = parseStringOption.message;
   }
 
@@ -62,8 +62,8 @@ export function StringProps(opts: IPropOptions, swagger: ApiPropertyOptions): Pr
     const emailOption: any = isArray(opts.isEmail)
       ? { message: opts.isEmail[1] || defMsg }
       : isObject(opts.isEmail)
-      ? opts.isEmail
-      : {};
+        ? opts.isEmail
+        : {};
     decorators.push(IsEmail(emailOption, { each: swagger.isArray, message: emailOption.message }));
     swagger.format = 'email';
     opts.validate = (v: string) => isNil(v) || isEmail(v, emailOption);
@@ -74,8 +74,8 @@ export function StringProps(opts: IPropOptions, swagger: ApiPropertyOptions): Pr
     const phoneOption: any = isArray(opts.isPhone)
       ? { message: opts.isEmail[1] || defMsg }
       : isObject(opts.isEmail)
-      ? opts.isEmail
-      : {};
+        ? opts.isEmail
+        : {};
     const strictMode = toBool(phoneOption.strictMode, true);
     decorators.push(
       IsMobilePhone(phoneOption.locale, { strictMode }, { each: swagger.isArray, message: phoneOption.message }),

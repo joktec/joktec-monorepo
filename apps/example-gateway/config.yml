@@ -76,7 +76,7 @@ mongo:
     database: dispatch
     autoIndex: true
     params: authSource=admin&directConnection=true&connectTimeoutMS=20000
-    debug: true
+    debug: false
   - conId: logConnection
     database: dispatch_log
 

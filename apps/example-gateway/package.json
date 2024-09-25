@@ -43,8 +43,8 @@
     "@joktec/mongo": "0.0.209",
     "@joktec/firebase": "0.0.76",
     "@joktec/storage": "0.0.160",
-    "apple-signin-auth": "^1.7.5",
-    "nestjs-i18n": "^10.4.0",
+    "apple-signin-auth": "^1.7.6",
+    "nestjs-i18n": "^10.4.9",
     "byte-length": "^1.0.2",
     "gravatar": "^1.8.2",
     "lodash": "^4.17.21",
@@ -54,11 +54,11 @@
     "rxjs": "^7.8.1",
     "pino-mongodb": "^4.3.0",
     "semver": "^7.6.3",
-    "sharp": "^0.32.6"
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@types/gravatar": "^1.8.6",
-    "@types/lodash": "^4.14.202",
+    "@types/lodash": "^4.17.9",
     "@types/mime-types": "^2.1.4",
     "@types/semver": "^7.5.8"
   },

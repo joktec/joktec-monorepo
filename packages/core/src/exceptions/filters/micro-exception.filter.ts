@@ -36,8 +36,8 @@ export class MicroExceptionFilter extends BaseRpcExceptionFilter implements IExc
   }
 
   transformStatus(exception: Error): number {
-    if (has(exception, 'error.status')) return get(exception, 'error.status');
-    if (has(exception, 'status')) return get(exception, 'status');
+    if (has(exception, 'error.status')) return get(exception, 'error.status') as number;
+    if (has(exception, 'status')) return get(exception, 'status') as number;
     if (exception instanceof HttpException) return exception.getStatus();
     if (exception instanceof RpcException) {
       const error = exception.getError();
@@ -55,7 +55,7 @@ export class MicroExceptionFilter extends BaseRpcExceptionFilter implements IExc
   }
 
   transformMessage(exception: Error): string {
-    if (has(exception, 'error.message')) return get(exception, 'error.message');
+    if (has(exception, 'error.message')) return get(exception, 'error.message') as string;
     if (exception instanceof HttpException) {
       const error = exception.getResponse();
       return isString(error) ? error : exception.message;
@@ -69,14 +69,14 @@ export class MicroExceptionFilter extends BaseRpcExceptionFilter implements IExc
   }
 
   transformTitle(exception: Error): string {
-    if (has(exception, 'error.title')) return get(exception, 'error.title');
-    if (has(exception, 'title')) return get(exception, 'title');
+    if (has(exception, 'error.title')) return get(exception, 'error.title') as string;
+    if (has(exception, 'title')) return get(exception, 'title') as string;
     return ExceptionMessage.ERROR_TITLE;
   }
 
   transformCode(exception: Error): number {
-    if (has(exception, 'error.code')) return get(exception, 'error.code');
-    if (has(exception, 'code')) return get(exception, 'code');
+    if (has(exception, 'error.code')) return get(exception, 'error.code') as number;
+    if (has(exception, 'code')) return get(exception, 'code') as number;
     return 0;
   }
 

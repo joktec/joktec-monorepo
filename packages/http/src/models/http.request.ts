@@ -1,5 +1,6 @@
 import { Agent } from 'http';
 import { AxiosRequestConfig } from 'axios';
+import { IAxiosRetryConfig } from 'axios-retry';
 import { HttpProxyConfig } from '../http.config';
 
 /**
@@ -12,6 +13,7 @@ export interface HttpRequest extends AxiosRequestConfig {
   serializer?: boolean;
   curlirize?: boolean;
   throwError?: boolean;
+  axiosRetry?: IAxiosRetryConfig;
 
   [key: string]: any;
 }

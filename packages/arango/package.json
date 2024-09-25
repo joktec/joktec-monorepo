@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.158",
-    "arangojs": "^9.0.0"
+    "arangojs": "^9.1.0"
   },
   "lint-staged": {
     "*.ts": [
