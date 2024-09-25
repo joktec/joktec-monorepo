@@ -16,7 +16,7 @@ import { ApiPropertyOptions } from '@nestjs/swagger';
 import { prop, PropType, Severity } from '@typegoose/typegoose';
 import { BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
 import { isArray, isBoolean, isNil, isUndefined, last, unset } from 'lodash';
-import { ObjectId } from '../models';
+import { isObjectIdType } from '../helpers';
 import {
   ArrayPropOptions,
   ArrayProps,
@@ -64,10 +64,6 @@ export const isRequired = (opts: IPropOptions<any> = {}): boolean => {
   return false;
 };
 
-export const isObjectId = (designType: any): boolean => {
-  return designType === ObjectId || designType === ObjectId.prototype.constructor;
-};
-
 export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): PropertyDecorator => {
   return (target: object, propertyKey: string | symbol) => {
     let designType = Reflect.getMetadata('design:type', target, propertyKey);
@@ -76,7 +72,7 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
 
     const decorators: PropertyDecorator[] = [...toArray(opts.decorators)];
     const swaggerOptions: ApiPropertyOptions = {
-      type: isObjectId(designType) ? String : designType,
+      type: isObjectIdType(designType) ? String : designType,
       required: isRequired(opts),
       example: !isUndefined(opts.example) ? opts.example : opts.default,
       enum: opts.enum,
@@ -89,12 +85,12 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
     let isArrayType: boolean = false;
     if (opts.type) {
       const typeFunction = isArray(opts.type) ? opts.type[0] : opts.type;
-      if (isObjectId(typeFunction)) decorators.push(Type(() => String));
+      if (isObjectIdType(typeFunction)) decorators.push(Type(() => String));
       else decorators.push(Type(() => typeFunction));
 
       isArrayType = isArray(opts.type) || kind === PropType.ARRAY;
       designType = isArray(opts.type) ? opts.type[0] : opts.type;
-      swaggerOptions.type = isObjectId(typeFunction) ? String : typeFunction;
+      swaggerOptions.type = isObjectIdType(typeFunction) ? String : typeFunction;
       swaggerOptions.isArray = isArrayType;
     }
 
@@ -133,7 +129,7 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
     else if (designType === Number) decorators.push(...NumberProps(opts, swaggerOptions));
     else if (designType === Date) decorators.push(...DateProps(opts, swaggerOptions));
     else if (designType === Boolean) decorators.push(...BoolProps(opts, swaggerOptions));
-    else if (isObjectId(designType)) decorators.push(IsMongoId({ each: swaggerOptions.isArray }));
+    else if (isObjectIdType(designType)) decorators.push(IsMongoId({ each: swaggerOptions.isArray }));
 
     const mongooseOpts = { ...opts };
     if (mongooseOpts.ref) delete mongooseOpts.type;

@@ -4,12 +4,13 @@ import { IndexOptions } from '@typegoose/typegoose/lib/types';
 import { get } from 'lodash';
 import mongoose from 'mongoose';
 import { IIndexOptions, ISchemaOptions } from '../decorators';
+import { isObjectIdType } from './mongo.utils';
 
 function injectParanoid(indexOption: IIndexOptions, paranoidKey: string = 'deletedAt') {
   Object.assign(indexOption.options.partialFilterExpression, { [paranoidKey]: { $type: 'null' } });
 }
 
-export function buildIndex(options: ISchemaOptions): ClassDecorator[] {
+export function buildIndex(target: any, options: ISchemaOptions): ClassDecorator[] {
   const deletedAt: string = get(options, 'paranoid.deletedAt.name', 'deletedAt');
   const paranoid: string = options?.paranoid ? deletedAt : null;
 
@@ -34,7 +35,13 @@ export function buildIndex(options: ISchemaOptions): ClassDecorator[] {
       const fields: mongoose.IndexDefinition = {};
       key.split(',').map(field => {
         fields[field] = 1;
-        opts.partialFilterExpression[field] = { $type: ['number', 'string', 'objectId'] };
+
+        const type = Reflect.getMetadata('design:type', target.prototype, field);
+        const $type = [];
+        if (type === String) $type.push('string');
+        if (type === Number) $type.push('number');
+        if (isObjectIdType(type)) $type.push('objectId');
+        opts.partialFilterExpression[field] = { $type };
       });
 
       const idx: IIndexOptions = { fields, options: opts };
