@@ -1,11 +1,18 @@
 import { toArray } from '@joktec/core';
 import { index } from '@typegoose/typegoose';
 import { IndexOptions } from '@typegoose/typegoose/lib/types';
-import { get, union } from 'lodash';
+import { get } from 'lodash';
 import mongoose from 'mongoose';
 import { IIndexOptions, ISchemaOptions } from '../decorators';
 
+function injectParanoid(indexOption: IIndexOptions, paranoidKey: string = 'deletedAt') {
+  Object.assign(indexOption.options.partialFilterExpression, { [paranoidKey]: { $type: 'null' } });
+}
+
 export function buildIndex(options: ISchemaOptions): ClassDecorator[] {
+  const deletedAt: string = get(options, 'paranoid.deletedAt.name', 'deletedAt');
+  const paranoid: string = options?.paranoid ? deletedAt : null;
+
   const indexes: IIndexOptions[] = [];
 
   if (options?.index) {
@@ -14,7 +21,10 @@ export function buildIndex(options: ISchemaOptions): ClassDecorator[] {
         obj[curr] = 1;
         return obj;
       }, {});
-      indexes.push({ fields });
+
+      const idx: IIndexOptions = { fields, options: { background: true } };
+      if (options.paranoid) injectParanoid(idx, paranoid);
+      indexes.push(idx);
     });
   }
 
@@ -26,7 +36,10 @@ export function buildIndex(options: ISchemaOptions): ClassDecorator[] {
         fields[field] = 1;
         opts.partialFilterExpression[field] = { $type: ['number', 'string', 'objectId'] };
       });
-      indexes.push({ fields, options: opts });
+
+      const idx: IIndexOptions = { fields, options: opts };
+      if (options.paranoid) injectParanoid(idx, paranoid);
+      indexes.push(idx);
     });
   }
 
@@ -35,22 +48,24 @@ export function buildIndex(options: ISchemaOptions): ClassDecorator[] {
       obj[path] = 'text';
       return obj;
     }, {});
-    indexes.push({ fields });
+
+    const idx: IIndexOptions = { fields, options: { background: true } };
+    // if (options.paranoid) injectParanoid(idx, paranoid); // TODO: Fix later - This cause error when search text
+    indexes.push(idx);
   }
 
   if (options?.geoSearch) {
-    indexes.push({ fields: { [options.geoSearch]: '2dsphere' } });
+    const fields: mongoose.IndexDefinition = { [options.geoSearch]: '2dsphere' };
+    const idx: IIndexOptions = { fields, options: { background: true } };
+    if (options.paranoid) injectParanoid(idx, paranoid);
+    indexes.push(idx);
   }
 
-  const defOptions: IndexOptions = { background: true, partialFilterExpression: {} };
-  const deletedAt: string = get(options, 'paranoid.deletedAt.name', 'deletedAt');
-  const paranoid: string = options?.paranoid ? deletedAt : null;
-  return union(indexes, options.customIndexes).map(idx => {
-    idx.options = { ...defOptions, ...idx.options };
-    if (paranoid) {
-      // TODO: Fix later - This cause error when search text
-      // Object.assign(idx.options.partialFilterExpression, { [paranoid]: { $type: 'null' } });
-    }
-    return index(idx.fields, idx.options);
+  toArray(options.customIndexes).map(idx => {
+    idx.options = { background: true, partialFilterExpression: {}, ...idx.options };
+    if (paranoid) injectParanoid(idx, paranoid);
+    indexes.push(idx);
   });
+
+  return indexes.map(idx => index(idx.fields, idx.options));
 }
