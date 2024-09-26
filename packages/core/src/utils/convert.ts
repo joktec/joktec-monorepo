@@ -1,3 +1,4 @@
+import { isJSON } from 'class-validator';
 import { isArray, isBoolean, isEmpty, isNaN, isNil, isPlainObject, isString, uniq } from 'lodash';
 import pluralize from 'pluralize';
 import slug from 'slug';
@@ -176,6 +177,10 @@ export function nullKeysToObject(obj: { [key: string]: any }): object {
       else if (obj[key] === 'null') result[key] = null;
       else if (obj[key] === 'undefined') delete obj[key];
       else result[key] = obj[key];
+
+      if (typeof obj[key] === 'string' && isJSON(obj[key])) {
+        result[key] = nullKeysToObject(JSON.parse(obj[key]));
+      }
     }
   }
 

@@ -67,7 +67,6 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
         encode: (params: Record<string, any>) => qs.stringify(params, { arrayFormat: 'brackets' }),
       },
       curlirize: toBool(config.curlirize, clientConfig.curlirize),
-      'axios-retry': config.axiosRetry,
     });
 
     const proxy = clientConfig.proxy || config.proxy || null;
@@ -93,7 +92,6 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
         encode: (params: Record<string, any>) => qs.stringify(params, { arrayFormat: 'brackets' }),
       },
       curlirize: toBool(config.curlirize, clientConfig.curlirize),
-      'axios-retry': config.axiosRetry,
     });
 
     const proxy = clientConfig.proxy || config.proxy || null;

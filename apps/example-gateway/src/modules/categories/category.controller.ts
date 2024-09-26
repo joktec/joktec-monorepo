@@ -1,7 +1,6 @@
 import {
   ApiOkResponse,
   ApiOperation,
-  ApiQuery,
   BaseController,
   Controller,
   Get,
@@ -32,7 +31,6 @@ export class CategoryController extends BaseController<Category, string>(props) 
 
   @Get('/ranking')
   @ApiOperation({ summary: `Get category ranking` })
-  @ApiQuery({ type: CategoryRankingDto })
   @ApiOkResponse({ type: CategoryRankingResponse, isArray: true })
   async ranking(@QueryParam() filter: CategoryRankingDto, @Req() req: IRequest): Promise<CategoryRankingResponse[]> {
     return this.categoryService.ranking(filter, req.timezone);

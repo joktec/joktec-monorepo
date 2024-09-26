@@ -3,7 +3,7 @@ import { IRequest } from '../../app.constant';
 import { SuccessResponse } from '../../common';
 import { Notification, User } from '../../models/schemas';
 import { NotificationRepo } from '../../repositories';
-import { NotificationFilterDto, NotificationReadDto, ReadStatus } from './models';
+import { INotificationFilterDto, NotificationReadDto, ReadStatus } from './models';
 
 @Injectable()
 export class NotificationService extends BaseService<Notification, string> {
@@ -14,7 +14,7 @@ export class NotificationService extends BaseService<Notification, string> {
     super(notificationRepo);
   }
 
-  async paginate(query: NotificationFilterDto): Promise<IListResponseDto<Notification>> {
+  async paginate(query: INotificationFilterDto): Promise<IListResponseDto<Notification>> {
     if (query.readStatus) {
       switch (query.readStatus) {
         case ReadStatus.UNREAD:

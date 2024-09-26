@@ -11,11 +11,12 @@ import {
 } from '@joktec/core';
 import { AuthGuard, RoleGuard, SuccessResponse } from '../../common';
 import { Notification, User } from '../../models/schemas';
-import { NotificationReadDto } from './models';
+import { NotificationFilterDto, NotificationReadDto } from './models';
 import { NotificationService } from './notification.service';
 
 const props: IControllerProps<Notification> = {
   dto: Notification,
+  customDto: { queryDto: NotificationFilterDto },
   guards: [AuthGuard, RoleGuard],
   useBearer: true,
   create: { disable: true },

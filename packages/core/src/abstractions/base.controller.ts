@@ -20,7 +20,6 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { UseFilters } from '@nestjs/common/decorators/core';
-import { PartialType } from '@nestjs/mapped-types';
 import {
   ApiBody,
   ApiExcludeController,
@@ -28,11 +27,18 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiTags,
+  PartialType,
 } from '@nestjs/swagger';
 import { startCase } from 'lodash';
-import { ApiNotAllowedEndpoint, ApiSchema, ApiUseApiKey, ApiUseBearer } from '../decorators';
+import {
+  ApiFilterQuery,
+  ApiNotAllowedEndpoint,
+  ApiSchema,
+  ApiUseApiKey,
+  ApiUseBearer,
+  IApiFilterQueryOptions,
+} from '../decorators';
 import { NotFoundException } from '../exceptions';
 import {
   BaseListResponse,
@@ -70,7 +76,7 @@ export interface IControllerProps<T extends Entity> extends IEndpointProps {
     updatedDto?: Constructor<DeepPartial<T>> | Clazz;
   };
   tag?: string;
-  paginate?: IEndpointProps & { search?: boolean };
+  paginate?: IEndpointProps & { search?: boolean } & IApiFilterQueryOptions;
   detail?: IEndpointProps;
   create?: IEndpointProps;
   update?: IEndpointProps;
@@ -94,7 +100,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
   const createDto: Constructor<T | any> = props.customDto?.createDto || props.dto;
   const updatedDto: Constructor<T | any> = props.customDto?.updatedDto || PartialType(createDto);
 
-  @ApiSchema({ name: `${nameSingular}Query` })
+  @ApiSchema({ name: `${nameSingular}QueryDto` })
   class QueryDto extends queryDto {}
 
   @ApiSchema({ name: `${nameSingular}Pagination` })
@@ -133,7 +139,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
     @Get('/')
     @ApiOperation({ summary: `List ${namePlural}` })
-    @ApiQuery({ type: QueryDto })
+    @ApiFilterQuery({ ...props.paginate })
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(isHideEndpoint(props.paginate))
     @ApiNotAllowedEndpoint(toBool(props.paginate?.disable, false))
@@ -150,7 +156,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
     @Post('/search')
     @ApiOperation({ summary: `Search ${namePlural}` })
-    @ApiBody({ type: QueryDto })
     @ApiOkResponse({ type: PaginationDto })
     @ApiExcludeEndpoint(!toBool(props.paginate?.search, false))
     @ApiNotAllowedEndpoint(!toBool(props.paginate?.search, false))
@@ -168,7 +173,6 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
 
     @Get('/:id')
     @ApiParam({ name: 'id' })
-    @ApiQuery({ type: QueryDto })
     @ApiOperation({ summary: `Get ${nameSingular}` })
     @ApiOkResponse({ type: props.dto })
     @ApiExcludeEndpoint(isHideEndpoint(props.detail))

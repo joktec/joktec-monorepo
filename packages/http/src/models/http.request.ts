@@ -44,7 +44,8 @@ export interface HttpRequest extends AxiosRequestConfig {
    * Custom configuration for retrying a failed request.
    * For more details, see: https://www.npmjs.com/package/axios-retry
    */
-  axiosRetry?: IAxiosRetryConfig;
+  'axios-retry'?: IAxiosRetryConfig;
+
   /**
    * Allows for additional properties as per your custom configuration needs.
    */

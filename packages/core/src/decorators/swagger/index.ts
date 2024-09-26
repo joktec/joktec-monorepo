@@ -28,3 +28,4 @@ export {
 } from '@nestjs/swagger';
 export * from './swagger.config';
 export * from './swagger.decorator';
+export * from './swagger.interface';

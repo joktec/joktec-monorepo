@@ -8,7 +8,12 @@ export enum ReadStatus {
   UNREAD = 'unread',
 }
 
-export interface NotificationFilterDto extends IMongoRequest<Notification> {
+export interface INotificationFilterDto extends IMongoRequest<Notification> {
+  readStatus?: ReadStatus;
+}
+
+export class NotificationFilterDto implements INotificationFilterDto {
+  @ApiPropertyOptional({ enum: ReadStatus })
   readStatus?: ReadStatus;
 }
 
