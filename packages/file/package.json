@@ -1,7 +1,7 @@
 {
   "name": "@joktec/file",
   "description": "JokTec - Local File Service",
-  "version": "0.0.158",
+  "version": "0.0.159",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -41,7 +41,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.160",
+    "@joktec/core": "0.0.161",
     "@tensorflow/tfjs-core": "^4.21.0",
     "@tensorflow/tfjs-data": "^4.17.0",
     "fs": "^0.0.1-security",
