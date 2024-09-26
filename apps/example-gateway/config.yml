@@ -100,6 +100,8 @@ cacher:
 
 http:
   timeout: 30000
+  retryConfig:
+    statusCodesToRetry: [ [ 100, 199 ], [ 200, 201 ] ]
 
 firebase:
   credential: './credentials/dispatch-19582-72214dfa4daa.json'

@@ -78,7 +78,7 @@ export const HttpMetricDecorator = () =>
             if (!httpConfig.debug) services.pinoLogger.error(errData, msg, conId, path, status);
             else services.pinoLogger.error({ ...errData, ...err.response }, msg, conId, path, status);
 
-            if (config.throwError) throw new HttpClientException(statusText, err.response);
+            if (config.onFailReturn === 'throw') throw new HttpClientException(statusText, err.response);
             return err.response;
           }
 
@@ -93,6 +93,7 @@ export const HttpMetricDecorator = () =>
           }
         }
 
+        // The request was not sent out because some configuration error caused the exception.
         services.pinoLogger.error(err, '`%s` http request to %s cause exception', conId, path);
         throw err;
       }

@@ -11,7 +11,7 @@ import qs from 'qs';
 import { HttpClient } from './http.client';
 import { HttpConfig, HttpProxyConfig } from './http.config';
 import { HttpMetricDecorator } from './http.metric';
-import { HttpAgent, HttpFormData, HttpRequest, HttpResponse } from './models';
+import { HttpAgent, HttpFormRequest, HttpRequest, HttpResponse } from './models';
 
 @Injectable()
 export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance> implements HttpClient {
@@ -80,13 +80,9 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
   }
 
   @HttpMetricDecorator()
-  async upload<T = any>(
-    config: HttpRequest,
-    data: HttpFormData,
-    conId: string = DEFAULT_CON_ID,
-  ): Promise<HttpResponse<T>> {
+  async upload<T = any>(config: HttpFormRequest, conId: string = DEFAULT_CON_ID): Promise<HttpResponse<T>> {
     const formData = new FormData();
-    Object.keys(data).map(key => toArray(data[key]).map(v => formData.append(key, v, 'file')));
+    Object.keys(config.data).map(key => toArray(config.data[key]).map(v => formData.append(key, v, 'file')));
 
     const clientConfig = this.getConfig(conId);
     const cf: AxiosRequestConfig = mergeDeep({}, clientConfig, config, {

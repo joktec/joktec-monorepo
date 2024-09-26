@@ -1,4 +1,12 @@
-import { BadRequestException, ConfigService, hashString, Injectable, LogService } from '@joktec/core';
+import {
+  BadRequestException,
+  ConfigService,
+  hashString,
+  Injectable,
+  LogService,
+  OnApplicationBootstrap,
+  OnModuleInit,
+} from '@joktec/core';
 import { FirebaseService } from '@joktec/firebase';
 import { HttpService } from '@joktec/http';
 import appleSignin from 'apple-signin-auth';
@@ -18,7 +26,7 @@ import {
 import { AuthAppleProvider, BaseProviderConfig } from './configs';
 
 @Injectable()
-export class AuthProvider {
+export class AuthProvider implements OnModuleInit, OnApplicationBootstrap {
   constructor(
     private configService: ConfigService,
     private logger: LogService,
@@ -26,6 +34,25 @@ export class AuthProvider {
     private firebaseService: FirebaseService,
   ) {
     this.logger.setContext(AuthProvider.name);
+  }
+
+  onModuleInit(): any {
+    this.httpService.setContext(AuthProvider.name);
+  }
+
+  onApplicationBootstrap(): any {
+    setTimeout(async () => {
+      try {
+        await this.httpService.request({
+          method: 'PUT',
+          url: 'https://google.com1/abc',
+          throwError: true,
+          // axiosRetry: { retries: 10 },
+        });
+      } catch (err) {
+        this.logger.error(err, 'XXXXXXXX');
+      }
+    }, 10000);
   }
 
   /**

@@ -22,7 +22,7 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
   }
 
   protected async init(config: ElasticConfig): Promise<HttpService> {
-    config.onRetryAttempt(this.logService);
+    config.getRetryConfig(this.logService);
     return this.httpService;
   }
 

@@ -6,7 +6,7 @@ import { CacheConfig } from '../cache.config';
 import { wildcardToRegExp } from '../cache.utils';
 
 export class LocalStore implements ICacheStore {
-  private client: LocalStorage;
+  private readonly client: LocalStorage;
 
   constructor(
     config: CacheConfig,
@@ -15,7 +15,9 @@ export class LocalStore implements ICacheStore {
     const cacheDir = config.cacheDir || 'cache';
     this.client = storage.create({
       dir: path.posix.join(cacheDir, config.conId),
-      logging: (...args: any[]) => this.logger.info(args, `Local logger init`),
+      logging: (...args: any[]) => {
+        if (config.debug) this.logger.info(args, `Local logger init`);
+      },
     });
   }
 

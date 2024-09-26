@@ -17,9 +17,11 @@ import {
 } from '@joktec/core';
 import { AxiosBasicCredentials, AxiosError, AxiosProxyConfig, type AxiosRequestConfig } from 'axios';
 import axiosRetry, { IAxiosRetryConfig } from 'axios-retry';
+import { chain, inRange, sum } from 'lodash';
 import mergeDeep from 'merge-deep';
+import { IHttpRetryConfig } from './models';
 
-export class HttpRetryConfig {
+export class HttpRetryConfig implements IHttpRetryConfig {
   @IsOptional()
   @IsInt()
   retries?: number = 3;
@@ -43,8 +45,13 @@ export class HttpRetryConfig {
   statusCodesToRetry?: number[][] = [];
 
   constructor(props?: Partial<HttpRetryConfig>) {
-    Object.assign(this, props);
-    this.statusCodesToRetry = props?.statusCodesToRetry || [];
+    Object.assign(this, {
+      ...props,
+      statusCodesToRetry: chain(props?.statusCodesToRetry || [])
+        .uniqBy((o: number[]) => sum(o))
+        .orderBy('0', 'asc')
+        .value(),
+    });
   }
 }
 
@@ -81,7 +88,7 @@ export class HttpProxyConfig implements AxiosProxyConfig {
 
   @IsOptional()
   @IsBoolean()
-  keepAlive?: boolean;
+  keepAlive?: boolean = true;
 
   @IsOptional()
   @IsInt()
@@ -92,10 +99,7 @@ export class HttpProxyConfig implements AxiosProxyConfig {
   maxSockets?: number;
 
   constructor(props: HttpProxyConfig) {
-    Object.assign(this, {
-      ...props,
-      keepAlive: toBool(props?.keepAlive, true),
-    });
+    Object.assign(this, props);
   }
 }
 
@@ -168,8 +172,7 @@ export class HttpConfig extends ClientConfig {
       validateResponse: null,
       retryDelay: (retryCount: number, _: AxiosError) => retryConfig.retryDelay * retryCount,
       retryCondition: (error: AxiosError): boolean => {
-        const { status } = error;
-        const { method } = error.config;
+        const { status, config } = error;
         const { httpMethodsToRetry, statusCodesToRetry } = retryConfig;
 
         if (!httpMethodsToRetry?.length && !statusCodesToRetry?.length) {
@@ -177,9 +180,11 @@ export class HttpConfig extends ClientConfig {
         }
 
         const isNetworkError = axiosRetry.isNetworkError(error);
-        const isMethodRetryable = httpMethodsToRetry?.length ? httpMethodsToRetry.includes(method as HttpMethod) : true;
+        const isMethodRetryable = httpMethodsToRetry?.length
+          ? httpMethodsToRetry.includes(config.method as HttpMethod)
+          : true;
         const isStatusRetryable = statusCodesToRetry?.length
-          ? statusCodesToRetry.some(([min, max]) => status >= min && status <= max)
+          ? statusCodesToRetry.some(([min, max]) => inRange(status, min, max))
           : true;
 
         return isNetworkError || (isMethodRetryable && isStatusRetryable);
