@@ -20,6 +20,7 @@ import {
   IMongoBulkOptions,
   IMongoBulkRequest,
   IMongoOptions,
+  IMongoPipeline,
   IMongoRequest,
   MongoSchema,
   ObjectId,
@@ -59,7 +60,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     return (isArray(docs) ? transformDocs : transformDocs[0]) as any;
   }
 
-  protected qb(query?: IMongoRequest<T>, options: IMongoOptions<T> = {}) {
+  public qb(query?: IMongoRequest<T>, options: IMongoOptions<T> = {}) {
     const qb = this.model.find<T>();
     qb.setOptions({ ...options });
 
@@ -75,7 +76,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
     return qb.lean();
   }
 
-  protected pipeline(query?: IMongoRequest<T>, options?: IMongoAggregateOptions): Aggregate<Array<any>> {
+  public pipeline<U = T>(query?: IMongoRequest<T>, options?: IMongoAggregateOptions<U>): Aggregate<Array<U>> {
     const aggregations = this.model.aggregate();
 
     if (options) aggregations.option({ ...options });
@@ -152,8 +153,12 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async aggregate<U = T>(query: IMongoRequest<T>, options?: IMongoAggregateOptions): Promise<U[]> {
-    return this.pipeline(query, options).exec();
+  async aggregate<U = T>(pipeline: IMongoPipeline[], options: IMongoAggregateOptions<U> = {}): Promise<U[]> {
+    const { autoTransform = true, transformFn } = options;
+    const docs: any[] = await this.model.aggregate(pipeline, options).exec();
+    if (transformFn) return options.transformFn(docs);
+    if (autoTransform) return this.transform(docs) as any[];
+    return docs;
   }
 
   @MongoCatch

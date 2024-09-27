@@ -7,6 +7,7 @@ import {
   IMongoBulkOptions,
   IMongoBulkRequest,
   IMongoOptions,
+  IMongoPipeline,
   IMongoRequest,
   MongoSchema,
 } from './models';
@@ -53,7 +54,7 @@ export interface IMongoRepository<T extends MongoSchema, ID = string> extends IB
 
   restore(condition: ICondition<T>, opts?: IMongoOptions<T>): Promise<T>;
 
-  aggregate<U = T>(query: IMongoRequest<T>, opts?: IMongoAggregateOptions): Promise<U[]>;
+  aggregate<U = T>(pipeline: IMongoPipeline[], opts?: IMongoAggregateOptions<U>): Promise<U[]>;
 
   upsert(condition: ICondition<T>, body: DeepPartial<T>, opts?: IMongoOptions<T>): Promise<T>;
 

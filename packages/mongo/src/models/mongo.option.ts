@@ -6,6 +6,9 @@ export interface IMongoOptions<T = any> extends QueryOptions<T> {
   force?: boolean;
 }
 
-export interface IMongoAggregateOptions extends AggregateOptions {}
+export interface IMongoAggregateOptions<T> extends AggregateOptions {
+  autoTransform?: boolean;
+  transformFn?: (docs: any[]) => Array<T> | Promise<Array<T>>;
+}
 
 export interface IMongoBulkOptions extends BulkWriteOptions, MongooseBulkWriteOptions {}
