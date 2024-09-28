@@ -102,7 +102,7 @@ export const createPinoHttp = async (
         },
         serializers: {
           req(req) {
-            req.body = req.raw.body;
+            if (req.raw.body) req.body = req.raw.body;
             return req;
           },
         },
