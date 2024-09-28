@@ -1,5 +1,5 @@
 import { AgentOptions } from 'http';
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool, toInt } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool } from '@joktec/core';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import curlirize from 'axios-curlirize';
 import axiosRetry from 'axios-retry';
@@ -50,12 +50,19 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     // Implement
   }
 
-  buildAgent(opt: AgentOptions & HttpProxyConfig): HttpAgent {
-    const proxyBody: any = { host: opt.host, port: toInt(opt.port) };
-    if (opt.auth) proxyBody.auth = `${opt.auth.username}:${opt.auth.password}`;
+  buildAgent(proxy: HttpProxyConfig, opts?: AgentOptions): HttpAgent {
+    const { protocol, host, port, auth } = proxy;
+    const url = new URL(`${protocol}://${host}:${port}`);
+    if (auth?.username && auth?.password) {
+      url.username = auth.username;
+      url.password = auth.password;
+    }
+
+    const { keepAlive = true, timeout, maxSockets } = proxy;
+    const options = Object.assign({ keepAlive, timeout, maxSockets }, opts);
     return {
-      httpAgent: new HttpProxyAgent({ ...opt, ...proxyBody }),
-      httpsAgent: new HttpsProxyAgent({ ...opt, ...proxyBody }),
+      httpAgent: new HttpProxyAgent(url, options),
+      httpsAgent: new HttpsProxyAgent(url, options),
     };
   }
 

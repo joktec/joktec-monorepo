@@ -84,7 +84,7 @@ export class HttpProxyConfig implements AxiosProxyConfig {
 
   @IsOptional()
   @IsString()
-  protocol?: string;
+  protocol?: string = 'http';
 
   @IsOptional()
   @IsBoolean()
