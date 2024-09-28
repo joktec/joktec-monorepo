@@ -194,8 +194,10 @@ export class HttpConfig extends ClientConfig {
         log.error('%s %s error, retry count: %s', method, url, retryCount);
       },
       onMaxRetryTimesExceeded: (err: AxiosError, retryCount: number) => {
-        const { method, url } = err.config;
-        log.error('%s %s error, reach max retry times exceeded. Last count: %s', method, url, retryCount);
+        if (retryCount) {
+          const { method, url } = err.config;
+          log.error('%s %s error, reach max retry times exceeded. Last count: %s', method, url, retryCount);
+        }
       },
     };
   }
