@@ -51,9 +51,8 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     // Implement
   }
 
-  public async checkProxy(proxy: HttpProxyConfig): Promise<[boolean, string]> {
+  public async checkProxy(proxy: HttpProxyConfig, timeout: number = 5000): Promise<[boolean, string]> {
     return new Promise((resolve, _) => {
-      const timeout = toInt(proxy.timeout, 5000);
       const { host, port } = proxy;
 
       const socket = new net.Socket();

@@ -14,11 +14,12 @@ export interface HttpClient extends Client<HttpConfig, AxiosInstance> {
    * a connection to the proxy server.
    *
    * @param proxy - The proxy configuration object that includes host, port, and authentication details.
+   * @param timeout - Timeout as milliseconds to abort the connection
    * @returns A promise that resolves to a tuple:
    *  - First element (`boolean`): `true` if the connection to the proxy is successful, `false` otherwise.
    *  - Second element (`string`): A message describing the result, such as "Connection successful" or the error message encountered.
    */
-  checkProxy(proxy: HttpProxyConfig): Promise<[boolean, string]>;
+  checkProxy(proxy: HttpProxyConfig, timeout?: number): Promise<[boolean, string]>;
 
   /**
    * Builds an HTTP agent with custom configuration, including proxy settings.
