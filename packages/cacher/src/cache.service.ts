@@ -1,6 +1,6 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import Redis from 'ioredis';
-import { isNull } from 'lodash';
+import { isNil } from 'lodash';
 import { MemcacheClient } from 'memcache-client';
 import { CacheClient, ICacheStore } from './cache.client';
 import { CacheConfig, CacheType } from './cache.config';
@@ -55,7 +55,7 @@ export class CacheService extends AbstractClientService<CacheConfig, ICacheStore
     const { namespace = DEFAULT_CON_ID } = opts;
     const keyPattern = namespace ? `${namespace}:${key}` : key;
     const value: string | null = await this.getClient(conId).getItem(keyPattern);
-    if (isNull(value)) return null;
+    if (isNil(value)) return null;
     const parseValue: CacheModel<T> = JSON.parse(value);
     return parseValue.value;
   }

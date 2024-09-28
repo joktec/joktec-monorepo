@@ -315,6 +315,13 @@ describe('nullKeysToObject function', () => {
     const converted = nullKeysToObject(obj);
     expect(converted).toEqual(expected);
   });
+
+   it("should handle an object with mixed values and 'null'", () => {
+    const obj = { a: 1, b: 'null', c: '{ "d": "null" }', e: null };
+    const expected = { a: 1, b: null, c: { d: null }, e: null };
+    const converted = nullKeysToObject(obj);
+    expect(converted).toEqual(expected);
+  });
 });
 
 describe('parseLang function', () => {
