@@ -10,6 +10,17 @@ import { HttpAgent, HttpFormRequest, HttpRequest, HttpResponse } from './models'
  */
 export interface HttpClient extends Client<HttpConfig, AxiosInstance> {
   /**
+   * Verifies the validity of the provided proxy configuration by attempting to establish
+   * a connection to the proxy server.
+   *
+   * @param proxy - The proxy configuration object that includes host, port, and authentication details.
+   * @returns A promise that resolves to a tuple:
+   *  - First element (`boolean`): `true` if the connection to the proxy is successful, `false` otherwise.
+   *  - Second element (`string`): A message describing the result, such as "Connection successful" or the error message encountered.
+   */
+  checkProxy(proxy: HttpProxyConfig): Promise<[boolean, string]>;
+
+  /**
    * Builds an HTTP agent with custom configuration, including proxy settings.
    *
    * @param opt - The options for configuring the agent, combining both standard AgentOptions
@@ -17,6 +28,7 @@ export interface HttpClient extends Client<HttpConfig, AxiosInstance> {
    * @returns An instance of HttpAgent to be used for HTTP requests.
    */
   buildAgent(opt: AgentOptions & HttpProxyConfig): HttpAgent;
+
   /**
    * Sends an HTTP request using the provided configuration.
    *
@@ -26,6 +38,7 @@ export interface HttpClient extends Client<HttpConfig, AxiosInstance> {
    * @returns A promise that resolves to an HttpResponse object containing the response data of type `T`.
    */
   request<T = any>(config: HttpRequest, conId?: string): Promise<HttpResponse<T>>;
+
   /**
    * Uploads form data to the server, using a multipart form request.
    *

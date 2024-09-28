@@ -1,5 +1,6 @@
 import { AgentOptions } from 'http';
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool } from '@joktec/core';
+import net from 'net';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool, toInt } from '@joktec/core';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import curlirize from 'axios-curlirize';
 import axiosRetry from 'axios-retry';
@@ -50,7 +51,28 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     // Implement
   }
 
-  buildAgent(proxy: HttpProxyConfig, opts?: AgentOptions): HttpAgent {
+  public async checkProxy(proxy: HttpProxyConfig): Promise<[boolean, string]> {
+    return new Promise((resolve, _) => {
+      const timeout = toInt(proxy.timeout, 5000);
+      const { host, port } = proxy;
+
+      const socket = new net.Socket();
+      const onError = (err: any) => {
+        socket.destroy();
+        resolve([false, 'Proxy Connection Error: ' + err.message]);
+      };
+
+      socket.setTimeout(timeout);
+      socket.once('error', onError);
+      socket.once('timeout', () => onError(new Error('Connection Timeout')));
+      socket.connect(port, host, () => {
+        socket.end();
+        resolve([true, 'OK']);
+      });
+    });
+  }
+
+  public buildAgent(proxy: HttpProxyConfig, opts?: AgentOptions): HttpAgent {
     const { protocol, host, port, auth } = proxy;
     const url = new URL(`${protocol}://${host}:${port}`);
     if (auth?.username && auth?.password) {
