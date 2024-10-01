@@ -9,6 +9,7 @@ import {
   linkTransform,
 } from '@joktec/core';
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { isFunction } from 'lodash';
 import { HttpConfig } from './http.config';
 import { HttpClientException } from './http.exception';
 
@@ -67,7 +68,7 @@ export const HttpMetricDecorator = () =>
         duration();
         httpMetric.trackStatus('FAILED', path, err);
 
-        if (axios.isAxiosError(err) || err instanceof AxiosError) {
+        if (axios.isAxiosError(err)) {
           // The request was made and the server responded with a status code that falls out of the range of 2xx
           if (err.response) {
             const msg = '`%s` http request to %s failed with status %s';
@@ -78,13 +79,18 @@ export const HttpMetricDecorator = () =>
             if (!httpConfig.debug) services.pinoLogger.error(errData, msg, conId, path, status);
             else services.pinoLogger.error({ ...errData, ...err.response }, msg, conId, path, status);
 
-            if (config.onFailReturn === 'throw') throw new HttpClientException(statusText, err.response);
+            // Handle validateResponse as function (sync or async)
+            if (isFunction(config.validateResponse)) {
+              const shouldReturnResponse = await Promise.resolve(config.validateResponse(err.response));
+              if (shouldReturnResponse) return err.response;
+            }
+
+            if (config.validateResponse === 'throw') throw new HttpClientException(statusText, err.response);
             return err.response;
           }
 
-          // The request was made but no response was received `error.request`
-          // is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
-          // [OR] Something happened in setting up the request that triggered an Error
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
           if (err.request) {
             const msg = '`%s` http request to %s error with no response';
             const { code, message, name, cause } = err;
@@ -93,7 +99,7 @@ export const HttpMetricDecorator = () =>
           }
         }
 
-        // The request was not sent out because some configuration error caused the exception.
+        // Something happened in setting up the request that triggered an Error
         services.pinoLogger.error(err, '`%s` http request to %s cause exception', conId, path);
         throw err;
       }

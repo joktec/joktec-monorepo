@@ -1,6 +1,6 @@
 import { AgentOptions } from 'http';
 import net from 'net';
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool, toInt } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool } from '@joktec/core';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import curlirize from 'axios-curlirize';
 import axiosRetry from 'axios-retry';
