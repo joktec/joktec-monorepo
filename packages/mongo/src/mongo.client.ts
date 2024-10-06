@@ -7,6 +7,7 @@ import {
   IMongoBulkOptions,
   IMongoBulkRequest,
   IMongoOptions,
+  IMongoPaginationResponse,
   IMongoPipeline,
   IMongoRequest,
   MongoSchema,
@@ -33,10 +34,7 @@ export interface MongoClient extends Client<MongoConfig, Connection> {
 }
 
 export interface IMongoRepository<T extends MongoSchema, ID = string> extends IBaseRepository<T, ID> {
-  paginate(
-    query: IMongoRequest<T>,
-    opts?: IMongoOptions<T>,
-  ): Promise<{ items: T[]; total: number; prevCursor?: string; currentCursor?: string; nextCursor?: string }>;
+  paginate(query: IMongoRequest<T>, opts?: IMongoOptions<T>): Promise<IMongoPaginationResponse<T>>;
 
   find(query: IMongoRequest<T>, opts?: IMongoOptions<T>): Promise<T[]>;
 

@@ -1,4 +1,4 @@
-import { Express, NextFunction, Request, Response } from 'express';
+import { Express, Request, Response } from 'express';
 import { Lookup } from 'geoip-lite';
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { Multer } from 'multer';
@@ -11,7 +11,7 @@ export type GeoIp = { ipAddress: string } & Lookup;
 export type IUserAgent = IResult;
 export { IBrowser, IDevice, IEngine, IOS, ICPU } from 'ua-parser-js';
 
-export interface ExpressNextFunction extends NextFunction {}
+export { NextFunction as ExpressNextFunction } from 'express';
 
 export interface ExpressResponse<T extends Entity = any> extends Response<DeepPartial<T> | Dictionary, Dictionary> {}
 

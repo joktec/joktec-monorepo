@@ -44,7 +44,6 @@ export type ISort<T extends Entity = {}> = {
 };
 
 type INearOption = { lat: number; lng: number; distance?: number };
-type ICursor<T extends Entity = {}> = '*' | string | { lastCursor: '*' | string; cursorField?: KeyOf<T> };
 
 export type INear<T extends Entity = {}> = {
   [key in keyof T]?: T[key] extends IDataType | IDataType[]
@@ -73,7 +72,6 @@ export interface IBaseRequest<T extends Entity = {}> {
   sort?: ISort<T>;
   near?: INear<T>;
   populate?: IPopulate<T>;
-  cursor?: ICursor<T>;
 
   [key: string]: any;
 }

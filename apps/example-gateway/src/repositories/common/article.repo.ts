@@ -1,4 +1,4 @@
-import { IListResponseDto, Injectable, plainToInstance, toInt } from '@joktec/core';
+import { IPaginationResponse, Injectable, plainToInstance, toInt } from '@joktec/core';
 import { IMongoPipeline, IMongoRequest, MongoHelper, MongoRepo, MongoService, ObjectId } from '@joktec/mongo';
 import { EmotionType } from '../../models/constants';
 import { Article, User } from '../../models/schemas';
@@ -9,7 +9,7 @@ export class ArticleRepo extends MongoRepo<Article, string> {
     super(mongoService, Article);
   }
 
-  async homeFeed(query: IMongoRequest<Article>, loggedUser: User): Promise<IListResponseDto<Article>> {
+  async homeFeed(query: IMongoRequest<Article>, loggedUser: User): Promise<IPaginationResponse<Article>> {
     const authorId = ObjectId.create(loggedUser._id);
     const $project = [...query.select].reduce((curr, acc) => {
       curr[acc] = 1;

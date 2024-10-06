@@ -1,5 +1,5 @@
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
-import { DeepPartial, Entity, IBaseRequest, ICondition, IListResponseDto, IResponseDto } from '../models';
+import { DeepPartial, Entity, IBaseRequest, ICondition, IResponseDto, IPaginationResponse } from '../models';
 import { ConfigService, LogService } from '../modules';
 
 export interface IBaseController<T, ID> {
@@ -7,7 +7,7 @@ export interface IBaseController<T, ID> {
 
   logService?: LogService;
 
-  paginate(query: IBaseRequest<T>): Promise<IListResponseDto<T>>;
+  paginate(query: IBaseRequest<T>): Promise<IPaginationResponse<T>>;
 
   detail(id: ID, query: IBaseRequest<T>): Promise<T>;
 
@@ -23,7 +23,7 @@ export interface IBaseService<T, ID, REQ> {
 
   logService?: LogService;
 
-  paginate(req: REQ): Promise<IListResponseDto<T>>;
+  paginate(req: REQ): Promise<IPaginationResponse<T>>;
 
   find(req: REQ): Promise<T[]>;
 
@@ -39,13 +39,7 @@ export interface IBaseService<T, ID, REQ> {
 }
 
 export interface IBaseRepository<T extends Entity, ID> {
-  paginate(query: IBaseRequest<T>): Promise<{
-    items: T[];
-    total: number;
-    prevCursor?: string;
-    currentCursor?: string;
-    nextCursor?: string;
-  }>;
+  paginate(query: IBaseRequest<T>): Promise<IPaginationResponse<T>>;
 
   find(query: IBaseRequest<T>): Promise<T[]>;
 

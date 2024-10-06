@@ -69,6 +69,7 @@ export {
   Req,
   RequestMethod,
   Res,
+  Next,
   Scope,
   UploadedFile,
   UploadedFiles,

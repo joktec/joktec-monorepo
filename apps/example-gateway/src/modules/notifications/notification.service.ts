@@ -1,4 +1,4 @@
-import { BaseService, ICondition, IListResponseDto, Inject, Injectable, REQUEST } from '@joktec/core';
+import { BaseService, ICondition, IPaginationResponse, Inject, Injectable, REQUEST } from '@joktec/core';
 import { IRequest } from '../../app.constant';
 import { SuccessResponse } from '../../common';
 import { Notification, User } from '../../models/schemas';
@@ -14,7 +14,7 @@ export class NotificationService extends BaseService<Notification, string> {
     super(notificationRepo);
   }
 
-  async paginate(query: INotificationFilterDto): Promise<IListResponseDto<Notification>> {
+  async paginate(query: INotificationFilterDto): Promise<IPaginationResponse<Notification>> {
     if (query.readStatus) {
       switch (query.readStatus) {
         case ReadStatus.UNREAD:

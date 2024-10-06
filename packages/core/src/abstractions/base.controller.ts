@@ -41,7 +41,6 @@ import {
 } from '../decorators';
 import { NotFoundException } from '../exceptions';
 import {
-  BaseListResponse,
   Clazz,
   Constructor,
   DeepPartial,
@@ -49,6 +48,7 @@ import {
   HttpStatus,
   IBaseController,
   IBaseRequest,
+  PagePaginationResponse,
 } from '../models';
 import { ConfigService, LogService } from '../modules';
 import { BaseValidationPipe } from '../pipes';
@@ -104,7 +104,7 @@ export const BaseController = <T extends Entity, ID>(props: IControllerProps<T>)
   class QueryDto extends queryDto {}
 
   @ApiSchema({ name: `${nameSingular}Pagination` })
-  class PaginationDto extends BaseListResponse<T>(props.dto) {}
+  class PaginationDto extends PagePaginationResponse<T>(props.dto) {}
 
   @ApiSchema({ name: `${nameSingular}CreateDto` })
   class CreateDto extends createDto {}

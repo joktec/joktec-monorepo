@@ -76,6 +76,6 @@ export class CommentService extends BaseService<Comment, string> {
   async myComments(query: IMongoRequest<Comment>): Promise<CommentPaginationDto> {
     const loggedUser = this.request.loggedUser;
     const { items, total } = await this.commentRepo.myComments(query, loggedUser._id);
-    return this.transformPaginate(items, total, query.page, query.limit);
+    return this.transformPaginate(items, total, query);
   }
 }

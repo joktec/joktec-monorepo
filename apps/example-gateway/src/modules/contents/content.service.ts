@@ -1,4 +1,4 @@
-import { BaseService, IListResponseDto, Injectable } from '@joktec/core';
+import { BaseService, IPaginationResponse, Injectable } from '@joktec/core';
 import { IMongoRequest } from '@joktec/mongo';
 import { Content } from '../../models/schemas';
 import { ContentRepo } from '../../repositories';
@@ -9,7 +9,7 @@ export class ContentService extends BaseService<Content, string> {
     super(contentRepo);
   }
 
-  async paginate(query: IMongoRequest<Content>): Promise<IListResponseDto<Content>> {
+  async paginate(query: IMongoRequest<Content>): Promise<IPaginationResponse<Content>> {
     return super.paginate({
       ...query,
       select: ['_id', 'code', 'title', 'subhead', 'description', 'type', 'image'],

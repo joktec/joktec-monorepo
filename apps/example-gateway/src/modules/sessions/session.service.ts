@@ -2,7 +2,7 @@ import {
   BaseService,
   ClientProxy,
   generateUUID,
-  IListResponseDto,
+  IPaginationResponse,
   Inject,
   Injectable,
   IUserAgent,
@@ -30,7 +30,7 @@ export class SessionService extends BaseService<Session, string> {
     super(sessionRepo);
   }
 
-  async paginate(query: IMongoRequest<Session>): Promise<IListResponseDto<Session>> {
+  async paginate(query: IMongoRequest<Session>): Promise<IPaginationResponse<Session>> {
     Object.assign(query.condition, { userType: User.name, userRefId: this.request.loggedUser._id });
     return super.paginate(query);
   }

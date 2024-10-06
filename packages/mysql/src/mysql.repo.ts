@@ -15,7 +15,7 @@ import { FindOptions, RestoreOptions } from 'sequelize';
 import { DestroyOptions } from 'sequelize/types/model';
 import { Model, ModelCtor, Repository } from 'sequelize-typescript';
 import { MysqlHelper } from './helpers';
-import { IMysqlRequest, MysqlId, MysqlModel } from './models';
+import { IMysqlRequest, IMysqlResponse, MysqlId, MysqlModel } from './models';
 import { IMysqlRepository } from './mysql.client';
 import { MysqlCatch } from './mysql.exception';
 import { MysqlService } from './mysql.service';
@@ -65,7 +65,7 @@ export abstract class MysqlRepo<T extends MysqlModel<T>, ID = MysqlId>
   }
 
   @MysqlCatch
-  async paginate(query: IMysqlRequest<T>): Promise<{ items: T[]; total: number }> {
+  async paginate(query: IMysqlRequest<T>): Promise<IMysqlResponse<T>> {
     const [items, total] = await Promise.all([this.find(query), this.count(query)]);
     return { items, total };
   }

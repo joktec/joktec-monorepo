@@ -4,7 +4,7 @@ import {
   ClientProxy,
   generateUUID,
   IBaseRequest,
-  IListResponseDto,
+  IPaginationResponse,
   Inject,
   Injectable,
   NotFoundException,
@@ -35,7 +35,7 @@ export class ArticleService extends BaseService<Article, string> {
     super(articleRepo);
   }
 
-  paginate(query: IBaseRequest<Article>): Promise<IListResponseDto<Article>> {
+  paginate(query: IBaseRequest<Article>): Promise<IPaginationResponse<Article>> {
     return super.paginate(query);
   }
 
@@ -67,7 +67,7 @@ export class ArticleService extends BaseService<Article, string> {
 
     if (viewed) {
       const { items, total } = await this.articleRepo.homeFeed(processQuery, loggedUser);
-      return this.transformPaginate(items, total, query.page, query.limit);
+      return this.transformPaginate(items, total, query);
     }
 
     const res = await super.paginate(processQuery);
@@ -182,7 +182,7 @@ export class ArticleService extends BaseService<Article, string> {
   async myLikeArticles(query: IMongoRequest<Article>): Promise<ArticlePaginationDto> {
     const loggedUser = this.request.loggedUser;
     const { items, total } = await this.emotionRepo.myLikeArticles(query, loggedUser._id);
-    const res = this.transformPaginate(items, total, query.page, query.limit);
+    const res = this.transformPaginate(items, total, query);
     return {
       ...res,
       items: res.items.map(item => Object.assign(item, { isLiked: true })),
@@ -200,7 +200,7 @@ export class ArticleService extends BaseService<Article, string> {
       ...blocks.map(block => String(block.targetId)),
     ];
     const { items, total } = await this.emotionRepo.getLikedUsers(query, article._id, excludeUserIds);
-    return this.transformPaginate<UserLiked>(items, total, query.page, query.limit);
+    return this.transformPaginate<UserLiked>(items, total, query as any);
   }
 
   async like(article: Article, loggedUser: User): Promise<Article> {

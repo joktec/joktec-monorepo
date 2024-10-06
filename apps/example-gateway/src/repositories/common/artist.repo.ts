@@ -1,4 +1,4 @@
-import { IListResponseDto, Injectable, plainToInstance, toInt } from '@joktec/core';
+import { IPaginationResponse, Injectable, plainToInstance, toInt } from '@joktec/core';
 import { IMongoPipeline, IMongoRequest, MongoHelper, MongoRepo, MongoService, ObjectId } from '@joktec/mongo';
 import { ArticleStatus } from '../../models/constants';
 import { Artist } from '../../models/schemas';
@@ -9,7 +9,7 @@ export class ArtistRepo extends MongoRepo<Artist, string> {
     super(mongoService, Artist);
   }
 
-  async paginateSelected(query: IMongoRequest<Artist>, artistIds: string[]): Promise<IListResponseDto<Artist>> {
+  async paginateSelected(query: IMongoRequest<Artist>, artistIds: string[]): Promise<IPaginationResponse<Artist>> {
     const pipeline: IMongoPipeline[] = [
       { $match: { ...query.condition, deletedAt: null, status: ArticleStatus.ACTIVATED } },
       {

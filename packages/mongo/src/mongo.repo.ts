@@ -2,7 +2,6 @@ import {
   ConfigService,
   DeepPartial,
   DEFAULT_CON_ID,
-  Encrypter,
   ICondition,
   Inject,
   Injectable,
@@ -12,7 +11,7 @@ import {
   toArray,
   Reflector,
 } from '@joktec/core';
-import { head, isArray, isNil, isObject, last, omit, pick } from 'lodash';
+import { isArray, isNil, omit, pick } from 'lodash';
 import { Aggregate, UpdateQuery } from 'mongoose';
 import { MongoHelper, MongoPipeline, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
 import {
@@ -20,10 +19,10 @@ import {
   IMongoBulkOptions,
   IMongoBulkRequest,
   IMongoOptions,
+  IMongoPaginationResponse,
   IMongoPipeline,
   IMongoRequest,
   MongoSchema,
-  ObjectId,
 } from './models';
 import { IMongoRepository, MongoType } from './mongo.client';
 import { MongoCatch } from './mongo.exception';
@@ -35,15 +34,11 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
 
-  private readonly encrypter: Encrypter;
-
   protected constructor(
     protected mongoService: MongoService,
     protected schema: typeof MongoSchema,
     protected conId: string = DEFAULT_CON_ID,
-  ) {
-    this.encrypter = new Encrypter({ secret: 'IN0OE4V8vBoc0tq8ZrnH5Ejkyr0wyboo', iv: '6HhRTF6XQuTk7aNN' });
-  }
+  ) {}
 
   async onModuleInit() {
     this.logService.setContext(this.constructor.name);
@@ -101,42 +96,17 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async count(query: IMongoRequest<T>, options: IMongoOptions<T> = {}): Promise<number> {
-    const processQuery = omit(query, ['select', 'page', 'limit', 'offset', 'sort', 'cursor']);
+    const processQuery = omit(query, ['select', 'page', 'limit', 'offset', 'sort']);
     const qb = this.qb(processQuery, options);
     return query.near ? qb.estimatedDocumentCount() : qb.countDocuments();
   }
 
   @MongoCatch
-  async paginate(
-    query: IMongoRequest<T>,
-    options: IMongoOptions<T> = {},
-  ): Promise<{ items: T[]; total: number; prevCursor?: string; currentCursor?: string; nextCursor?: string }> {
-    const findQuery: IMongoRequest<T> = omit(query, ['cursor']);
-    const countQuery: IMongoRequest<T> = omit(query, ['select', 'page', 'limit', 'offset', 'sort', 'cursor']);
-
-    if (!query.cursor) {
-      const [items, total] = await Promise.all([this.find(findQuery, options), this.count(countQuery, options)]);
-      return { items, total };
-    }
-
-    const lastCursor = isObject(query.cursor) ? query.cursor.lastCursor : query.cursor || '*';
-    const cursorField = isObject(query.cursor) ? query.cursor.cursorField : '_id';
-
-    findQuery.sort = Object.assign({ [cursorField]: 1 }, findQuery.sort);
-    if (lastCursor && lastCursor !== '*') {
-      let decryptedValue: any = this.encrypter.decrypted(lastCursor);
-      if (ObjectId.isValid(decryptedValue)) decryptedValue = ObjectId.create(decryptedValue);
-      findQuery.condition = Object.assign({ [cursorField]: { $gt: decryptedValue } }, findQuery.condition);
-    }
-
+  async paginate(query: IMongoRequest<T>, options: IMongoOptions<T> = {}): Promise<IMongoPaginationResponse<T>> {
+    const findQuery: IMongoRequest<T> = { ...query };
+    const countQuery: IMongoRequest<T> = omit(query, ['select', 'page', 'limit', 'offset', 'sort']);
     const [items, total] = await Promise.all([this.find(findQuery, options), this.count(countQuery, options)]);
-    return {
-      items,
-      total,
-      prevCursor: lastCursor === '*' ? null : this.encrypter.encrypted(String(head(items)._id)),
-      currentCursor: lastCursor,
-      nextCursor: items.length < query.limit ? null : this.encrypter.encrypted(String(last(items)._id)),
-    };
+    return { items, total };
   }
 
   @MongoCatch

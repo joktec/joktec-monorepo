@@ -1,4 +1,4 @@
-import { IListResponseDto, Injectable, plainToInstance, toInt } from '@joktec/core';
+import { IPaginationResponse, Injectable, plainToInstance, toInt } from '@joktec/core';
 import { IMongoPipeline, IMongoRequest, MongoHelper, MongoRepo, MongoService, ObjectId } from '@joktec/mongo';
 import { EmotionStatus, EmotionType } from '../../models/constants';
 import { Article, Emotion, User } from '../../models/schemas';
@@ -9,7 +9,7 @@ export class EmotionRepo extends MongoRepo<Emotion, string> {
     super(mongoService, Emotion);
   }
 
-  async myLikeArticles(query: IMongoRequest<Article>, userId: string): Promise<IListResponseDto<Article>> {
+  async myLikeArticles(query: IMongoRequest<Article>, userId: string): Promise<IPaginationResponse<Article>> {
     const select = ['_id', 'title', 'description', 'createdAt', 'type', 'postedAt', 'summary', 'authorId'];
     const fileSelect = ['files._id', 'files.type', 'files.url', 'files.preview', 'files.ratio'];
     const authorSelect = ['author._id', 'author.avatar', 'author.email', 'author.nickname'];
@@ -57,7 +57,7 @@ export class EmotionRepo extends MongoRepo<Emotion, string> {
     query: IMongoRequest<User>,
     articleId: string,
     excludeUserIds: string[],
-  ): Promise<IListResponseDto<User>> {
+  ): Promise<IPaginationResponse<User>> {
     const aggregations: IMongoPipeline[] = [
       {
         $match: {

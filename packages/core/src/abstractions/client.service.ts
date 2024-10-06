@@ -3,7 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { startCase } from 'lodash';
 import { firstValueFrom } from 'rxjs';
 import { MethodNotAllowedException } from '../exceptions';
-import { Constructor, DeepPartial, Entity, IBaseRequest, IBaseService, IListResponseDto } from '../models';
+import { Constructor, DeepPartial, Entity, IBaseRequest, IBaseService, IPaginationResponse } from '../models';
 import { ConfigService, JwtPayload, LogService } from '../modules';
 import { toSingular } from '../utils';
 
@@ -31,13 +31,13 @@ export const ClientService = <T extends Entity, ID = string, REQ extends IBaseRe
 
     protected afterModuleInit() {}
 
-    async paginate(req: REQ): Promise<IListResponseDto<T>> {
-      const result = this.client.send<IListResponseDto<T>>({ cmd: `${nameSingular}.paginate` }, { req });
+    async paginate(req: REQ): Promise<IPaginationResponse<T>> {
+      const result = this.client.send<IPaginationResponse<T>>({ cmd: `${nameSingular}.paginate` }, { req });
       return await firstValueFrom(result);
     }
 
     async find(req: IBaseRequest<T>): Promise<T[]> {
-      const result = this.client.send<IListResponseDto<T>>({ cmd: `${nameSingular}.paginate` }, { req });
+      const result = this.client.send<IPaginationResponse<T>>({ cmd: `${nameSingular}.paginate` }, { req });
       const data = await firstValueFrom(result);
       return data?.items || [];
     }

@@ -1,7 +1,7 @@
 import { Inject, OnModuleInit, Type } from '@nestjs/common';
 import { Args, Mutation, ObjectType, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
-import { BaseListResponse, Constructor, Entity, IBaseController, IBaseRequest } from '../models';
+import { Constructor, Entity, IBaseController, IBaseRequest, PagePaginationResponse } from '../models';
 import { ConfigService, LogService } from '../modules';
 import { toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';
@@ -17,7 +17,7 @@ export const BaseResolver = <T extends Entity, ID>(props: IBaseResolverProps<T>)
   const namePlural = toPlural(nameSingular);
 
   @ObjectType(`${nameSingular}Pagination`)
-  class PaginationDto extends BaseListResponse<T>(props.dto) {}
+  class PaginationDto extends PagePaginationResponse<T>(props.dto) {}
 
   class Resolver implements IBaseController<T, ID>, OnModuleInit {
     @Inject() public readonly configService: ConfigService;

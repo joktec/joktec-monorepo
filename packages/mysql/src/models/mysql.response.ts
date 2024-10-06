@@ -1,3 +1,3 @@
-import { IListResponseDto } from '@joktec/core';
+import { IPaginationResponse } from '@joktec/core';
 
-export interface IMysqlResponse<T> extends IListResponseDto<T> {}
+export interface IMysqlResponse<T> extends IPaginationResponse<T> {}

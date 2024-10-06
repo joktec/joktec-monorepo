@@ -1,9 +1,10 @@
+import { Type as NestType } from '@nestjs/common';
 import { Field } from '@nestjs/graphql';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { Constructor, Entity } from './base.dto';
 
-export interface IListResponseDto<T extends Entity> {
+export interface IPaginationResponse<T extends Entity> {
   items: T[];
   total: number;
 
@@ -12,13 +13,14 @@ export interface IListResponseDto<T extends Entity> {
   nextPage?: number;
   lastPage?: number;
 
-  prevCursor?: string;
-  currentCursor?: string;
-  nextCursor?: string;
+  prevOffset?: number;
+  currOffset?: number;
+  nextOffset?: number;
+  lastOffset?: number;
 }
 
-export const BaseListResponse = <T extends Entity>(dto: Constructor<T>) => {
-  class BaseListResponse implements IListResponseDto<T> {
+export const PagePaginationResponse = <T extends Entity>(dto: Constructor<T>): NestType<IPaginationResponse<T>> => {
+  class BaseListResponseClazz implements IPaginationResponse<T> {
     @Field(() => [dto], { defaultValue: [] })
     @ApiProperty({ type: [dto], default: [], example: () => [new dto()] })
     @Type(() => dto)
@@ -29,33 +31,52 @@ export const BaseListResponse = <T extends Entity>(dto: Constructor<T>) => {
     total: number;
 
     @Field({ nullable: true, defaultValue: null })
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ example: 1 })
     prevPage?: number;
 
     @Field({ nullable: true, defaultValue: 1 })
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ example: 2 })
     currPage?: number;
 
     @Field({ nullable: true, defaultValue: null })
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ example: 3 })
     nextPage?: number;
 
     @Field({ nullable: true, defaultValue: null })
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ example: 10 })
     lastPage?: number;
-
-    @Field({ nullable: true, defaultValue: null })
-    @ApiPropertyOptional()
-    prevCursor?: string;
-
-    @Field({ nullable: true, defaultValue: null })
-    @ApiPropertyOptional()
-    currentCursor?: string;
-
-    @Field({ nullable: true, defaultValue: null })
-    @ApiPropertyOptional()
-    nextCursor?: string;
   }
 
-  return BaseListResponse;
+  return BaseListResponseClazz;
+};
+
+export const OffsetPaginationResponse = <T extends Entity>(dto: Constructor<T>): NestType<IPaginationResponse<T>> => {
+  class BaseListResponseClazz implements IPaginationResponse<T> {
+    @Field(() => [dto], { defaultValue: [] })
+    @ApiProperty({ type: [dto], default: [], example: () => [new dto()] })
+    @Type(() => dto)
+    items: T[];
+
+    @Field({ defaultValue: 0 })
+    @ApiProperty({ default: 0 })
+    total: number;
+
+    @Field({ nullable: true, defaultValue: null })
+    @ApiPropertyOptional({ example: 0 })
+    prevOffset?: number;
+
+    @Field({ nullable: true, defaultValue: 1 })
+    @ApiPropertyOptional({ example: 10 })
+    currOffset?: number;
+
+    @Field({ nullable: true, defaultValue: null })
+    @ApiPropertyOptional({ example: 20 })
+    nextOffset?: number;
+
+    @Field({ nullable: true, defaultValue: null })
+    @ApiPropertyOptional({ example: 100 })
+    lastOffset?: number;
+  }
+
+  return BaseListResponseClazz;
 };

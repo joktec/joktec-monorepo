@@ -12,7 +12,7 @@ import {
   Transport,
 } from '@nestjs/microservices';
 import { set, startCase } from 'lodash';
-import { Constructor, DeepPartial, Entity, IBaseController, IBaseRequest, IListResponseDto } from '../models';
+import { Constructor, DeepPartial, Entity, IBaseController, IBaseRequest, IPaginationResponse } from '../models';
 import { ConfigService, LogService } from '../modules';
 import { BaseValidationPipe } from '../pipes';
 import { toSingular } from '../utils';
@@ -47,7 +47,10 @@ export const ClientController = <T extends Entity, ID>(
     protected afterModuleInit() {}
 
     @MessagePattern({ cmd: `${nameSingular}.paginate` }, transport)
-    async paginate(@Payload('req') req: IBaseRequest<T>, @Ctx() context?: MicroContext): Promise<IListResponseDto<T>> {
+    async paginate(
+      @Payload('req') req: IBaseRequest<T>,
+      @Ctx() context?: MicroContext,
+    ): Promise<IPaginationResponse<T>> {
       return this.service.paginate(req);
     }
 

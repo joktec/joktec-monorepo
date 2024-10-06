@@ -43,6 +43,7 @@ export class ExpressInterceptor<T = any> implements NestInterceptor<T, ExpressRe
       offset,
     };
 
+    if (req.query?.offset) delete query.page;
     if (!query.language) {
       const language = resolverLanguage(req.headers['accept-language'] || '');
       query.language = head(language) || '*';
