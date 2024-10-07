@@ -17,7 +17,7 @@ export class NotificationService extends BaseService<Notification, string> {
   }
 
   async push(notificationId: string) {
-    const notification = await this.notificationRepo.findById(notificationId);
+    const notification = await this.notificationRepo.findOne(notificationId);
 
     if (notification.topics?.length) {
       const results = await this.notificationUtils.sendByTopic(notification.topics, {

@@ -9,10 +9,16 @@ export class BlockRepo extends MongoRepo<Block, string> {
   }
 
   async findArticleBlock(userId: string, select: string = 'targetId'): Promise<Block[]> {
-    return this.find({ condition: { authorId: userId, target: Article.name }, select });
+    return this.find({
+      condition: { authorId: userId, target: Article.name },
+      select,
+    });
   }
 
   async findUserBlock(userId: string, select: string = 'targetId'): Promise<Block[]> {
-    return this.find({ condition: { authorId: userId, target: User.name }, select });
+    return this.find({
+      condition: { authorId: userId, target: User.name },
+      select,
+    });
   }
 }

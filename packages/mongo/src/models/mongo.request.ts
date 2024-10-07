@@ -1,25 +1,27 @@
 import { IBaseRequest } from '@joktec/core';
-import { mongoose } from '@typegoose/typegoose';
-import { PipelineStage } from 'mongoose';
+import { mongoose, Ref } from '@typegoose/typegoose';
+import { PipelineStage, RefType } from 'mongoose';
 import { MongoSchema } from './mongo.schema';
 
 export class ObjectId extends mongoose.Types.ObjectId {
-  constructor(inputId?: string | ObjectId) {
+  constructor(inputId?: string | ObjectId | Ref<any, RefType>) {
     super(inputId);
   }
 
-  public static create(value?: string | ObjectId): ObjectId {
+  public static create(value?: string | ObjectId | Ref<any, RefType>): ObjectId {
     if (!value) return new ObjectId();
     return new ObjectId(value);
   }
 
-  public static compare(first: string | ObjectId, second: string | ObjectId): boolean {
+  public static compare(
+    first: string | ObjectId | Ref<any, RefType>,
+    second: string | ObjectId | Ref<any, RefType>,
+  ): boolean {
     if (!ObjectId.isValid(first) || !ObjectId.isValid(second)) return false;
     return new ObjectId(first).equals(second);
   }
 }
 
-export type IMongoBulkRequest = { conditions?: string[]; operator?: string; fields?: string[] };
 export type IMongoPipeline = PipelineStage;
 export type IMongoLookupPipeline = Exclude<PipelineStage, PipelineStage.Merge | PipelineStage.Out>;
 export type IMongoUnionWithPipeline = Exclude<PipelineStage, PipelineStage.Out | PipelineStage.Merge>;

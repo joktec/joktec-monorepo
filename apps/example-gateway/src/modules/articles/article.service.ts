@@ -205,7 +205,7 @@ export class ArticleService extends BaseService<Article, string> {
 
   async like(article: Article, loggedUser: User): Promise<Article> {
     const payload = { authorId: loggedUser._id, targetId: article._id, target: Article.name, type: EmotionType.LIKE };
-    const isLiked = await this.emotionRepo.findOne({ condition: payload });
+    const isLiked = await this.emotionRepo.findOne(payload);
     if (isLiked) throw new BadRequestException('article.ALREADY_LIKED');
     await this.emotionRepo.create(payload);
     this.articleClient.emit({ cmd: 'Article.summary' }, { article, action: EmotionType.LIKE });
@@ -215,9 +215,9 @@ export class ArticleService extends BaseService<Article, string> {
 
   async unlike(article: Article, loggedUser: User): Promise<Article> {
     const payload = { authorId: loggedUser._id, targetId: article._id, target: Article.name, type: EmotionType.LIKE };
-    const isLiked = await this.emotionRepo.findOne({ condition: payload });
+    const isLiked = await this.emotionRepo.findOne(payload);
     if (!isLiked) throw new BadRequestException('article.NOT_ALREADY_LIKED');
-    await this.emotionRepo.delete({ _id: isLiked._id }, { force: true });
+    await this.emotionRepo.delete(isLiked._id, { force: true });
     this.articleClient.emit({ cmd: 'Article.summary' }, { article, action: EmotionType.LIKE });
     article.summary.like--;
     return article;
@@ -253,7 +253,7 @@ export class ArticleService extends BaseService<Article, string> {
 
   async share(body: ArticleShareDto, article: Article, loggedUser: User): Promise<Article> {
     const payload = { authorId: loggedUser._id, targetId: article._id, target: Article.name, type: EmotionType.SHARE };
-    const isShared = await this.emotionRepo.findOne({ condition: payload });
+    const isShared = await this.emotionRepo.findOne(payload);
     if (isShared) throw new BadRequestException('article.ALREADY_SHARED');
 
     const uuid = last(generateUUID().split('-'));
@@ -272,7 +272,10 @@ export class ArticleService extends BaseService<Article, string> {
     if (res) {
       const loggedUser = this.request.loggedUser;
       const emotion = await this.emotionRepo.findOne({
-        condition: { authorId: loggedUser._id, targetId: res._id, target: Article.name, type: EmotionType.LIKE },
+        authorId: loggedUser._id,
+        targetId: res._id,
+        target: Article.name,
+        type: EmotionType.LIKE,
       });
       res['isLiked'] = !!emotion;
     }
@@ -281,7 +284,7 @@ export class ArticleService extends BaseService<Article, string> {
 
   async delete(id: string): Promise<Article> {
     const loggedUser = this.request.loggedUser;
-    const article = await this.articleRepo.findById(id);
+    const article = await this.articleRepo.findOne(id);
     if (!article) throw new NotFoundException('article.NOT_FOUND');
     if (String(article.authorId) !== loggedUser._id) throw new BadRequestException('article.CAN_NOT_DELETE');
     return super.delete(id);

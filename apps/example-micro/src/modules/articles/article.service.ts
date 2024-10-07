@@ -24,26 +24,26 @@ export class ArticleService extends BaseService<Article, string> {
       const like = await this.emotionRepo.count({
         condition: { target: Article.name, targetId: article._id, type: EmotionType.LIKE },
       });
-      await this.articleRepo.update({ _id: article._id }, { $set: { 'summary.like': like } });
+      await this.articleRepo.update(article._id, { $set: { 'summary.like': like } });
     }
 
     if (action === 'share') {
       const share = await this.emotionRepo.count({
         condition: { target: Article.name, targetId: article._id, type: EmotionType.SHARE },
       });
-      await this.articleRepo.update({ _id: article._id }, { $set: { 'summary.share': share } });
+      await this.articleRepo.update(article._id, { $set: { 'summary.share': share } });
     }
 
     if (action === 'download') {
       const download = await this.emotionRepo.count({
         condition: { target: Article.name, targetId: article._id, type: EmotionType.DOWNLOAD },
       });
-      await this.articleRepo.update({ _id: article._id }, { $set: { 'summary.download': download } });
+      await this.articleRepo.update(article._id, { $set: { 'summary.download': download } });
     }
 
     if (action === 'comment') {
       const comment = await this.commentRepo.count({ condition: { articleId: article._id } });
-      await this.articleRepo.update({ _id: article._id }, { $set: { 'summary.comment': comment } });
+      await this.articleRepo.update(article._id, { $set: { 'summary.comment': comment } });
     }
 
     return { success: true };

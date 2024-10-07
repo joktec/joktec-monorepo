@@ -33,7 +33,7 @@ export class ArticleCronner {
         }),
         this.commentRepo.count({ condition: { articleId: article._id } }),
       ]);
-      await this.articleRepo.update({ _id: article._id }, { summary: { like, share, view, download, comment } });
+      await this.articleRepo.update(article._id, { summary: { like, share, view, download, comment } });
     }
     return { success: true, message: `Update ${articles.length} articles` };
   }

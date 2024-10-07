@@ -40,7 +40,7 @@ export class CronScheduler implements OnModuleInit {
 
     // Save all cron into database
     const insertCrons = Object.values(this.cronMeta).map(meta => meta.cron);
-    await this.cronRepo.bulkUpsert(insertCrons, { conditions: ['title'] });
+    await this.cronRepo.bulkUpsert(insertCrons, ['title']);
 
     // Remove crons not exist in definition
     const cronNames = Object.keys(this.cronMeta);
@@ -82,7 +82,7 @@ export class CronScheduler implements OnModuleInit {
     const serviceInstance = this.moduleRef.get(serviceClazz, { strict: false });
     if (!serviceInstance) {
       this.logService.warn(`Service %s not found. Job %s initialize failed.`, cron.serviceName, cronName);
-      await this.cronRepo.update({ _id: cron._id }, { status: CronStatus.DISABLED });
+      await this.cronRepo.update(cron._id, { status: CronStatus.DISABLED });
       return;
     }
 
@@ -94,7 +94,7 @@ export class CronScheduler implements OnModuleInit {
         cron.serviceName,
         cronName,
       );
-      await this.cronRepo.update({ _id: cron._id }, { status: CronStatus.DISABLED });
+      await this.cronRepo.update(cron._id, { status: CronStatus.DISABLED });
       return;
     }
 
@@ -119,7 +119,7 @@ export class CronScheduler implements OnModuleInit {
       const nextExecution = this.schedulerRegistry.getCronJob(cronName).nextDate().toJSDate();
       const finishedAt = new Date();
       await Promise.all([
-        this.cronRepo.update({ _id: cron._id }, { lastExecution, nextExecution }),
+        this.cronRepo.update(cron._id, { lastExecution, nextExecution }),
         this.cronHistoryRepo.create({
           cronId: cron._id,
           type: CronHistoryType.AUTOMATIC,
@@ -157,13 +157,13 @@ export class CronScheduler implements OnModuleInit {
   }
 
   async trigger(cronId: string, waiting: boolean = false): Promise<SuccessResponse> {
-    const cron = await this.cronRepo.findById(cronId);
+    const cron = await this.cronRepo.findOne(cronId);
     const serviceClazz = this.cronMeta[cron.title].service;
     const serviceInstance = this.moduleRef.get(serviceClazz, { strict: false });
     if (!serviceInstance) {
       const msg = `Service ${cron.serviceName} not found. Job ${cron.title} trigger failed.`;
       this.logService.warn(msg);
-      await this.cronRepo.update({ _id: cron._id }, { status: CronStatus.DISABLED });
+      await this.cronRepo.update(cron._id, { status: CronStatus.DISABLED });
       return { success: false, message: msg };
     }
 
@@ -171,7 +171,7 @@ export class CronScheduler implements OnModuleInit {
     if (!method) {
       const msg = `Method ${cron.methodName} not found in service ${cron.serviceName}. Job ${cron.title} trigger failed.`;
       this.logService.warn(msg);
-      await this.cronRepo.update({ _id: cron._id }, { status: CronStatus.DISABLED });
+      await this.cronRepo.update(cron._id, { status: CronStatus.DISABLED });
       return { success: false, message: msg };
     }
 
@@ -195,7 +195,7 @@ export class CronScheduler implements OnModuleInit {
 
       const finishedAt = new Date();
       await Promise.all([
-        this.cronRepo.update({ _id: cron._id }, { lastExecution }),
+        this.cronRepo.update(cron._id, { lastExecution }),
         this.cronHistoryRepo.create({
           cronId: cron._id,
           type: CronHistoryType.MANUAL,

@@ -16,7 +16,7 @@ export class ArtistService extends BaseService<Artist, string> {
 
   async paginate(query: IMongoRequest<Artist>): Promise<IPaginationResponse<Artist>> {
     const loggedUser = this.request.loggedUser;
-    const user = await this.userRepo.findById(loggedUser._id);
+    const user = await this.userRepo.findOne(loggedUser._id);
     const artistIds = user.artistIds.map(String);
     const { items, total } = await this.artistRepo.paginateSelected(query, artistIds);
     return this.transformPaginate(items, total, query);

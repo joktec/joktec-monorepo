@@ -9,7 +9,7 @@ import {
   NotFoundException,
   REQUEST,
 } from '@joktec/core';
-import { IMongoRequest } from '@joktec/mongo';
+import { IMongoRequest, ObjectId } from '@joktec/mongo';
 import { IRequest, TRANSPORT } from '../../app.constant';
 import { Comment, User } from '../../models/schemas';
 import { ArticleRepo, BlockRepo, CommentRepo } from '../../repositories';
@@ -46,7 +46,7 @@ export class CommentService extends BaseService<Comment, string> {
 
   async create(entity: CommentCreateDto): Promise<Comment> {
     const loggedUser = this.request.loggedUser;
-    const article = await this.articleRepo.findById(String(entity.articleId));
+    const article = await this.articleRepo.findOne(entity.articleId);
     if (!article) throw new BadRequestException('article.NOT_FOUND');
     const comment = await super.create({ ...entity, authorId: loggedUser._id });
     this.articleClient.emit({ cmd: 'Article.summary' }, { article, action: 'comment' });
@@ -55,17 +55,17 @@ export class CommentService extends BaseService<Comment, string> {
 
   async update(id: string, entity: DeepPartial<Comment>): Promise<Comment> {
     const loggedUser = this.request.loggedUser;
-    const comment = await this.findById(id, { populate: { article: '*' } });
+    const comment = await this.commentRepo.findOne(id, { populate: { article: '*' } });
     if (!comment) throw new NotFoundException('comment.NOT_FOUND');
-    if (String(comment.authorId) !== loggedUser._id) throw new BadRequestException('comment.NOT_OWNER_COMMENT');
+    if (!ObjectId.compare(comment.authorId, loggedUser._id)) throw new BadRequestException('comment.NOT_OWNER_COMMENT');
     return super.update(id, entity);
   }
 
   async delete(id: string): Promise<Comment> {
     const loggedUser = this.request.loggedUser;
-    const comment = await this.findById(id, { populate: { article: '*' } });
+    const comment = await this.commentRepo.findOne(id, { populate: { article: '*' } });
     if (!comment) throw new NotFoundException('comment.NOT_FOUND');
-    if (String(comment.authorId) !== loggedUser._id) throw new BadRequestException('comment.NOT_OWNER_COMMENT');
+    if (!ObjectId.compare(comment.authorId, loggedUser._id)) throw new BadRequestException('comment.NOT_OWNER_COMMENT');
     await super.delete(id);
     if (comment.article) {
       this.articleClient.emit({ cmd: 'Article.summary' }, { article: comment.article, action: 'comment' });

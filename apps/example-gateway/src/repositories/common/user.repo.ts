@@ -13,7 +13,7 @@ export class UserRepo extends MongoRepo<User, string> {
 
   @Cacheable(`${AUTH_GUARD_NAMESPACE}.user`, { expiry: CacheTtlSeconds.ONE_DAY, transform: User })
   async findByPayload(payload: JwtPayload): Promise<User> {
-    return this.findById(payload.sub);
+    return this.findOne(payload.sub);
   }
 
   async findBizUsers(select: string = '_id'): Promise<User[]> {
@@ -21,7 +21,7 @@ export class UserRepo extends MongoRepo<User, string> {
   }
 
   async preload(user: Partial<User>): Promise<User> {
-    return this.findById(user._id);
+    return this.findOne(user._id);
   }
 
   async hiddenKeywords(userId: string, keywordId: string) {

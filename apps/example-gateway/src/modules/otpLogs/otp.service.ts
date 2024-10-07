@@ -33,7 +33,7 @@ export class OtpService extends BaseService<Otp, string> {
   }
 
   async findByActiveCode(activeCode: string): Promise<Otp> {
-    return this.otpRepo.findOne({ condition: { activeCode }, sort: { createdAt: 'desc' } });
+    return this.otpRepo.findOne({ activeCode }, { sort: { createdAt: 'desc' } });
   }
 
   async createOtp(email: string, type: OTPType, expired: number, locale: string): Promise<Otp> {
@@ -51,7 +51,7 @@ export class OtpService extends BaseService<Otp, string> {
   }
 
   async revokeOtp(lastOTP: Otp): Promise<Otp> {
-    return this.otpRepo.update({ _id: lastOTP._id }, { status: OTPStatus.EXPIRED });
+    return this.otpRepo.update(lastOTP._id, { status: OTPStatus.EXPIRED });
   }
 
   async extendOtp(lastOTP: Otp, expired: number): Promise<Otp> {
@@ -71,13 +71,13 @@ export class OtpService extends BaseService<Otp, string> {
   }
 
   async confirmOtp(lastOtp: Otp): Promise<Otp> {
-    return this.otpRepo.update(
-      { _id: lastOtp._id },
-      { activeCode: generateUUID({ prefix: lastOtp.type }), status: OTPStatus.VERIFIED },
-    );
+    return this.otpRepo.update(lastOtp._id, {
+      activeCode: generateUUID({ prefix: lastOtp.type }),
+      status: OTPStatus.VERIFIED,
+    });
   }
 
   async finishOtp(lastOtp: Otp): Promise<Otp> {
-    return this.otpRepo.update({ _id: lastOtp._id }, { status: OTPStatus.SUCCESS });
+    return this.otpRepo.update(lastOtp._id, { status: OTPStatus.SUCCESS });
   }
 }

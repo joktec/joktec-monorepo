@@ -17,7 +17,7 @@ export class TagService extends BaseService<Tag, string> {
   }
 
   async recentlyKeywords(payload: JwtPayload): Promise<LatestKeywordResponseDto> {
-    const { keywords = [] } = await this.userRepo.findById(payload.sub);
+    const { keywords = [] } = await this.userRepo.findOne(payload.sub);
     return {
       feed: chain(keywords)
         .filter(keyword => keyword.type === ArticleType.FEED && !keyword.hidden)
@@ -35,7 +35,7 @@ export class TagService extends BaseService<Tag, string> {
   }
 
   async clearKeywords(body: ClearKeywordDto, payload: JwtPayload): Promise<SuccessResponse> {
-    const user = await this.userRepo.findOne({ condition: { _id: payload.sub } });
+    const user = await this.userRepo.findOne(payload.sub);
     const keywordIds: string[] = toArray(body.keywordIds);
     if (body.hideAll) {
       user.keywords.filter(key => key.type === body.type).map(key => keywordIds.push(key._id));

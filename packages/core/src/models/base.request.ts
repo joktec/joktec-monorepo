@@ -44,7 +44,6 @@ export type ISort<T extends Entity = {}> = {
 };
 
 type INearOption = { lat: number; lng: number; distance?: number };
-
 export type INear<T extends Entity = {}> = {
   [key in keyof T]?: T[key] extends IDataType | IDataType[]
     ? never

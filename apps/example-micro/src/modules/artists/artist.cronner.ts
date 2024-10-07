@@ -40,7 +40,7 @@ export class ArtistCronner {
 
       if (!files?.length) continue;
       const url = head(files).url;
-      await this.artistRepo.update({ _id: artist._id }, { avatar: url });
+      await this.artistRepo.update(artist._id, { avatar: url });
     }
 
     return { success: true, message: `Update ${artists.length} artists` };

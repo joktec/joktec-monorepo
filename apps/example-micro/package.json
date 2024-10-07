@@ -37,7 +37,7 @@
   "dependencies": {
     "@joktec/core": "0.0.162",
     "@joktec/cacher": "0.0.111",
-    "@joktec/http": "0.0.168",
+    "@joktec/http": "0.0.169",
     "@joktec/mailer": "0.0.162",
     "@joktec/mongo": "0.0.214",
     "@joktec/notifier": "0.0.163",

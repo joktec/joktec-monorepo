@@ -12,7 +12,7 @@ export class UserService extends BaseService<User, string> {
   }
 
   async getSimpleProfile(id: string) {
-    return this.userRepo.findById(id, {
+    return this.userRepo.findOne(id, {
       select: [
         '_id',
         'address',
@@ -32,12 +32,12 @@ export class UserService extends BaseService<User, string> {
 
   async findByEmail(email: string): Promise<User> {
     const condition: ICondition<User> = { email };
-    return this.userRepo.findOne({ condition });
+    return this.userRepo.findOne(condition);
   }
 
   async checkExistNickname(nickname: string, email: string): Promise<boolean> {
     const condition: ICondition<User> = { nickname, email: { $ne: email } };
-    return !!(await this.userRepo.findOne({ condition }));
+    return !!(await this.userRepo.findOne(condition));
   }
 
   async upsertByProvider(providerProfile: AuthProviderProfile, nickname?: string, avatar?: string): Promise<User> {
@@ -60,7 +60,7 @@ export class UserService extends BaseService<User, string> {
         profileName: providerProfile.profileName,
         profileImage: providerProfile.profileImage,
       });
-      user = await this.userRepo.update({ _id: user._id }, { $push: { providers: userProvider } });
+      user = await this.userRepo.update(user._id, { $push: { providers: userProvider } });
     }
 
     return user;

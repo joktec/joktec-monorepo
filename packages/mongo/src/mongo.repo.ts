@@ -11,25 +11,28 @@ import {
   toArray,
   Reflector,
 } from '@joktec/core';
+import { Ref } from '@typegoose/typegoose';
 import { isArray, isNil, omit, pick } from 'lodash';
-import { Aggregate, UpdateQuery } from 'mongoose';
+import { Aggregate, RefType, UpdateQuery } from 'mongoose';
 import { MongoHelper, MongoPipeline, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
 import {
   IMongoAggregateOptions,
   IMongoBulkOptions,
-  IMongoBulkRequest,
   IMongoOptions,
   IMongoPaginationResponse,
   IMongoPipeline,
   IMongoRequest,
   MongoSchema,
+  ObjectId,
 } from './models';
 import { IMongoRepository, MongoType } from './mongo.client';
 import { MongoCatch } from './mongo.exception';
 import { MongoService } from './mongo.service';
 
 @Injectable()
-export abstract class MongoRepo<T extends MongoSchema, ID = string> implements IMongoRepository<T, ID>, OnModuleInit {
+export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = string>
+  implements IMongoRepository<T, ID>, OnModuleInit
+{
   @Inject() protected reflector: Reflector;
   @Inject() protected configService: ConfigService;
   @Inject() protected logService: LogService;
@@ -110,25 +113,18 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async findOne(query: IMongoRequest<T>, options: IMongoOptions<T> = {}): Promise<T> {
-    const doc = await this.qb(query, options).findOne().exec();
-    return this.transform(doc) as T;
-  }
+  async findOne(
+    cond: ID | ObjectId | Ref<T, ID> | ICondition<T>,
+    query: Omit<IMongoRequest<T>, 'condition'> = {},
+    options: IMongoOptions<T> = {},
+  ): Promise<T> {
+    const condition: ICondition<T> = {};
+    if (ObjectId.isValid(String(cond))) Object.assign(condition, { _id: ObjectId.create(String(cond)) });
+    else Object.assign(condition, cond);
 
-  @MongoCatch
-  async findById(id: ID, query: IMongoRequest<T> = {}, options: IMongoOptions<T> = {}): Promise<T> {
-    query.condition = { _id: id } as any;
-    const doc = await this.qb(query, options).findOne().exec();
+    const mergeQuery = Object.assign({}, query, { condition });
+    const doc = await this.qb(mergeQuery, options).findOne().exec();
     return this.transform(doc) as T;
-  }
-
-  @MongoCatch
-  async aggregate<U = T>(pipeline: IMongoPipeline[], options: IMongoAggregateOptions<U> = {}): Promise<U[]> {
-    const { autoTransform = true, transformFn } = options;
-    const docs: any[] = await this.model.aggregate(pipeline, options).exec();
-    if (transformFn) return options.transformFn(docs);
-    if (autoTransform) return this.transform(docs) as any[];
-    return docs;
   }
 
   @MongoCatch
@@ -140,10 +136,14 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async update(
-    condition: ICondition<T>,
+    cond: ID | ObjectId | Ref<T, ID> | ICondition<T>,
     body: DeepPartial<T> & UpdateQuery<T>,
     options: IMongoOptions<T> = {},
   ): Promise<T> {
+    const condition: ICondition<T> = {};
+    if (ObjectId.isValid(String(cond))) Object.assign(condition, { _id: ObjectId.create(String(cond)) });
+    else Object.assign(condition, cond);
+
     const transformBody: T = this.transform(body) as T;
     const _options = Object.assign({}, UPDATE_OPTIONS, options);
     const doc = await this.qb({ condition }, _options).findOneAndUpdate(transformBody).exec();
@@ -151,31 +151,36 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
   }
 
   @MongoCatch
-  async delete(condition: ICondition<T>, options: IMongoOptions<T> = {}): Promise<T> {
+  async delete(cond: ID | ObjectId | Ref<T, ID> | ICondition<T>, options: IMongoOptions<T> = {}): Promise<T> {
+    const condition: ICondition<T> = {};
+    if (ObjectId.isValid(String(cond))) Object.assign(condition, { _id: ObjectId.create(String(cond)) });
+    else Object.assign(condition, cond);
+
     const doc = await this.qb().destroyOne(condition, options).exec();
     return this.transform(doc) as T;
   }
 
   @MongoCatch
-  async restore(condition: ICondition<T>, options: IMongoOptions<T> = {}): Promise<T> {
+  async deleteMany(cond: ICondition<T>, options: IMongoOptions<T> = {}): Promise<T[]> {
+    const docs = await this.qb({ condition: cond }).exec();
+    await this.model.destroyMany(cond, options).exec();
+    return this.transform(docs) as T[];
+  }
+
+  @MongoCatch
+  async restore(cond: ID | ObjectId | Ref<T, ID> | ICondition<T>, options: IMongoOptions<T> = {}): Promise<T> {
+    const condition: ICondition<T> = {};
+    if (ObjectId.isValid(String(cond))) Object.assign(condition, { _id: ObjectId.create(String(cond)) });
+    else Object.assign(condition, cond);
+
     const doc = await this.qb().restore(condition, options).exec();
     return this.transform(doc) as T;
   }
 
   @MongoCatch
-  async deleteMany(condition: ICondition<T>, options: IMongoOptions<T> = {}): Promise<T[]> {
-    const docs = await this.qb({ condition }).exec();
-    await this.model.destroyMany(condition, options).exec();
-    return this.transform(docs) as T[];
-  }
-
-  @MongoCatch
-  async upsert(
-    condition: ICondition<T>,
-    body: DeepPartial<T> & UpdateQuery<T>,
-    options: IMongoOptions<T> = {},
-  ): Promise<T> {
+  async upsert(body: DeepPartial<T>, onConflicts: (keyof T)[] = ['_id'], options: IMongoOptions<T> = {}): Promise<T> {
     const transformBody: T = this.transform(body) as T;
+    const condition: ICondition<T> = pick(body, onConflicts) as ICondition<T>;
     const _options = Object.assign({}, UPSERT_OPTIONS, options);
     const doc = await this.qb({ condition }, _options).findOneAndUpdate(transformBody).exec();
     return this.transform(doc) as T;
@@ -183,20 +188,23 @@ export abstract class MongoRepo<T extends MongoSchema, ID = string> implements I
 
   @MongoCatch
   async bulkUpsert(
-    docs: (DeepPartial<T> & UpdateQuery<T>)[],
-    upsert: IMongoBulkRequest = {},
+    docs: DeepPartial<T>[],
+    onConflicts: (keyof T)[] = ['_id'],
     options: IMongoBulkOptions = {},
   ): Promise<any> {
-    const { conditions = ['_id'], fields, operator = '$set' } = upsert;
-    const bulkDocs: any[] = docs?.map(doc => {
-      return {
-        updateOne: {
-          filter: pick(doc, conditions),
-          update: { [operator]: fields?.length ? pick(doc, fields) : doc },
-          upsert: true,
-        },
-      };
+    const transformBody: T[] = this.transform(docs) as T[];
+    const bulkDocs: any[] = transformBody.map((doc: T) => {
+      return { updateOne: { filter: pick(doc, onConflicts), update: { $set: doc }, upsert: true } };
     });
     return this.model.bulkWrite(bulkDocs, options);
+  }
+
+  @MongoCatch
+  async aggregate<U = T>(pipeline: IMongoPipeline[], options: IMongoAggregateOptions<U> = {}): Promise<U[]> {
+    const { autoTransform = true, transformFn } = options;
+    const docs: any[] = await this.model.aggregate(pipeline, options).exec();
+    if (transformFn) return options.transformFn(docs);
+    if (autoTransform) return this.transform(docs) as any[];
+    return docs;
   }
 }

@@ -12,6 +12,6 @@ export class SessionRepo extends MongoRepo<Session, string> {
 
   @Cacheable(`${AUTH_GUARD_NAMESPACE}.session`, { expiry: CacheTtlSeconds.ONE_DAY, transform: Session })
   async findByPayload(payload: JwtPayload): Promise<Session> {
-    return this.findOne({ condition: { tokenId: payload.jti } });
+    return this.findOne({ tokenId: payload.jti });
   }
 }

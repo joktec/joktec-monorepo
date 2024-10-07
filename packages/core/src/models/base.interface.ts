@@ -1,5 +1,13 @@
 import { ArgumentsHost, ExceptionFilter } from '@nestjs/common';
-import { DeepPartial, Entity, IBaseRequest, ICondition, IResponseDto, IPaginationResponse } from '../models';
+import {
+  DeepPartial,
+  Entity,
+  IBaseRequest,
+  ICondition,
+  IResponseDto,
+  IPaginationResponse,
+  Dictionary,
+} from '../models';
 import { ConfigService, LogService } from '../modules';
 
 export interface IBaseController<T, ID> {
@@ -45,17 +53,15 @@ export interface IBaseRepository<T extends Entity, ID> {
 
   count(query: IBaseRequest<T>): Promise<number>;
 
-  findOne(query: IBaseRequest<T>): Promise<T>;
+  findOne(cond: ID | ICondition<T>, query?: Omit<IBaseRequest<T>, 'condition'>, opts?: Dictionary): Promise<T>;
 
-  findById(id: ID, query?: IBaseRequest<T>): Promise<T>;
+  create(body: DeepPartial<T>, opts?: Dictionary): Promise<T>;
 
-  create(body: DeepPartial<T>, opts?: Record<string, any>): Promise<T>;
+  update(cond: ID | ICondition<T>, body: DeepPartial<T>, opts?: Dictionary): Promise<T>;
 
-  update(condition: ICondition<T>, body: DeepPartial<T>, opts?: Record<string, any>): Promise<T>;
+  delete(cond: ID | ICondition<T>, opts?: Dictionary & { force?: boolean }): Promise<T>;
 
-  delete(condition: ICondition<T>, opts?: Record<string, any> & { force?: boolean }): Promise<T>;
-
-  restore(condition: ICondition<T>, opts?: Record<string, any>): Promise<T>;
+  restore(cond: ID | ICondition<T>, opts?: Dictionary): Promise<T>;
 }
 
 export interface IExceptionFilter extends ExceptionFilter {

@@ -17,11 +17,11 @@ export class UserService extends BaseService<User, string> {
   }
 
   async logKeyword(userId: string, value: string, type: ArticleType): Promise<SuccessResponse> {
-    const user = await this.userRepo.findById(userId);
+    const user = await this.userRepo.findOne(userId);
     const isExistKeyword = user.keywords.some(key => key.value === value);
     if (!isExistKeyword) {
       const userKeyword: Partial<UserKeyword> = { value, type };
-      await this.userRepo.update({ _id: userId }, { $push: { keywords: userKeyword } });
+      await this.userRepo.update(userId, { $push: { keywords: userKeyword } });
       return { success: true };
     }
 
@@ -48,14 +48,14 @@ export class UserService extends BaseService<User, string> {
     if (session.topics?.length) {
       for (const topic of session.topics) {
         await this.firebaseService.messaging().unsubscribeFromTopic(session.fcmToken, topic);
-        await this.sessionRepo.update({ _id: session._id }, { $pull: { topics: topic } });
+        await this.sessionRepo.update(session._id, { $pull: { topics: topic } });
       }
     }
 
     const topics = toArray<string>(user.config?.topics).map(topic => `${topic}-${session.locale}`);
     for (const topic of topics) {
       await this.firebaseService.messaging().subscribeToTopic(session.fcmToken, topic);
-      await this.sessionRepo.update({ _id: session._id }, { $push: { topics: topic } });
+      await this.sessionRepo.update(session._id, { $push: { topics: topic } });
     }
     return topics.length;
   }
@@ -63,7 +63,7 @@ export class UserService extends BaseService<User, string> {
   async unsubscribeFromTopic(session: Session) {
     for (const topic of session.topics) {
       await this.firebaseService.messaging().unsubscribeFromTopic(session.fcmToken, topic);
-      await this.sessionRepo.update({ _id: session._id }, { $pull: { topics: topic } });
+      await this.sessionRepo.update(session._id, { $pull: { topics: topic } });
     }
     return session.topics.length;
   }

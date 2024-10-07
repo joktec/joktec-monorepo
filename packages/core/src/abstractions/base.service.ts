@@ -1,13 +1,5 @@
 import { Inject, OnModuleInit } from '@nestjs/common';
-import {
-  DeepPartial,
-  Entity,
-  IPaginationResponse,
-  IBaseRepository,
-  IBaseRequest,
-  IBaseService,
-  ICondition,
-} from '../models';
+import { DeepPartial, Entity, IPaginationResponse, IBaseRepository, IBaseRequest, IBaseService } from '../models';
 import { ConfigService, LogService } from '../modules';
 import { cloneInstance } from '../utils';
 
@@ -57,7 +49,7 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   }
 
   async findById(id: ID, query?: REQ): Promise<T> {
-    return this.repository.findById(id, query);
+    return this.repository.findOne(id, query);
   }
 
   async findOne(query: REQ): Promise<T> {
@@ -70,18 +62,15 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   }
 
   async update(id: ID, entity: DeepPartial<T>): Promise<T> {
-    const condition: ICondition<T> = { id } as object;
     const processEntity: DeepPartial<T> = cloneInstance(entity);
-    return this.repository.update(condition, processEntity);
+    return this.repository.update(id, processEntity);
   }
 
   async delete(id: ID): Promise<T> {
-    const condition: ICondition<T> = { id } as object;
-    return this.repository.delete(condition);
+    return this.repository.delete(id);
   }
 
   async restore(id: ID): Promise<T> {
-    const condition: ICondition<T> = { id } as object;
-    return this.repository.restore(condition);
+    return this.repository.restore(id);
   }
 }

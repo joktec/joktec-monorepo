@@ -12,7 +12,7 @@ export class ExistArticleInterceptor implements NestInterceptor<Article, Article
     const req = context.switchToHttp().getRequest<IRequest<Article>>();
     if (!req.instances) req.instances = [];
     if (req.params.id) {
-      const article = await this.articleRepo.findById(req.params.id);
+      const article = await this.articleRepo.findOne(req.params.id);
       if (!article) throw new NotFoundException('article.NOT_FOUND');
       req.instances.push(article);
     }
