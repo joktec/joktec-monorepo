@@ -1,5 +1,4 @@
-import { IsNumber, Max, Min } from '@joktec/core';
-import { ApiPropertyOptions } from '@nestjs/swagger';
+import { ApiPropertyOptions, IsNumber, Max, Min } from '@joktec/core';
 import { PropOptionsForNumber } from '@typegoose/typegoose/lib/types';
 import { isArray, isNil, isNumber } from 'lodash';
 import { IPropOptions } from '../prop.decorator';

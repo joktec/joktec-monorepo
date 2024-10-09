@@ -1,18 +1,18 @@
 import {
   ApiHideProperty,
   ApiProperty,
+  ApiPropertyOptions,
   applyDecorators,
   Clazz,
   Exclude,
+  IsMongoId,
   IsNotEmpty,
   IsOptional,
   toArray,
   toBool,
   Type,
   ValidateNested,
-  IsMongoId,
 } from '@joktec/core';
-import { ApiPropertyOptions } from '@nestjs/swagger';
 import { prop, PropType, Severity } from '@typegoose/typegoose';
 import { BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
 import { isArray, isBoolean, isNil, isUndefined, last, unset } from 'lodash';

@@ -1,4 +1,5 @@
 import {
+  ApiPropertyOptions,
   IsEmail,
   isEmail,
   IsHexColor,
@@ -12,7 +13,6 @@ import {
   toInt,
   ValidationOptions,
 } from '@joktec/core';
-import { ApiPropertyOptions } from '@nestjs/swagger';
 import { PropOptionsForString } from '@typegoose/typegoose/lib/types';
 import { isArray, isNil, isNumber, isObject } from 'lodash';
 import { IsEmailOptions } from 'validator/lib/isEmail';

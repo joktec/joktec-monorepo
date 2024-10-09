@@ -7,11 +7,11 @@ import {
   Injectable,
   KeyOf,
   LogService,
+  OnApplicationBootstrap,
   OnModuleInit,
   plainToInstance,
   toArray,
 } from '@joktec/core';
-import { OnApplicationBootstrap } from '@nestjs/common';
 import { isArray, isNil, isObject, omit } from 'lodash';
 import { DeepPartial, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';

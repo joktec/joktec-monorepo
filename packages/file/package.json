@@ -48,8 +48,13 @@
     "fs-extra": "^11.2.0",
     "lodash": "^4.17.21",
     "magika": "^0.2.13",
+    "moment": "^2.30.1",
     "rxjs": "^7.8.1",
     "seedrandom": "^3.0.5"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/lodash": "^4.17.10"
   },
   "lint-staged": {
     "*.ts": [
@@ -76,8 +81,5 @@
       "!**/*.{d,enum}.ts"
     ]
   },
-  "gitHead": "5c13d4ee8ca290e9f0f98482f014c818faf98e42",
-  "devDependencies": {
-    "@types/fs-extra": "^11.0.4"
-  }
+  "gitHead": "5c13d4ee8ca290e9f0f98482f014c818faf98e42"
 }

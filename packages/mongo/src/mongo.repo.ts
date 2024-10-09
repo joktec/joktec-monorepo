@@ -8,8 +8,8 @@ import {
   LogService,
   OnModuleInit,
   plainToInstance,
-  toArray,
   Reflector,
+  toArray,
 } from '@joktec/core';
 import { Ref } from '@typegoose/typegoose';
 import { isArray, isNil, omit, pick } from 'lodash';

@@ -1,5 +1,5 @@
 import { ApiProperty, Field } from '@joktec/core';
-import { CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
 
 export interface IMysqlModel {
   createdAt?: Date;

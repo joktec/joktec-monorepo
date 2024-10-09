@@ -1,6 +1,7 @@
 export {
   ApiProperty,
   ApiPropertyOptional,
+  ApiPropertyOptions,
   ApiResponseProperty,
   ApiQuery,
   ApiParam,

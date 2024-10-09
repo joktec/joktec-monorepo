@@ -1,5 +1,4 @@
-import { IsDate, MaxDate, MinDate, Type, ValidationOptions } from '@joktec/core';
-import { ApiPropertyOptions } from '@nestjs/swagger';
+import { ApiPropertyOptions, IsDate, MaxDate, MinDate, Type, ValidationOptions } from '@joktec/core';
 import { PropOptionsForString } from '@typegoose/typegoose/lib/types';
 import { isArray, isNil } from 'lodash';
 import { IPropOptions } from '../prop.decorator';

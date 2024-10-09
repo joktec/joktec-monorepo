@@ -55,6 +55,7 @@
     "typeorm-naming-strategies": "^4.1.0"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.10",
     "@types/mysql": "^2.15.26",
     "@types/validator": "^13.12.2"
   },

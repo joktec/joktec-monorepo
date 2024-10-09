@@ -1,5 +1,4 @@
-import { IsBoolean } from '@joktec/core';
-import { ApiPropertyOptions } from '@nestjs/swagger';
+import { ApiPropertyOptions, IsBoolean } from '@joktec/core';
 import { BasePropOptions } from '@typegoose/typegoose/lib/types';
 import { IPropOptions } from '../prop.decorator';
 

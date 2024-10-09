@@ -1,5 +1,4 @@
-import { IsEnum } from '@joktec/core';
-import { ApiPropertyOptions } from '@nestjs/swagger';
+import { ApiPropertyOptions, IsEnum } from '@joktec/core';
 import { PropOptionsForString } from '@typegoose/typegoose/lib/types';
 import { IPropOptions } from '../prop.decorator';
 

@@ -40,7 +40,11 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.163",
-    "arangojs": "^9.1.0"
+    "arangojs": "^9.1.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.10"
   },
   "lint-staged": {
     "*.ts": [
