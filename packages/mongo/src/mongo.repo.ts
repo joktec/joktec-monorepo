@@ -92,6 +92,14 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   }
 
   @MongoCatch
+  async paginate(query: IMongoRequest<T>, options: IMongoOptions<T> = {}): Promise<IMongoPaginationResponse<T>> {
+    const findQuery: IMongoRequest<T> = { ...query };
+    const countQuery: IMongoRequest<T> = omit(query, ['select', 'page', 'limit', 'offset', 'sort']);
+    const [items, total] = await Promise.all([this.find(findQuery, options), this.count(countQuery, options)]);
+    return { items, total };
+  }
+
+  @MongoCatch
   async find(query: IMongoRequest<T>, options: IMongoOptions<T> = {}): Promise<T[]> {
     const docs = await this.qb(query, options).find().exec();
     return this.transform(docs) as T[];
@@ -102,14 +110,6 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
     const processQuery = omit(query, ['select', 'page', 'limit', 'offset', 'sort']);
     const qb = this.qb(processQuery, options);
     return query.near ? qb.estimatedDocumentCount() : qb.countDocuments();
-  }
-
-  @MongoCatch
-  async paginate(query: IMongoRequest<T>, options: IMongoOptions<T> = {}): Promise<IMongoPaginationResponse<T>> {
-    const findQuery: IMongoRequest<T> = { ...query };
-    const countQuery: IMongoRequest<T> = omit(query, ['select', 'page', 'limit', 'offset', 'sort']);
-    const [items, total] = await Promise.all([this.find(findQuery, options), this.count(countQuery, options)]);
-    return { items, total };
   }
 
   @MongoCatch

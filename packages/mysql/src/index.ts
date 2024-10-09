@@ -5,5 +5,4 @@ export * from './mysql.config';
 export * from './mysql.repo';
 export * from './mysql.exception';
 export * from './models';
-export * from 'sequelize-typescript';
-export { Op, Optional } from 'sequelize';
+export * from 'typeorm';

@@ -1,5 +1,5 @@
 import { DEFAULT_CON_ID, Injectable } from '@joktec/core';
-import { MysqlRepo, MysqlService, Op } from '@joktec/mysql';
+import { In, MysqlRepo, MysqlService, Not } from '@joktec/mysql';
 import { CronModel, CronStatus } from './models';
 
 @Injectable()
@@ -9,21 +9,18 @@ export class CronRepo extends MysqlRepo<CronModel, string> {
   }
 
   public async bulkCreate(crons: CronModel[]): Promise<CronModel[]> {
-    return this.model.bulkCreate(crons, { updateOnDuplicate: ['id'], returning: true });
+    return this.bulkUpsert(crons, ['id']);
   }
 
   public async getCrons(type: string, ids: string[] = []): Promise<CronModel[]> {
-    return this.model.findAll({
-      where: { type, id: { [Op.in]: ids } },
-      order: ['date', 'ASC'],
-    });
+    return this.repository.find({ where: { type, id: In(ids) }, order: { date: 'ASC' } });
   }
 
   public async getDependCrons(types: string[], date: string): Promise<CronModel[]> {
     if (!types.length) return [];
-    return this.model.findAll({
-      where: { date, type: { [Op.in]: types }, status: { [Op.not]: CronStatus.DONE } },
-      order: ['date', 'ASC'],
+    return this.repository.find({
+      where: { date, type: In(types), status: Not(CronStatus.DONE) },
+      order: { date: 'ASC' },
     });
   }
 }

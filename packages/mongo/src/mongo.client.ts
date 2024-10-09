@@ -25,8 +25,6 @@ export interface MongoModelRegistry {
 
 export type MongoType<T extends MongoSchema = MongoSchema> = ReturnModelType<typeof MongoSchema, QueryHelper<T>>;
 
-export type A<T> = T | T[];
-
 export interface MongoClient extends Client<MongoConfig, Connection> {
   isConnected(conId?: string): boolean;
 

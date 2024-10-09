@@ -10,9 +10,8 @@ import {
   IsTypes,
 } from '@joktec/core';
 import { pick } from 'lodash';
-import { ConnectionOptions } from 'sequelize/types/sequelize';
 
-export class MysqlSlaveConfig implements ConnectionOptions {
+export class MysqlSlaveConfig {
   @IsString()
   @IsNotEmpty()
   host: string;
@@ -41,12 +40,23 @@ export class MysqlSlaveConfig implements ConnectionOptions {
 export enum Dialect {
   MYSQL = 'mysql',
   POSTGRES = 'postgres',
-  SQLITE = 'sqlite',
+  COCKROACHDB = 'cockroachdb',
+  SAP = 'sap',
   MARIADB = 'mariadb',
-  MSSQL = 'mssql',
-  DB2 = 'db2',
-  SNOWFLAKE = 'snowflake',
+  SQLITE = 'sqlite',
+  CORDOVA = 'cordova',
+  REACT_NATIVE = 'react-native',
+  NATIVESCRIPT = 'nativescript',
+  SQLJS = 'sqljs',
   ORACLE = 'oracle',
+  MSSQL = 'mssql',
+  MONGODB = 'mongodb',
+  AURORA_MYSQL = 'aurora-mysql',
+  AURORA_POSTGRES = 'aurora-postgres',
+  EXPO = 'expo',
+  BETTER_SQLITE3 = 'better-sqlite3',
+  CAPACITOR = 'capacitor',
+  SPANNER = 'spanner',
 }
 
 export class MysqlConfig extends ClientConfig {

@@ -1,23 +1,24 @@
 import { ApiProperty, Field } from '@joktec/core';
-import { CreatedAt, DeletedAt, Model, UpdatedAt } from 'sequelize-typescript';
+import { CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 
-export class MysqlModel<
-  TModelAttributes extends {} = any,
-  TCreationAttributes extends {} = TModelAttributes,
-> extends Model<TModelAttributes, TCreationAttributes> {
-  id?: number | any;
+export interface IMysqlModel {
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+}
 
-  @CreatedAt
+export class MysqlModel implements IMysqlModel {
+  @CreateDateColumn()
   @ApiProperty({ type: Date })
   @Field(() => Date, { nullable: true })
   createdAt?: Date;
 
-  @UpdatedAt
+  @UpdateDateColumn()
   @ApiProperty({ type: Date })
   @Field(() => Date, { nullable: true })
   updatedAt?: Date;
 
-  @DeletedAt
+  @DeleteDateColumn()
   @ApiProperty({ type: Date })
   @Field(() => Date, { nullable: true })
   deletedAt?: Date;

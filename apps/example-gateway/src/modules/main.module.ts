@@ -13,6 +13,7 @@ import { InquiryModule } from './inquiries';
 import { NotificationModule } from './notifications';
 import { OtpModule } from './otpLogs';
 import { PostModule } from './posts';
+import { ProductModule } from './products';
 import { ProfileModule } from './profile';
 import { ReportModule } from './reports';
 import { SessionModule } from './sessions';
@@ -43,6 +44,7 @@ import { UserModule } from './users';
     SettingModule,
     TagModule,
     UserModule,
+    ProductModule,
   ],
 })
 export class MainModule {}

@@ -1,6 +1,6 @@
-import { BaseMethodDecorator, CallbackMethodOptions, InternalServerException, ValidatorBuilder } from '@joktec/core';
+import { BaseMethodDecorator, CallbackMethodOptions, InternalServerException } from '@joktec/core';
 import { snakeCase } from 'lodash';
-import { ValidationErrorItem } from 'sequelize';
+import { QueryFailedError } from 'typeorm';
 
 export class MysqlException extends InternalServerException {
   constructor(msg: string = 'MYSQL_EXCEPTION', error: any) {
@@ -13,20 +13,10 @@ export const MysqlCatch = BaseMethodDecorator(async (options: CallbackMethodOpti
   try {
     return await method(...args);
   } catch (err) {
-    if (err.errors && Array.isArray(err.errors)) {
-      const validationBuilder = ValidatorBuilder.init(MysqlException.name);
-      err.errors.map((errItem: ValidationErrorItem) => {
-        validationBuilder.add(errItem.path, errItem.message, errItem.value);
-      });
-      validationBuilder.throw();
-    }
-
-    if (err.parent || err.original) {
-      const parent = err.parent || err.original;
+    if (err instanceof QueryFailedError) {
       const msg = snakeCase(err.message).toUpperCase();
-      throw new MysqlException(msg, parent);
+      throw new MysqlException(msg, err);
     }
-
-    throw new MysqlException(err.message, err);
+    throw new MysqlException(err, err.message);
   }
 });

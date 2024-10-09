@@ -1,27 +1,28 @@
 import {
   ConfigService,
-  DeepPartial,
+  Constructor,
   DEFAULT_CON_ID,
   ICondition,
   Inject,
   Injectable,
+  KeyOf,
   LogService,
   OnModuleInit,
+  plainToInstance,
   toArray,
-  toBool,
 } from '@joktec/core';
 import { OnApplicationBootstrap } from '@nestjs/common';
-import { FindOptions, RestoreOptions } from 'sequelize';
-import { DestroyOptions } from 'sequelize/types/model';
-import { Model, ModelCtor, Repository } from 'sequelize-typescript';
+import { isArray, isNil, isObject, omit } from 'lodash';
+import { DeepPartial, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { MysqlHelper } from './helpers';
-import { IMysqlRequest, IMysqlResponse, MysqlId, MysqlModel } from './models';
+import { IMysqlOption, IMysqlRequest, IMysqlResponse, MysqlId, MysqlModel } from './models';
 import { IMysqlRepository } from './mysql.client';
 import { MysqlCatch } from './mysql.exception';
 import { MysqlService } from './mysql.service';
 
 @Injectable()
-export abstract class MysqlRepo<T extends MysqlModel<T>, ID = MysqlId>
+export abstract class MysqlRepo<T extends MysqlModel, ID extends MysqlId = MysqlId>
   implements IMysqlRepository<T, ID>, OnModuleInit, OnApplicationBootstrap
 {
   @Inject() protected configService: ConfigService;
@@ -29,7 +30,7 @@ export abstract class MysqlRepo<T extends MysqlModel<T>, ID = MysqlId>
 
   protected constructor(
     protected mysqlService: MysqlService,
-    protected model: ModelCtor<T>,
+    protected model: Constructor<T>,
     protected conId: string = DEFAULT_CON_ID,
   ) {}
 
@@ -37,98 +38,136 @@ export abstract class MysqlRepo<T extends MysqlModel<T>, ID = MysqlId>
     this.logService.setContext(this.constructor.name);
   }
 
-  onApplicationBootstrap() {
-    this.model = this.mysqlService.getModel(this.model, this.conId);
-  }
+  onApplicationBootstrap() {}
 
   get repository(): Repository<T> {
     return this.mysqlService.getRepository(this.model, this.conId);
   }
 
-  @MysqlCatch
-  async find(query: IMysqlRequest<T>): Promise<T[]> {
-    const options: FindOptions<T> = MysqlHelper.parseFilter(query);
-    if (query.select) options.attributes = toArray(query.select, { split: ',' });
-    if (query.sort) options.order = Object.entries(query.sort);
-    if (query.limit) options.limit = query.limit;
+  protected transform(docs: any | any[]): T | T[] {
+    if (isNil(docs)) return null;
+    if (isArray(docs) && !docs.length) return [];
+    const transformDocs = plainToInstance(this.model, toArray(docs));
+    return (isArray(docs) ? transformDocs : transformDocs[0]) as any;
+  }
+
+  public qb(query: IMysqlRequest<T> = {}, opts: IMysqlOption<T> = {}): FindManyOptions<T> {
+    const options: FindManyOptions<T> = MysqlHelper.parseFilter(query);
+    // if (query?.near) qb.center(query.near); // TODO: Handle
+    // if (query?.keyword) qb.search(query.keyword); // TODO: Handle
+    if (query.select) options.select = MysqlHelper.parseProjection(query.select);
+    if (query.sort) options.order = MysqlHelper.parseOrder(query.sort);
+    if (query.limit) options.take = query.limit;
     if (query.limit && query.page) {
-      options.limit = query.limit;
-      options.offset = (query.page - 1) * query.limit;
+      options.take = query.limit;
+      options.skip = (query.page - 1) * query.limit;
     }
-    return this.model.findAll(options);
+    if (query.populate) options.relations = MysqlHelper.parseRelations(query.populate);
+    return { ...opts, ...options };
+  }
+
+  private whereById(pkValue: ID): FindManyOptions<T>['where'] {
+    const primaryColumns = this.repository.metadata.primaryColumns.map(pk => pk.propertyName);
+    return primaryColumns.reduce((curr, acc) => {
+      curr[acc] = pkValue;
+      return curr;
+    }, {});
   }
 
   @MysqlCatch
-  async count(query: IMysqlRequest<T>): Promise<number> {
-    const options: FindOptions = MysqlHelper.parseFilter(query);
-    return this.model.count(options);
-  }
-
-  @MysqlCatch
-  async paginate(query: IMysqlRequest<T>): Promise<IMysqlResponse<T>> {
-    const [items, total] = await Promise.all([this.find(query), this.count(query)]);
+  async paginate(query: IMysqlRequest<T>, opts: IMysqlOption<T> = {}): Promise<IMysqlResponse<T>> {
+    const findQuery: IMysqlRequest<T> = { ...query };
+    const countQuery: IMysqlRequest<T> = omit(query, ['select', 'page', 'limit', 'offset', 'sort']);
+    const [items, total] = await Promise.all([this.find(findQuery, opts), this.count(countQuery, opts)]);
     return { items, total };
   }
 
   @MysqlCatch
-  async findOne(query: IMysqlRequest<T>): Promise<T> {
-    const options: FindOptions = MysqlHelper.parseFilter(query);
-    if (query.select) options.attributes = toArray(query.select, { split: ',' });
-    return this.model.findOne(options);
+  async find(query: IMysqlRequest<T>, opts: IMysqlOption<T> = {}): Promise<T[]> {
+    const options: FindManyOptions<T> = this.qb(query, opts);
+    const docs = await this.repository.find(options);
+    return this.transform(docs) as T[];
   }
 
   @MysqlCatch
-  async findById(id: ID, query: IMysqlRequest<T>): Promise<T> {
-    query.condition = { [this.model.primaryKeyAttribute]: id } as any;
-    const options: FindOptions = MysqlHelper.parseFilter(query);
-    if (query.select) options.attributes = toArray(query.select, { split: ',' });
-    return this.model.findOne(options);
+  async count(query: IMysqlRequest<T>, opts: IMysqlOption<T> = {}): Promise<number> {
+    const options: FindManyOptions<T> = this.qb(query, opts);
+    return this.repository.count(options);
   }
 
   @MysqlCatch
-  async create(body: Model<T>): Promise<T> {
-    return this.model.build(body as any, { isNewRecord: true }).save();
+  async findOne(
+    cond: ID | ICondition<T>,
+    query: Omit<IMysqlRequest<T>, 'condition'> = {},
+    opts: IMysqlOption<T> = {},
+  ): Promise<T> {
+    const condition: ICondition<T> = {};
+    if (!isObject(cond)) Object.assign(condition, { ...this.whereById(cond) });
+    else Object.assign(condition, cond);
+
+    const mergeQuery: IMysqlRequest<T> = Object.assign({}, query, { condition });
+    const options: FindOneOptions<T> = this.qb(mergeQuery, opts);
+    const doc = await this.repository.findOne(options);
+    return this.transform(doc) as T;
   }
 
   @MysqlCatch
-  async update(condition: ICondition<T>, body: DeepPartial<T>): Promise<T> {
-    const options: FindOptions = MysqlHelper.parseFilter({ condition });
-    const model: T = await this.model.findOne(options);
-    if (!model) return null;
-    const fields: any[] = Object.keys(body);
-    return model.update(body as T, { fields });
+  async create(body: DeepPartial<T>, opts: IMysqlOption<T> = {}): Promise<T> {
+    const transformBody: T = this.transform(body) as T;
+    const entity = this.repository.create(transformBody);
+    return this.repository.save(entity, opts);
   }
 
   @MysqlCatch
-  async delete(condition: ICondition<T>, opts?: { force?: boolean; userId?: ID }): Promise<T> {
-    const existModel = await this.findOne({ condition });
-    if (!existModel) return null;
+  async update(cond: ID | ICondition<T>, body: DeepPartial<T>, options: IMysqlOption<T> = {}): Promise<T> {
+    const condition: ICondition<T> = {};
+    if (!isObject(cond)) Object.assign(condition, { ...this.whereById(cond) });
+    else Object.assign(condition, cond);
 
-    const options: DestroyOptions<T> = MysqlHelper.parseFilter({ condition });
-    options.force = toBool(opts?.force, false);
-    await this.model.destroy(options);
-    return existModel;
+    const entity = await this.findOne(condition, options);
+    if (!entity) return null;
+
+    const transformBody: T = this.transform({ ...entity, ...body }) as T;
+    const doc = await this.repository.save(transformBody, options);
+    return this.transform(doc) as T;
   }
 
   @MysqlCatch
-  async restore(condition: ICondition<T>, opts?: { userId?: ID }): Promise<T> {
-    const options: RestoreOptions<T> = MysqlHelper.parseFilter({ condition });
-    await this.model.restore(options);
-    if (!opts?.userId) {
-      return this.findOne({ condition });
-    }
-    return this.update(condition, { updatedAt: opts?.userId });
+  async delete(cond: ID | ICondition<T>, opts: IMysqlOption<T> & { force?: boolean } = {}): Promise<T> {
+    const entity = await this.findOne(cond, opts);
+    if (!entity) return null;
+    const func: Function = opts?.force ? this.repository.remove : this.repository.softRemove;
+    const doc = await func(entity);
+    return this.transform(doc) as T;
   }
 
   @MysqlCatch
-  async upsert(body: DeepPartial<T>, onConflicts: (keyof T)[]): Promise<T> {
-    const fields: any[] = Object.keys(body);
-    const [row, result] = await this.model.upsert(body as any, {
-      returning: true,
-      fields,
-      conflictFields: onConflicts,
-    });
-    if (!row || !result) return null;
-    return row;
+  async restore(cond: ID | ICondition<T>, opts: IMysqlOption<T> & { reload?: false } = {}): Promise<T> {
+    const entity = await this.findOne(cond, opts);
+    if (!entity) return null;
+    const doc = await this.repository.recover(entity);
+    return this.transform(doc) as T;
+  }
+
+  @MysqlCatch
+  async upsert(
+    body: DeepPartial<T>,
+    onConflicts: KeyOf<T>[],
+    opts: IMysqlOption<T> & Omit<UpsertOptions<T>, 'conflictPaths'> = {},
+  ): Promise<T> {
+    const transformBody: any = this.repository.create(body);
+    const result = await this.repository.upsert(transformBody, { ...opts, conflictPaths: onConflicts });
+    return this.transform(result.generatedMaps[0]) as T;
+  }
+
+  @MysqlCatch
+  async bulkUpsert(
+    body: DeepPartial<T>[],
+    onConflicts: KeyOf<T>[],
+    opts: IMysqlOption<T> & Omit<UpsertOptions<T>, 'conflictPaths'> = {},
+  ): Promise<T[]> {
+    const transformBody: any = this.repository.create(body);
+    const result = await this.repository.upsert(transformBody, { ...opts, conflictPaths: onConflicts });
+    return this.transform(result.generatedMaps) as T[];
   }
 }

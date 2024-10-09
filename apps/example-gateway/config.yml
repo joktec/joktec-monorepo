@@ -19,7 +19,7 @@ transports:
 
 log:
   level: info
-  hideWarning: true
+  hideWarning: false
   hideObject: false
   hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]
   transport:
@@ -79,6 +79,14 @@ mongo:
     debug: false
   - conId: logConnection
     database: dispatch_log
+
+mysql:
+  host: localhost
+  port: 3306
+  username: root
+  password: root
+  database: dispatch
+  sync: true
 
 storage:
   region: ap-southeast-1

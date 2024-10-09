@@ -62598,12 +62598,23 @@
       "enum": [
         "mysql",
         "postgres",
-        "sqlite",
+        "cockroachdb",
+        "sap",
         "mariadb",
+        "sqlite",
+        "cordova",
+        "react-native",
+        "nativescript",
+        "sqljs",
+        "oracle",
         "mssql",
-        "db2",
-        "snowflake",
-        "oracle"
+        "mongodb",
+        "aurora-mysql",
+        "aurora-postgres",
+        "expo",
+        "better-sqlite3",
+        "capacitor",
+        "spanner"
       ]
     },
     "MysqlSlaveConfig": {

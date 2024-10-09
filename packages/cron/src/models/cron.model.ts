@@ -1,18 +1,5 @@
-import {
-  AllowNull,
-  BeforeCreate,
-  BeforeUpdate,
-  Column,
-  CreatedAt,
-  DataType,
-  Default,
-  Is,
-  IsUppercase,
-  Model,
-  PrimaryKey,
-  Table,
-  UpdatedAt,
-} from '@joktec/mysql';
+import { IsDateString, IsEnum, IsUppercase } from '@joktec/core';
+import { BeforeInsert, BeforeUpdate, Column, Entity, MysqlModel, PrimaryGeneratedColumn } from '@joktec/mysql';
 import { snakeCase, upperCase } from 'lodash';
 
 export enum CronStatus {
@@ -21,41 +8,29 @@ export enum CronStatus {
   TODO = 'TODO',
 }
 
-const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
-
-@Table({ tableName: 'cron', timestamps: true, underscored: true, paranoid: false })
-export class CronModel extends Model<CronModel> {
-  @PrimaryKey
+@Entity('cron')
+export class CronModel extends MysqlModel {
+  @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column(DataType.STRING(255))
-  @AllowNull(false)
-  @IsUppercase
+  @Column({ type: 'varchar', length: 255 })
+  @IsUppercase()
   type!: string;
 
-  @Column(DataType.STRING(10))
-  @AllowNull(false)
-  @Is(DATE_REGEX)
+  @Column({ type: 'varchar', length: 10 })
+  @IsDateString()
   date!: string;
 
-  @Column(DataType.ENUM(...Object.values(CronStatus)))
-  @AllowNull(false)
-  @Default(CronStatus.TODO)
+  @Column({ type: 'enum', enum: CronStatus, default: CronStatus.TODO })
+  @IsEnum(CronStatus)
   status!: CronStatus;
 
-  @Column(DataType.JSON)
-  @Default({})
+  @Column({ type: 'json', default: {} })
   data!: Record<string, any>;
 
-  @CreatedAt
-  createdAt?: Date;
-
-  @UpdatedAt
-  updatedAt?: Date;
-
-  @BeforeUpdate
-  @BeforeCreate
-  static makeUpperCase(instance: CronModel) {
-    instance.type = upperCase(snakeCase(instance.type));
+  @BeforeInsert()
+  @BeforeUpdate()
+  makeUpperCase() {
+    this.type = upperCase(snakeCase(this.type));
   }
 }

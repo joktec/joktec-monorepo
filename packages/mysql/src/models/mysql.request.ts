@@ -6,4 +6,6 @@ export type ArrayBinding = Array<IDataType>;
 export type DictBinding = { [key: string]: IDataType };
 export type RawBinding = ArrayBinding | DictBinding;
 
-export interface IMysqlRequest<T extends MysqlModel<T>> extends IBaseRequest<T> {}
+export interface IMysqlRequest<T extends MysqlModel> extends IBaseRequest<T> {
+  withDeleted?: boolean;
+}

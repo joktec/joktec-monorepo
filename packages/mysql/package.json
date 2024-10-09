@@ -51,8 +51,8 @@
     "mysql": "2.18.1",
     "mysql2": "^3.11.3",
     "reflect-metadata": "*",
-    "sequelize": "^6.37.3",
-    "sequelize-typescript": "^2.1.6"
+    "typeorm": "0.3.21-dev.e7649d2",
+    "typeorm-naming-strategies": "^4.1.0"
   },
   "devDependencies": {
     "@types/mysql": "^2.15.26",
