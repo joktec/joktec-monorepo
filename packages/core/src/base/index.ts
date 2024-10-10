@@ -83,6 +83,8 @@ export {
   ExceptionFilter,
   Redirect,
   NestApplicationOptions,
+  Sse,
+  MessageEvent,
 } from '@nestjs/common';
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
 export { Queue, QueueOptions, Job, JobOptions } from 'bull';
