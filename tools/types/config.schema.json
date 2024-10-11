@@ -62580,11 +62580,11 @@
             "$ref": "#/definitions/MysqlSlaveConfig"
           }
         },
-        "benchmark": {
-          "type": "boolean"
-        },
         "sync": {
           "type": "boolean"
+        },
+        "benchmark": {
+          "$ref": "#/definitions/MysqlBenchmarkConfig"
         }
       },
       "required": [
@@ -62642,6 +62642,35 @@
         "username",
         "password",
         "database"
+      ]
+    },
+    "MysqlBenchmarkConfig": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "type": "boolean"
+        },
+        "all": {
+          "type": "boolean"
+        },
+        "level": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MysqlLogLevel"
+          }
+        }
+      }
+    },
+    "MysqlLogLevel": {
+      "type": "string",
+      "enum": [
+        "query",
+        "schema",
+        "error",
+        "warn",
+        "info",
+        "log",
+        "migration"
       ]
     },
     "Listable<NotifierConfig>": {

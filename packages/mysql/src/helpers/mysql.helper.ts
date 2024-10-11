@@ -1,123 +1,128 @@
-import { IBaseRequest, ICondition, IPopulate, toArray, toBool } from '@joktec/core';
-import {
-  FindManyOptions,
-  FindOptionsWhere,
-  ILike,
-  In,
-  LessThan,
-  LessThanOrEqual,
-  MoreThan,
-  MoreThanOrEqual,
-  Not,
-} from 'typeorm';
-import { MysqlModel } from '../models';
-import { MysqlException } from '../mysql.exception';
+import { ICondition, IPopulate, ISort } from '@joktec/core';
+import { SelectQueryBuilder } from 'typeorm';
 
 export class MysqlHelper {
-  static parseProjection<T extends MysqlModel>(
-    select: string | string[] | Record<string, number | boolean>,
-  ): FindManyOptions<T>['select'] {
-    if (typeof select === 'object') {
-      return Object.entries(select).reduce((acc, [field, direction]) => {
-        acc[field] = toBool(direction);
-        return acc;
-      }, {});
-    }
-
-    return toArray(select, { split: ',' }).reduce((acc, field) => {
-      acc[field] = true;
-      return acc;
-    }, {});
-  }
-
-  static parseFilter<T>(query: IBaseRequest<T>): FindManyOptions<T> {
-    const { condition = {}, keyword } = query;
-    const where: FindOptionsWhere<T> = MysqlHelper.parseCondition(condition);
-    if (keyword && typeof where === 'object') {
-      where['name'] = ILike(`%${keyword}%`);
-    }
-    return { where };
-  }
-
-  static parseCondition<T>(condition: ICondition<T>): FindOptionsWhere<T> {
-    const where: FindOptionsWhere<T> = {};
+  static applyCondition<T>(qb: SelectQueryBuilder<T>, condition?: ICondition<T>) {
+    if (!condition) return;
 
     for (const [key, value] of Object.entries(condition)) {
-      if (key === '$and' || key === '$or') {
-        where[key === '$and' ? 'AND' : 'OR'] = value.map((c: ICondition<T>) => MysqlHelper.parseCondition(c));
-        continue;
+      if (key === '$or') {
+        const orConditions = value.map((c: ICondition<T>) => MysqlHelper.buildCondition(qb, c));
+        qb.orWhere(orConditions.join(' OR '));
+      } else if (key === '$and') {
+        const andConditions = value.map((c: ICondition<T>) => MysqlHelper.buildCondition(qb, c));
+        qb.andWhere(andConditions.join(' AND '));
+      } else {
+        const whereClause = MysqlHelper.buildCondition(qb, { [key]: value } as ICondition<T>);
+        qb.andWhere(whereClause);
       }
+    }
+  }
 
-      if (value === null || value === undefined) {
-        where[key] = Not(null);
-        continue;
-      }
-
+  static buildCondition<T>(qb: SelectQueryBuilder<T>, condition: ICondition<T>) {
+    for (const [key, value] of Object.entries(condition)) {
       if (typeof value === 'object') {
         for (const [op, val] of Object.entries(value)) {
           switch (op) {
+            // Toán tử so sánh
             case '$eq':
-              where[key] = val;
+              qb.andWhere(`${qb.alias}.${key} = :${key}`, { [key]: val });
               break;
             case '$gt':
-              where[key] = MoreThan(val);
+              qb.andWhere(`${qb.alias}.${key} > :${key}`, { [key]: val });
               break;
             case '$gte':
-              where[key] = MoreThanOrEqual(val);
+              qb.andWhere(`${qb.alias}.${key} >= :${key}`, { [key]: val });
               break;
             case '$lt':
-              where[key] = LessThan(val);
+              qb.andWhere(`${qb.alias}.${key} < :${key}`, { [key]: val });
               break;
             case '$lte':
-              where[key] = LessThanOrEqual(val);
+              qb.andWhere(`${qb.alias}.${key} <= :${key}`, { [key]: val });
               break;
             case '$ne':
-              where[key] = Not(val);
+              qb.andWhere(`${qb.alias}.${key} != :${key}`, { [key]: val });
               break;
+
+            // Toán tử array
             case '$in':
-              where[key] = In(toArray(val));
+              qb.andWhere(`${qb.alias}.${key} IN (:...${key})`, { [key]: val });
               break;
+            case '$nin':
+              qb.andWhere(`${qb.alias}.${key} NOT IN (:...${key})`, { [key]: val });
+              break;
+            case '$all':
+              // Đây là cách giả lập toán tử `$all`, TypeORM không có toán tử này nhưng có thể xử lý theo cách thủ công
+              qb.andWhere(
+                `${qb.alias}.${key} @> ARRAY[:...${key}]`, // PostgreSQL array contains operator
+                { [key]: val },
+              );
+              break;
+
+            // Toán tử văn bản (Text)
             case '$like':
-              where[key] = ILike(`%${val}%`);
+              qb.andWhere(`${qb.alias}.${key} LIKE :${key}`, { [key]: `%${val}%` });
               break;
             case '$begin':
-              where[key] = ILike(`${val}%`);
+              qb.andWhere(`${qb.alias}.${key} LIKE :${key}`, { [key]: `${val}%` });
               break;
             case '$end':
-              where[key] = ILike(`%${val}`);
+              qb.andWhere(`${qb.alias}.${key} LIKE :${key}`, { [key]: `%${val}` });
               break;
+
+            // Toán tử boolean
+            case '$exists':
+              qb.andWhere(`${qb.alias}.${key} IS NOT NULL`);
+              break;
+            case '$nil':
+              qb.andWhere(`${qb.alias}.${key} IS NULL`);
+              break;
+            case '$empty':
+              qb.andWhere(`${qb.alias}.${key} = ''`);
+              break;
+
+            // Toán tử NOT
+            case '$not':
+              qb.andWhere(`${qb.alias}.${key} != :${key}`, { [key]: val });
+              break;
+
+            // Toán tử size cho array
+            case '$size':
+              qb.andWhere(`array_length(${key}, 1) = :${key}`, { [key]: val });
+              break;
+
             default:
-              throw new MysqlException(`Operator ${op} not supported`, { op, val });
+              throw new Error(`Unsupported operator: ${op}`);
           }
         }
       } else {
-        where[key] = value;
+        qb.andWhere(`${qb.alias}.${key} = :${key}`, { [key]: value });
       }
     }
-
-    return where;
+    return qb;
   }
 
-  static parseOrder<T>(sort: any): FindManyOptions<T>['order'] {
-    const order: FindManyOptions<T>['order'] = {};
+  static applyProjection<T>(qb: SelectQueryBuilder<T>, select?: string | string[]) {
+    if (!select) return;
+    const fields = Array.isArray(select) ? select : select.split(',');
+    qb.select(fields.map(field => `${qb.alias}.${field.trim()}`));
+  }
+
+  static applyOrder<T>(qb: SelectQueryBuilder<T>, sort?: ISort<T>) {
+    if (!sort) return;
     for (const [key, value] of Object.entries(sort)) {
-      order[key] = value === 'asc' ? 'ASC' : 'DESC';
+      qb.addOrderBy(`${qb.alias}.${key}`, value === 'asc' ? 'ASC' : 'DESC');
     }
-    return order;
   }
 
-  static parseRelations<T>(populate: IPopulate<T>): FindManyOptions<T>['relations'] {
-    const relations: Record<string, any> = {};
-    for (const [key, value] of Object.entries(populate)) {
+  static applyRelations<T>(qb: SelectQueryBuilder<T>, populate?: IPopulate<T>) {
+    if (!populate) return;
+    for (const [relation, value] of Object.entries(populate)) {
       if (value === '*') {
-        relations[key] = true;
-        continue;
-      }
-
-      if (typeof value === 'object') {
-        relations[key] = MysqlHelper.parseRelations(value['populate'] || {});
+        qb.leftJoinAndSelect(`${qb.alias}.${relation}`, relation);
+      } else if (typeof value === 'object') {
+        qb.leftJoinAndSelect(`${qb.alias}.${relation}`, relation);
       }
     }
-    return relations;
   }
 }

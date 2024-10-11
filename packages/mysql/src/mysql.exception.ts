@@ -3,7 +3,7 @@ import { snakeCase } from 'lodash';
 import { QueryFailedError } from 'typeorm';
 
 export class MysqlException extends InternalServerException {
-  constructor(msg: string = 'MYSQL_EXCEPTION', error: any) {
+  constructor(msg: string = 'MYSQL_EXCEPTION', error?: any) {
     super(msg, error);
   }
 }

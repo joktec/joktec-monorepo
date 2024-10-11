@@ -51,8 +51,7 @@
     "mysql": "2.18.1",
     "mysql2": "^3.11.3",
     "reflect-metadata": "*",
-    "typeorm": "0.3.21-dev.e7649d2",
-    "typeorm-naming-strategies": "^4.1.0"
+    "typeorm": "0.3.21-dev.e7649d2"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.10",

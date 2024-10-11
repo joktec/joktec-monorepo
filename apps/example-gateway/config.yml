@@ -87,6 +87,9 @@ mysql:
   password: root
   database: dispatch
   sync: true
+  benchmark:
+    enable: true
+    all: true
 
 storage:
   region: ap-southeast-1

@@ -8,10 +8,10 @@ import {
   Type,
   MaxLength,
 } from '@joktec/core';
-import { Column, Entity, PrimaryGeneratedColumn } from '@joktec/mysql';
+import { Column, PrimaryGeneratedColumn, Tables } from '@joktec/mysql';
 import { BaseEntity } from '../common';
 
-@Entity({ name: 'products' })
+@Tables<Product>({ name: 'products' })
 export class Product extends BaseEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   @ApiPropertyOptional()

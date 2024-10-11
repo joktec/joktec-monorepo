@@ -14,8 +14,9 @@ import {
 } from '@joktec/core';
 import { isArray, isNil, isObject, omit } from 'lodash';
 import { DeepPartial, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
-import { MysqlHelper } from './helpers';
+import { MysqlFinder, MysqlHelper } from './helpers';
 import { IMysqlOption, IMysqlRequest, IMysqlResponse, MysqlId, MysqlModel } from './models';
 import { IMysqlRepository } from './mysql.client';
 import { MysqlCatch } from './mysql.exception';
@@ -51,18 +52,42 @@ export abstract class MysqlRepo<T extends MysqlModel, ID extends MysqlId = Mysql
     return (isArray(docs) ? transformDocs : transformDocs[0]) as any;
   }
 
-  public qb(query: IMysqlRequest<T> = {}, opts: IMysqlOption<T> = {}): FindManyOptions<T> {
-    const options: FindManyOptions<T> = MysqlHelper.parseFilter(query);
+  public qb(query: IMysqlRequest<T> = {}, opts: IMysqlOption<T> = {}): SelectQueryBuilder<T> {
+    const metadata = Reflect.getMetadata('searchableKeywords', this.model);
+
+    const qb = this.repository.createQueryBuilder(this.model.name);
+    if (query.condition) MysqlHelper.applyCondition(qb, query.condition);
+    if (query.select) MysqlHelper.applyProjection(qb, query.select);
+    if (query.sort) MysqlHelper.applyOrder(qb, query.sort);
+    if (query.limit) qb.take(query.limit);
+    if (query.limit && query.page) {
+      qb.take(query.limit);
+      qb.skip((query.page - 1) * query.limit);
+    }
+    if (query.populate) MysqlHelper.applyRelations(qb, query.populate);
+    if (opts.withDeleted) qb.withDeleted();
+    if (opts.comment) qb.comment(opts.comment);
+    if (opts.cache) qb.cache(opts.cache);
+    if (opts.lock) {
+      if (opts.lock.mode === 'optimistic') qb.setLock('optimistic', opts.lock.version);
+      else qb.setLock(opts.lock.mode, undefined, opts.lock.tables).setOnLocked(opts.lock.onLocked);
+    }
+    return qb;
+  }
+
+  public finder(query: IMysqlRequest<T> = {}, opts: IMysqlOption<T> = {}): FindManyOptions<T> {
+    const options: FindManyOptions<T> = MysqlFinder.parseFilter(query);
     // if (query?.near) qb.center(query.near); // TODO: Handle
     // if (query?.keyword) qb.search(query.keyword); // TODO: Handle
-    if (query.select) options.select = MysqlHelper.parseProjection(query.select);
-    if (query.sort) options.order = MysqlHelper.parseOrder(query.sort);
+    if (query.select) options.select = MysqlFinder.parseProjection(query.select);
+    if (query.sort) options.order = MysqlFinder.parseOrder(query.sort);
     if (query.limit) options.take = query.limit;
     if (query.limit && query.page) {
       options.take = query.limit;
       options.skip = (query.page - 1) * query.limit;
     }
-    if (query.populate) options.relations = MysqlHelper.parseRelations(query.populate);
+    if (query.populate) options.relations = MysqlFinder.parseRelations(query.populate);
+
     return { ...opts, ...options };
   }
 
@@ -84,14 +109,14 @@ export abstract class MysqlRepo<T extends MysqlModel, ID extends MysqlId = Mysql
 
   @MysqlCatch
   async find(query: IMysqlRequest<T>, opts: IMysqlOption<T> = {}): Promise<T[]> {
-    const options: FindManyOptions<T> = this.qb(query, opts);
+    const options: FindManyOptions<T> = this.finder(query, opts);
     const docs = await this.repository.find(options);
     return this.transform(docs) as T[];
   }
 
   @MysqlCatch
   async count(query: IMysqlRequest<T>, opts: IMysqlOption<T> = {}): Promise<number> {
-    const options: FindManyOptions<T> = this.qb(query, opts);
+    const options: FindManyOptions<T> = this.finder(query, opts);
     return this.repository.count(options);
   }
 
@@ -106,7 +131,7 @@ export abstract class MysqlRepo<T extends MysqlModel, ID extends MysqlId = Mysql
     else Object.assign(condition, cond);
 
     const mergeQuery: IMysqlRequest<T> = Object.assign({}, query, { condition });
-    const options: FindOneOptions<T> = this.qb(mergeQuery, opts);
+    const options: FindOneOptions<T> = this.finder(mergeQuery, opts);
     const doc = await this.repository.findOne(options);
     return this.transform(doc) as T;
   }

@@ -2,10 +2,11 @@ import { AbstractClientService, Constructor, DEFAULT_CON_ID, Inject, Injectable,
 import { pick } from 'lodash';
 import { DatabaseType, DataSource, Repository } from 'typeorm';
 import { DataSourceOptions } from 'typeorm/data-source/DataSourceOptions';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { MysqlModel } from './models';
+import { MysqlBenchmark } from './mysql.benchmark';
 import { MODEL_REGISTRY_KEY, MysqlClient, MysqlModelRegistry } from './mysql.client';
 import { MysqlConfig } from './mysql.config';
+import { MysqlNamingStrategy } from './mysql.strategy';
 
 const RETRY_OPTS = 'mysql.retry';
 
@@ -21,8 +22,9 @@ export class MysqlService extends AbstractClientService<MysqlConfig, DataSource>
     const options = {
       ...config,
       type: config.dialect as DatabaseType,
-      namingStrategy: new SnakeNamingStrategy(),
+      namingStrategy: new MysqlNamingStrategy(),
       entities: [...this.modelRegistry[config.conId]],
+      logger: new MysqlBenchmark(config.benchmark, this.logService),
     } as DataSourceOptions;
 
     if (config.slaves?.length) {
@@ -42,7 +44,6 @@ export class MysqlService extends AbstractClientService<MysqlConfig, DataSource>
       this.logService.info('`%s` Connected to MySQL successfully', conId);
 
       if (this.modelRegistry[conId]) {
-        // client.setOptions({ entities: [...this.modelRegistry[conId]] as any });
         if (config.sync) {
           await client.synchronize(true);
           this.logService.info('`%s` Sync MySQL schema successfully', conId);
