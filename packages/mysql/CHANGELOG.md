@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.178](https://github.com/joktec/joktec-monorepo/compare/@joktec/mysql@0.0.177...@joktec/mysql@0.0.178) (2024-10-11)
+
+
+### Bug Fixes
+
+* mysql index decorator ([029ed6a](https://github.com/joktec/joktec-monorepo/commit/029ed6a8ea55ee1e1c25fba034138b280cf702f7))
+
+
+
+
+
 ## [0.0.177](https://github.com/joktec/joktec-monorepo/compare/@joktec/mysql@0.0.176...@joktec/mysql@0.0.177) (2024-10-11)
 
 **Note:** Version bump only for package @joktec/mysql
