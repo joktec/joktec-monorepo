@@ -25,15 +25,15 @@ export const Tables = <T extends MysqlModel = any>(options: ITableOptions<T> = {
     const decorators: ClassDecorator[] = [SetMetadata<string, ITableOptions>(className, options), Entity(options)];
 
     if (options.index?.length) {
-      options.index.map(indexOpts => decorators.push(Index(indexOpts)));
+      decorators.push(Index(options.index, { background: true }));
     }
 
     if (options.unique?.length) {
-      options.unique.map(uniqueOpts => decorators.push(Index(uniqueOpts, { unique: true })));
+      decorators.push(Index(options.unique, { unique: true, background: true }));
     }
 
     if (options.textSearch?.length) {
-      decorators.push(Index(options.textSearch.map(String), { fulltext: true }));
+      decorators.push(Index(options.textSearch.map(String), { fulltext: true, background: true }));
     }
 
     if (options.customIndexes?.length) {
