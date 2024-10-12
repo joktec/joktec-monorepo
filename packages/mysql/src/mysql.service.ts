@@ -25,6 +25,7 @@ export class MysqlService extends AbstractClientService<MysqlConfig, DataSource>
       namingStrategy: new MysqlNamingStrategy(),
       entities: [...this.modelRegistry[config.conId]],
       logger: new MysqlBenchmark(config.benchmark, this.logService),
+      dropSchema: false,
     } as DataSourceOptions;
 
     if (config.slaves?.length) {
@@ -45,7 +46,7 @@ export class MysqlService extends AbstractClientService<MysqlConfig, DataSource>
 
       if (this.modelRegistry[conId]) {
         if (config.sync) {
-          await client.synchronize(true);
+          await client.synchronize(false);
           this.logService.info('`%s` Sync MySQL schema successfully', conId);
         }
       }
