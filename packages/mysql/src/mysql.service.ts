@@ -1,6 +1,6 @@
 import { AbstractClientService, Constructor, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
 import { pick } from 'lodash';
-import { DatabaseType, DataSource, Repository } from 'typeorm';
+import { DatabaseType, DataSource, EntityManager, Repository } from 'typeorm';
 import { DataSourceOptions } from 'typeorm/data-source/DataSourceOptions';
 import { MysqlModel } from './models';
 import { MysqlBenchmark } from './mysql.benchmark';
@@ -62,6 +62,10 @@ export class MysqlService extends AbstractClientService<MysqlConfig, DataSource>
     } catch (err) {
       this.logService.error(err, '`%s` Error when close connection to MySQL', conId);
     }
+  }
+
+  public getEntityManager(conId: string = DEFAULT_CON_ID): EntityManager {
+    return this.getClient(conId).createEntityManager();
   }
 
   public getRepository<T extends MysqlModel>(

@@ -1,5 +1,5 @@
-import { Client, Constructor, DeepPartial, IBaseRepository, KeyOf } from '@joktec/core';
-import { DataSource, Repository } from 'typeorm';
+import { Client, Constructor, DeepPartial, DEFAULT_CON_ID, IBaseRepository, KeyOf } from '@joktec/core';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { IMysqlOption, MysqlId, MysqlModel } from './models';
 import { MysqlConfig } from './mysql.config';
@@ -16,6 +16,8 @@ export interface MysqlModelRegistry {
 }
 
 export interface MysqlClient extends Client<MysqlConfig, DataSource> {
+  getEntityManager(conId?: string): EntityManager;
+
   getRepository<T extends MysqlModel>(entityClass: Constructor<T>, conId?: string): Repository<T>;
 }
 

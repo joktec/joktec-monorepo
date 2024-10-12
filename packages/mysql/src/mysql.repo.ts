@@ -13,7 +13,7 @@ import {
   toArray,
 } from '@joktec/core';
 import { isArray, isNil, isObject, omit } from 'lodash';
-import { DeepPartial, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
+import { DeepPartial, EntityManager, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { MysqlFinder, MysqlHelper } from './helpers';
@@ -40,6 +40,10 @@ export abstract class MysqlRepo<T extends MysqlModel, ID extends MysqlId = Mysql
   }
 
   onApplicationBootstrap() {}
+
+  get entityManager(): EntityManager {
+    return this.mysqlService.getEntityManager(this.conId);
+  }
 
   get repository(): Repository<T> {
     return this.mysqlService.getRepository(this.model, this.conId);
