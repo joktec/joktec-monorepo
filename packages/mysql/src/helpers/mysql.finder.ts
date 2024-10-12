@@ -1,7 +1,19 @@
 import { IBaseRequest, ICondition, IPopulate, toArray, toBool } from '@joktec/core';
-import { FindManyOptions, ILike, In, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not } from 'typeorm';
+import {
+  Equal,
+  FindManyOptions,
+  ILike,
+  In,
+  IsNull,
+  LessThan,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+} from 'typeorm';
 import { MysqlModel } from '../models';
 import { MysqlException } from '../mysql.exception';
+import { isNil } from 'lodash';
 
 export class MysqlFinder {
   static parseFilter<T>(query: IBaseRequest<T>): FindManyOptions<T> {
@@ -38,16 +50,11 @@ export class MysqlFinder {
         continue;
       }
 
-      if (value === null || value === undefined) {
-        where[key] = Not(null);
-        continue;
-      }
-
       if (typeof value === 'object') {
         for (const [op, val] of Object.entries(value)) {
           switch (op) {
             case '$eq':
-              where[key] = val;
+              where[key] = isNil(value) ? IsNull() : Equal(val);
               break;
             case '$gt':
               where[key] = MoreThan(val);
@@ -62,10 +69,13 @@ export class MysqlFinder {
               where[key] = LessThanOrEqual(val);
               break;
             case '$ne':
-              where[key] = Not(val);
+              where[key] = isNil(val) ? Not(IsNull()) : Not(val);
               break;
             case '$in':
-              where[key] = In(toArray(val));
+              if (toArray(val).length) where[key] = In(toArray(val));
+              break;
+            case '$nin':
+              if (toArray(val).length) where[key] = Not(In(toArray(val)));
               break;
             case '$like':
               where[key] = ILike(`%${val}%`);
@@ -75,6 +85,9 @@ export class MysqlFinder {
               break;
             case '$end':
               where[key] = ILike(`%${val}`);
+              break;
+            case '$not':
+              where[key] = Not(this.parseCondition(val));
               break;
             default:
               throw new MysqlException(`Operator ${op} not supported`, { op, val });
