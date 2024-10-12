@@ -1,7 +1,7 @@
 {
   "name": "@joktec/mysql",
   "description": "JokTec - MySql Service",
-  "version": "0.0.181",
+  "version": "0.0.182",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
