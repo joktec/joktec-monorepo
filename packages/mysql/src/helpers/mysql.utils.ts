@@ -1,8 +1,9 @@
+import { toArray } from '@joktec/core';
 import { SelectQueryBuilder } from 'typeorm';
 
-export function printSql(query: string, parameters?: any[]): string {
+export function printSql(query: string, parameters: any[] = []): string {
   let sql: string = query;
-  parameters.forEach((param: any) => {
+  toArray(parameters).forEach((param: any) => {
     sql = sql.replace('?', () => {
       if (typeof param === 'string') return `'${param}'`;
       else if (param instanceof Date) return `'${param.toISOString()}'`;
