@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.179](https://github.com/joktec/joktec-monorepo/compare/@joktec/mysql@0.0.178...@joktec/mysql@0.0.179) (2024-10-12)
+
+
+### Bug Fixes
+
+* mysql auto sync ([88c7417](https://github.com/joktec/joktec-monorepo/commit/88c74170ed87357895ed38a0fb5a260f3bcbc6ad))
+
+
+
+
+
 ## [0.0.178](https://github.com/joktec/joktec-monorepo/compare/@joktec/mysql@0.0.177...@joktec/mysql@0.0.178) (2024-10-11)
 
 
