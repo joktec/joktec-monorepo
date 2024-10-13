@@ -18,7 +18,7 @@
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
     "prebuild": "rimraf dist",
-    "dep:upgrade": "ncu -p yarn -f /^@joktec*/ -u",
+    "dep:upgrade": "ncu -p pnpm -f /^@joktec*/ -u",
     "build": "npx tsc -p tsconfig.json && node dist/main"
   },
   "dependencies": {
@@ -27,7 +27,7 @@
     "@joktec/bigquery": "^0.0.163",
     "@joktec/cacher": "^0.0.114",
     "@joktec/core": "^0.0.165",
-    "@joktec/cron": "^0.0.183",
+    "@joktec/cron": "^0.0.184",
     "@joktec/elastic": "^0.0.171",
     "@joktec/file": "^0.0.163",
     "@joktec/firebase": "^0.0.83",
@@ -35,7 +35,7 @@
     "@joktec/kafka": "^0.0.163",
     "@joktec/mailer": "^0.0.165",
     "@joktec/mongo": "^0.0.218",
-    "@joktec/mysql": "^0.0.181",
+    "@joktec/mysql": "^0.0.182",
     "@joktec/notifier": "^0.0.166",
     "@joktec/rabbit": "^0.0.163",
     "@joktec/storage": "^0.0.167",

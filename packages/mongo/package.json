@@ -31,12 +31,12 @@
   "scripts": {
     "clean": "rimraf -rf dist",
     "purge": "rimraf -rf dist node_modules",
-    "prebuild": "yarn clean",
+    "prebuild": "pnpm clean",
     "build": "nest build -p tsconfig.json",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": "pnpm build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p yarn -u",
+    "dep:upgrade": "ncu -p pnpm -u",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -45,15 +45,14 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.165",
-    "@typegoose/typegoose": "^12.7.0",
+    "@typegoose/typegoose": "^12.8.0",
     "dot-object": "^2.1.5",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
-    "mongoose": "^8.6.3"
+    "mongoose": "^8.7.1"
   },
   "devDependencies": {
-    "@types/dot-object": "^2.1.6",
-    "@types/mongoose": "^5.11.97"
+    "@types/dot-object": "^2.1.6"
   },
   "lint-staged": {
     "*.ts": [
