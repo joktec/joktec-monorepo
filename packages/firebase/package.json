@@ -26,12 +26,12 @@
   "scripts": {
     "clean": "rimraf -rf dist",
     "purge": "rimraf -rf dist node_modules",
-    "prebuild": "pnpm clean",
+    "prebuild": "yarn clean",
     "build": "nest build -p tsconfig.json",
-    "prepublishOnly": "pnpm build",
+    "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p pnpm -u",
+    "dep:upgrade": "ncu -p yarn -u",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.165",
-    "firebase-admin": "^12.6.0",
+    "firebase-admin": "^12.5.0",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1"
   },

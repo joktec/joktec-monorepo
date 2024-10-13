@@ -13,6 +13,11 @@
   "engines": {
     "node": ">=14"
   },
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "tools/*"
+  ],
   "keywords": [
     "microservices",
     "monorepo",
@@ -20,10 +25,8 @@
     "nx"
   ],
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
     "postinstall": "husky",
     "ls": "lerna ls -la && nx print-affected",
-    "changed": "lerna changed",
     "relp": "lerna run relp",
     "dev": "lerna run dev",
     "build": "lerna run build",

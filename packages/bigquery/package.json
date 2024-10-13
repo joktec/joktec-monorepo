@@ -26,12 +26,12 @@
   "scripts": {
     "clean": "rimraf -rf dist",
     "purge": "rimraf -rf dist node_modules",
-    "prebuild": "pnpm clean",
+    "prebuild": "yarn clean",
     "build": "nest build -p tsconfig.json",
-    "prepublishOnly": "pnpm build",
+    "prepublishOnly": "yarn build",
     "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
     "lint": "eslint --fix \"./src/**/*.ts\"",
-    "dep:upgrade": "ncu -p pnpm -u",
+    "dep:upgrade": "ncu -p yarn -u",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -45,7 +45,7 @@
     "moment": "^2.30.1"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.10"
+    "@types/lodash": "^4.17.9"
   },
   "lint-staged": {
     "*.ts": [

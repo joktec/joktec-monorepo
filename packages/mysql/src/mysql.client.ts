@@ -1,4 +1,4 @@
-import { Client, Constructor, DeepPartial, IBaseRepository, KeyOf } from '@joktec/core';
+import { Client, Constructor, DeepPartial, DEFAULT_CON_ID, IBaseRepository, KeyOf } from '@joktec/core';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { IMysqlOption, MysqlId, MysqlModel } from './models';
