@@ -1,4 +1,4 @@
-import { Global, Module } from '@joktec/core';
+import { BullModule, Global, Module } from '@joktec/core';
 import { ArticleModule } from './articles';
 import { ArtistModule } from './artists';
 import { AssetModule } from './assets';
@@ -45,6 +45,7 @@ import { UserModule } from './users';
     TagModule,
     UserModule,
     ProductModule,
+    BullModule.registerQueue({ name: 'apify_queue' }),
   ],
 })
 export class MainModule {}

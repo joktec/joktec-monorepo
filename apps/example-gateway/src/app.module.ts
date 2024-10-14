@@ -3,6 +3,7 @@ import { CacheModule } from '@joktec/cacher';
 import {
   APP_FILTER,
   APP_INTERCEPTOR,
+  BullModule,
   ConfigModule,
   ConfigService,
   createPinoHttp,
@@ -32,6 +33,7 @@ import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
       useFactory: (cfg: ConfigService) => createPinoHttp(cfg),
     }),
     GatewayModule.forRoot({ metric: true, static: true }),
+    BullModule.forRoot(),
     HttpModule,
     FirebaseModule,
     JwtModule,

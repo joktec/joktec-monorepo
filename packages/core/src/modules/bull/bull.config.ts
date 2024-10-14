@@ -1,34 +1,64 @@
-import { toArray, toBool, toInt, toRoute } from '../../utils';
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsTypes } from '../../decorators/validators/is-type.decorator';
+import { toArray } from '../../utils';
 
 export class BullBoardConfig {
-  enable!: boolean;
-  path!: string;
+  @IsOptional()
+  @IsBoolean()
+  enable?: boolean = true;
+
+  @IsOptional()
+  @IsString()
+  path?: string = 'bulls';
+
+  @IsOptional()
+  @IsString()
   username?: string;
+
+  @IsOptional()
+  @IsString()
   password?: string;
 
-  constructor(props: Partial<BullBoardConfig>) {
-    Object.assign(this, {
-      ...props,
-      enable: toBool(props?.enable, true),
-      path: toRoute(props?.path || 'bulls'),
-    });
+  constructor(props?: Partial<BullBoardConfig>) {
+    Object.assign(this, props);
   }
 }
 
 export class BullConfig {
+  @IsNotEmpty()
+  @IsArray()
+  @IsString({ each: true })
   queue: string[];
-  host?: string;
-  port?: number;
+
+  @IsNotEmpty()
+  @IsString()
+  host: string = 'localhost';
+
+  @IsNotEmpty()
+  @IsInt()
+  port: number = 6379;
+
+  @IsOptional()
+  @IsString()
+  username?: string;
+
+  @IsOptional()
+  @IsString()
   password?: string;
+
+  @IsOptional()
+  @IsInt()
+  db?: number;
+
+  @IsOptional()
+  @IsTypes([BullBoardConfig])
   board?: BullBoardConfig;
 
   constructor(props: BullConfig) {
     Object.assign(this, {
       ...props,
       queue: toArray<string>(props?.queue, { split: ',' }),
-      host: props?.host || 'localhost',
-      port: toInt(props?.port, 6379),
-      board: props?.board && new BullBoardConfig(props.board),
+      board: props?.board ? new BullBoardConfig(props.board) : null,
     });
   }
 }

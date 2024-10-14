@@ -61019,15 +61019,23 @@
         "port": {
           "type": "number"
         },
+        "username": {
+          "type": "string"
+        },
         "password": {
           "type": "string"
+        },
+        "db": {
+          "type": "number"
         },
         "board": {
           "$ref": "#/definitions/BullBoardConfig"
         }
       },
       "required": [
-        "queue"
+        "queue",
+        "host",
+        "port"
       ]
     },
     "BullBoardConfig": {
@@ -61045,11 +61053,7 @@
         "password": {
           "type": "string"
         }
-      },
-      "required": [
-        "enable",
-        "path"
-      ]
+      }
     },
     "JwtConfig": {
       "type": "object",

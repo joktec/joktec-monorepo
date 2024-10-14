@@ -1,13 +1,17 @@
 import { Inject, OnApplicationBootstrap, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { isEmpty } from 'lodash';
 import mergeDeep from 'merge-deep';
-import { ExceptionMessage, InternalServerException } from '../exceptions';
+import {
+  ClientConnectException,
+  ExceptionMessage,
+  InternalServerException,
+  InvalidClientConfigException,
+} from '../exceptions';
 import { Constructor } from '../models';
 import { ConfigService, LogService } from '../modules';
 import { sleep, toArray } from '../utils';
 import { Client } from './client';
 import { ClientConfig, DEFAULT_CON_ID } from './client.config';
-import { InvalidClientConfigException } from './client.exception';
 
 export abstract class AbstractClientService<IConfig extends ClientConfig, IClient = any>
   implements Client<IConfig, IClient>, OnModuleInit, OnApplicationBootstrap, OnModuleDestroy
@@ -58,7 +62,11 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
     this.clients[conId] = await this.init(this.configs[conId]);
     this.logService.debug(this.configs[conId], '`%s` %s %s with config', conId, this.service, endMessage);
 
-    await this.start(this.clients[conId], conId);
+    try {
+      await this.start(this.clients[conId], conId);
+    } catch (err) {
+      throw new ClientConnectException(ExceptionMessage.CLIENT_CONNECTION_FAILED, err);
+    }
   }
 
   private validateConfig(config: IConfig): IConfig {
@@ -66,7 +74,7 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
     const error = cfg.validate();
     if (error?.length) {
       this.logService.error(error, `${this.service} invalid config`);
-      throw new InvalidClientConfigException(ExceptionMessage.INVALID_CLIENT_CONFIG, error);
+      throw new InvalidClientConfigException(ExceptionMessage.INVALID_CONFIG, error);
     }
     return cfg;
   }

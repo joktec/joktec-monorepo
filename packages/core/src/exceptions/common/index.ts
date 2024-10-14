@@ -1,4 +1,5 @@
 export * from './bad-request.exception';
+export * from './client.exception';
 export * from './forbidden.exception';
 export * from './internal.exception';
 export * from './method-not-allowed.exception';

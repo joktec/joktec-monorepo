@@ -1,10 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigGetOptions, ConfigService as JsConfigService, NoInferType } from '@nestjs/config';
 import { validateSync, ValidationError, ValidatorOptions } from 'class-validator';
-import { ExceptionMessage, IValidationProperty } from '../../exceptions';
+import { ExceptionMessage, InvalidClientConfigException, IValidationProperty } from '../../exceptions';
 import { Constructor } from '../../models';
 import { buildError } from '../../utils';
-import { ConfigException } from './config.exception';
 import { AppConfig, initConfig } from './config.factory';
 
 @Injectable()
@@ -45,7 +44,7 @@ export class ConfigService extends JsConfigService implements OnModuleInit {
     const cfgInstance = this.parse(clazz, propertyPath, defaultValue, getOpts);
     const flatErrors = this.validate(cfgInstance, options);
     if (flatErrors.length) {
-      throw new ConfigException(ExceptionMessage.INVALID_CONFIG, { error: flatErrors });
+      throw new InvalidClientConfigException(ExceptionMessage.INVALID_CONFIG, { error: flatErrors });
     }
     return cfgInstance;
   }

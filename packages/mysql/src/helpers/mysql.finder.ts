@@ -1,4 +1,5 @@
 import { IBaseRequest, ICondition, IPopulate, toArray, toBool } from '@joktec/core';
+import { isNil } from 'lodash';
 import {
   Equal,
   FindManyOptions,
@@ -13,7 +14,6 @@ import {
 } from 'typeorm';
 import { MysqlModel } from '../models';
 import { MysqlException } from '../mysql.exception';
-import { isNil } from 'lodash';
 
 export class MysqlFinder {
   static parseFilter<T>(query: IBaseRequest<T>): FindManyOptions<T> {

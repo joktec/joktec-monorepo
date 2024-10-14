@@ -5,7 +5,7 @@ import { ExpressAdapter } from '@bull-board/express';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as bodyParser from 'body-parser';
-import Queue from 'bull';
+import { Queue } from 'bullmq';
 import csurf from 'csurf';
 import { NextFunction } from 'express';
 import basicAuth from 'express-basic-auth';
@@ -123,27 +123,22 @@ export class GatewayFactory {
   private static setUpBullBoard(app: NestExpressApplication): boolean {
     const configService = app.get(ConfigService);
     const bull = configService.parse(BullConfig, 'bull');
+    if (!bull || !bull?.board?.enable) return false;
 
-    const queues = bull.queue?.map(q => {
-      const { host, port, password } = bull;
-      return new BullMQAdapter(new Queue(q, { redis: { host, port, password } }));
-    });
+    const queues = bull.queue?.map(q => new BullMQAdapter(new Queue(q, { connection: { ...bull } })));
+    if (!queues?.length) return false;
 
-    if (bull.board?.enable && queues?.length) {
-      const { path, username, password } = bull.board;
-      if (username && password) {
-        app.use(path, basicAuth({ challenge: true, users: { [username]: password } }));
-      }
-
-      const serverAdapter = new ExpressAdapter();
-      serverAdapter.setBasePath(path);
-      createBullBoard({ queues, serverAdapter });
-      app.use(path, serverAdapter.getRouter());
-
-      return true;
+    const { path, username, password } = bull.board;
+    if (username && password) {
+      app.use(path, basicAuth({ challenge: true, users: { [username]: password } }));
     }
 
-    return false;
+    const serverAdapter = new ExpressAdapter();
+    serverAdapter.setBasePath(path);
+    createBullBoard({ queues, serverAdapter });
+    app.use(path, serverAdapter.getRouter());
+
+    return true;
   }
 
   private static setUpViewEngine(app: NestExpressApplication) {

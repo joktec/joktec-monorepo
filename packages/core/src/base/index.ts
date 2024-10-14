@@ -87,7 +87,6 @@ export {
   MessageEvent,
 } from '@nestjs/common';
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
-export { Queue, QueueOptions, Job, JobOptions } from 'bull';
 export { FileInterceptor, FilesInterceptor, FileFieldsInterceptor, MulterModule } from '@nestjs/platform-express';
 export { ThrottlerModule, ThrottlerModuleOptions, ThrottlerAsyncOptions } from '@nestjs/throttler';
 export * from './app';
