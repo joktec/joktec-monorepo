@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.164](https://github.com/joktec/joktec-monorepo/compare/@joktec/bigquery@0.0.163...@joktec/bigquery@0.0.164) (2024-10-14)
+
+
+### Reverts
+
+* Revert "chore: migrate pnpm" ([98e16fb](https://github.com/joktec/joktec-monorepo/commit/98e16fb04f0d7456d3587c7a3a4c77a36be2dbaa))
+
+
+
+
+
 ## [0.0.163](https://github.com/joktec/joktec-monorepo/compare/@joktec/bigquery@0.0.162...@joktec/bigquery@0.0.163) (2024-10-10)
 
 **Note:** Version bump only for package @joktec/bigquery

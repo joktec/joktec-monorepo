@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.219](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.218...@joktec/mongo@0.0.219) (2024-10-14)
+
+
+### Reverts
+
+* Revert "chore: migrate pnpm" ([98e16fb](https://github.com/joktec/joktec-monorepo/commit/98e16fb04f0d7456d3587c7a3a4c77a36be2dbaa))
+
+
+
+
+
 ## [0.0.218](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.217...@joktec/mongo@0.0.218) (2024-10-10)
 
 **Note:** Version bump only for package @joktec/mongo

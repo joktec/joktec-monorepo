@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.185](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.184...@joktec/cron@0.0.185) (2024-10-14)
+
+
+### Reverts
+
+* Revert "chore: migrate pnpm" ([98e16fb](https://github.com/joktec/joktec-monorepo/commit/98e16fb04f0d7456d3587c7a3a4c77a36be2dbaa))
+
+
+
+
+
 ## [0.0.184](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.183...@joktec/cron@0.0.184) (2024-10-12)
 
 **Note:** Version bump only for package @joktec/cron
