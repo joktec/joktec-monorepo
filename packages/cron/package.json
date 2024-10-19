@@ -1,7 +1,7 @@
 {
   "name": "@joktec/cron",
   "description": "JokTec - Cron Service",
-  "version": "0.0.185",
+  "version": "0.0.186",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.166",
-    "@joktec/mysql": "0.0.183",
+    "@joktec/mysql": "0.0.184",
     "@nestjs/common": "^10.4.4",
     "@nestjs/core": "^10.4.4",
     "@nestjs/schedule": "^4.1.1",
