@@ -50,6 +50,11 @@ export class MysqlFinder {
         continue;
       }
 
+      if (isNil(value)) {
+        where[key] = IsNull();
+        continue;
+      }
+
       if (typeof value === 'object') {
         for (const [op, val] of Object.entries(value)) {
           switch (op) {
