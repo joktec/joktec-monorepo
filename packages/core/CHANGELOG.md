@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.167](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.166...@joktec/core@0.0.167) (2024-10-27)
+
+
+### Bug Fixes
+
+* core convert condition ([4404fea](https://github.com/joktec/joktec-monorepo/commit/4404feabbd83213052395399fc43814df3ac4150))
+
+
+
+
+
 ## [0.0.166](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.165...@joktec/core@0.0.166) (2024-10-14)
 
 
