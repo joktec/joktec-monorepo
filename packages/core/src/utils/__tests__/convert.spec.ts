@@ -316,9 +316,9 @@ describe('nullKeysToObject function', () => {
     expect(converted).toEqual(expected);
   });
 
-  it("should handle an object with mixed values and 'null'", () => {
-    const obj = { a: 1, b: 'null', c: '{ "d": "null" }', e: null };
-    const expected = { a: 1, b: null, c: { d: null }, e: null };
+  it("should handle an object with mixed values and 'null' 2", () => {
+    const obj = { a: 1, b: 'null', c: '{ "d": "null" }', e: null, f: { $in: [1, 2, 3] } };
+    const expected = { a: 1, b: null, c: { d: null }, e: null, f: { $in: [1, 2, 3] } };
     const converted = nullKeysToObject(obj);
     expect(converted).toEqual(expected);
   });

@@ -173,7 +173,8 @@ export function nullKeysToObject(obj: { [key: string]: any }): object {
 
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
-      if (typeof obj[key] === 'object' && obj[key] !== null) result[key] = nullKeysToObject(obj[key]);
+      if (Array.isArray(obj[key])) result[key] = obj[key];
+      else if (typeof obj[key] === 'object' && obj[key] !== null) result[key] = nullKeysToObject(obj[key]);
       else if (obj[key] === 'null') result[key] = null;
       else if (obj[key] === 'undefined') delete obj[key];
       else result[key] = obj[key];
