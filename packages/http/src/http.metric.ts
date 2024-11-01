@@ -75,10 +75,12 @@ export const HttpMetricDecorator = () =>
             const { code, message, name } = err;
             const errData = { message, name, code, data };
 
+            const msg = '`%s` http request to %s failed with status %s';
             const excludeResponseType: ResponseType[] = ['stream', 'blob', 'arraybuffer'];
             if (httpConfig.debug && !excludeResponseType.includes(config.responseType)) {
-              const msg = '`%s` http request to %s failed with status %s';
               services.pinoLogger.error(errData, msg, conId, path, status);
+            } else {
+              services.pinoLogger.error(msg, conId, path, status);
             }
 
             // Handle validateResponse as function (sync or async)
