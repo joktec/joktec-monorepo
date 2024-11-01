@@ -1,7 +1,7 @@
 {
   "name": "@joktec/http",
   "description": "JokTec - Http Client Service",
-  "version": "0.0.175",
+  "version": "0.0.176",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
