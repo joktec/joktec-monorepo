@@ -18,6 +18,7 @@ export {
   BullRegistrar,
   SharedBullConfigurationFactory,
   SharedBullAsyncConfiguration,
+  RegisterFlowProducerOptions,
 } from '@nestjs/bullmq';
 export {
   AdvancedOptions,
@@ -29,6 +30,9 @@ export {
   QueueEvents,
   QueueEventsOptions,
   QueueBaseOptions,
+  Worker,
+  WorkerOptions,
+  WorkerListener,
 } from 'bullmq';
 export * from './bull.config';
 export * from './bull.module';

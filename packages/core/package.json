@@ -54,6 +54,7 @@
   "dependencies": {
     "@bull-board/api": "^5.23.0",
     "@bull-board/express": "^5.23.0",
+    "@bull-board/nestjs": "^6.3.2",
     "@bull-board/ui": "^5.23.0",
     "@grpc/proto-loader": "^0.7.13",
     "@nestjs/bullmq": "^10.2.1",

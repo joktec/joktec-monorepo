@@ -1,6 +1,6 @@
 import { AgentOptions } from 'http';
 import net from 'net';
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, toArray, toBool } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, HttpMethod, Injectable, toArray, toBool } from '@joktec/core';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import curlirize from 'axios-curlirize';
 import axiosRetry from 'axios-retry';
@@ -87,8 +87,7 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     };
   }
 
-  @HttpMetricDecorator()
-  async request<T = any>(config: HttpRequest, conId: string = DEFAULT_CON_ID): Promise<HttpResponse<T>> {
+  public buildConfig(config: HttpRequest, conId: string = DEFAULT_CON_ID): AxiosRequestConfig {
     const clientConfig = this.getConfig(conId);
     const cf: AxiosRequestConfig = mergeDeep({}, clientConfig, config, {
       paramsSerializer: config.serializer && {
@@ -97,12 +96,22 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
       curlirize: toBool(config.curlirize, clientConfig.curlirize),
     });
 
+    if (cf.baseURL && cf.baseURL.endsWith('/')) {
+      cf.baseURL = cf.baseURL.slice(0, -1);
+    }
+
     const proxy = clientConfig.proxy || config.proxy || null;
     if (proxy) {
       Object.assign(cf, this.buildAgent(proxy));
       delete cf.proxy;
     }
 
+    return cf;
+  }
+
+  @HttpMetricDecorator()
+  async request<T = any>(config: HttpRequest, conId: string = DEFAULT_CON_ID): Promise<HttpResponse<T>> {
+    const cf: AxiosRequestConfig = this.buildConfig(config, conId);
     return this.getClient(conId).request<T>(cf);
   }
 
@@ -111,22 +120,12 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     const formData = new FormData();
     Object.keys(config.data).map(key => toArray(config.data[key]).map(v => formData.append(key, v, 'file')));
 
-    const clientConfig = this.getConfig(conId);
-    const cf: AxiosRequestConfig = mergeDeep({}, clientConfig, config, {
-      method: 'POST',
-      headers: { ...config.headers, 'Content-Type': 'multipart/form-data' },
+    const baseConfig = this.buildConfig(config, conId);
+    const cf: AxiosRequestConfig = mergeDeep({}, baseConfig, {
+      method: HttpMethod.POST,
+      headers: { ...baseConfig.headers, 'Content-Type': 'multipart/form-data' },
       data: formData,
-      paramsSerializer: config.serializer && {
-        encode: (params: Record<string, any>) => qs.stringify(params, { arrayFormat: 'brackets' }),
-      },
-      curlirize: toBool(config.curlirize, clientConfig.curlirize),
     });
-
-    const proxy = clientConfig.proxy || config.proxy || null;
-    if (proxy) {
-      Object.assign(cf, this.buildAgent(proxy));
-      delete cf.proxy;
-    }
 
     return this.getClient(conId).request<T>(cf);
   }

@@ -127,4 +127,4 @@ http:
     statusCodesToRetry: [ [ 100, 199 ], [ 200, 201 ] ]
 
 firebase:
-  credential: './credentials/dispatch-19582-72214dfa4daa.json'
+  credential: './credentials/dispatch-d581a.json'

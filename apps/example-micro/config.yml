@@ -79,10 +79,10 @@ mailer:
       strict: true
 
 firebase:
-  credential: './credentials/dispatch-19582-72214dfa4daa.json'
+  credential: './credentials/dispatch-d581a.json'
 
 notifier:
   isAlwaysUseFCM: true
   fcm:
     appName: dispatch-19582
-    credential: './credentials/dispatch-19582-72214dfa4daa.json'
+    credential: './credentials/dispatch-d581a.json'
