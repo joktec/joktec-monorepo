@@ -3,24 +3,15 @@ import { JobQueue } from '../job.queue';
 import { JobProcessor } from './job.processor';
 
 export abstract class JobBatchProcessor<I, O> extends JobProcessor<I, O> {
-  protected constructor(
-    protected context: string,
-    protected configKey: string,
-  ) {
-    super(context, configKey);
+  protected constructor(protected configKey: string) {
+    super(configKey);
   }
 
   async process(items: I[], worker?: JobModel): Promise<O[]> {
     if (!items.length) {
       return [];
     }
-
-    return await this.batchExec(
-      items,
-      async data => await this.batchProcess(data, worker),
-      this.getConfig(),
-      this.context,
-    );
+    return await this.batchExec(items, async data => await this.batchProcess(data, worker), this.getConfig());
   }
 
   protected abstract batchProcess(data: I[], worker: JobModel): Promise<O[]>;
@@ -28,13 +19,7 @@ export abstract class JobBatchProcessor<I, O> extends JobProcessor<I, O> {
   private async batchExec<I, O>(
     data: I[],
     eachBatch: (data: I[]) => Promise<O[]>,
-    opts?: {
-      concurrent?: number;
-      batchSize?: number;
-      maxRetries?: number;
-      retryTimeout?: number;
-    },
-    context?: string,
+    opts?: { concurrent?: number; batchSize?: number; maxRetries?: number; retryTimeout?: number },
   ): Promise<O[]> {
     const res: O[] = [];
     const queue = new JobQueue<I>(
@@ -48,7 +33,7 @@ export abstract class JobBatchProcessor<I, O> extends JobProcessor<I, O> {
         maxRetries: opts.maxRetries,
         failedIdleTimeout: opts.retryTimeout,
       },
-      context,
+      this.logService,
     );
 
     await queue.pushAndWaitForCompleted(data);

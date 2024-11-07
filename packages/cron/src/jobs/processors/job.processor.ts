@@ -8,10 +8,9 @@ export abstract class JobProcessor<I, O> {
 
   private config: JobProcessorConfig;
 
-  protected constructor(
-    protected context: string,
-    protected configKey: string,
-  ) {}
+  protected constructor(protected configKey: string) {
+    this.logService.setContext(this.constructor.name);
+  }
 
   getConfig(): JobProcessorConfig {
     const def = new JobProcessorConfig(this.configService.get<JobProcessorConfig>(this.configKey as any));
