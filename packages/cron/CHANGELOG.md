@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.193](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.192...@joktec/cron@0.0.193) (2024-11-07)
+
+
+### Bug Fixes
+
+* cron lib ([16153ae](https://github.com/joktec/joktec-monorepo/commit/16153ae1836b0e0a9ed01d0fccaa14812139681d))
+
+
+
+
+
 ## [0.0.192](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.191...@joktec/cron@0.0.192) (2024-11-07)
 
 **Note:** Version bump only for package @joktec/cron
