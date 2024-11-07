@@ -29,8 +29,8 @@ export abstract class CrontabScheduler implements OnModuleInit {
   @Inject() private readonly schedulerRegistry: SchedulerRegistry;
 
   protected constructor(
-    private cronRepo: ICrontabRepo<ICrontabModel, string>,
-    private cronHistoryRepo: ICrontabHistoryRepo<ICrontabHistoryModel, string>,
+    protected cronRepo: ICrontabRepo<ICrontabModel, string>,
+    protected cronHistoryRepo: ICrontabHistoryRepo<ICrontabHistoryModel, string>,
   ) {
     this.logService.setContext(this.constructor.name);
   }
@@ -136,7 +136,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
         this.cronHistoryRepo.create({
           cronId: cron.id,
           type: CrontabHistoryType.AUTOMATIC,
-          snapshot: cron.snapshot,
+          snapshot: cron.snapshot(),
           executedAt: lastExecution,
           finishedAt,
           duration: getTimeString(finishedAt.getTime() - lastExecution.getTime()),
@@ -212,7 +212,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
         this.cronHistoryRepo.create({
           cronId: cron.id,
           type: CrontabHistoryType.MANUAL,
-          snapshot: cron.snapshot,
+          snapshot: cron.snapshot(),
           executedAt: lastExecution,
           finishedAt,
           duration: getTimeString(finishedAt.getTime() - lastExecution.getTime()),

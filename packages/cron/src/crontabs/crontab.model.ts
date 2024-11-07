@@ -16,7 +16,7 @@ export interface ICrontabModel {
   lastExecution?: Date;
   nextExecution?: Date;
   status: CrontabStatus;
-  snapshot?: () => Object;
+  snapshot?: () => Record<string, any>;
 }
 
 export interface ICrontabHistoryModel {
