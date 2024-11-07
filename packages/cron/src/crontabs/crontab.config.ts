@@ -1,8 +1,16 @@
-import { toBool, toInt } from '@joktec/core';
+import { IsBoolean, IsInt, IsOptional, IsString, toBool, toInt } from '@joktec/core';
 
 export class CrontabConfig {
+  @IsOptional()
+  @IsBoolean()
   enable?: boolean;
+
+  @IsOptional()
+  @IsInt()
   initIdleTimeout?: number;
+
+  @IsOptional()
+  @IsString()
   prefix?: string;
 
   constructor(props?: Partial<CrontabConfig>) {

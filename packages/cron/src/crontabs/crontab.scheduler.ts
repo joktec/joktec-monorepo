@@ -31,6 +31,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
   protected constructor(
     protected cronRepo: ICrontabRepo<ICrontabModel, string>,
     protected cronHistoryRepo: ICrontabHistoryRepo<ICrontabHistoryModel, string>,
+    private configKey: string = 'crontab',
   ) {}
 
   async onModuleInit() {
@@ -43,7 +44,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
 
   protected getConfig() {
     if (this.config) return this.config;
-    this.config = this.configService.parse(CrontabConfig, '');
+    this.config = this.configService.parseOrThrow(CrontabConfig, this.configKey);
     this.logService.info('Config %j', this.config);
     return this.config;
   }
@@ -154,7 +155,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
     const job = new CronJob(cronTime, onTick, onComplete, onStart, cron.timezone || undefined);
     this.schedulerRegistry.addCronJob(cronName, job as any);
     job.start();
-    this.logService.info(`Job ${cron.code} added with expression ${job.nextDate()} (${description})`);
+    this.logService.info(`Job %s added with expression %s (%s)`, cron.code, job.nextDate(), description);
   }
 
   async stopCron(cron: ICrontabModel) {
@@ -165,7 +166,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
     const job = this.schedulerRegistry.getCronJob(cronName);
     if (job.running) job.stop();
     this.schedulerRegistry.deleteCronJob(cronName);
-    this.logService.info(`Job ${cron.code} stopped`);
+    this.logService.info(`Job %s stopped`, cron.code);
   }
 
   async trigger(cronId: string, waiting: boolean = false): Promise<{ success: boolean; message?: string }> {

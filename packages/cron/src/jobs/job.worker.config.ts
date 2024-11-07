@@ -1,20 +1,73 @@
-import { toArray, toBool, toInt } from '@joktec/core';
+import {
+  IsArray,
+  IsBoolean,
+  IsDate,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  toArray,
+  toBool,
+  toInt,
+} from '@joktec/core';
 import { TIMEZONE } from './job.constant';
 
 export class JobWorkerConfig {
-  type: string;
-  enable: boolean;
-  startFromScratch: boolean;
-  cleanUpOnStart: boolean;
+  @IsNotEmpty()
+  @IsString()
+  type!: string;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  enable!: boolean;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  startFromScratch!: boolean;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  cleanUpOnStart!: boolean;
+
+  @IsOptional()
+  @IsInt()
   concurrent?: number;
+
+  @IsOptional()
+  @IsInt()
   batchSize?: number;
+
+  @IsOptional()
+  @IsInt()
   retries?: number;
+
+  @IsOptional()
+  @IsInt()
   failedIdleTimeout?: number;
+
+  @IsOptional()
+  @IsInt()
   resetTimeout?: number;
+
+  @IsOptional()
+  @IsDate()
   fromDate?: Date;
+
+  @IsOptional()
+  @IsDate()
   toDate?: Date;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   dependsOn?: string[];
+
+  @IsOptional()
+  @IsString()
   conId?: string;
+
+  @IsOptional()
+  @IsString()
   timezone?: string;
 
   constructor(props: Partial<JobWorkerConfig>) {
