@@ -1,5 +1,4 @@
-import { toInt } from '@joktec/core';
-import { Logger } from '@nestjs/common';
+import { toInt, LogService } from '@joktec/core';
 import async, { QueueObject } from 'async';
 
 export class QueueConfig<T> {
@@ -23,14 +22,13 @@ class QueueMessage<T> {
   }
 }
 
-export class CronQueue<T> {
+export class JobQueue<T> {
   private queue: QueueObject<QueueMessage<T>>;
-  private readonly logger = new Logger(CronQueue.name);
   private config: QueueConfig<T>;
 
   constructor(
     config: Partial<QueueConfig<T>>,
-    private context?: string,
+    private readonly logService?: LogService,
   ) {
     this.config = new QueueConfig<T>(config);
     this.init();
@@ -44,19 +42,18 @@ export class CronQueue<T> {
           .consume(messages.map(msg => msg.data))
           .then(_ => callback())
           .catch(err => {
-            this.logger.error(
-              `The message is processed, wait for ${this.config.failedIdleTimeout} to be re-processed`,
-              err?.stack || err,
-              this.context,
-            );
-            setTimeout(() => callback(err), this.config.failedIdleTimeout);
+            const failedIdleTimeout = this.config.failedIdleTimeout;
+            if (this.logService) {
+              this.logService.error(err, `The message is processed, wait for %s to be re-processed`, failedIdleTimeout);
+            }
+            setTimeout(() => callback(err), failedIdleTimeout);
           })
-          .finally(() =>
-            this.logger.log(
-              `${messages.length} messages is processed within ${(new Date().getTime() - startedAt) / 1000} secs`,
-              this.context,
-            ),
-          );
+          .finally(() => {
+            if (this.logService) {
+              const timeExec = (new Date().getTime() - startedAt) / 1000;
+              this.logService.info(`%s messages is processed within %s secs`, messages.length, timeExec);
+            }
+          });
       },
       this.config.concurrent,
       this.config.batchSize,
@@ -79,12 +76,8 @@ export class CronQueue<T> {
     const push = priority ? this.queue.unshift.bind(this.queue) : this.queue.push.bind(this.queue);
     push(msg, async err => {
       if (err) {
-        if (msg.retries === this.config.maxRetries) {
-          this.logger.error(
-            `The message is reached max retries config, it is stopped and committed`,
-            err.stack,
-            this.context,
-          );
+        if (msg.retries === this.config.maxRetries && this.logService) {
+          this.logService.error(err, `The message is reached max retries config, it is stopped and committed`);
         }
         msg.retries++;
         this._push(msg, true);
@@ -120,16 +113,11 @@ export class CronQueue<T> {
   static async batchProcess<I, O>(
     data: I[],
     eachBatch: (data: I[]) => Promise<O[]>,
-    opts?: {
-      concurrent?: number;
-      batchSize?: number;
-      maxRetries?: number;
-      retryTimeout?: number;
-    },
-    context?: string,
+    opts?: { concurrent?: number; batchSize?: number; maxRetries?: number; retryTimeout?: number },
+    logService?: LogService,
   ): Promise<O[]> {
     const res: O[] = [];
-    const queue = new CronQueue<I>(
+    const queue = new JobQueue<I>(
       {
         consume: async (d: I[]) => {
           const out = await eachBatch(d);
@@ -140,7 +128,7 @@ export class CronQueue<T> {
         maxRetries: toInt(opts.maxRetries, 3),
         failedIdleTimeout: toInt(opts.retryTimeout, 15000),
       },
-      context,
+      logService,
     );
 
     await queue.pushAndWaitForCompleted(data);

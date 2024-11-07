@@ -1,6 +1,7 @@
 import { toArray, toBool, toInt } from '@joktec/core';
+import { TIMEZONE } from './job.constant';
 
-export class CronWorkerConfig {
+export class JobWorkerConfig {
   type: string;
   enable: boolean;
   startFromScratch: boolean;
@@ -14,8 +15,9 @@ export class CronWorkerConfig {
   toDate?: Date;
   dependsOn?: string[];
   conId?: string;
+  timezone?: string;
 
-  constructor(props: Partial<CronWorkerConfig>) {
+  constructor(props: Partial<JobWorkerConfig>) {
     Object.assign(this, {
       ...props,
       enable: toBool(props?.enable, false),
@@ -26,6 +28,7 @@ export class CronWorkerConfig {
       retries: toInt(props?.retries, 3),
       failedIdleTimeout: toInt(props?.failedIdleTimeout, 15000),
       resetTimeout: toInt(props?.resetTimeout, 30 * 1000),
+      timezone: props?.timezone || TIMEZONE,
       dependsOn: toArray<string>(props?.dependsOn),
     });
   }

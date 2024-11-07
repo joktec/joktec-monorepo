@@ -1,12 +1,12 @@
 import { toInt } from '@joktec/core';
 
-export class CronProcessorConfig {
+export class JobProcessorConfig {
   batchSize: number;
   concurrent: number;
   retries: number;
   retryTimeout: number;
 
-  constructor(props: Partial<CronProcessorConfig>) {
+  constructor(props?: Partial<JobProcessorConfig>) {
     Object.assign(this, {
       batchSize: toInt(props?.batchSize, 1),
       concurrent: toInt(props?.concurrent, 1),

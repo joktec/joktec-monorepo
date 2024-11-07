@@ -1,8 +1,8 @@
-import { CronProcessor } from './cron.processor';
-import { CronQueue } from './cron.queue';
-import { CronModel } from './models';
+import { JobModel } from '../job.model';
+import { JobQueue } from '../job.queue';
+import { JobProcessor } from './job.processor';
 
-export abstract class CronBatchProcessor<I, O> extends CronProcessor<I, O> {
+export abstract class JobBatchProcessor<I, O> extends JobProcessor<I, O> {
   protected constructor(
     protected context: string,
     protected configKey: string,
@@ -10,20 +10,20 @@ export abstract class CronBatchProcessor<I, O> extends CronProcessor<I, O> {
     super(context, configKey);
   }
 
-  async process(items: I[], cron?: CronModel): Promise<O[]> {
+  async process(items: I[], worker?: JobModel): Promise<O[]> {
     if (!items.length) {
       return [];
     }
 
     return await this.batchExec(
       items,
-      async data => await this.batchProcess(data, cron),
+      async data => await this.batchProcess(data, worker),
       this.getConfig(),
       this.context,
     );
   }
 
-  protected abstract batchProcess(data: I[], cron: CronModel): Promise<O[]>;
+  protected abstract batchProcess(data: I[], worker: JobModel): Promise<O[]>;
 
   private async batchExec<I, O>(
     data: I[],
@@ -37,7 +37,7 @@ export abstract class CronBatchProcessor<I, O> extends CronProcessor<I, O> {
     context?: string,
   ): Promise<O[]> {
     const res: O[] = [];
-    const queue = new CronQueue<I>(
+    const queue = new JobQueue<I>(
       {
         consume: async (d: I[]) => {
           const out = await eachBatch(d);
@@ -56,7 +56,7 @@ export abstract class CronBatchProcessor<I, O> extends CronProcessor<I, O> {
     return res;
   }
 
-  async sleep(ms): Promise<void> {
+  async sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

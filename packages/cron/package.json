@@ -47,15 +47,12 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.168",
-    "@joktec/mysql": "0.0.186",
-    "@nestjs/common": "^10.4.4",
-    "@nestjs/core": "^10.4.4",
     "@nestjs/schedule": "^4.1.1",
     "async": "^3.2.6",
     "async-retry": "^1.3.3",
+    "cron": "^3.1.7",
+    "dayjs": "^1.11.13",
     "lodash": "^4.17.21",
-    "moment": "^2.30.1",
-    "moment-timezone": "^0.5.45",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
