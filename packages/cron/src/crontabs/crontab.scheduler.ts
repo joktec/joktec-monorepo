@@ -31,11 +31,10 @@ export abstract class CrontabScheduler implements OnModuleInit {
   protected constructor(
     protected cronRepo: ICrontabRepo<ICrontabModel, string>,
     protected cronHistoryRepo: ICrontabHistoryRepo<ICrontabHistoryModel, string>,
-  ) {
-    this.logService.setContext(this.constructor.name);
-  }
+  ) {}
 
   async onModuleInit() {
+    this.logService.setContext(this.constructor.name);
     if (!this.getConfig().enable) return;
     setTimeout(async () => {
       await this.initProcess();
