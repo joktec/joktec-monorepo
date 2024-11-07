@@ -6,7 +6,7 @@ export enum JobStatus {
 
 export abstract class JobModel {
   id: string;
-  type: string;
+  code: string;
   date: string;
   status: JobStatus;
   data?: Record<string, any>;

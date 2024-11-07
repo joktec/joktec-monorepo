@@ -13,7 +13,7 @@ export abstract class JobProcessor<I, O> {
   }
 
   getConfig(): JobProcessorConfig {
-    const def = new JobProcessorConfig(this.configService.get<JobProcessorConfig>(this.configKey as any));
+    const def = this.configService.parse(JobProcessorConfig, this.configKey);
     return (this.config = this.config ?? def);
   }
 

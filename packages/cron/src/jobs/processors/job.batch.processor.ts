@@ -31,7 +31,7 @@ export abstract class JobBatchProcessor<I, O> extends JobProcessor<I, O> {
         concurrent: opts.concurrent,
         batchSize: opts.batchSize,
         maxRetries: opts.maxRetries,
-        failedIdleTimeout: opts.retryTimeout,
+        retryTimeout: opts.retryTimeout,
       },
       this.logService,
     );

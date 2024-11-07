@@ -1,88 +1,69 @@
-import {
-  IsArray,
-  IsBoolean,
-  IsDate,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  toArray,
-  toBool,
-  toInt,
-} from '@joktec/core';
+import { IsArray, IsBoolean, IsDate, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/core';
 import { TIMEZONE } from './job.constant';
 
 export class JobWorkerConfig {
   @IsNotEmpty()
+  @IsBoolean()
+  enable: boolean = true;
+
+  @IsNotEmpty()
+  @IsBoolean()
+  isGlobal?: boolean = true;
+
+  @IsNotEmpty()
   @IsString()
-  type!: string;
+  code!: string;
 
   @IsNotEmpty()
   @IsBoolean()
-  enable!: boolean;
+  startFromScratch: boolean = false;
 
   @IsNotEmpty()
   @IsBoolean()
-  startFromScratch!: boolean;
+  cleanUpOnStart: boolean = false;
 
-  @IsNotEmpty()
+  @IsOptional()
+  @IsInt()
+  concurrent?: number = 1;
+
+  @IsOptional()
+  @IsInt()
+  batchSize?: number = 10;
+
+  @IsOptional()
+  @IsInt()
+  maxRetries?: number = 3;
+
+  @IsOptional()
+  @IsInt()
+  retryTimeout?: number = 15000;
+
+  @IsOptional()
+  @IsInt()
+  resetTimeout?: number = 30 * 1000;
+
+  @IsOptional()
   @IsBoolean()
-  cleanUpOnStart!: boolean;
-
-  @IsOptional()
-  @IsInt()
-  concurrent?: number;
-
-  @IsOptional()
-  @IsInt()
-  batchSize?: number;
-
-  @IsOptional()
-  @IsInt()
-  retries?: number;
-
-  @IsOptional()
-  @IsInt()
-  failedIdleTimeout?: number;
-
-  @IsOptional()
-  @IsInt()
-  resetTimeout?: number;
+  exitOnDone?: boolean = true;
 
   @IsOptional()
   @IsDate()
-  fromDate?: Date;
+  fromDate?: Date = null;
 
   @IsOptional()
   @IsDate()
-  toDate?: Date;
+  toDate?: Date = null;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  dependsOn?: string[];
+  dependsOn?: string[] = [];
 
   @IsOptional()
   @IsString()
-  conId?: string;
-
-  @IsOptional()
-  @IsString()
-  timezone?: string;
+  timezone?: string = TIMEZONE;
 
   constructor(props: Partial<JobWorkerConfig>) {
-    Object.assign(this, {
-      ...props,
-      enable: toBool(props?.enable, false),
-      startFromScratch: toBool(props?.startFromScratch, false),
-      cleanUpOnStart: toBool(props?.cleanUpOnStart, false),
-      concurrent: toInt(props?.concurrent, 1),
-      batchSize: toInt(props?.batchSize, 10),
-      retries: toInt(props?.retries, 3),
-      failedIdleTimeout: toInt(props?.failedIdleTimeout, 15000),
-      resetTimeout: toInt(props?.resetTimeout, 30 * 1000),
-      timezone: props?.timezone || TIMEZONE,
-      dependsOn: toArray<string>(props?.dependsOn),
-    });
+    Object.assign(this, { ...props });
   }
 }

@@ -1,17 +1,10 @@
-import { toInt } from '@joktec/core';
-
 export class JobProcessorConfig {
-  batchSize: number;
-  concurrent: number;
-  retries: number;
-  retryTimeout: number;
+  concurrent?: number = 1;
+  batchSize?: number = 1;
+  maxRetries?: number = 3;
+  retryTimeout?: number = 15000;
 
   constructor(props?: Partial<JobProcessorConfig>) {
-    Object.assign(this, {
-      batchSize: toInt(props?.batchSize, 1),
-      concurrent: toInt(props?.concurrent, 1),
-      retries: toInt(props?.retries, 3),
-      retryTimeout: toInt(props?.retries, 15000),
-    });
+    Object.assign(this, { ...props });
   }
 }

@@ -1,12 +1,12 @@
-import { toInt, LogService } from '@joktec/core';
+import { toInt, LogService, getTimeString } from '@joktec/core';
 import async, { QueueObject } from 'async';
 
 export class QueueConfig<T> {
   consume: (d: T[]) => Promise<void>;
-  concurrent: number = 1;
-  batchSize: number = 1;
-  maxRetries: number = 3;
-  failedIdleTimeout: number = 15000;
+  concurrent?: number = 1;
+  batchSize?: number = 1;
+  maxRetries?: number = 3;
+  retryTimeout?: number = 15000;
 
   constructor(props: Partial<QueueConfig<T>>) {
     Object.assign(this, props);
@@ -42,16 +42,20 @@ export class JobQueue<T> {
           .consume(messages.map(msg => msg.data))
           .then(_ => callback())
           .catch(err => {
-            const failedIdleTimeout = this.config.failedIdleTimeout;
+            const timeout = this.config.retryTimeout;
             if (this.logService) {
-              this.logService.error(err, `The message is processed, wait for %s to be re-processed`, failedIdleTimeout);
+              this.logService.error(
+                err,
+                `The message is processed, wait for %s to be re-processed`,
+                getTimeString(timeout),
+              );
             }
-            setTimeout(() => callback(err), failedIdleTimeout);
+            setTimeout(() => callback(err), timeout);
           })
           .finally(() => {
             if (this.logService) {
-              const timeExec = (new Date().getTime() - startedAt) / 1000;
-              this.logService.info(`%s messages is processed within %s secs`, messages.length, timeExec);
+              const timeExec = new Date().getTime() - startedAt;
+              this.logService.info(`%s messages is processed within %s`, messages.length, getTimeString(timeExec));
             }
           });
       },
@@ -126,7 +130,7 @@ export class JobQueue<T> {
         concurrent: toInt(opts.concurrent, 1),
         batchSize: toInt(opts.batchSize, 1),
         maxRetries: toInt(opts.maxRetries, 3),
-        failedIdleTimeout: toInt(opts.retryTimeout, 15000),
+        retryTimeout: toInt(opts.retryTimeout, 15000),
       },
       logService,
     );
