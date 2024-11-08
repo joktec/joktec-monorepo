@@ -5,7 +5,6 @@ export enum JobStatus {
 }
 
 export interface IJobModel<T extends object = Record<string, any>> {
-  id: string;
   code: string;
   type: string;
   date: string;

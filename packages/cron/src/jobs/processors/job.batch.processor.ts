@@ -8,9 +8,7 @@ export abstract class JobBatchProcessor<I, O> extends JobProcessor<I, O> {
   }
 
   async process(items: I[], worker?: IJobModel): Promise<O[]> {
-    if (!items.length) {
-      return [];
-    }
+    if (!items.length) return [];
     return await this.batchExec(items, async data => await this.batchProcess(data, worker), this.getConfig());
   }
 
