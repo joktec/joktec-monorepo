@@ -1,14 +1,16 @@
-import { ConfigService, Inject, LogService } from '@joktec/core';
+import { ConfigService, Inject, LogService, OnModuleInit } from '@joktec/core';
 import { IJobModel } from '../job.model';
 import { JobProcessorConfig } from './job.processor.config';
 
-export abstract class JobProcessor<I, O> {
+export abstract class JobProcessor<I, O> implements OnModuleInit {
   @Inject() protected logService: LogService;
   @Inject() protected configService: ConfigService;
 
   private config: JobProcessorConfig;
 
-  protected constructor(protected configKey: string) {
+  protected constructor(protected configKey: string) {}
+
+  onModuleInit() {
     this.logService.setContext(this.constructor.name);
   }
 
