@@ -7,6 +7,7 @@ export enum JobStatus {
 export interface IJobModel {
   id: string;
   code: string;
+  type: string;
   date: string;
   status: JobStatus;
   data?: Record<string, any>;

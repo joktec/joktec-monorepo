@@ -12,7 +12,7 @@ export class JobWorkerConfig {
 
   @IsNotEmpty()
   @IsString()
-  code!: string;
+  type!: string;
 
   @IsNotEmpty()
   @IsBoolean()
