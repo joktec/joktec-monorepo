@@ -80,7 +80,9 @@ export abstract class JobWorker<
     const updatedJobs = newJobs.map(newJob => {
       const currentJob = currentJobs.find(currJob => currJob.code === newJob.code);
       if (currentJob && !this.config.startFromScratch) {
-        return merge({}, newJob, currentJob);
+        const result = merge({}, newJob, currentJob);
+        result.data = JSON.parse(JSON.stringify(currentJob.data));
+        return result;
       }
       return newJob;
     });
