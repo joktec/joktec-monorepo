@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.207](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.206...@joktec/cron@0.0.207) (2024-11-08)
+
+
+### Bug Fixes
+
+* merge deep ([a4c9f57](https://github.com/joktec/joktec-monorepo/commit/a4c9f57978100917e4915392bf4b791b31bf520c))
+
+
+
+
+
 ## [0.0.206](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.205...@joktec/cron@0.0.206) (2024-11-08)
 
 
