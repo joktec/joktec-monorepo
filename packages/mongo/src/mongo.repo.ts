@@ -5,6 +5,7 @@ import {
   ICondition,
   Inject,
   Injectable,
+  KeyOf,
   LogService,
   OnModuleInit,
   plainToInstance,
@@ -178,23 +179,21 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   }
 
   @MongoCatch
-  async upsert(body: DeepPartial<T>, onConflicts: (keyof T)[] = ['_id'], options: IMongoOptions<T> = {}): Promise<T> {
+  async upsert(body: DeepPartial<T>, onConflicts?: KeyOf<T>[], options: IMongoOptions<T> = {}): Promise<T> {
+    const fields = onConflicts?.length ? onConflicts : ['_id'];
     const transformBody: T = this.transform(body) as T;
-    const condition: ICondition<T> = pick(body, onConflicts) as ICondition<T>;
+    const condition: ICondition<T> = pick(body, fields) as ICondition<T>;
     const _options = Object.assign({}, UPSERT_OPTIONS, options);
     const doc = await this.qb({ condition }, _options).findOneAndUpdate(transformBody).exec();
     return this.transform(doc) as T;
   }
 
   @MongoCatch
-  async bulkUpsert(
-    docs: DeepPartial<T>[],
-    onConflicts: (keyof T)[] = ['_id'],
-    options: IMongoBulkOptions = {},
-  ): Promise<any> {
+  async bulkUpsert(docs: DeepPartial<T>[], onConflicts?: KeyOf<T>[], options: IMongoBulkOptions = {}): Promise<any> {
+    const fields = onConflicts?.length ? onConflicts : ['_id'];
     const transformBody: T[] = this.transform(docs) as T[];
     const bulkDocs: any[] = transformBody.map((doc: T) => {
-      return { updateOne: { filter: pick(doc, onConflicts), update: { $set: doc }, upsert: true } };
+      return { updateOne: { filter: pick(doc, fields), update: { $set: doc }, upsert: true } };
     });
     return this.model.bulkWrite(bulkDocs, options);
   }

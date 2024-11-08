@@ -1,4 +1,4 @@
-import { Client, DeepPartial, IBaseRepository, ICondition } from '@joktec/core';
+import { Client, DeepPartial, IBaseRepository, ICondition, KeyOf } from '@joktec/core';
 import { Ref, ReturnModelType } from '@typegoose/typegoose';
 import { ClientSession, ClientSessionOptions, Connection, RefType, UpdateQuery } from 'mongoose';
 import { QueryHelper } from './helpers';
@@ -60,9 +60,9 @@ export interface IMongoRepository<T extends MongoSchema, ID extends RefType = st
 
   restore(cond: ID | ObjectId | Ref<T, ID> | ICondition<T>, opts?: IMongoOptions<T>): Promise<T>;
 
-  upsert(doc: DeepPartial<T>, onConflicts?: (keyof T)[], opts?: IMongoOptions<T>): Promise<T>;
+  upsert(doc: DeepPartial<T>, onConflicts?: KeyOf<T>[], opts?: IMongoOptions<T>): Promise<T>;
 
-  bulkUpsert(docs: Array<DeepPartial<T>>, onConflicts?: (keyof T)[], opts?: IMongoBulkOptions): Promise<any>;
+  bulkUpsert(docs: Array<DeepPartial<T>>, onConflicts?: KeyOf<T>[], opts?: IMongoBulkOptions): Promise<any>;
 
   aggregate<U = T>(pipeline: IMongoPipeline[], opts?: IMongoAggregateOptions<U>): Promise<U[]>;
 }
