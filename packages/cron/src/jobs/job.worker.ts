@@ -1,4 +1,13 @@
-import { ConfigService, getTimeString, Inject, LogService, OnModuleInit, sleep, toArray } from '@joktec/core';
+import {
+  ConfigService,
+  Constructor,
+  getTimeString,
+  Inject,
+  LogService,
+  OnModuleInit,
+  sleep,
+  toArray,
+} from '@joktec/core';
 import dayjs from 'dayjs';
 import { flatten, isArray, isString, snakeCase, upperCase } from 'lodash';
 import { FORMAT } from './job.constant';
@@ -7,15 +16,21 @@ import { JobQueue } from './job.queue';
 import { IJobRepo } from './job.repo';
 import { JobWorkerConfig } from './job.worker.config';
 
-export abstract class JobWorker<JOB extends IJobModel> implements OnModuleInit {
+export abstract class JobWorker<
+  JOB extends IJobModel<DATA>,
+  DATA extends object = Record<string, any>,
+  CONFIG extends JobWorkerConfig = JobWorkerConfig,
+> implements OnModuleInit
+{
   @Inject() protected logService: LogService;
   @Inject() protected configService: ConfigService;
 
-  private config: JobWorkerConfig;
+  private config: CONFIG;
   private jobQueue: JobQueue<JOB>;
 
   protected constructor(
-    protected jobRepo: IJobRepo<IJobModel, string>,
+    protected jobRepo: IJobRepo<IJobModel<DATA>, string>,
+    protected configClass: Constructor<CONFIG>,
     private configKey: string,
   ) {}
 
@@ -40,7 +55,7 @@ export abstract class JobWorker<JOB extends IJobModel> implements OnModuleInit {
 
   protected getConfig() {
     if (this.config) return this.config;
-    this.config = this.configService.parse(JobWorkerConfig, this.configKey);
+    this.config = this.configService.parse(this.configClass, this.configKey);
     this.logService.info('Config %j', this.config);
     return this.config;
   }
@@ -143,7 +158,7 @@ export abstract class JobWorker<JOB extends IJobModel> implements OnModuleInit {
     const dependsOn: string[] = [];
     if (isString(this.config.dependsOn)) dependsOn.push(this.config.dependsOn);
     if (isArray(this.config.dependsOn)) dependsOn.push(...this.config.dependsOn);
-    const runningJobs: IJobModel[] = await this.jobRepo.find({
+    const runningJobs = await this.jobRepo.find({
       condition: { date: job.date, type: { $in: dependsOn }, status: { $ne: JobStatus.DONE } },
       sort: { date: 'asc' },
     });

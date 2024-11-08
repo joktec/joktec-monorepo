@@ -4,13 +4,13 @@ export enum JobStatus {
   TODO = 'TODO',
 }
 
-export interface IJobModel {
+export interface IJobModel<T extends object = Record<string, any>> {
   id: string;
   code: string;
   type: string;
   date: string;
   startedAt: Date;
   finishedAt: Date;
-  data?: Record<string, any>;
+  data?: T;
   status: JobStatus;
 }
