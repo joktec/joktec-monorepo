@@ -50,7 +50,7 @@ export abstract class JobWorker<
       this.logService,
     );
 
-    await this.initJobs();
+    if (config.initOnStart) await this.initJobs();
   }
 
   protected getConfig() {
@@ -192,7 +192,7 @@ export abstract class JobWorker<
     return ranges;
   }
 
-  async drain(): Promise<void> {
+  protected async drain(): Promise<void> {
     await this.jobQueue.drain();
   }
 

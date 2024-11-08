@@ -28,7 +28,7 @@ export class JobWorkerConfig {
 
   @IsOptional()
   @IsInt()
-  batchSize?: number = 10;
+  batchSize?: number = 1;
 
   @IsOptional()
   @IsInt()
@@ -41,6 +41,10 @@ export class JobWorkerConfig {
   @IsOptional()
   @IsInt()
   resetTimeout?: number = 30 * 1000;
+
+  @IsOptional()
+  @IsBoolean()
+  initOnStart?: boolean = true;
 
   @IsOptional()
   @IsBoolean()
