@@ -68,6 +68,6 @@ export class JobWorkerConfig {
   timezone?: string = TIMEZONE;
 
   constructor(props: Partial<JobWorkerConfig>) {
-    Object.assign(this, { ...props });
+    Object.assign(this, props);
   }
 }

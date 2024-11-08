@@ -9,7 +9,7 @@ import {
   toArray,
 } from '@joktec/core';
 import dayjs from 'dayjs';
-import { flatten, isArray, isString, snakeCase } from 'lodash';
+import { flatten, isArray, isString, snakeCase, merge } from 'lodash';
 import { FORMAT } from './job.constant';
 import { IJobModel, JobStatus } from './job.model';
 import { JobQueue } from './job.queue';
@@ -76,11 +76,11 @@ export abstract class JobWorker<
       sort: { date: 'asc' },
     });
 
-    // merge with current jobs if startFromScratch === false
+    // merge with current jobs if startFromScratch is true
     const updatedJobs = newJobs.map(newJob => {
       const currentJob = currentJobs.find(currJob => currJob.code === newJob.code);
       if (currentJob && this.config.startFromScratch) {
-        Object.assign(newJob, currentJob);
+        merge(newJob, currentJob);
       }
       return newJob;
     });

@@ -18,6 +18,6 @@ export class JobProcessorConfig {
   retryTimeout?: number = 15000;
 
   constructor(props?: Partial<JobProcessorConfig>) {
-    Object.assign(this, { ...props });
+    Object.assign(this, props);
   }
 }
