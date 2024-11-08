@@ -2,12 +2,12 @@ import { ConfigService, getTimeString, Inject, LogService, OnModuleInit, sleep, 
 import dayjs from 'dayjs';
 import { flatten, isArray, isString, snakeCase, upperCase } from 'lodash';
 import { FORMAT } from './job.constant';
-import { JobModel, JobStatus } from './job.model';
+import { IJobModel, JobStatus } from './job.model';
 import { JobQueue } from './job.queue';
 import { IJobRepo } from './job.repo';
 import { JobWorkerConfig } from './job.worker.config';
 
-export abstract class JobWorker<JOB extends JobModel> implements OnModuleInit {
+export abstract class JobWorker<JOB extends IJobModel> implements OnModuleInit {
   @Inject() protected logService: LogService;
   @Inject() protected configService: ConfigService;
 
@@ -15,7 +15,7 @@ export abstract class JobWorker<JOB extends JobModel> implements OnModuleInit {
   private jobQueue: JobQueue<JOB>;
 
   protected constructor(
-    protected jobRepo: IJobRepo<JobModel, string>,
+    protected jobRepo: IJobRepo<IJobModel, string>,
     private configKey: string,
   ) {}
 
@@ -143,7 +143,7 @@ export abstract class JobWorker<JOB extends JobModel> implements OnModuleInit {
     const dependsOn: string[] = [];
     if (isString(this.config.dependsOn)) dependsOn.push(this.config.dependsOn);
     if (isArray(this.config.dependsOn)) dependsOn.push(...this.config.dependsOn);
-    const runningJobs: JobModel[] = await this.jobRepo.find({
+    const runningJobs: IJobModel[] = await this.jobRepo.find({
       condition: { date: job.date, code: { $in: dependsOn }, status: { $ne: JobStatus.DONE } },
       sort: { date: 'asc' },
     });

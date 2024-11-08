@@ -1,5 +1,5 @@
 import { ConfigService, Inject, LogService } from '@joktec/core';
-import { JobModel } from '../job.model';
+import { IJobModel } from '../job.model';
 import { JobProcessorConfig } from './job.processor.config';
 
 export abstract class JobProcessor<I, O> {
@@ -17,5 +17,5 @@ export abstract class JobProcessor<I, O> {
     return (this.config = this.config ?? def);
   }
 
-  abstract process(data: I[] | I, job?: JobModel): Promise<O[] | O>;
+  abstract process(data: I[] | I, job?: IJobModel): Promise<O[] | O>;
 }

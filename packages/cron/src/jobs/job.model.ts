@@ -4,7 +4,7 @@ export enum JobStatus {
   TODO = 'TODO',
 }
 
-export abstract class JobModel {
+export interface IJobModel {
   id: string;
   code: string;
   date: string;

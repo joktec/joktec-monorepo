@@ -1,4 +1,4 @@
-import { JobModel } from '../job.model';
+import { IJobModel } from '../job.model';
 import { JobQueue } from '../job.queue';
 import { JobProcessor } from './job.processor';
 
@@ -7,14 +7,14 @@ export abstract class JobBatchProcessor<I, O> extends JobProcessor<I, O> {
     super(configKey);
   }
 
-  async process(items: I[], worker?: JobModel): Promise<O[]> {
+  async process(items: I[], worker?: IJobModel): Promise<O[]> {
     if (!items.length) {
       return [];
     }
     return await this.batchExec(items, async data => await this.batchProcess(data, worker), this.getConfig());
   }
 
-  protected abstract batchProcess(data: I[], worker: JobModel): Promise<O[]>;
+  protected abstract batchProcess(data: I[], worker: IJobModel): Promise<O[]>;
 
   private async batchExec<I, O>(
     data: I[],
