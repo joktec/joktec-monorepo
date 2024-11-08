@@ -40,7 +40,7 @@
     "@joktec/cacher": "0.0.117",
     "@joktec/http": "0.0.176",
     "@joktec/mailer": "0.0.168",
-    "@joktec/mongo": "0.0.221",
+    "@joktec/mongo": "0.0.222",
     "@joktec/mysql": "0.0.186",
     "@joktec/firebase": "0.0.86",
     "@joktec/storage": "0.0.170",

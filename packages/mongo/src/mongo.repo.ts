@@ -189,13 +189,16 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   }
 
   @MongoCatch
-  async bulkUpsert(docs: DeepPartial<T>[], onConflicts?: KeyOf<T>[], options: IMongoBulkOptions = {}): Promise<any> {
+  async bulkUpsert(docs: DeepPartial<T>[], onConflicts?: KeyOf<T>[], options: IMongoBulkOptions = {}): Promise<T[]> {
     const fields = onConflicts?.length ? onConflicts : ['_id'];
     const transformBody: T[] = this.transform(docs) as T[];
     const bulkDocs: any[] = transformBody.map((doc: T) => {
       return { updateOne: { filter: pick(doc, fields), update: { $set: doc }, upsert: true } };
     });
-    return this.model.bulkWrite(bulkDocs, options);
+
+    const result = await this.model.bulkWrite(bulkDocs, options);
+    const newIds = [...Object.values(result.upsertedIds), ...Object.values(result.insertedIds)];
+    return this.find({ condition: { _id: { $in: newIds } } as any });
   }
 
   @MongoCatch

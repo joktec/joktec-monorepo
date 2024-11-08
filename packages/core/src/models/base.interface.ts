@@ -7,6 +7,7 @@ import {
   IResponseDto,
   IPaginationResponse,
   Dictionary,
+  KeyOf,
 } from '../models';
 import { ConfigService, LogService } from '../modules';
 
@@ -62,6 +63,10 @@ export interface IBaseRepository<T extends Entity, ID> {
   delete(cond: ID | ICondition<T>, opts?: Dictionary & { force?: boolean }): Promise<T>;
 
   restore(cond: ID | ICondition<T>, opts?: Dictionary): Promise<T>;
+
+  upsert(body: DeepPartial<T>, onConflicts: KeyOf<T>[], opts?: Dictionary): Promise<T>;
+
+  bulkUpsert(docs: Array<DeepPartial<T>>, onConflicts?: KeyOf<T>[], opts?: Dictionary): Promise<T[]>;
 }
 
 export interface IExceptionFilter extends ExceptionFilter {
