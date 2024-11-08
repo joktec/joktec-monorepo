@@ -9,8 +9,8 @@ export interface IJobModel {
   code: string;
   type: string;
   date: string;
-  status: JobStatus;
+  startedAt: Date;
+  finishedAt: Date;
   data?: Record<string, any>;
-  createdAt?: Date;
-  updatedAt?: Date;
+  status: JobStatus;
 }

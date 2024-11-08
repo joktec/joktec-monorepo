@@ -26,9 +26,9 @@
   "keywords": [
     "schedule",
     "cron",
-    "mysql",
     "async",
-    "cargoQueue"
+    "cargoQueue",
+    "job"
   ],
   "scripts": {
     "clean": "rimraf -rf dist",

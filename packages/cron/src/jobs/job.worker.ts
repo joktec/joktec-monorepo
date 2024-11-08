@@ -84,8 +84,8 @@ export abstract class JobWorker<JOB extends IJobModel> implements OnModuleInit {
       type,
       date,
       status: JobStatus.TODO,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      startedAt: new Date(),
+      finishedAt: new Date(),
       data: {},
     } as JOB);
   }
@@ -96,7 +96,7 @@ export abstract class JobWorker<JOB extends IJobModel> implements OnModuleInit {
     if (!canProcess) await sleep(this.config.resetTimeout);
 
     await this.processOnJobStartHook(job);
-    nextJob.updatedAt = new Date();
+    nextJob.finishedAt = new Date();
     await this.jobRepo.upsert(nextJob, ['code']);
 
     if (nextJob.status == JobStatus.DONE) {
@@ -111,15 +111,15 @@ export abstract class JobWorker<JOB extends IJobModel> implements OnModuleInit {
   private async processOnJobDoneHook(job: JOB) {
     if (job.status == JobStatus.DONE) {
       await this.onDoneHook(job);
-      const execTime = job.updatedAt.getTime() - job.createdAt.getTime();
+      const execTime = job.finishedAt.getTime() - job.startedAt.getTime();
       this.logService.info(job, 'Job %s sis completed in %s', job.code, getTimeString(execTime));
     }
   }
 
   private async processOnJobStartHook(job: JOB) {
     if (job.status == JobStatus.TODO) {
-      job.createdAt = new Date();
-      this.logService.info('Job %s - %s is started at %s', job.type, job.date, job.createdAt);
+      job.startedAt = new Date();
+      this.logService.info('Job %s - %s is started at %s', job.type, job.date, job.startedAt);
       job.status = JobStatus.IN_PROGRESS;
       await this.onStartHook(job);
     }
