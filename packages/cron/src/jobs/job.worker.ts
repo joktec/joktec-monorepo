@@ -77,18 +77,20 @@ export abstract class JobWorker<
     });
 
     // merge with current jobs if startFromScratch === false
-    for (const job of newJobs) {
-      const currentJob = currentJobs.find(c => c.code === job.code);
+    const updatedJobs = newJobs.map(newJob => {
+      const currentJob = currentJobs.find(currJob => currJob.code === newJob.code);
       if (currentJob && !this.config.startFromScratch) {
-        Object.assign(job, currentJob);
+        Object.assign(newJob, currentJob);
       }
-    }
+      return newJob;
+    });
 
     // update new an existed jobs
-    await this.jobRepo.bulkUpsert(newJobs, ['code']);
-    const runJobs = newJobs.filter(c => c.status != JobStatus.DONE).sort(c => dayjs(c.date).unix());
+    await this.jobRepo.bulkUpsert(updatedJobs, ['code']);
+    const runJobs = updatedJobs.filter(c => c.status !== JobStatus.DONE).sort(c => dayjs(c.date).unix());
     if (runJobs.length) {
       this.jobQueue.push(runJobs);
+      this.logService.info('Prepare %s jobs to running', runJobs.length);
       return;
     }
 
