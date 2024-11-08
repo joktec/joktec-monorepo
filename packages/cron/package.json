@@ -1,7 +1,7 @@
 {
   "name": "@joktec/cron",
   "description": "JokTec - Cron Service",
-  "version": "0.0.209",
+  "version": "0.0.210",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
