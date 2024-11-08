@@ -9,7 +9,7 @@ import {
   toArray,
 } from '@joktec/core';
 import dayjs from 'dayjs';
-import { flatten, isArray, isString, snakeCase, upperCase } from 'lodash';
+import { flatten, isArray, isString, snakeCase } from 'lodash';
 import { FORMAT } from './job.constant';
 import { IJobModel, JobStatus } from './job.model';
 import { JobQueue } from './job.queue';
@@ -87,13 +87,17 @@ export abstract class JobWorker<
     // update new an existed jobs
     await this.jobRepo.bulkUpsert(newJobs, ['code']);
     const runJobs = newJobs.filter(c => c.status != JobStatus.DONE).sort(c => dayjs(c.date).unix());
-    if (runJobs.length) this.jobQueue.push(runJobs);
+    if (runJobs.length) {
+      this.jobQueue.push(runJobs);
+      return;
+    }
+
     this.logService.info('All jobs are done');
     await this.onDone();
   }
 
   protected async createNewJobs(date: string): Promise<JOB[]> {
-    const type = upperCase(snakeCase(this.config.type));
+    const type = snakeCase(this.config.type).toUpperCase();
     return toArray({
       code: `${type}-${date}`,
       type,
@@ -119,7 +123,7 @@ export abstract class JobWorker<
       return;
     }
 
-    this.logService.info(job, 'Next job %s will be processed', job.code);
+    this.logService.info('Next job %s will be processed %j', job.code, job);
     this.jobQueue.unshift(nextJob);
   }
 
