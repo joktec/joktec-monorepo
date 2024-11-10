@@ -61010,12 +61010,6 @@
     "BullConfig": {
       "type": "object",
       "properties": {
-        "queue": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
         "host": {
           "type": "string"
         },
@@ -61036,7 +61030,6 @@
         }
       },
       "required": [
-        "queue",
         "host",
         "port"
       ]
@@ -61047,6 +61040,12 @@
         "enable": {
           "type": "boolean"
         },
+        "queues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "path": {
           "type": "string"
         },
@@ -61056,7 +61055,10 @@
         "password": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "queues"
+      ]
     },
     "JwtConfig": {
       "type": "object",

@@ -7,6 +7,11 @@ export class BullBoardConfig {
   @IsBoolean()
   enable?: boolean = true;
 
+  @IsNotEmpty()
+  @IsArray()
+  @IsString({ each: true })
+  queues: string[];
+
   @IsOptional()
   @IsString()
   path?: string = 'bulls';
@@ -20,16 +25,15 @@ export class BullBoardConfig {
   password?: string;
 
   constructor(props?: Partial<BullBoardConfig>) {
-    Object.assign(this, props);
+    Object.assign(this, {
+      ...props,
+      queues: toArray<string>(props?.queues, { split: ',' }),
+    });
+    if (!this.path.startsWith('/')) this.path = `/${this.path}`;
   }
 }
 
 export class BullConfig {
-  @IsNotEmpty()
-  @IsArray()
-  @IsString({ each: true })
-  queue: string[];
-
   @IsNotEmpty()
   @IsString()
   host: string = 'localhost';
@@ -57,7 +61,6 @@ export class BullConfig {
   constructor(props: BullConfig) {
     Object.assign(this, {
       ...props,
-      queue: toArray<string>(props?.queue, { split: ',' }),
       board: props?.board ? new BullBoardConfig(props.board) : null,
     });
   }

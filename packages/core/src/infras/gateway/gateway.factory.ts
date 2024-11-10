@@ -54,19 +54,20 @@ export class GatewayFactory {
     const gatewayName = configService.get('description', 'Gateway');
     await app.listen(port, () => {
       const baseUrl = `http://localhost:${port}`;
-      logService.info(`🚀 Application %s is running on %s`, gatewayName, joinUrl(baseUrl, { paths: [contextPath] }));
+
+      const appUrl = joinUrl(baseUrl, { paths: [contextPath] });
+      logService.info(`🚀 Application %s is running on %s`, gatewayName, appUrl);
 
       if (useSwagger) {
         const swagger = configService.parse(SwaggerConfig, 'gateway.swagger');
-        logService.info(`📕️ Access API Document at %s`, joinUrl(baseUrl, { paths: [contextPath, swagger.path] }));
+        const swaggerUrl = joinUrl(baseUrl, { paths: [contextPath, swagger.path] });
+        logService.info(`📗 Access API Document at %s`, swaggerUrl);
       }
 
       if (useBullBoard) {
         const bull = configService.parse(BullConfig, 'bull');
-        logService.info(
-          `🎯 Access bull dashboard at %s. Make sure Redis is running by default`,
-          joinUrl(baseUrl, { paths: [contextPath, bull.board.path] }),
-        );
+        const bullUrl = joinUrl(baseUrl, { paths: [contextPath, bull.board.path] });
+        logService.info(`🎯 Access bull dashboard at %s. Make sure Redis is running by default`, bullUrl);
       }
     });
 
@@ -125,18 +126,20 @@ export class GatewayFactory {
     const bull = configService.parse(BullConfig, 'bull');
     if (!bull || !bull?.board?.enable) return false;
 
-    const queues = bull.queue?.map(q => new BullMQAdapter(new Queue(q, { connection: { ...bull } })));
-    if (!queues?.length) return false;
-
-    const { path, username, password } = bull.board;
-    if (username && password) {
-      app.use(path, basicAuth({ challenge: true, users: { [username]: password } }));
-    }
+    const { path, queues = [], username, password } = bull.board;
 
     const serverAdapter = new ExpressAdapter();
     serverAdapter.setBasePath(path);
-    createBullBoard({ queues, serverAdapter });
-    app.use(path, serverAdapter.getRouter());
+    createBullBoard({
+      queues: queues.map(q => new BullMQAdapter(new Queue(q, { connection: { ...bull } }))),
+      serverAdapter,
+    });
+
+    const middlewares = [serverAdapter.getRouter()];
+    if (username && password) {
+      middlewares.unshift(basicAuth({ challenge: true, users: { [username]: password } }));
+    }
+    app.use(path, ...middlewares);
 
     return true;
   }

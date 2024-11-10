@@ -18,7 +18,6 @@ transports:
       db: 0
 
 bull:
-  queue: [ apify_queue ]
   host: localhost
   port: 6379
   password: root
@@ -28,6 +27,7 @@ bull:
     path: bulls
     username: admin
     password: admin
+    queues: [ apify_queue ]
 
 log:
   level: info
