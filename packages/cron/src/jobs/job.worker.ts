@@ -9,10 +9,9 @@ import {
   toArray,
 } from '@joktec/core';
 import dayjs from 'dayjs';
-import { flatten, isArray, isString, snakeCase, merge } from 'lodash';
-import { FORMAT } from './job.constant';
+import { flatten, merge } from 'lodash';
 import { IJobModel, JobStatus } from './job.model';
-import { JobQueue } from './job.queue';
+import { JobQueue, QueueConfig } from './job.queue';
 import { IJobRepo } from './job.repo';
 import { JobWorkerConfig } from './job.worker.config';
 
@@ -36,39 +35,54 @@ export abstract class JobWorker<
 
   async onModuleInit() {
     this.logService.setContext(this.constructor.name);
-    const config = this.getConfig();
-    if (!config.enable) return;
+    this.config = this.getConfig();
+    await this.initQueue();
 
-    this.jobQueue = new JobQueue<JOB>(
-      {
-        consume: ([job]) => this.processJob(job),
-        concurrent: this.config.concurrent,
-        batchSize: this.config.batchSize,
-        maxRetries: this.config.maxRetries,
-        retryTimeout: this.config.retryTimeout,
-      },
-      this.logService,
-    );
-
-    if (config.initOnStart) await this.initJobs();
+    if (!this.config.enable) return;
+    if (this.config.autoStart) await this.initJobs();
   }
 
-  protected getConfig() {
+  /**
+   * Retrieves the worker's configuration.
+   * @returns The loaded configuration of type CONFIG.
+   */
+  protected getConfig(): CONFIG {
     if (this.config) return this.config;
     this.config = this.configService.parse(this.configClass, this.configKey);
-    this.logService.info('Config %j', this.config);
+    this.logService.debug('Config %j', this.config);
     return this.config;
   }
 
-  protected async initJobs(): Promise<void> {
-    const dateRange: string[] = this.buildDateRange();
-    this.logService.info(`Prepare run job in date range: %j`, dateRange);
-    await this.pushJobs(...dateRange);
-    await this.drain(); // wait for jobs completed and exit the process
-    await this.onDone();
+  /**
+   * Initializes the job queue with specific configurations.
+   */
+  protected async initQueue(): Promise<void> {
+    const queueConfig: QueueConfig<JOB> = {
+      consume: ([job]) => this.processJob(job),
+      concurrent: this.config.concurrent,
+      batchSize: this.config.batchSize,
+      maxRetries: this.config.maxRetries,
+      retryTimeout: this.config.retryTimeout,
+    };
+    this.jobQueue = new JobQueue<JOB>(queueConfig, this.logService);
   }
 
-  protected async pushJobs(...dates: string[]) {
+  /**
+   * Initializes and runs jobs based on the specified date range.
+   */
+  protected async initJobs(): Promise<void> {
+    const dateRange: string[] = this.config.dateRange;
+    this.logService.info(`Prepare run job in date range: %j`, dateRange);
+    await this.pushJobs(...dateRange);
+    await this.jobQueue.drain(); // wait for jobs completed and exit the process
+    await this.onCompleted();
+  }
+
+  /**
+   * Pushes jobs to the queue based on the given dates.
+   * @param dates - Array of dates to create jobs for.
+   */
+  protected async pushJobs(...dates: string[]): Promise<void> {
     // new jobs
     const newJobs = flatten(await Promise.all(dates.map(date => this.createNewJobs(date))));
     const currentJobs = await this.jobRepo.find({
@@ -95,35 +109,61 @@ export abstract class JobWorker<
       this.logService.info('Prepare %s jobs to running', runJobs.length);
       return;
     }
-
-    this.logService.info('All jobs are done');
-    await this.onDone();
   }
 
+  /**
+   * Creates new jobs for the specified date.
+   * @param date - Date for which new jobs are created.
+   * @returns A promise resolving to an array of created jobs.
+   */
   protected async createNewJobs(date: string): Promise<JOB[]> {
-    const type = snakeCase(this.config.type).toUpperCase();
+    const type = this.config.type;
     return toArray({
       code: `${type}-${date}`,
       type,
       date,
-      status: JobStatus.TODO,
       startedAt: new Date(),
       finishedAt: new Date(),
       data: {},
+      status: JobStatus.TODO,
     } as JOB);
   }
 
-  private async processJob(job: JOB): Promise<void> {
-    const canProcess = await this.isCanProcess(job);
-    const nextJob: JOB = canProcess ? await this.process(job) : await this.reset(job);
-    if (!canProcess) await sleep(this.config.resetTimeout);
+  /**
+   * Invoked when a job starts.
+   * @param job - The job that has started.
+   */
+  protected async onStart(job: JOB): Promise<void> {
+    return;
+  }
 
-    await this.processOnJobStartHook(job);
+  /**
+   * Processes a job by updating its status, checking conditions, and handling completion.
+   * @param job - The job to process.
+   */
+  private async processJob(job: JOB): Promise<void> {
+    if (job.status === JobStatus.TODO) {
+      job.startedAt = new Date();
+      job.status = JobStatus.IN_PROGRESS;
+      this.logService.info('Job %s - %s is started at %s', job.type, job.date, job.startedAt);
+      await this.onStart(job);
+    }
+
+    const canProcess = await this.canProcess(job);
+    if (!canProcess) {
+      const msg = `Unable to continue running job [%s]. This job will be restart after %s!`;
+      this.logService.warn(msg, job.code, getTimeString(this.config.resetTimeout));
+      await sleep(this.config.resetTimeout);
+    }
+
+    const nextJob: JOB = await (canProcess ? this.process(job) : this.reset(job));
     nextJob.finishedAt = new Date();
     await this.jobRepo.upsert(nextJob, ['code']);
 
-    if (nextJob.status == JobStatus.DONE) {
-      await this.processOnJobDoneHook(nextJob);
+    if (nextJob.status === JobStatus.DONE) {
+      const execTime = job.finishedAt.getTime() - job.startedAt.getTime();
+      this.logService.info(job, 'Job %s sis completed in %s', job.code, getTimeString(execTime));
+      await this.onDone(job);
       return;
     }
 
@@ -131,81 +171,51 @@ export abstract class JobWorker<
     this.jobQueue.unshift(nextJob);
   }
 
-  private async processOnJobDoneHook(job: JOB) {
-    if (job.status == JobStatus.DONE) {
-      await this.onDoneHook(job);
-      const execTime = job.finishedAt.getTime() - job.startedAt.getTime();
-      this.logService.info(job, 'Job %s sis completed in %s', job.code, getTimeString(execTime));
-    }
-  }
+  /**
+   * Checks if the job can proceed based on dependencies.
+   * @param job - The job to check.
+   * @returns A boolean indicating if the job can proceed.
+   */
+  protected async canProcess(job: JOB): Promise<boolean> {
+    const dependsOn: string[] = toArray<string>(this.config.dependsOn);
+    if (!dependsOn.length) return true;
 
-  private async processOnJobStartHook(job: JOB) {
-    if (job.status == JobStatus.TODO) {
-      job.startedAt = new Date();
-      this.logService.info('Job %s - %s is started at %s', job.type, job.date, job.startedAt);
-      job.status = JobStatus.IN_PROGRESS;
-      await this.onStartHook(job);
-    }
-  }
-
-  protected async onStartHook(job: JOB): Promise<void> {
-    this.logService.info('On start hook for job: %s', job.code);
-    return;
-  }
-
-  protected async onDoneHook(job: JOB): Promise<void> {
-    this.logService.info('On done hook for job: %s', job.code);
-    return;
-  }
-
-  protected async isCanProcess(job: JOB): Promise<boolean> {
-    if (!this.config.dependsOn?.length) {
-      return true;
-    }
-
-    const dependsOn: string[] = [];
-    if (isString(this.config.dependsOn)) dependsOn.push(this.config.dependsOn);
-    if (isArray(this.config.dependsOn)) dependsOn.push(...this.config.dependsOn);
-    const runningJobs = await this.jobRepo.find({
+    const runningJobs = await this.jobRepo.count({
       condition: { date: job.date, type: { $in: dependsOn }, status: { $ne: JobStatus.DONE } },
-      sort: { date: 'asc' },
     });
-    const canProcess: boolean = runningJobs.length === 0;
-
-    if (!canProcess) {
-      const msg = `Unable to continue running job [%s]. This job will be restart after %s!`;
-      this.logService.warn(msg, job.code, getTimeString(this.config.resetTimeout));
-    }
-
-    return canProcess;
+    return runningJobs === 0;
   }
 
+  /**
+   * Abstract method to define job-specific processing logic.
+   * @param job - The job to process.
+   * @returns A promise resolving to the processed job.
+   */
   abstract process(job: JOB): Promise<JOB>;
 
+  /**
+   * Resets a job if it cannot be processed.
+   * @param job - The job to reset.
+   * @returns A promise resolving to the reset job.
+   */
   protected async reset(job: JOB): Promise<JOB> {
     return job;
   }
 
-  protected buildDateRange(): string[] {
-    const fromDate = this.config.fromDate || dayjs().tz(this.config.timezone).endOf('days').toDate();
-    const toDate = this.config.toDate || fromDate;
-
-    const start = dayjs(fromDate);
-    const end = dayjs(toDate);
-    const ranges = [];
-    do {
-      ranges.push(start.format(FORMAT));
-      start.add(1, 'day');
-    } while (start.isSameOrBefore(end, 'day'));
-    return ranges;
+  /**
+   * Invoked when a job completes successfully.
+   * @param job - The job that completed.
+   */
+  protected async onDone(job: JOB): Promise<void> {
+    return;
   }
 
-  protected async drain(): Promise<void> {
-    await this.jobQueue.drain();
-  }
-
-  protected async onDone() {
-    if (this.config.exitOnDone) {
+  /**
+   * Invoked when all jobs of a specific type are completed.
+   */
+  protected async onCompleted() {
+    this.logService.info('All jobs of type %s are done', this.config.type);
+    if (this.config.autoExit) {
       process.exit(0);
     }
   }

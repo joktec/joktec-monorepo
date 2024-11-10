@@ -71,6 +71,9 @@
         "storage": {
           "$ref": "#/definitions/Listable%3CStorageConfig%3E"
         },
+        "crontab": {
+          "$ref": "#/definitions/Listable%3CCrontabConfig%3E"
+        },
         "misc": {
           "type": "object"
         }
@@ -63105,6 +63108,33 @@
         "bucket-owner-read",
         "bucket-owner-full-control"
       ]
+    },
+    "Listable<CrontabConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/CrontabConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CrontabConfig"
+          }
+        }
+      ]
+    },
+    "CrontabConfig": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "type": "boolean"
+        },
+        "initIdleTimeout": {
+          "type": "number"
+        },
+        "prefix": {
+          "type": "string"
+        }
+      }
     }
   }
 }

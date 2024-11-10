@@ -13,7 +13,7 @@ export class QueueConfig<T> {
   }
 }
 
-class QueueMessage<T> {
+export class QueueMessage<T> {
   retries: number = 0;
   data: T;
 
@@ -23,18 +23,17 @@ class QueueMessage<T> {
 }
 
 export class JobQueue<T> {
+  private readonly logService?: LogService;
   private queue: QueueObject<QueueMessage<T>>;
   private config: QueueConfig<T>;
 
-  constructor(
-    config: Partial<QueueConfig<T>>,
-    private readonly logService?: LogService,
-  ) {
+  constructor(config: Partial<QueueConfig<T>>, logService?: LogService) {
     this.config = new QueueConfig<T>(config);
+    this.logService = logService;
     this.init();
   }
 
-  init() {
+  init(): void {
     this.queue = async.cargoQueue<QueueMessage<T>>(
       (messages: QueueMessage<T>[], callback) => {
         const startedAt = new Date().getTime();
@@ -44,11 +43,8 @@ export class JobQueue<T> {
           .catch(err => {
             const timeout = this.config.retryTimeout;
             if (this.logService) {
-              this.logService.error(
-                err,
-                `The message is processed, wait for %s to be re-processed`,
-                getTimeString(timeout),
-              );
+              const msg = `The message is processed, wait for %s to be re-processed`;
+              this.logService.error(err, msg, getTimeString(timeout));
             }
             setTimeout(() => callback(err), timeout);
           })
@@ -64,14 +60,14 @@ export class JobQueue<T> {
     );
   }
 
-  push(data: T[]) {
+  push(data: T[]): void {
     for (const d of data) {
       const msg = new QueueMessage(d);
       this._push(msg);
     }
   }
 
-  unshift(d: T) {
+  unshift(d: T): void {
     const msg = new QueueMessage(d);
     this._push(msg, true);
   }
@@ -93,28 +89,25 @@ export class JobQueue<T> {
     await this.queue.drain();
   }
 
-  async pushAndWaitForCompleted(data: T[]) {
+  async pushAndWaitForCompleted(data: T[]): Promise<void> {
     this.push(data);
     await this.drain();
   }
 
   getMessages() {
-    return {
-      running: this.queue.workersList(),
-      // waiting: [...this.queue],
-    };
+    return this.queue.workersList();
   }
 
-  async kill() {
+  async kill(): Promise<void> {
     this.queue.kill();
   }
 
-  async reset() {
+  async reset(): Promise<void> {
     this.queue.kill();
     this.init();
   }
 
-  static async batchProcess<I, O>(
+  async batchProcess<I, O>(
     data: I[],
     eachBatch: (data: I[]) => Promise<O[]>,
     opts?: { concurrent?: number; batchSize?: number; maxRetries?: number; retryTimeout?: number },

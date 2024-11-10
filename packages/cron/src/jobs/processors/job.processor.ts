@@ -12,10 +12,11 @@ export abstract class JobProcessor<I, O> implements OnModuleInit {
 
   onModuleInit() {
     this.logService.setContext(this.constructor.name);
+    this.getConfig();
   }
 
   getConfig(): JobProcessorConfig {
-    const def = this.configService.parse(JobProcessorConfig, this.configKey);
+    const def = this.configService.parseOrThrow(JobProcessorConfig, this.configKey);
     return (this.config = this.config ?? def);
   }
 

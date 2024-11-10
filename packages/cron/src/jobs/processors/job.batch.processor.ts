@@ -12,8 +12,6 @@ export abstract class JobBatchProcessor<I, O> extends JobProcessor<I, O> {
     return await this.batchExec(items, async data => await this.batchProcess(data, worker), this.getConfig());
   }
 
-  protected abstract batchProcess(data: I[], worker: IJobModel): Promise<O[]>;
-
   private async batchExec<I, O>(
     data: I[],
     eachBatch: (data: I[]) => Promise<O[]>,
@@ -39,7 +37,5 @@ export abstract class JobBatchProcessor<I, O> extends JobProcessor<I, O> {
     return res;
   }
 
-  async sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  protected abstract batchProcess(data: I[], worker: IJobModel): Promise<O[]>;
 }

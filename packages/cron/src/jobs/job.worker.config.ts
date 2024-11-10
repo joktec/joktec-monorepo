@@ -1,5 +1,7 @@
-import { IsArray, IsBoolean, IsDate, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/core';
-import { TIMEZONE } from './job.constant';
+import { IsArray, IsBoolean, IsDate, IsInt, IsNotEmpty, IsOptional, IsString, Type } from '@joktec/core';
+import dayjs from 'dayjs';
+import { snakeCase } from 'lodash';
+import { FORMAT, TIMEZONE } from './job.constant';
 
 export class JobWorkerConfig {
   @IsNotEmpty()
@@ -44,18 +46,20 @@ export class JobWorkerConfig {
 
   @IsOptional()
   @IsBoolean()
-  initOnStart?: boolean = true;
+  autoStart?: boolean = true;
 
   @IsOptional()
   @IsBoolean()
-  exitOnDone?: boolean = true;
+  autoExit?: boolean = true;
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   fromDate?: Date = null;
 
   @IsOptional()
   @IsDate()
+  @Type(() => Date)
   toDate?: Date = null;
 
   @IsOptional()
@@ -69,5 +73,20 @@ export class JobWorkerConfig {
 
   constructor(props: Partial<JobWorkerConfig>) {
     Object.assign(this, props);
+    if (this.type) this.type = snakeCase(this.type).toUpperCase();
+  }
+
+  get dateRange(): string[] {
+    const fromDate = this.fromDate || dayjs().tz(this.timezone).endOf('days').toDate();
+    const toDate = this.toDate || fromDate;
+
+    const start = dayjs(fromDate);
+    const end = dayjs(toDate);
+    const ranges = [];
+    do {
+      ranges.push(start.format(FORMAT));
+      start.add(1, 'day');
+    } while (start.isSameOrBefore(end, 'day'));
+    return ranges;
   }
 }

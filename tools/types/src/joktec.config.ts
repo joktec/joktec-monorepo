@@ -3,6 +3,7 @@ import { ArangoConfig } from '@joktec/arango';
 import { BigQueryConfig } from '@joktec/bigquery';
 import { CacheConfig } from '@joktec/cacher';
 import { BullConfig, GatewayConfig, JwtConfig, Listable, LogConfig, MicroConfig, Transporter } from '@joktec/core';
+import { CrontabConfig } from '@joktec/cron';
 import { ElasticConfig } from '@joktec/elastic';
 import { FileConfig } from '@joktec/file';
 import { FirebaseConfig } from '@joktec/firebase';
@@ -39,6 +40,7 @@ export type JoktecConfig = {
   notifier?: Listable<NotifierConfig>;
   rabbit?: Listable<RabbitConfig>;
   storage?: Listable<StorageConfig>;
+  crontab?: Listable<CrontabConfig>;
   // Misc
   misc?: Record<string, any>;
 };
