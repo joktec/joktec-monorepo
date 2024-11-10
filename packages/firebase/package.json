@@ -1,7 +1,7 @@
 {
   "name": "@joktec/firebase",
   "description": "JokTec - Firebase Admin Service",
-  "version": "0.0.87",
+  "version": "0.0.88",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -39,7 +39,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.169",
+    "@joktec/core": "0.0.170",
     "firebase-admin": "^12.5.0",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1"

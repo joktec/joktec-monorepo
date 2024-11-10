@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.170](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.169...@joktec/core@0.0.170) (2024-11-10)
+
+
+### Bug Fixes
+
+* bullmq ui ([6eaab4a](https://github.com/joktec/joktec-monorepo/commit/6eaab4af9bd27479304bde3216f617f505207051))
+
+
+
+
+
 ## [0.0.169](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.168...@joktec/core@0.0.169) (2024-11-08)
 
 
