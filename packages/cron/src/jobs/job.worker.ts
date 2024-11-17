@@ -118,7 +118,7 @@ export abstract class JobWorker<
    */
   protected async createNewJobs(date: string): Promise<JOB[]> {
     const type = this.config.type;
-    return toArray({
+    return toArray<JOB>({
       code: `${type}-${date}`,
       type,
       date,
@@ -151,8 +151,7 @@ export abstract class JobWorker<
 
     const canProcess = await this.canProcess(job);
     if (!canProcess) {
-      const msg = `Unable to continue running job [%s]. This job will be restart after %s!`;
-      this.logService.warn(msg, job.code, getTimeString(this.config.resetTimeout));
+      await this.onDelay(job);
       await sleep(this.config.resetTimeout);
     }
 
@@ -184,6 +183,15 @@ export abstract class JobWorker<
       condition: { date: job.date, type: { $in: dependsOn }, status: { $ne: JobStatus.DONE } },
     });
     return runningJobs === 0;
+  }
+
+  /**
+   * Invoked when a job cannot be processed due to dependencies.
+   * @param job - The job that cannot be processed.
+   */
+  protected async onDelay(job: JOB) {
+    const msg = `Unable to continue running job [%s]. This job will be restart after %s!`;
+    this.logService.warn(msg, job.code, getTimeString(this.config.resetTimeout));
   }
 
   /**
