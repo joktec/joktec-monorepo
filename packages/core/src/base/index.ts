@@ -89,4 +89,13 @@ export {
 export { ObjectType, Query, Field, Mutation, InputType } from '@nestjs/graphql';
 export { FileInterceptor, FilesInterceptor, FileFieldsInterceptor, MulterModule } from '@nestjs/platform-express';
 export { ThrottlerModule, ThrottlerModuleOptions, ThrottlerAsyncOptions } from '@nestjs/throttler';
+export {
+  EventEmitterModule,
+  EventEmitter2,
+  EVENT_PAYLOAD,
+  OnEvent,
+  OnEventType,
+  OnEventMetadata,
+  EventEmitterReadinessWatcher,
+} from '@nestjs/event-emitter';
 export * from './app';
