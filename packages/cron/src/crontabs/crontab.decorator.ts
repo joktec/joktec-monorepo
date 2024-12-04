@@ -4,9 +4,12 @@ import { has, isString } from 'lodash';
 import { CrontabType } from './crontab.constant';
 import { ICrontabModel } from './crontab.model';
 
+export type CronVerbose = 'all' | 'error' | 'none';
+
 export interface ICrontabMeta {
   cron: Partial<ICrontabModel>;
   service: Clazz;
+  verbose?: CronVerbose;
 }
 
 export interface ICrontabOption {
@@ -14,6 +17,7 @@ export interface ICrontabOption {
   timezone?: string;
   timeout?: number;
   parameters?: { [key: string]: any };
+  verbose?: CronVerbose;
 }
 
 global.AllCronMetadata = {};
@@ -49,6 +53,6 @@ export function Crontab(expression: string | Date, cronOpts: ICrontabOption = {}
       process.exit(1);
     }
 
-    global.AllCronMetadata[code] = { cron, service: target.constructor } as ICrontabMeta;
+    global.AllCronMetadata[code] = { cron, service: target.constructor, verbose: cronOpts.verbose } as ICrontabMeta;
   };
 }

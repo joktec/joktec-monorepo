@@ -133,9 +133,10 @@ export abstract class CrontabScheduler implements OnModuleInit {
       const lastExecution = this.schedulerRegistry.getCronJob(cronName).lastDate();
       const nextExecution = this.schedulerRegistry.getCronJob(cronName).nextDate().toJSDate();
       const finishedAt = new Date();
-      await Promise.all([
-        this.cronRepo.update(cron.id, { lastExecution, nextExecution }),
-        this.cronHistoryRepo.create({
+
+      await this.cronRepo.update(cron.id, { lastExecution, nextExecution });
+      this.isSaveHistory(cron.code, cronStatus) &&
+        (await this.cronHistoryRepo.create({
           cronId: cron.id,
           type: CrontabHistoryType.AUTOMATIC,
           snapshot: cron.snapshot(),
@@ -145,8 +146,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
           status: cronStatus,
           res: cronRes ? { data: cronRes } : null,
           error: cronError ? { msg: cronError.message, stack: cronError.stack } : null,
-        }),
-      ]);
+        }));
       this.logService.info('End to execute CronJob %s', cron.code);
     };
 
@@ -209,9 +209,9 @@ export abstract class CrontabScheduler implements OnModuleInit {
       }
 
       const finishedAt = new Date();
-      await Promise.all([
-        this.cronRepo.update(cron.id, { lastExecution }),
-        this.cronHistoryRepo.create({
+      await this.cronRepo.update(cron.id, { lastExecution });
+      this.isSaveHistory(cron.code, cronStatus) &&
+        (await this.cronHistoryRepo.create({
           cronId: cron.id,
           type: CrontabHistoryType.MANUAL,
           snapshot: cron.snapshot(),
@@ -221,8 +221,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
           status: cronStatus,
           res: cronRes ? { data: cronRes } : null,
           error: cronError ? { msg: cronError.message, stack: cronError.stack } : null,
-        }),
-      ]);
+        }));
       this.logService.info('End to trigger CronJob %s', cron.code);
     };
 
@@ -233,5 +232,10 @@ export abstract class CrontabScheduler implements OnModuleInit {
     }
 
     return { success: true };
+  }
+
+  private isSaveHistory(code: string, cronStatus: CrontabHistoryStatus): boolean {
+    const verbose = this.cronMeta[code].verbose;
+    return !verbose || verbose === 'all' || (verbose === 'error' && cronStatus === CrontabHistoryStatus.FAILED);
   }
 }
