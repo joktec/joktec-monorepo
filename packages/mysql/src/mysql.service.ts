@@ -4,7 +4,13 @@ import { DatabaseType, DataSource, EntityManager, Repository } from 'typeorm';
 import { DataSourceOptions } from 'typeorm/data-source/DataSourceOptions';
 import { MysqlModel } from './models';
 import { MysqlBenchmark } from './mysql.benchmark';
-import { MODEL_REGISTRY_KEY, MysqlClient, MysqlModelRegistry } from './mysql.client';
+import {
+  MODEL_REGISTRY_KEY,
+  MysqlClient,
+  MysqlModelRegistry,
+  MysqlSubscriberRegistry,
+  SUBSCRIBER_REGISTRY_KEY,
+} from './mysql.client';
 import { MysqlConfig } from './mysql.config';
 import { MysqlNamingStrategy } from './mysql.strategy';
 
@@ -12,7 +18,10 @@ const RETRY_OPTS = 'mysql.retry';
 
 @Injectable()
 export class MysqlService extends AbstractClientService<MysqlConfig, DataSource> implements MysqlClient {
-  constructor(@Inject(MODEL_REGISTRY_KEY) private modelRegistry: MysqlModelRegistry) {
+  constructor(
+    @Inject(MODEL_REGISTRY_KEY) private modelRegistry: MysqlModelRegistry,
+    @Inject(SUBSCRIBER_REGISTRY_KEY) private subscriberRegistry: MysqlSubscriberRegistry,
+  ) {
     super('mysql', MysqlConfig);
   }
 
@@ -24,6 +33,7 @@ export class MysqlService extends AbstractClientService<MysqlConfig, DataSource>
       type: config.dialect as DatabaseType,
       namingStrategy: new MysqlNamingStrategy(),
       entities: [...this.modelRegistry[config.conId]],
+      subscribers: [...this.subscriberRegistry[config.conId]],
       logger: new MysqlBenchmark(config.benchmark, this.logService),
       dropSchema: false,
     } as DataSourceOptions;

@@ -27,7 +27,7 @@
     "@joktec/bigquery": "^0.0.169",
     "@joktec/cacher": "^0.0.120",
     "@joktec/core": "^0.0.171",
-    "@joktec/cron": "^0.0.214",
+    "@joktec/cron": "^0.0.215",
     "@joktec/elastic": "^0.0.178",
     "@joktec/file": "^0.0.169",
     "@joktec/firebase": "^0.0.89",
