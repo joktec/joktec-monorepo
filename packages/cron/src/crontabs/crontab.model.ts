@@ -4,7 +4,6 @@ export interface ICrontabModel {
   id: string;
   code: string;
   title?: string;
-  description?: string | Record<string, any>;
   serviceName: string;
   methodName: string;
   type: CrontabType;
@@ -21,7 +20,7 @@ export interface ICrontabModel {
 
 export interface ICrontabHistoryModel {
   id: string;
-  cronId: string | Object;
+  cronId: string;
   type: CrontabHistoryType;
   snapshot?: Record<string, any>;
   executedAt: Date;

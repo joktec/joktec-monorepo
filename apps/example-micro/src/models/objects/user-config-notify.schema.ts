@@ -20,9 +20,9 @@ export class UserConfigNotify {
   @Prop({ required: true, default: true })
   activated!: boolean;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   lastAllowedAt?: Date;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   lastDeniedAt?: Date;
 }

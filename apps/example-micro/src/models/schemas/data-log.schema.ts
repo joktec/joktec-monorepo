@@ -38,12 +38,12 @@ export class DataLog extends BaseSchema {
   @Prop({ required: true, example: '1.0.0' })
   version!: string;
 
-  @Prop({ type: DataLogRequest, required: false, example: () => new DataLogRequest() })
+  @Prop({ type: DataLogRequest, example: () => new DataLogRequest() })
   req?: DataLogRequest;
 
-  @Prop({ type: Object, required: false, example: {} }, PropType.MAP)
+  @Prop({ type: Object, example: {} }, PropType.MAP)
   args?: Record<string, any>;
 
-  @Prop({ type: Object, required: false, example: {} }, PropType.MAP)
+  @Prop({ type: Object, example: {} }, PropType.MAP)
   err?: Record<string, any>;
 }

@@ -21,3 +21,4 @@ export * from './session.enum';
 export * from './setting.enum';
 export * from './tag.enum';
 export * from './user.enum';
+export * from './snippet.enum';

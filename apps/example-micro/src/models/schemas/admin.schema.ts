@@ -11,13 +11,13 @@ export class Admin extends BaseSchema {
   @Prop({ required: true, example: 'John' })
   fistName!: string;
 
-  @Prop({ required: false, example: 'Doe' })
+  @Prop({ example: 'Doe' })
   lastName?: string;
 
   @Prop({ required: true, trim: true, lowercase: true, default: null, isEmail: true, example: 'admin@gmail.com' })
   email: string;
 
-  @Prop({ required: false, default: null, example: 'https://cnd.domain.com/image.png' })
+  @Prop({ default: null, example: 'https://cnd.domain.com/image.png' })
   @IsCdnUrl()
   avatar?: string;
 

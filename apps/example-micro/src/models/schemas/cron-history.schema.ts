@@ -1,35 +1,53 @@
+import { CrontabHistoryStatus, CrontabHistoryType, ICrontabHistoryModel } from '@joktec/cron';
 import { ObjectId, Prop, PropType, Ref, Schema } from '@joktec/mongo';
 import { BaseSchema } from '../common';
-import { CronHistoryStatus, CronHistoryType } from '../constants';
 import { CronSchema } from './cron.schema';
 
-@Schema({ collection: 'cron_histories', index: ['cronId'], paranoid: true })
-export class CronHistory extends BaseSchema {
-  @Prop({ type: ObjectId, ref: () => CronSchema, required: true })
-  cronId!: Ref<CronSchema, string>;
+@Schema({ collection: 'cron_histories', index: ['cronRefId'], paranoid: true })
+export class CronHistory extends BaseSchema implements ICrontabHistoryModel {
+  get cronId(): string {
+    return this.cronRefId.toString();
+  }
 
-  @Prop({ required: true, enum: CronHistoryType, default: CronHistoryType.AUTOMATIC })
-  type!: CronHistoryType;
+  set cronId(value: string) {
+    this.cronRefId = new ObjectId(value).toString();
+  }
 
-  @Prop({ type: Object, default: null }, PropType.MAP)
+  @Prop({ type: ObjectId, ref: () => CronSchema, required: true, comment: 'Reference ID to the cron job' })
+  cronRefId!: Ref<CronSchema, string>;
+
+  @Prop({
+    required: true,
+    enum: CrontabHistoryType,
+    default: CrontabHistoryType.AUTOMATIC,
+    comment: 'Type of cron history record',
+  })
+  type!: CrontabHistoryType;
+
+  @Prop({ type: Object, default: null, comment: 'Snapshot data at the time of execution' }, PropType.MAP)
   snapshot?: Record<string, any>;
 
-  @Prop({ required: true })
+  @Prop({ required: true, comment: 'Execution start time' })
   executedAt!: Date;
 
-  @Prop({ default: () => new Date() })
+  @Prop({ default: () => new Date(), comment: 'Execution end time' })
   finishedAt?: Date;
 
-  @Prop({ default: null })
+  @Prop({ default: null, comment: 'Duration of execution' })
   duration?: string;
 
-  @Prop({ required: true, enum: CronHistoryStatus, default: CronHistoryStatus.COMPLETED })
-  status!: CronHistoryStatus;
+  @Prop({
+    required: true,
+    enum: CrontabHistoryStatus,
+    default: CrontabHistoryStatus.COMPLETED,
+    comment: 'Status of the cron execution',
+  })
+  status!: CrontabHistoryStatus;
 
-  @Prop({ type: Object, required: false, default: null }, PropType.MAP)
+  @Prop({ type: Object, default: null, comment: 'Result data of the cron execution' }, PropType.MAP)
   res?: Record<string, any>;
 
-  @Prop({ type: Object, required: false, default: null }, PropType.MAP)
+  @Prop({ type: Object, default: null, comment: 'Error details if the cron execution failed' }, PropType.MAP)
   error?: Record<string, any>;
 
   // Virtual
@@ -37,9 +55,10 @@ export class CronHistory extends BaseSchema {
     type: CronSchema,
     ref: () => CronSchema,
     foreignField: '_id',
-    localField: 'cronId',
+    localField: 'cronRefId',
     justOne: true,
     example: {},
+    comment: 'Reference to the related cron job',
   })
   cron?: Ref<CronSchema>;
 }

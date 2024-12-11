@@ -1,6 +1,6 @@
-import { BaseService, cloneInstance, DeepPartial, ICondition, Injectable } from '@joktec/core';
+import { BaseService, cloneInstance, DeepPartial, Injectable } from '@joktec/core';
+import { CrontabStatus } from '@joktec/cron';
 import { SuccessResponse } from '../../common';
-import { CronStatus } from '../../models/constants';
 import { CronSchema } from '../../models/schemas';
 import { CronRepo } from '../../repositories';
 import { CronScheduler } from './cron.scheduler';
@@ -15,11 +15,10 @@ export class CronService extends BaseService<CronSchema, string> {
   }
 
   async update(id: string, entity: DeepPartial<CronSchema>): Promise<CronSchema> {
-    const condition: ICondition<CronSchema> = { _id: id };
     const processEntity: DeepPartial<CronSchema> = cloneInstance(entity);
-    const cron = await this.repository.update(condition, processEntity);
-    cron.status === CronStatus.ACTIVATED && (await this.cronScheduler.startCron(cron, true));
-    cron.status === CronStatus.DISABLED && (await this.cronScheduler.stopCron(cron));
+    const cron = await this.repository.update({ id }, processEntity);
+    cron.status === CrontabStatus.ACTIVATED && (await this.cronScheduler.startCron(cron, true));
+    cron.status === CrontabStatus.DISABLED && (await this.cronScheduler.stopCron(cron));
     return cron;
   }
 

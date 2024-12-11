@@ -8,7 +8,7 @@ import { ArticleElement } from './article-element.schema';
 
 @Schema({ schemaOptions: { _id: true, timestamps: true } })
 export class ArticleFile extends BaseSubSchema {
-  @Prop({ required: false })
+  @Prop({  })
   caption?: string;
 
   @Prop({ required: true, enum: ArticleFileType })
@@ -22,7 +22,7 @@ export class ArticleFile extends BaseSubSchema {
   @IsCdnUrl()
   preview!: string;
 
-  @Prop({ required: false })
+  @Prop({  })
   @IsCdnUrl()
   originalUrl?: string;
 
@@ -42,22 +42,22 @@ export class ArticleFile extends BaseSubSchema {
     return `${resizeUrl}/width=300,quality=100/${fullUrl}`;
   }
 
-  @Prop({ required: false, default: '*/*', example: 'image/png' })
+  @Prop({ default: '*/*', example: 'image/png' })
   mimetype?: string;
 
-  @Prop({ required: false, default: 0, unsigned: true })
+  @Prop({ default: 0, unsigned: true })
   width?: number;
 
-  @Prop({ required: false, default: 0, unsigned: true })
+  @Prop({ default: 0, unsigned: true })
   height?: number;
 
-  @Prop({ required: false, default: 0, unsigned: true })
+  @Prop({ default: 0, unsigned: true })
   ratio?: number;
 
-  @Prop({ required: false, default: 0, unsigned: true })
+  @Prop({ default: 0, unsigned: true })
   seq?: number;
 
-  @Prop({ type: [Number], required: false, default: null })
+  @Prop({ type: [Number], default: null })
   filter?: number[];
 
   @Prop({ type: [ArticleElement], required: true, default: [] })

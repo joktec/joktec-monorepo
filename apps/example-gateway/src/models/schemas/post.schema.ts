@@ -34,7 +34,7 @@ export class Post extends BaseSchema {
   @IsCdnUrl()
   image!: string;
 
-  @Prop({ required: false })
+  @Prop({  })
   @IsCdnUrl()
   background?: string;
 
@@ -44,7 +44,7 @@ export class Post extends BaseSchema {
   @Prop({ required: true })
   endDate!: Date;
 
-  @Prop({ required: false })
+  @Prop({  })
   @IsUrl({ protocols: ['http', 'https'] })
   link?: string;
 

@@ -7,7 +7,6 @@ import { CategoryRepo } from './common/category.repo';
 import { CommentRepo } from './common/comment.repo';
 import { ConnectionRepo } from './common/connection.repo';
 import { ContentRepo } from './common/content.repo';
-import { CredentialRepo } from './common/credential.repo';
 import { CronHistoryRepo } from './common/cron-history.repo';
 import { CronRepo } from './common/cron.repo';
 import { DataLogRepo } from './common/data-log.repo';
@@ -16,7 +15,6 @@ import { InquiryRepo } from './common/inquiry.repo';
 import { NotificationRepo } from './common/notification.repo';
 import { OtpRepo } from './common/otp.repo';
 import { PostRepo } from './common/post.repo';
-import { ProxyRepo } from './common/proxy.repo';
 import { ReportRepo } from './common/report.repo';
 import { SessionRepo } from './common/session.repo';
 import { SettingRepo } from './common/setting.repo';
@@ -34,7 +32,6 @@ export const Repositories = [
   CommentRepo,
   ConnectionRepo,
   ContentRepo,
-  CredentialRepo,
   CronRepo,
   CronHistoryRepo,
   EmotionRepo,
@@ -43,7 +40,6 @@ export const Repositories = [
   NotificationRepo,
   OtpRepo,
   PostRepo,
-  ProxyRepo,
   ReportRepo,
   SessionRepo,
   SettingRepo,
@@ -62,7 +58,6 @@ export * from './common/category.repo';
 export * from './common/comment.repo';
 export * from './common/connection.repo';
 export * from './common/content.repo';
-export * from './common/credential.repo';
 export * from './common/cron.repo';
 export * from './common/cron-history.repo';
 export * from './common/emotion.repo';
@@ -71,7 +66,6 @@ export * from './common/data-log.repo';
 export * from './common/notification.repo';
 export * from './common/otp.repo';
 export * from './common/post.repo';
-export * from './common/proxy.repo';
 export * from './common/report.repo';
 export * from './common/session.repo';
 export * from './common/setting.repo';

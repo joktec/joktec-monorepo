@@ -2,7 +2,6 @@ export * from './admin-config.schema';
 export * from './article-element.schema';
 export * from './article-file.schema';
 export * from './article-summary.schema';
-export * from './credential-base-auth.schema';
 export * from './data-log-request.schema';
 export * from './session-device.schema';
 export * from './user-address.schema';

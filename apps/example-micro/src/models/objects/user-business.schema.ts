@@ -24,6 +24,6 @@ export class UserBusiness {
   @Prop({ required: true, default: false })
   recommend_priority!: boolean;
 
-  @Prop({ required: false, isEmail: true })
+  @Prop({ isEmail: true })
   email?: string;
 }

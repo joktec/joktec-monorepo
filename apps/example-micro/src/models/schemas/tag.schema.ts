@@ -13,14 +13,14 @@ export class Tag extends BaseSchema {
   @Prop({ required: true, trim: true })
   title!: string;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   @I18nTransform()
   hiddenText?: I18nText;
 
   @Prop({ required: true, enum: TagStatus })
   status!: TagStatus;
 
-  @Prop({ type: ObjectId, ref: () => User, required: false })
+  @Prop({ type: ObjectId, ref: () => User,  })
   authorId?: Ref<User, string>;
 
   @Prop({ type: ObjectId, ref: () => Tag, default: null })

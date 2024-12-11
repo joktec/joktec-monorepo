@@ -22,7 +22,7 @@ export class I18nText {
   @Prop({ required: true, example: '라이프스타일' })
   ko!: string;
 
-  @Prop({ required: false, example: 'Lifestyle' })
+  @Prop({ example: 'Lifestyle' })
   en?: string;
 }
 

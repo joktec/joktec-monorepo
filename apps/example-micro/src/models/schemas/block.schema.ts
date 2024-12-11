@@ -17,10 +17,10 @@ export class Block extends BaseSchema {
   @Prop({ type: [ObjectId], ref: () => Setting, required: true, uniqItems: true, default: [] })
   reasonIds!: Ref<Setting, string>[];
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   reasonText?: string;
 
-  @Prop({ required: false, default: () => new Date() })
+  @Prop({ default: () => new Date() })
   sentAt?: Date;
 
   @Prop({ required: true, enum: BlockStatus, default: BlockStatus.ACTIVATED })

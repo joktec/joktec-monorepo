@@ -8,13 +8,13 @@ export class UserConfig {
   @Prop({ required: true, enum: LOCALE, default: DEFAULT_LOCALE })
   language!: LOCALE;
 
-  @Prop({ required: false, default: 'Asia/Seoul' })
+  @Prop({ default: 'Asia/Seoul' })
   @IsTimeZone()
   timezone?: string;
 
   @Prop({ type: [UserConfigNotify], required: true, default: () => UserConfigNotify.init() })
   notifications!: UserConfigNotify[];
 
-  @Prop({ type: [String], required: false, default: ['default', 'event'] })
+  @Prop({ type: [String], default: ['default', 'event'] })
   topics: string[];
 }

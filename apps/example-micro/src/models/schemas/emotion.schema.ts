@@ -20,10 +20,10 @@ export class Emotion extends BaseSchema {
   @Prop({ type: ObjectId, refPath: 'target', example: EXAMPLE_MONGO_ID })
   targetId?: Ref<Article | Comment, string>;
 
-  @Prop({ required: false })
+  @Prop({  })
   deepLink?: string;
 
-  @Prop({ type: Object, required: false, default: () => Object.create(null) }, PropType.MAP)
+  @Prop({ type: Object, default: () => Object.create(null) }, PropType.MAP)
   payload?: Record<string, any>;
 
   @Prop({ required: true, default: () => new Date() })

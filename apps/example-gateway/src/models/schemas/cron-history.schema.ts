@@ -5,8 +5,16 @@ import { CronSchema } from './cron.schema';
 
 @Schema({ collection: 'cron_histories', index: ['cronId'], paranoid: true })
 export class CronHistory extends BaseSchema implements ICrontabHistoryModel {
+  get cronId(): string {
+    return this.cronRefId.toString();
+  }
+
+  set cronId(value: string) {
+    this.cronRefId = new ObjectId(value).toString();
+  }
+
   @Prop({ type: ObjectId, ref: () => CronSchema, required: true, comment: 'Reference ID to the cron job' })
-  cronId!: Ref<CronSchema, string>;
+  cronRefId!: Ref<CronSchema, string>;
 
   @Prop({
     required: true,
@@ -47,7 +55,7 @@ export class CronHistory extends BaseSchema implements ICrontabHistoryModel {
     type: CronSchema,
     ref: () => CronSchema,
     foreignField: '_id',
-    localField: 'cronId',
+    localField: 'cronRefId',
     justOne: true,
     example: {},
     comment: 'Reference to the related cron job',

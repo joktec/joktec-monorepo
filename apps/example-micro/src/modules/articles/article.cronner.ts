@@ -1,7 +1,7 @@
 import { Injectable, LogService } from '@joktec/core';
+import { Crontab } from '@joktec/cron';
 import { CronExpression } from '@nestjs/schedule';
 import Timezone from 'timezone-enum';
-import { Cronner } from '../../common';
 import { ArticleStatus, EmotionType } from '../../models/constants';
 import { Article } from '../../models/schemas';
 import { ArticleRepo, CommentRepo, EmotionRepo } from '../../repositories';
@@ -17,8 +17,8 @@ export class ArticleCronner {
     this.logService.setContext(ArticleCronner.name);
   }
 
-  @Cronner(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
-    subhead: 'Every midnight will calculate article summary',
+  @Crontab(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+    title: 'Every midnight will calculate article summary',
     timezone: Timezone['Asia/Seoul'],
   })
   async summary() {

@@ -8,7 +8,7 @@ import { ArticleElement } from './article-element.schema';
 
 @Schema({ schemaOptions: { _id: true, timestamps: true } })
 export class ArticleFile extends BaseSubSchema {
-  @Prop({ required: false })
+  @Prop({  })
   caption?: string;
 
   @Prop({ required: true, enum: ArticleFileType })
@@ -22,7 +22,7 @@ export class ArticleFile extends BaseSubSchema {
   @IsCdnUrl()
   preview!: string;
 
-  @Prop({ required: false })
+  @Prop({  })
   @IsCdnUrl()
   originalUrl?: string;
 
