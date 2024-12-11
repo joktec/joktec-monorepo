@@ -11,4 +11,6 @@ export interface IMongoAggregateOptions<T> extends AggregateOptions {
   transformFn?: (docs: any[]) => Array<T> | Promise<Array<T>>;
 }
 
-export interface IMongoBulkOptions extends BulkWriteOptions, MongooseBulkWriteOptions {}
+export interface IMongoBulkOptions extends BulkWriteOptions, MongooseBulkWriteOptions {
+  chunkSize?: number;
+}

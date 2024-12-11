@@ -11,8 +11,9 @@ import {
   OnModuleInit,
   plainToInstance,
   toArray,
+  toInt,
 } from '@joktec/core';
-import { isArray, isNil, isObject, omit } from 'lodash';
+import { chunk, isArray, isNil, isObject, omit } from 'lodash';
 import { DeepPartial, EntityManager, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
@@ -193,10 +194,17 @@ export abstract class MysqlRepo<T extends MysqlModel, ID extends MysqlId = Mysql
   async bulkUpsert(
     body: DeepPartial<T>[],
     onConflicts: KeyOf<T>[],
-    opts: IMysqlOption<T> & Omit<UpsertOptions<T>, 'conflictPaths'> = {},
+    opts: IMysqlOption<T> & Omit<UpsertOptions<T>, 'conflictPaths'> & { chunkSize?: number } = {},
   ): Promise<T[]> {
-    const transformBody: any = this.repository.create(body);
-    const result = await this.repository.upsert(transformBody, { ...opts, conflictPaths: onConflicts });
-    return this.transform(result.generatedMaps) as T[];
+    const chunkSize = toInt(opts?.chunkSize, 1000);
+    const chunkItems = chunk(body, chunkSize);
+    const results: T[][] = [];
+    for (const chunkItem of chunkItems) {
+      const transformBody: any = this.repository.create(chunkItem);
+      const result = await this.repository.upsert(transformBody, { ...opts, conflictPaths: onConflicts });
+      const transformResult = this.transform(result.generatedMaps) as T[];
+      results.push(transformResult);
+    }
+    return results.flat();
   }
 }

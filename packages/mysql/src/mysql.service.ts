@@ -74,6 +74,10 @@ export class MysqlService extends AbstractClientService<MysqlConfig, DataSource>
     }
   }
 
+  public getDataSource(conId: string = DEFAULT_CON_ID): DataSource {
+    return this.getClient(conId);
+  }
+
   public getEntityManager(conId: string = DEFAULT_CON_ID): EntityManager {
     return this.getClient(conId).createEntityManager();
   }

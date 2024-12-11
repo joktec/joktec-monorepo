@@ -11,9 +11,10 @@ import {
   plainToInstance,
   Reflector,
   toArray,
+  toInt,
 } from '@joktec/core';
 import { Ref } from '@typegoose/typegoose';
-import { isArray, isNil, omit, pick } from 'lodash';
+import { chunk, isArray, isNil, omit, pick } from 'lodash';
 import { Aggregate, RefType, UpdateQuery } from 'mongoose';
 import { MongoHelper, MongoPipeline, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
 import {
@@ -192,13 +193,22 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   async bulkUpsert(docs: DeepPartial<T>[], onConflicts?: KeyOf<T>[], options: IMongoBulkOptions = {}): Promise<T[]> {
     const fields = onConflicts?.length ? onConflicts : ['_id'];
     const transformBody: T[] = this.transform(docs) as T[];
-    const bulkDocs: any[] = transformBody.map((doc: T) => {
-      return { updateOne: { filter: pick(doc, fields), update: { $set: doc }, upsert: true } };
-    });
 
-    const result = await this.model.bulkWrite(bulkDocs, options);
-    const newIds = [...Object.values(result.upsertedIds), ...Object.values(result.insertedIds)];
-    return this.find({ condition: { _id: { $in: newIds } } as any });
+    const chunkSize = toInt(options?.chunkSize, 1000);
+    const chunkItems = chunk(transformBody, chunkSize);
+    const results: T[][] = [];
+
+    for (const chunkItem of chunkItems) {
+      const bulkDocs: any[] = chunkItem.map((doc: T) => {
+        return { updateOne: { filter: pick(doc, fields), update: { $set: doc }, upsert: true } };
+      });
+      const result = await this.model.bulkWrite(bulkDocs, options);
+      const newIds = [...Object.values(result.upsertedIds), ...Object.values(result.insertedIds)];
+      const newItems = await this.find({ condition: { _id: { $in: newIds } } as any });
+      results.push(newItems);
+    }
+
+    return results.flat();
   }
 
   @MongoCatch

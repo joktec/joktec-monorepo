@@ -20,13 +20,13 @@ import { MysqlService } from './mysql.service';
 export class MysqlModule {
   static forRoot(opts?: MysqlModuleOptions | MysqlModuleOptions[]): DynamicModule {
     const modelProviders: MysqlModelRegistry = toArray(opts).reduce((curr: object, acc: MysqlModuleOptions) => {
-      curr[acc.conId || DEFAULT_CON_ID] = acc.models;
+      curr[acc.conId || DEFAULT_CON_ID] = toArray(acc.models);
       return curr;
     }, {});
 
     const subscriberProviders: MysqlSubscriberRegistry = toArray(opts).reduce(
       (curr: object, acc: MysqlModuleOptions) => {
-        curr[acc.conId || DEFAULT_CON_ID] = acc.subscribers;
+        curr[acc.conId || DEFAULT_CON_ID] = toArray(acc.subscribers);
         return curr;
       },
       {},
