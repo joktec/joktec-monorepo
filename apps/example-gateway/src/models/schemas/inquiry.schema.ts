@@ -9,13 +9,13 @@ export class Inquiry extends BaseSchema {
   @Prop({ type: [ObjectId], ref: () => Setting, required: true, minSize: 1 })
   reasonIds!: Ref<Setting, string>[];
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   reasonText?: string;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   feedback?: string;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   respondedAt?: Date;
 
   @Prop({ required: true, enum: InquiryStatus, default: InquiryStatus.RECEIVED })

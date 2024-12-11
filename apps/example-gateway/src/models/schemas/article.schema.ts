@@ -15,13 +15,13 @@ import { User } from './user.schema';
   paranoid: true,
 })
 export class Article extends BaseSchema {
-  @Prop({ required: false, trim: true, default: '', example: 'This is a title' })
+  @Prop({ trim: true, default: '', example: 'This is a title' })
   title!: string;
 
-  @Prop({ required: false, trim: true, default: '', example: 'This is a subhead' })
+  @Prop({ trim: true, default: '', example: 'This is a subhead' })
   subhead?: string;
 
-  @Prop({ required: false, trim: true, default: '', example: 'This is a description' })
+  @Prop({ trim: true, default: '', example: 'This is a description' })
   description!: string;
 
   @Prop({ required: true, enum: ArticleType, default: ArticleType.DEFAULT })
@@ -45,13 +45,13 @@ export class Article extends BaseSchema {
   @Prop({ type: [String], default: [] })
   rawHashtags?: string[];
 
-  @Prop({ required: false, enum: ArticleResource, default: ArticleResource.DEFAULT })
+  @Prop({ enum: ArticleResource, default: ArticleResource.DEFAULT })
   resource?: ArticleResource;
 
   @Prop({ default: null })
   resourceId?: string;
 
-  @Prop({ type: ObjectId, ref: () => User, required: false, default: null, example: EXAMPLE_MONGO_ID })
+  @Prop({ type: ObjectId, ref: () => User, default: null, example: EXAMPLE_MONGO_ID })
   authorId?: Ref<User, string>;
 
   @Prop({ type: ObjectId, ref: () => Article, default: null })

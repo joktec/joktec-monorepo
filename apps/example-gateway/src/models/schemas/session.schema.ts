@@ -38,7 +38,7 @@ export class Session extends BaseSchema {
   @Prop({ default: DEFAULT_LOCALE })
   locale?: string;
 
-  @Prop({ type: SessionDevice, required: false, default: null })
+  @Prop({ type: SessionDevice, default: null })
   deviceInfo?: SessionDevice;
 
   @Prop({ default: null })

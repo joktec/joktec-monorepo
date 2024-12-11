@@ -42,22 +42,22 @@ export class ArticleElement {
   @Prop({ required: true, default: [] })
   matrix_4!: number[];
 
-  @Prop({ required: false, default: '' })
+  @Prop({ default: '' })
   @IsCdnUrl()
   url?: string;
 
   @Prop({ required: true, default: 0 })
   width!: number;
 
-  @Prop({ required: false, default: 0 })
+  @Prop({ default: 0 })
   height?: number;
 
-  @Prop({ required: false, default: true })
+  @Prop({ default: true })
   isEdit!: boolean;
 
-  @Prop({ type: ArticleElementMatrix, required: false, default: null })
+  @Prop({ type: ArticleElementMatrix, default: null })
   matrixImageModel?: ArticleElementMatrix;
 
-  @Prop({ type: ArticleElementText, required: false, default: null })
+  @Prop({ type: ArticleElementText, default: null })
   text?: ArticleElementText;
 }

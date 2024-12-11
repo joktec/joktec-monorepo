@@ -1,63 +1,63 @@
 import { IsTimeZone } from '@joktec/core';
+import { CrontabStatus, CrontabType, ICrontabModel } from '@joktec/cron';
 import { Prop, PropType, Schema } from '@joktec/mongo';
 import { pick } from 'lodash';
 import { BaseSchema, I18nText, I18nTransform } from '../common';
-import { CronStatus, CronType } from '../constants';
 
 @Schema({
   collection: 'crons',
-  textSearch: 'title,subhead,description.en,description.ko',
-  unique: ['title'],
+  textSearch: 'code,title,description.en,description.vi',
+  unique: ['code'],
   paranoid: true,
 })
-export class CronSchema extends BaseSchema {
-  @Prop({ required: true, trim: true })
-  title!: string;
+export class CronSchema extends BaseSchema implements ICrontabModel {
+  @Prop({ required: true, trim: true, comment: 'Code of the cron job' })
+  code!: string;
 
-  @Prop({ required: false, default: null })
-  subhead?: string;
+  @Prop({ default: null, comment: 'Optional title for the cron job' })
+  title?: string;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null, comment: 'Description of the cron job' })
   @I18nTransform()
   description?: I18nText;
 
-  @Prop({ required: true, trim: true })
+  @Prop({ required: true, trim: true, comment: 'Service name associated with the cron job' })
   serviceName!: string;
 
-  @Prop({ required: true, trim: true })
+  @Prop({ required: true, trim: true, comment: 'Method name associated with the cron job' })
   methodName!: string;
 
-  @Prop({ required: true, enum: CronType, default: CronType.CRON })
-  type!: CronType;
+  @Prop({ required: true, enum: CrontabType, default: CrontabType.CRON, comment: 'Type of cron job' })
+  type!: CrontabType;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null, comment: 'Cron expression for scheduling' })
   expression?: string;
 
-  @Prop({ default: null })
+  @Prop({ default: null, comment: 'Specific date and time for cron execution' })
   cronDate?: Date;
 
-  @Prop({ default: 0 })
+  @Prop({ default: 0, comment: 'Timeout duration in seconds' })
   timeout?: number;
 
-  @Prop({ default: null })
+  @Prop({ default: null, example: 'UTC', comment: 'Timezone for cron execution' })
   @IsTimeZone()
   timezone?: string;
 
-  @Prop({ type: Object, default: null }, PropType.MAP)
+  @Prop({ type: Object, default: null, comment: 'Parameters as a JSON object' }, PropType.MAP)
   parameters?: Record<string, any>;
 
-  @Prop({ default: null })
+  @Prop({ default: null, comment: 'Last execution date and time of the cron job' })
   lastExecution?: Date;
 
-  @Prop({ default: null })
+  @Prop({ default: null, comment: 'Next scheduled execution date and time' })
   nextExecution?: Date;
 
-  @Prop({ required: true, enum: CronStatus, default: CronStatus.ACTIVATED })
-  status!: CronStatus;
+  @Prop({ required: true, enum: CrontabStatus, default: CrontabStatus.ACTIVATED, comment: 'Status of the cron job' })
+  status!: CrontabStatus;
 
-  public get snapshot(): Object {
+  public snapshot(): Object {
     return pick(this, [
-      'title',
+      'code',
       'serviceName',
       'methodName',
       'type',

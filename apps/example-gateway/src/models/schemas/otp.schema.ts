@@ -16,7 +16,7 @@ export class Otp extends BaseSchema {
   @Prop({ required: true })
   privateCode!: string;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   activeCode!: string;
 
   @Prop({ required: true, enum: LOCALE, default: DEFAULT_LOCALE })

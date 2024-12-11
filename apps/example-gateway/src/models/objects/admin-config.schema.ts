@@ -7,7 +7,7 @@ export class AdminConfig {
   @Prop({ required: true, enum: LOCALE, default: DEFAULT_LOCALE })
   language!: LOCALE;
 
-  @Prop({ required: false, default: 'Asia/Seoul' })
+  @Prop({ default: 'Asia/Seoul' })
   @IsTimeZone()
   timezone?: string;
 }

@@ -19,7 +19,7 @@ export class Post extends BaseSchema {
   @I18nTransform()
   title!: I18nText;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   @I18nTransform()
   subhead?: I18nText;
 

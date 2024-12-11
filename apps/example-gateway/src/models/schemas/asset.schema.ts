@@ -49,7 +49,7 @@ export class Asset extends BaseSchema {
   @Prop({ required: true, enum: AssetStatus, example: AssetStatus.ACTIVATED })
   status!: AssetStatus;
 
-  @Prop({ type: ObjectId, ref: () => User, required: false, default: null, example: EXAMPLE_MONGO_ID })
+  @Prop({ type: ObjectId, ref: () => User, default: null, example: EXAMPLE_MONGO_ID })
   authorId?: Ref<User, string>;
 
   // Virtual

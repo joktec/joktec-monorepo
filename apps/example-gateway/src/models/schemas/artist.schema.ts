@@ -34,7 +34,7 @@ export class Artist extends BaseSchema {
   @Prop({ required: true, enum: ArtistStatus, default: ArtistStatus.ACTIVATED })
   status!: ArtistStatus;
 
-  @Prop({ required: false, default: '', hidden: true })
+  @Prop({ default: '', hidden: true })
   hiddenText?: string;
 
   @Prop({ type: [ObjectId], ref: () => Category, required: true, default: [], example: [EXAMPLE_MONGO_ID] })

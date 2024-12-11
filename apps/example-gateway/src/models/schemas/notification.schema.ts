@@ -21,7 +21,7 @@ export class Notification extends BaseSchema {
   @I18nTransform()
   subhead!: I18nText;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   @I18nTransform()
   description?: I18nText;
 
@@ -40,7 +40,7 @@ export class Notification extends BaseSchema {
   @Prop({ type: [ObjectId], ref: () => User, default: [], uniqItems: true })
   readById?: Ref<User, string>[];
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   sentAt?: Date;
 
   @Prop({ required: true, enum: NotificationStatus, default: NotificationStatus.UNPUBLISHED })

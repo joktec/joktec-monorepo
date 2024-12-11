@@ -13,7 +13,7 @@ export class Tag extends BaseSchema {
   @Prop({ required: true, trim: true })
   title!: string;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   @I18nTransform()
   hiddenText?: I18nText;
 

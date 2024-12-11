@@ -24,13 +24,13 @@ import { Artist } from './artist.schema';
   paranoid: true,
 })
 export class User extends BaseSchema {
-  @Prop({ required: false, default: '' })
+  @Prop({ default: '' })
   nickname?: string;
 
   @Prop({ required: true, trim: true, lowercase: true, default: null, isEmail: true, example: 'admin@gmail.com' })
   email!: string;
 
-  @Prop({ required: false, hidden: true })
+  @Prop({ hidden: true })
   password?: string;
 
   @Prop({ required: true, enum: UserRole, default: UserRole.NORMAL })
@@ -57,7 +57,7 @@ export class User extends BaseSchema {
   @Prop({ required: true, default: () => new UserProfile() })
   profile!: UserProfile;
 
-  @Prop({ required: false, default: null, example: () => new UserAddress() })
+  @Prop({ default: null, example: () => new UserAddress() })
   address?: UserAddress;
 
   @Prop({ required: true, default: () => new UserWallet() })
@@ -66,7 +66,7 @@ export class User extends BaseSchema {
   @Prop({ required: true, default: () => new UserRank() })
   rank!: UserRank;
 
-  @Prop({ required: false, default: null })
+  @Prop({ default: null })
   business?: UserBusiness;
 
   @Prop({ type: [UserKeyword], required: true, default: [] })

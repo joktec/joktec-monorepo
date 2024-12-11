@@ -23,7 +23,7 @@ export class Emotion extends BaseSchema {
   @Prop({ required: false })
   deepLink?: string;
 
-  @Prop({ type: Object, required: false, default: () => Object.create(null) }, PropType.MAP)
+  @Prop({ type: Object, default: () => Object.create(null) }, PropType.MAP)
   payload?: Record<string, any>;
 
   @Prop({ required: true, default: () => new Date() })
