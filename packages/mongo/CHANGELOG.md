@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.227](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.226...@joktec/mongo@0.0.227) (2024-12-13)
+
+**Note:** Version bump only for package @joktec/mongo
+
+
+
+
+
 ## [0.0.226](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.225...@joktec/mongo@0.0.226) (2024-12-11)
 
 **Note:** Version bump only for package @joktec/mongo
