@@ -23,10 +23,10 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
       user: config.username,
       pass: config.password,
       dbName: config.database,
+      ...config.options,
     };
 
     mongoose.set('strictQuery', config.strictQuery);
-    mongoose.set('autoIndex', config.autoIndex);
     if (config.debug) {
       mongoose.set('debug', (collectionName: string, methodName: string, ...methodArgs: any[]) => {
         const args = methodArgs.map(arg => JSON.stringify(arg)).join(', ');

@@ -1,4 +1,14 @@
-import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@joktec/core';
+import {
+  ClientConfig,
+  IsBoolean,
+  IsInt,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  toBool,
+  toInt,
+} from '@joktec/core';
 
 export class MongoConfig extends ClientConfig {
   @IsString()
@@ -45,6 +55,10 @@ export class MongoConfig extends ClientConfig {
   @IsOptional()
   autoIndex?: boolean;
 
+  @IsOptional()
+  @IsObject()
+  options?: Record<string, any>;
+
   constructor(props: MongoConfig) {
     super(props);
     Object.assign(this, {
@@ -54,6 +68,7 @@ export class MongoConfig extends ClientConfig {
       retryTimeout: toInt(props.retryTimeout, 20000),
       strictQuery: toBool(props.strictQuery, true),
       autoIndex: toBool(props.autoIndex, true),
+      options: props.options || {},
     });
   }
 }
