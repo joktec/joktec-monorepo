@@ -10,6 +10,6 @@ export * from './models';
 export * from './plugins';
 export * from './helpers';
 export { Aggregate, QueryOptions, UpdateQuery } from 'mongoose';
-export { mongoose, Ref } from '@typegoose/typegoose';
+export { mongoose, Ref, pre, post } from '@typegoose/typegoose';
 export { VirtualOptions, RefType } from '@typegoose/typegoose/lib/types';
 export { PropType, Severity, DecoratorKeys } from '@typegoose/typegoose/lib/internal/constants';
