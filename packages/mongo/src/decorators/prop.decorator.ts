@@ -9,7 +9,6 @@ import {
   IsNotEmpty,
   IsOptional,
   toArray,
-  toBool,
   Type,
   ValidateNested,
 } from '@joktec/core';
@@ -81,10 +80,9 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
       required: isRequired(opts),
       example: !isUndefined(opts.example) ? opts.example : opts.default,
       enum: opts.enum,
-      deprecated: toBool(opts.deprecated, false),
+      deprecated: isBoolean(opts.deprecated) ? opts.deprecated : undefined,
       nullable: !opts.required,
       description: opts?.comment || undefined,
-      ...opts.swagger,
     };
 
     let isArrayType: boolean = false;
@@ -137,8 +135,22 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
     else if (isObjectIdType(designType)) decorators.push(IsMongoId({ each: swaggerOptions.isArray }));
 
     const mongooseOpts = { ...opts };
-    if (mongooseOpts.ref) delete mongooseOpts.type;
-    applyDecorators(prop(mongooseOpts, kind), ...decorators, ApiProperty(swaggerOptions))(target, propertyKey);
+    if (mongooseOpts.ref) {
+      delete mongooseOpts.type;
+      if (opts.example) swaggerOptions.example = opts.example;
+      else swaggerOptions.example = isArrayType ? [] : {};
+    } else {
+      if (!isArrayType && isArray(opts.example)) {
+        swaggerOptions.example = opts.example[0];
+        swaggerOptions.examples = opts.example;
+      }
+    }
+
+    applyDecorators(
+      prop(mongooseOpts, kind),
+      ...decorators,
+      ApiProperty({ ...swaggerOptions, ...opts.swagger }),
+    )(target, propertyKey);
     Reflect.defineMetadata(PROP_DESIGN_TYPE_KEY, designType, target, propertyKey);
   };
 };
