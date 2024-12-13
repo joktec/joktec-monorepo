@@ -20,7 +20,7 @@ export class Tag extends BaseSchema {
   @Prop({ required: true, enum: TagStatus })
   status!: TagStatus;
 
-  @Prop({ type: ObjectId, ref: () => User,  })
+  @Prop({ type: ObjectId, ref: () => User })
   authorId?: Ref<User, string>;
 
   @Prop({ type: ObjectId, ref: () => Tag, default: null })

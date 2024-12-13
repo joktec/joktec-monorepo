@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Counter, Histogram } from 'prom-client';
 import { LogService } from '../../modules';
 import { getTimeString } from '../../utils';

@@ -40,7 +40,7 @@
     "@joktec/cron": "0.0.217",
     "@joktec/http": "0.0.179",
     "@joktec/mailer": "0.0.171",
-    "@joktec/mongo": "0.0.226",
+    "@joktec/mongo": "0.0.227",
     "@joktec/notifier": "0.0.172",
     "@joktec/firebase": "0.0.89",
     "@joktec/storage": "0.0.173",

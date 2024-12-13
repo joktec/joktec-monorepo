@@ -6,6 +6,7 @@ export * from './base.request';
 export * from './base.response';
 export * from './constants';
 export * from './cqrs';
+export * from './utils';
 export {
   Transporter,
   parseTransports,

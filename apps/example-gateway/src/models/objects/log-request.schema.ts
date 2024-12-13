@@ -11,16 +11,16 @@ export class LogRequest {
   @Prop({ required: true, example: '/users' })
   url!: string;
 
-  @Prop({ type: Object,  }, PropType.MAP)
+  @Prop({ type: Object }, PropType.MAP)
   query?: Record<string, any>;
 
-  @Prop({ type: Object,  }, PropType.MAP)
+  @Prop({ type: Object }, PropType.MAP)
   params?: Record<string, any>;
 
-  @Prop({ type: Object,  }, PropType.MAP)
+  @Prop({ type: Object }, PropType.MAP)
   body?: Record<string, any>;
 
-  @Prop({ type: Object,  }, PropType.MAP)
+  @Prop({ type: Object }, PropType.MAP)
   headers?: Record<string, any>;
 
   @Prop({ required: true, example: '::ffff:10.0.75.217' })

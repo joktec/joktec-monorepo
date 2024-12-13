@@ -20,7 +20,7 @@ export class Emotion extends BaseSchema {
   @Prop({ type: ObjectId, refPath: 'target', example: EXAMPLE_MONGO_ID })
   targetId?: Ref<Article | Comment, string>;
 
-  @Prop({  })
+  @Prop({})
   deepLink?: string;
 
   @Prop({ type: Object, default: () => Object.create(null) }, PropType.MAP)

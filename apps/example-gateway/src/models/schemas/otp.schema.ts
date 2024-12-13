@@ -37,7 +37,7 @@ export class Otp extends BaseSchema {
   @Prop({ required: true, default: 1, min: 1, max: 5 })
   retry!: number;
 
-  @Prop({ type: ObjectId, ref: () => User,  })
+  @Prop({ type: ObjectId, ref: () => User })
   authorId?: Ref<User, string>;
 
   // Virtual

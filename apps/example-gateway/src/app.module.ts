@@ -20,7 +20,7 @@ import { HttpModule } from '@joktec/http';
 import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { appConfigFactory } from './app.config';
 import { DEFAULT_LOCALE } from './app.constant';
-import { CustomExceptionFilter, CustomExpressInterceptor, HeaderMiddleware } from './common';
+import { CustomExceptionFilter, CustomExpressInterceptor } from './common';
 import { MainModule } from './modules/main.module';
 import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
 
@@ -62,6 +62,6 @@ import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(GatewayMetricMiddleware, HeaderMiddleware).forRoutes('*');
+    consumer.apply(GatewayMetricMiddleware).forRoutes('*');
   }
 }

@@ -1,17 +1,10 @@
 import { Express, Request, Response } from 'express';
-import { Lookup } from 'geoip-lite';
 // eslint-disable-next-line unused-imports/no-unused-imports
 import { Multer } from 'multer';
-import { IResult } from 'ua-parser-js';
 import { JwtPayload } from '../modules';
 import { DeepPartial, Dictionary, Entity } from './base.dto';
 import { IBaseRequest } from './base.request';
-
-export type GeoIp = { ipAddress: string } & Lookup;
-export type IUserAgent = IResult;
-export { IBrowser, IDevice, IEngine, IOS, ICPU } from 'ua-parser-js';
-
-export { NextFunction as ExpressNextFunction } from 'express';
+import { GeoIp, IUserAgent } from './utils';
 
 export interface ExpressResponse<T extends Entity = any> extends Response<DeepPartial<T> | Dictionary, Dictionary> {}
 
@@ -21,6 +14,8 @@ export interface ExpressRequest<T extends Entity = any, U = any>
   loggedUser?: U;
   userAgent?: IUserAgent;
   geoIp?: GeoIp;
+  locale?: string;
+  timezone?: string;
 
   [key: string]: any;
 }

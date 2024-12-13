@@ -7,15 +7,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as bodyParser from 'body-parser';
 import { Queue } from 'bullmq';
 import csurf from 'csurf';
-import { NextFunction } from 'express';
 import basicAuth from 'express-basic-auth';
-import { lookup } from 'geoip-lite';
 import helmet from 'helmet';
-import requestIp from 'request-ip';
-import UAParser from 'ua-parser-js';
 import { ApplicationMiddlewareFactory, resolveMiddleware } from '../../base';
 import { SwaggerConfig, SwaggerSecurity } from '../../decorators';
-import { ExpressRequest, ExpressResponse, HttpRequestHeader } from '../../models';
+import { HttpRequestHeader } from '../../models';
 import { BullConfig, ConfigService, LogService } from '../../modules';
 import { joinUrl } from '../../utils';
 import { GatewayConfig } from './gateway.config';
@@ -32,12 +28,6 @@ export class GatewayFactory {
     app.setGlobalPrefix(contextPath);
     app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-    app.use((req: ExpressRequest, res: ExpressResponse, next: NextFunction) => {
-      const ipAddress = requestIp.getClientIp(req);
-      req.geoIp = { ipAddress, ...lookup(ipAddress) };
-      req.userAgent = new UAParser(req.headers['user-agent'] || '').getResult();
-      next();
-    });
 
     app.useGlobalGuards(...(await resolveMiddleware(app, middlewares?.guards)));
     app.useGlobalPipes(...(await resolveMiddleware(app, middlewares?.pipes)));
