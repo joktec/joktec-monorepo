@@ -12,6 +12,7 @@ import {
 } from '@joktec/core';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob, CronJobParams } from 'cron';
+import cronValidate from 'cron-validate';
 import { get, map } from 'lodash';
 import { CrontabConfig } from './crontab.config';
 import { CrontabHistoryStatus, CrontabHistoryType, CrontabStatus } from './crontab.constant';
@@ -53,7 +54,10 @@ export abstract class CrontabScheduler implements OnModuleInit {
     this.logService.info('Start process to init Crontab');
 
     // Save all cron into database
-    const insertCrons = Object.values(this.cronMeta).map(meta => meta.cron);
+    const insertCrons = Object.values(this.cronMeta).map(meta => ({
+      ...meta.cron,
+      expression: this.getAndValidExpression(meta.cron.expression),
+    }));
     await this.cronRepo.bulkUpsert(insertCrons, ['code']);
 
     // Remove crons not exist in definition
@@ -69,6 +73,25 @@ export abstract class CrontabScheduler implements OnModuleInit {
     // Query and start cronjob
     const crons = await this.cronRepo.find({ condition: { status: CrontabStatus.ACTIVATED } });
     crons.map(cron => this.startCron(cron));
+  }
+
+  protected getAndValidExpression(cronExpression: string): string {
+    if (!cronExpression) return null;
+    if (cronValidate(cronExpression).isValid()) return cronExpression;
+
+    const isConfigPath = cronExpression.includes('.');
+    if (isConfigPath) {
+      const cfgExpression = this.configService.get<string>(cronExpression, null);
+      if (cfgExpression && cronValidate(cfgExpression).isValid()) return cfgExpression;
+    }
+
+    const isEnvVar = cronExpression.match(/^[A-Z_]+$/);
+    if (isEnvVar) {
+      const envExpression = process.env[cronExpression];
+      if (envExpression && cronValidate(envExpression).isValid()) return envExpression;
+    }
+
+    throw new BadRequestException(`Cron expression '${cronExpression}' is invalid.`);
   }
 
   async refreshOne(cron: ICrontabModel) {
@@ -157,7 +180,12 @@ export abstract class CrontabScheduler implements OnModuleInit {
     const job = new CronJob(cronTime, onTick, onComplete, onStart, cron.timezone || undefined);
     this.schedulerRegistry.addCronJob(cronName, job as any);
     job.start();
-    this.logService.info(`Job %s added with expression %s (%s)`, cron.code, job.nextDate(), description);
+    if (cron.cronDate) {
+      this.logService.info(`Job %s added and will be run at %s (%s)`, cron.code, job.nextDate(), description);
+    } else {
+      const msg = `Job %s added with expression %s. The first job will be execute at %s (%s)`;
+      this.logService.info(msg, cron.code, cron.expression, job.nextDate(), description);
+    }
   }
 
   async stopCron(cron: ICrontabModel) {
