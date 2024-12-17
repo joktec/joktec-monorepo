@@ -1,6 +1,5 @@
 import {
   ConfigService,
-  DeepPartial,
   DEFAULT_CON_ID,
   ICondition,
   Inject,
@@ -15,7 +14,7 @@ import {
 } from '@joktec/core';
 import { Ref } from '@typegoose/typegoose';
 import { chunk, isArray, isNil, omit, pick } from 'lodash';
-import { Aggregate, AnyBulkWriteOperation, RefType, UpdateQuery } from 'mongoose';
+import { Aggregate, AnyBulkWriteOperation, RefType } from 'mongoose';
 import { MongoHelper, MongoPipeline, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
 import {
   IMongoAggregateOptions,
@@ -24,6 +23,7 @@ import {
   IMongoPaginationResponse,
   IMongoPipeline,
   IMongoRequest,
+  IMongoUpdate,
   MongoSchema,
   ObjectId,
 } from './models';
@@ -130,7 +130,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   }
 
   @MongoCatch
-  async create(body: DeepPartial<T> & UpdateQuery<T>, options: IMongoOptions<T> = {}): Promise<T> {
+  async create(body: IMongoUpdate<T>, options: IMongoOptions<T> = {}): Promise<T> {
     const transformBody: T = this.transform(body) as T;
     const doc = await this.model.create(transformBody);
     return this.findOne({ condition: { _id: String(doc._id) } } as any, options);
@@ -139,7 +139,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   @MongoCatch
   async update(
     cond: ID | ObjectId | Ref<T, ID> | ICondition<T>,
-    body: DeepPartial<T> & UpdateQuery<T>,
+    body: IMongoUpdate<T>,
     options: IMongoOptions<T> = {},
   ): Promise<T> {
     const condition: ICondition<T> = {};
@@ -180,11 +180,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   }
 
   @MongoCatch
-  async upsert(
-    body: DeepPartial<T> & UpdateQuery<T>,
-    onConflicts?: KeyOf<T>[],
-    options: IMongoOptions<T> = {},
-  ): Promise<T> {
+  async upsert(body: IMongoUpdate<T>, onConflicts?: KeyOf<T>[], options: IMongoOptions<T> = {}): Promise<T> {
     const fields = onConflicts?.length ? onConflicts : ['_id'];
     const transformBody: T = this.transform(body) as T;
     const condition: ICondition<T> = pick(body, fields) as ICondition<T>;
@@ -194,11 +190,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   }
 
   @MongoCatch
-  async bulkUpsert(
-    docs: (DeepPartial<T> & UpdateQuery<T>)[],
-    onConflicts?: KeyOf<T>[],
-    options: IMongoBulkOptions = {},
-  ): Promise<T[]> {
+  async bulkUpsert(docs: IMongoUpdate<T>[], onConflicts?: KeyOf<T>[], options: IMongoBulkOptions = {}): Promise<T[]> {
     const fields = onConflicts?.length ? onConflicts : ['_id'];
     const transformBody: T[] = this.transform(docs) as T[];
 

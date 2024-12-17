@@ -1,6 +1,6 @@
-import { IBaseRequest } from '@joktec/core';
+import { DeepPartial, IBaseRequest } from '@joktec/core';
 import { mongoose, Ref } from '@typegoose/typegoose';
-import { PipelineStage, RefType } from 'mongoose';
+import { PipelineStage, RefType, UpdateQuery } from 'mongoose';
 import { MongoSchema } from './mongo.schema';
 
 export class ObjectId extends mongoose.Types.ObjectId {
@@ -22,6 +22,7 @@ export class ObjectId extends mongoose.Types.ObjectId {
   }
 }
 
+export type IMongoUpdate<T extends MongoSchema> = DeepPartial<T> & UpdateQuery<T>;
 export type IMongoPipeline = PipelineStage;
 export type IMongoLookupPipeline = Exclude<PipelineStage, PipelineStage.Merge | PipelineStage.Out>;
 export type IMongoUnionWithPipeline = Exclude<PipelineStage, PipelineStage.Out | PipelineStage.Merge>;
