@@ -45,8 +45,8 @@ export function Crontab(expression: string | Date, cronOpts: ICrontabOption = {}
     };
 
     // Valid by cronType
-    if (isString(expression)) Object.assign(cron, { expression, cronDate: null });
-    else Object.assign(cron, { expression: null, cronDate: dayjs(expression).toDate() });
+    if (isString(expression)) Object.assign(cron, { expression });
+    else Object.assign(cron, { cronDate: dayjs(expression).toDate() });
 
     if (!cron.expression && !cron.cronDate) {
       console.error(new InternalServerException(`Cron ${code} must be set cron expression or specific date`));

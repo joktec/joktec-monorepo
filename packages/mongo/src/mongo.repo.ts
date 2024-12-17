@@ -200,7 +200,14 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
 
     for (const chunkItem of chunkItems) {
       const bulkDocs: AnyBulkWriteOperation[] = chunkItem.map((doc: T) => {
-        return { updateOne: { filter: pick(doc, fields), update: doc, upsert: true } };
+        const updateDoc: IMongoUpdate<any> = {};
+        Object.keys(doc).forEach(key => {
+          if (!key.startsWith('$')) {
+            if (!updateDoc.$set) updateDoc.$set = {};
+            updateDoc.$set[key] = doc[key];
+          }
+        });
+        return { updateOne: { filter: pick(doc, fields), update: updateDoc, upsert: true } };
       });
       const result = await this.model.bulkWrite(bulkDocs, options);
       const newIds = [...Object.values(result.upsertedIds), ...Object.values(result.insertedIds)];

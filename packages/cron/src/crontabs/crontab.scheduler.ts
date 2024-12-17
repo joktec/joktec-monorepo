@@ -179,7 +179,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
 
     const onComplete = null;
     const onStart: CronJobParams<any, any>['start'] = false;
-    const cronTime = cron.cronDate ? cron.cronDate : cron.expression;
+    const cronTime = cron.cronDate || cron.expression;
     const description: string = get(cron, 'title') || 'No description';
     const job = new CronJob(cronTime, onTick, onComplete, onStart, cron.timezone || undefined);
     this.schedulerRegistry.addCronJob(cronName, job as any);
