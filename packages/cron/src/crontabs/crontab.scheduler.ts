@@ -76,19 +76,23 @@ export abstract class CrontabScheduler implements OnModuleInit {
   }
 
   protected getAndValidExpression(cronExpression: string): string {
+    const isValid = (expression: string): boolean => {
+      return cronValidate(expression, { useSeconds: true, useYears: true }).isValid();
+    };
+
     if (!cronExpression) return null;
-    if (cronValidate(cronExpression).isValid()) return cronExpression;
+    if (isValid(cronExpression)) return cronExpression;
 
     const isConfigPath = cronExpression.includes('.');
     if (isConfigPath) {
       const cfgExpression = this.configService.get<string>(cronExpression, null);
-      if (cfgExpression && cronValidate(cfgExpression).isValid()) return cfgExpression;
+      if (cfgExpression && isValid(cfgExpression)) return cfgExpression;
     }
 
     const isEnvVar = cronExpression.match(/^[A-Z_]+$/);
     if (isEnvVar) {
       const envExpression = process.env[cronExpression];
-      if (envExpression && cronValidate(envExpression).isValid()) return envExpression;
+      if (envExpression && isValid(envExpression)) return envExpression;
     }
 
     throw new BadRequestException(`Cron expression '${cronExpression}' is invalid.`);
