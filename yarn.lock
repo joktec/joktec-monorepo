@@ -3534,6 +3534,21 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
+"@joktec/cron@0.0.219", "@joktec/cron@^0.0.219":
+  version "0.0.219"
+  resolved "https://registry.yarnpkg.com/@joktec/cron/-/cron-0.0.219.tgz#841a84729216f8df3f5a6d40f02d9f19f927be3f"
+  integrity sha512-bv2t5Wvb4EGSlZlaGh+6zZaxGDavvggCeNZ8udyIpCqwAoF5m5LbdD27bR7yrWirchynlvefVWtbqQKj0dKy4g==
+  dependencies:
+    "@joktec/core" "0.0.172"
+    "@nestjs/schedule" "^4.1.1"
+    async "^3.2.6"
+    async-retry "^1.3.3"
+    cron "^3.1.7"
+    cron-validate "^1.4.5"
+    dayjs "^1.11.13"
+    lodash "^4.17.21"
+    reflect-metadata "^0.2.2"
+
 "@jridgewell/gen-mapping@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.1.1.tgz#e5d2e450306a9491e3bd77e323e38d7aff315996"

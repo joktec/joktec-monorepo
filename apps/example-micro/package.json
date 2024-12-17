@@ -37,10 +37,10 @@
   "dependencies": {
     "@joktec/core": "0.0.172",
     "@joktec/cacher": "0.0.121",
-    "@joktec/cron": "0.0.218",
+    "@joktec/cron": "0.0.219",
     "@joktec/http": "0.0.180",
     "@joktec/mailer": "0.0.172",
-    "@joktec/mongo": "0.0.230",
+    "@joktec/mongo": "0.0.232",
     "@joktec/notifier": "0.0.173",
     "@joktec/firebase": "0.0.90",
     "@joktec/storage": "0.0.174",
