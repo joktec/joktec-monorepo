@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.233](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.232...@joktec/mongo@0.0.233) (2024-12-17)
+
+
+### Bug Fixes
+
+* mongo upsert ([7b8c20f](https://github.com/joktec/joktec-monorepo/commit/7b8c20f739ce4a312b34f5298baec8f3e6bcfb7f))
+
+
+
+
+
 ## [0.0.232](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.0.231...@joktec/mongo@0.0.232) (2024-12-17)
 
 **Note:** Version bump only for package @joktec/mongo

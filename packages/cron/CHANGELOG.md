@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.223](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.222...@joktec/cron@0.0.223) (2024-12-17)
+
+
+### Bug Fixes
+
+* mongo upsert ([7b8c20f](https://github.com/joktec/joktec-monorepo/commit/7b8c20f739ce4a312b34f5298baec8f3e6bcfb7f))
+
+
+
+
+
 ## [0.0.222](https://github.com/joktec/joktec-monorepo/compare/@joktec/cron@0.0.221...@joktec/cron@0.0.222) (2024-12-17)
 
 
