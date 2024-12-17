@@ -15,7 +15,7 @@ import {
 } from '@joktec/core';
 import { Ref } from '@typegoose/typegoose';
 import { chunk, isArray, isNil, omit, pick } from 'lodash';
-import { Aggregate, RefType, UpdateQuery } from 'mongoose';
+import { Aggregate, AnyBulkWriteOperation, RefType, UpdateQuery } from 'mongoose';
 import { MongoHelper, MongoPipeline, UPDATE_OPTIONS, UPSERT_OPTIONS } from './helpers';
 import {
   IMongoAggregateOptions,
@@ -180,7 +180,11 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   }
 
   @MongoCatch
-  async upsert(body: DeepPartial<T>, onConflicts?: KeyOf<T>[], options: IMongoOptions<T> = {}): Promise<T> {
+  async upsert(
+    body: DeepPartial<T> & UpdateQuery<T>,
+    onConflicts?: KeyOf<T>[],
+    options: IMongoOptions<T> = {},
+  ): Promise<T> {
     const fields = onConflicts?.length ? onConflicts : ['_id'];
     const transformBody: T = this.transform(body) as T;
     const condition: ICondition<T> = pick(body, fields) as ICondition<T>;
@@ -190,7 +194,11 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   }
 
   @MongoCatch
-  async bulkUpsert(docs: DeepPartial<T>[], onConflicts?: KeyOf<T>[], options: IMongoBulkOptions = {}): Promise<T[]> {
+  async bulkUpsert(
+    docs: (DeepPartial<T> & UpdateQuery<T>)[],
+    onConflicts?: KeyOf<T>[],
+    options: IMongoBulkOptions = {},
+  ): Promise<T[]> {
     const fields = onConflicts?.length ? onConflicts : ['_id'];
     const transformBody: T[] = this.transform(docs) as T[];
 
@@ -199,8 +207,8 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
     const results: T[][] = [];
 
     for (const chunkItem of chunkItems) {
-      const bulkDocs: any[] = chunkItem.map((doc: T) => {
-        return { updateOne: { filter: pick(doc, fields), update: { $set: doc }, upsert: true } };
+      const bulkDocs: AnyBulkWriteOperation[] = chunkItem.map((doc: T) => {
+        return { updateOne: { filter: pick(doc, fields), update: doc, upsert: true } };
       });
       const result = await this.model.bulkWrite(bulkDocs, options);
       const newIds = [...Object.values(result.upsertedIds), ...Object.values(result.insertedIds)];
