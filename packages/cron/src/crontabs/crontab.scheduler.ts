@@ -12,7 +12,7 @@ import {
 } from '@joktec/core';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob, CronJobParams } from 'cron';
-import cronValidate from 'cron-validate';
+import { isValidCron } from 'cron-validator';
 import { get, map } from 'lodash';
 import { CrontabConfig } from './crontab.config';
 import { CrontabHistoryStatus, CrontabHistoryType, CrontabStatus } from './crontab.constant';
@@ -76,7 +76,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
   }
 
   protected validate(expression: string): boolean {
-    return cronValidate(expression, { preset: 'npm-node-cron' }).isValid();
+    return isValidCron(expression, { seconds: true, alias: true, allowBlankDay: true, allowSevenAsSunday: true });
   }
 
   protected getAndValidExpression(cronExpression: string): string {
