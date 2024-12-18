@@ -1,7 +1,7 @@
 {
   "name": "@joktec/cacher",
   "description": "JokTec - Cache Service",
-  "version": "0.0.121",
+  "version": "0.0.122",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -42,7 +42,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.0.172",
+    "@joktec/core": "0.0.173",
     "dot-object": "^2.1.5",
     "ioredis": "^5.4.1",
     "lodash": "^4.17.21",
