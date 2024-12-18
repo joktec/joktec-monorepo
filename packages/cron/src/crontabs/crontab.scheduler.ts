@@ -38,9 +38,10 @@ export abstract class CrontabScheduler implements OnModuleInit {
   async onModuleInit() {
     this.logService.setContext(this.constructor.name);
     if (!this.getConfig().enable) return;
-    setTimeout(async () => {
-      await this.initProcess();
-    }, this.config.initIdleTimeout);
+
+    const initIdleTimeout = this.config.initIdleTimeout;
+    this.logService.info(`Crontab will be init after ${getTimeString(initIdleTimeout)}`);
+    setTimeout(() => this.initProcess(), initIdleTimeout);
   }
 
   protected getConfig() {
@@ -155,6 +156,9 @@ export abstract class CrontabScheduler implements OnModuleInit {
           cronError = { ...err.getError(), stack: err.stack };
         }
         cronStatus = CrontabHistoryStatus.FAILED;
+        if (this.cronMeta[cron.code].verbose) {
+          this.logService.error(err, 'Error when executing CronJob %s', cron.code);
+        }
       }
 
       const lastExecution = this.schedulerRegistry.getCronJob(cronName).lastDate();
@@ -267,7 +271,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
   }
 
   private isSaveHistory(code: string, cronStatus: CrontabHistoryStatus): boolean {
-    const verbose = this.cronMeta[code].verbose;
-    return !verbose || verbose === 'all' || (verbose === 'error' && cronStatus === CrontabHistoryStatus.FAILED);
+    const trace = this.cronMeta[code].trace;
+    return !trace || trace === 'all' || (trace === 'error' && cronStatus === CrontabHistoryStatus.FAILED);
   }
 }

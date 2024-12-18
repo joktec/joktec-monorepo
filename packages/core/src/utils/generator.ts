@@ -84,13 +84,33 @@ export const matchPassword = (password: string, hashPassword: string): boolean =
 };
 
 /**
- * Converts a duration time (in milliseconds) to a formatted display string, including both milliseconds and seconds.
+ * Converts a duration time (in milliseconds) to a formatted display string,
+ * including appropriate units based on the size of the duration.
  * @param duration - The duration time in milliseconds.
  * @returns The formatted display string representing the duration.
  */
 export const getTimeString = (duration: number): string => {
-  if (Math.abs(duration) >= 1500) {
-    return `${(duration / 1000).toFixed(2)} s`;
+  const absDuration = Math.abs(duration);
+  if (absDuration < 1500) return `${duration} ms`;
+
+  const timeUnits = [
+    { unit: 'ms', value: 1 },
+    { unit: 's', value: 1000 },
+    { unit: 'min', value: 60 * 1000 },
+    { unit: 'h', value: 60 * 60 * 1000 },
+    { unit: 'd', value: 24 * 60 * 60 * 1000 },
+    { unit: 'w', value: 7 * 24 * 60 * 60 * 1000 },
+    { unit: 'mo', value: 30 * 24 * 60 * 60 * 1000 }, // 1 tháng = 30 ngày
+    { unit: 'y', value: 365 * 24 * 60 * 60 * 1000 }, // 1 năm = 365 ngày
+  ];
+
+  for (let i = timeUnits.length - 1; i >= 0; i--) {
+    const { unit, value } = timeUnits[i];
+    const timeInUnit = duration / value;
+    if (absDuration >= value) {
+      return `${timeInUnit.toFixed(2)} ${unit}`;
+    }
   }
+
   return `${duration} ms`;
 };
