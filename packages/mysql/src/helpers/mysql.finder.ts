@@ -1,6 +1,7 @@
 import { IBaseRequest, ICondition, IPopulate, toArray, toBool } from '@joktec/core';
 import { isNil } from 'lodash';
 import {
+  And,
   Equal,
   FindManyOptions,
   ILike,
@@ -56,51 +57,55 @@ export class MysqlFinder {
       }
 
       if (typeof value === 'object') {
+        const conditions: any[] = [];
         for (const [op, val] of Object.entries(value)) {
           switch (op) {
             case '$eq':
-              where[key] = isNil(value) ? IsNull() : Equal(val);
+              conditions.push(isNil(val) ? IsNull() : Equal(val));
               break;
             case '$gt':
-              where[key] = MoreThan(val);
+              conditions.push(MoreThan(val));
               break;
             case '$gte':
-              where[key] = MoreThanOrEqual(val);
+              conditions.push(MoreThanOrEqual(val));
               break;
             case '$lt':
-              where[key] = LessThan(val);
+              conditions.push(LessThan(val));
               break;
             case '$lte':
-              where[key] = LessThanOrEqual(val);
+              conditions.push(LessThanOrEqual(val));
               break;
             case '$ne':
-              where[key] = isNil(val) ? Not(IsNull()) : Not(val);
+              conditions.push(isNil(val) ? Not(IsNull()) : Not(val));
               break;
             case '$in':
-              if (toArray(val).length) where[key] = In(toArray(val));
+              if (toArray(val).length) conditions.push(In(toArray(val)));
               break;
             case '$nin':
-              if (toArray(val).length) where[key] = Not(In(toArray(val)));
+              if (toArray(val).length) conditions.push(Not(In(toArray(val))));
               break;
             case '$like':
-              where[key] = ILike(`%${val}%`);
+              conditions.push(ILike(`%${val}%`));
               break;
             case '$begin':
-              where[key] = ILike(`${val}%`);
+              conditions.push(ILike(`${val}%`));
               break;
             case '$end':
-              where[key] = ILike(`%${val}`);
+              conditions.push(ILike(`%${val}`));
               break;
             case '$not':
-              where[key] = Not(this.parseCondition(val));
+              conditions.push(Not(this.parseCondition(val)));
               break;
             default:
               throw new MysqlException(`Operator ${op} not supported`, { op, val });
           }
         }
-      } else {
-        where[key] = value;
+
+        if (conditions.length > 1) where[key] = And(...conditions);
+        else where[key] = conditions[0];
+        continue;
       }
+      where[key] = value;
     }
 
     return where;
