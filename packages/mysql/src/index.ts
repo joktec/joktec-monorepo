@@ -9,3 +9,4 @@ export * from './decorators';
 export * from './helpers';
 export * from './models';
 export * from 'typeorm';
+export { UpsertOptions } from 'typeorm/repository/UpsertOptions';

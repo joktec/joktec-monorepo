@@ -200,7 +200,7 @@ export abstract class MysqlRepo<T extends MysqlModel, ID extends MysqlId = Mysql
     const chunkItems = chunk(body, chunkSize);
     const results: T[][] = [];
     for (const chunkItem of chunkItems) {
-      const transformBody: any = this.repository.create(chunkItem);
+      const transformBody: any[] = this.repository.create(chunkItem);
       const result = await this.repository.upsert(transformBody, { ...opts, conflictPaths: onConflicts });
       const transformResult = this.transform(result.generatedMaps) as T[];
       results.push(transformResult);
