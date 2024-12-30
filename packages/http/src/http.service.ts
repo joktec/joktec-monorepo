@@ -106,6 +106,19 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
       delete cf.proxy;
     }
 
+    if (config.authorization) {
+      if (config.authorization.basicAuth) cf.auth = config.authorization.basicAuth;
+      if (config.authorization.bearerToken) {
+        const bearerToken = config.authorization.bearerToken.replace('Bearer ', '').trim();
+        cf.headers['Authorization'] = `Bearer ${bearerToken}`;
+      }
+      if (config.authorization.apiKey) {
+        const { key, value, addTo } = config.authorization.apiKey;
+        if (addTo === 'header') cf.headers[key] = value;
+        if (addTo === 'query') cf.params[key] = value;
+      }
+    }
+
     return cf;
   }
 

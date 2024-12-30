@@ -1,8 +1,14 @@
 import { Agent } from 'http';
-import { AxiosRequestConfig } from 'axios';
+import { AxiosBasicCredentials, AxiosRequestConfig } from 'axios';
 import { IAxiosRetryConfig } from 'axios-retry';
 import { HttpProxyConfig } from '../http.config';
 import { HttpResponse } from './http.response';
+
+export interface HttpAuthorization {
+  basicAuth?: AxiosBasicCredentials;
+  bearerToken?: string;
+  apiKey?: { key: string; value: string; addTo?: 'header' | 'query' };
+}
 
 /**
  * Custom HTTP request configuration that extends AxiosRequestConfig.
@@ -58,6 +64,12 @@ export interface HttpRequest<DATA = any> extends AxiosRequestConfig<DATA> {
    * For more details, see: https://www.npmjs.com/package/axios-retry
    */
   'axios-retry'?: IAxiosRetryConfig;
+
+  /**
+   * Authorization configuration for the request.
+   * Supports basic authentication, bearer token, and API key.
+   */
+  authorization?: HttpAuthorization;
 
   /**
    * Allows for additional properties as per your custom configuration needs.
