@@ -42,7 +42,7 @@
     "@joktec/http": "0.0.181",
     "@joktec/mailer": "0.0.173",
     "@joktec/mongo": "0.0.234",
-    "@joktec/mysql": "0.0.194",
+    "@joktec/mysql": "0.0.195",
     "@joktec/firebase": "0.0.91",
     "@joktec/storage": "0.0.175",
     "apple-signin-auth": "^1.7.6",
