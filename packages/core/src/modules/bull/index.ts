@@ -19,6 +19,7 @@ export {
   SharedBullConfigurationFactory,
   SharedBullAsyncConfiguration,
   RegisterFlowProducerOptions,
+  InjectFlowProducer,
 } from '@nestjs/bullmq';
 export {
   AdvancedOptions,
@@ -33,6 +34,13 @@ export {
   Worker,
   WorkerOptions,
   WorkerListener,
+  FlowJob,
+  FlowOpts,
+  FlowProducer,
+  FlowChildJob,
+  FlowJobBase,
+  FlowProducerListener,
+  FlowQueuesOpts,
 } from 'bullmq';
 export * from './bull.config';
 export * from './bull.module';
