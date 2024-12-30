@@ -57,6 +57,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
     // Save all cron into database
     const insertCrons = Object.values(this.cronMeta).map(meta => ({
       ...meta.cron,
+      timezone: meta.cron.timezone || this.config.timezone,
       expression: this.getAndValidExpression(meta.cron.expression),
     }));
     await this.cronRepo.bulkUpsert(insertCrons, ['code']);
@@ -191,8 +192,8 @@ export abstract class CrontabScheduler implements OnModuleInit {
     if (cron.cronDate) {
       this.logService.info(`Job %s added and will be run at %s (%s)`, cron.code, job.nextDate(), description);
     } else {
-      const msg = `Job %s added with expression %s. The first job will be execute at %s (%s)`;
-      this.logService.info(msg, cron.code, cron.expression, job.nextDate(), description);
+      const msg = `Job %s added with expression %s (%s). The first job will be execute at %s (%s)`;
+      this.logService.info(msg, cron.code, cron.expression, cron.timezone, job.nextDate(), description);
     }
   }
 
