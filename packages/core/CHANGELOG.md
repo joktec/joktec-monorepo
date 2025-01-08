@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.175](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.174...@joktec/core@0.0.175) (2025-01-08)
+
+
+### Bug Fixes
+
+* base service core ([8c1e98b](https://github.com/joktec/joktec-monorepo/commit/8c1e98b0cd5cc591d24f10731338bdd63c8d2b50))
+
+
+
+
+
 ## [0.0.174](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.173...@joktec/core@0.0.174) (2024-12-30)
 
 **Note:** Version bump only for package @joktec/core

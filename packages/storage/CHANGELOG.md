@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.177](https://github.com/joktec/joktec-monorepo/compare/@joktec/storage@0.0.176...@joktec/storage@0.0.177) (2025-01-08)
+
+**Note:** Version bump only for package @joktec/storage
+
+
+
+
+
 ## [0.0.176](https://github.com/joktec/joktec-monorepo/compare/@joktec/storage@0.0.175...@joktec/storage@0.0.176) (2024-12-30)
 
 **Note:** Version bump only for package @joktec/storage
