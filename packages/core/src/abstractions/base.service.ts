@@ -1,5 +1,5 @@
 import { Inject, OnModuleInit } from '@nestjs/common';
-import { DeepPartial, Entity, IPaginationResponse, IBaseRepository, IBaseRequest, IBaseService } from '../models';
+import { DeepPartial, Entity, IBaseRepository, IBaseRequest, IBaseService, IPaginationResponse } from '../models';
 import { ConfigService, LogService } from '../modules';
 import { cloneInstance } from '../utils';
 
@@ -53,7 +53,8 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   }
 
   async findOne(query: REQ): Promise<T> {
-    return this.repository.findOne(query);
+    const { condition, ...rest } = query;
+    return this.repository.findOne(condition, { ...rest });
   }
 
   async create(entity: DeepPartial<T>): Promise<T> {
