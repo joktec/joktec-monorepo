@@ -76,6 +76,22 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
     return qb.lean();
   }
 
+  public cursor(query: IMongoRequest<T>, options: IMongoOptions<T> = {}) {
+    const qb = this.model.find<T>();
+    qb.setOptions({ ...options });
+
+    if (query?.near) qb.center(query.near);
+    if (query?.keyword) qb.search(query.keyword);
+    if (query?.condition) qb.where(MongoHelper.parseFilter(query.condition));
+    if (query?.select) qb.select(MongoHelper.parseProjection(query.select));
+    if (query?.sort) qb.sort(MongoHelper.parseSort(query.sort));
+    if (query?.offset) qb.skip(query.offset);
+    if (query?.limit) qb.limit(query.limit);
+    if (query?.populate) qb.populate(MongoHelper.parsePopulate(query.populate));
+
+    return qb.lean().cursor();
+  }
+
   public pipeline<U = T>(query?: IMongoRequest<T>, options?: IMongoAggregateOptions<U>): Aggregate<Array<U>> {
     const aggregations = this.model.aggregate();
 
