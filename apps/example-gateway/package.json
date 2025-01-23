@@ -41,7 +41,7 @@
     "@joktec/cron": "0.0.226",
     "@joktec/http": "0.0.183",
     "@joktec/mailer": "0.0.175",
-    "@joktec/mongo": "0.0.237",
+    "@joktec/mongo": "0.0.238",
     "@joktec/mysql": "0.0.197",
     "@joktec/firebase": "0.0.93",
     "@joktec/storage": "0.0.177",
