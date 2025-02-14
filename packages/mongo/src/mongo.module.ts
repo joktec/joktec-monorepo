@@ -13,7 +13,7 @@ import { MongoService } from './mongo.service';
 export class MongoModule {
   static forRoot(...opts: MongoModuleOptions[]): DynamicModule {
     const providers: MongoModelRegistry = toArray(opts).reduce((curr: object, acc: MongoModuleOptions) => {
-      curr[acc.conId || DEFAULT_CON_ID] = acc.models;
+      curr[acc.conId || DEFAULT_CON_ID] = toArray(acc.models);
       return curr;
     }, {});
 

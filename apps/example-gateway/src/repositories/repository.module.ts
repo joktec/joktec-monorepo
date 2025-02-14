@@ -8,11 +8,8 @@ import { Repositories } from './index';
 @Global()
 @Module({
   imports: [
-    MongoModule.forRoot([
-      { models: [...SCHEMAS], conId: DEFAULT_CON_ID },
-      { models: [DataLog], conId: 'logConnection' },
-    ]),
-    MysqlModule.forRoot([{ models: [...ENTITIES], conId: DEFAULT_CON_ID }]),
+    MongoModule.forRoot({ models: [...SCHEMAS], conId: DEFAULT_CON_ID }, { models: [DataLog], conId: 'logConnection' }),
+    MysqlModule.forRoot({ models: [...ENTITIES], conId: DEFAULT_CON_ID }),
   ],
   providers: [...Repositories],
   exports: [...Repositories],

@@ -1,4 +1,5 @@
 import { DEFAULT_CON_ID, DynamicModule, Global, Module, toArray } from '@joktec/core';
+import { isEmpty } from 'lodash';
 import {
   MODEL_REGISTRY_KEY,
   MysqlModelRegistry,
@@ -18,7 +19,7 @@ import { MysqlService } from './mysql.service';
   exports: [MysqlService],
 })
 export class MysqlModule {
-  static forRoot(opts?: MysqlModuleOptions | MysqlModuleOptions[]): DynamicModule {
+  static forRoot(...opts: MysqlModuleOptions[]): DynamicModule {
     const modelProviders: MysqlModelRegistry = toArray(opts).reduce((curr: object, acc: MysqlModuleOptions) => {
       curr[acc.conId || DEFAULT_CON_ID] = toArray(acc.models);
       return curr;
@@ -31,6 +32,9 @@ export class MysqlModule {
       },
       {},
     );
+
+    if (isEmpty(modelProviders)) modelProviders[DEFAULT_CON_ID] = [];
+    if (isEmpty(subscriberProviders)) subscriberProviders[DEFAULT_CON_ID] = [];
 
     return {
       module: MysqlModule,

@@ -63138,6 +63138,9 @@
         },
         "prefix": {
           "type": "string"
+        },
+        "timezone": {
+          "type": "string"
         }
       }
     }
