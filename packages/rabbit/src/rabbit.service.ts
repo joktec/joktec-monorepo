@@ -1,4 +1,4 @@
-import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry, toInt } from '@joktec/core';
 import amqp, { ConfirmChannel, Connection, Options } from 'amqplib';
 import { has } from 'lodash';
 import {
@@ -60,7 +60,9 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
       }).bind(this),
     );
 
-    for (const hook of this.hooks[conId]) await hook(conId);
+    for (const hook of this.hooks[conId]) {
+      await hook(conId);
+    }
   }
 
   @RabbitMetric()
@@ -95,24 +97,22 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
     options: RabbitConsumeOptions = {},
     conId: string = DEFAULT_CON_ID,
   ) {
+    const onMessageFn = async (msg: RabbitMessage): Promise<void> => {
+      try {
+        this.logService.debug('`%s` rabbit consumed message: %s', conId, msg.content?.toString());
+        await callback(msg);
+        options.autoCommit && (await this.commit(msg, conId));
+        this.rabbitMetricService.consume('SUCCESS', queue, conId);
+      } catch (error) {
+        this.logService.error(error, '`%s` rabbit handle message fail', conId);
+        this.rabbitMetricService.consume('ERROR', queue, conId);
+        await this.reject(msg, options.requeue ?? true, conId);
+      }
+    };
+
     const hook = async (conId: string) => {
-      await this.channels[conId].prefetch(options.prefetchMessages ?? 10);
-      await this.channels[conId].consume(
-        queue,
-        async (msg: RabbitMessage) => {
-          try {
-            this.logService.debug('`%s` rabbit consumed message: %s', conId, msg.content?.toString());
-            await callback(msg);
-            options.autoCommit && (await this.commit(msg, conId));
-            this.rabbitMetricService.consume('SUCCESS', queue, conId);
-          } catch (error) {
-            this.logService.error(error, '`%s` rabbit handle message fail', conId);
-            this.rabbitMetricService.consume('ERROR', queue, conId);
-            await this.reject(msg, options.requeue ?? true, conId);
-          }
-        },
-        options,
-      );
+      await this.channels[conId].prefetch(toInt(options.prefetchMessages) ?? 1);
+      await this.channels[conId].consume(queue, onMessageFn, options);
     };
 
     this.hooks[conId].push(hook);

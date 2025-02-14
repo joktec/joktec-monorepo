@@ -1,3 +1,3 @@
 import { ConsumeMessage } from 'amqplib';
 
-export type RabbitMessage = ConsumeMessage;
+export interface RabbitMessage extends ConsumeMessage {}

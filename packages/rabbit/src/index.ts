@@ -1,3 +1,4 @@
+export * from './loaders';
 export * from './models';
 export * from './rabbit.config';
 export * from './rabbit.module';
