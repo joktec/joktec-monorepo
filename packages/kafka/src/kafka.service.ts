@@ -1,14 +1,11 @@
-import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
-import { ConsumerConfig, ConsumerSubscribeTopic, Kafka, ProducerConfig } from 'kafkajs';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
+import { Consumer, ConsumerConfig, ConsumerSubscribeTopics, Kafka, Producer, ProducerConfig } from 'kafkajs';
 import { KafkaClient, KafkaProp } from './kafka.client';
-import {
-  ConsumerBatchRunConfig,
-  ConsumerMessageRunConfig,
-  KafkaConfig,
-  ProducerManyTopic,
-  ProducerTopic,
-} from './kafka.config';
+import { KafkaConfig } from './kafka.config';
 import { PublishKafkaMetric } from './kafka.metric';
+import { ConsumerBatchRunConfig, ConsumerMessageRunConfig, ProducerManyTopic, ProducerTopic } from './models';
+
+const RETRY_OPTS = 'kafka.retry';
 
 @Injectable()
 export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> implements KafkaClient {
@@ -18,33 +15,28 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     super('kafka', KafkaConfig);
   }
 
-  async init(config: KafkaConfig): Promise<Kafka> {
+  @Retry(RETRY_OPTS)
+  protected async init(config: KafkaConfig): Promise<Kafka> {
     config.log(this.logService);
     this.props[config.conId] = { producers: {}, consumers: {} };
     return new Kafka(config);
   }
 
-  async start(client: Kafka, conId: string = DEFAULT_CON_ID): Promise<void> {
+  protected async start(client: Kafka, conId: string = DEFAULT_CON_ID): Promise<void> {
     // TODO: Do nothing
   }
 
-  async pause(topic: string, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // TODO: Do nothing
+  protected async stop(client: Kafka, conId: string = DEFAULT_CON_ID): Promise<void> {
+    const props: KafkaProp = this.props[conId];
+    Object.keys(props.producers).map(producerKey => props.producers[producerKey].disconnect());
+    Object.keys(props.consumers).map(consumerKey => props.consumers[consumerKey].disconnect());
   }
 
-  async resume(topic: string, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // TODO: Do nothing
-  }
-
-  async stop(client: Kafka, conId: string = DEFAULT_CON_ID): Promise<void> {
-    Object.keys(this.props).map(key => {
-      const props: KafkaProp = this.props[key];
-      Object.keys(props.producers).map(producerKey => props.producers[producerKey].disconnect());
-      Object.keys(props.consumers).map(consumerKey => props.consumers[consumerKey].disconnect());
-    });
-  }
-
-  async initProducer(key: string, producerConfig: ProducerConfig = {}, conId: string = DEFAULT_CON_ID) {
+  private async initProducer(
+    key: string,
+    producerConfig: ProducerConfig = {},
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<Producer> {
     let producer = this.props[conId].producers[key];
     if (!producer) {
       this.props[conId].producers[key] = producer = this.getClient(conId).producer(producerConfig);
@@ -56,48 +48,66 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     return producer;
   }
 
-  async initConsumer(groupId: string, consumerCfg: ConsumerConfig, conId: string = DEFAULT_CON_ID) {
+  private async initConsumer(groupId: string, cfg: ConsumerConfig, conId: string = DEFAULT_CON_ID): Promise<Consumer> {
     let consumer = this.props[conId].consumers[groupId];
-
     if (!consumer) {
-      this.props[conId].consumers[groupId] = consumer = this.getClient(conId).consumer(consumerCfg);
-      this.logService.info(consumerCfg, '[`%s` %s-consumer] created', conId, groupId);
+      this.props[conId].consumers[groupId] = consumer = this.getClient(conId).consumer(cfg);
+      this.logService.info(cfg, '[`%s` %s-consumer] created', conId, groupId);
 
       await consumer.connect();
       this.logService.info('[`%s` %s-consumer] connected', conId, groupId);
     }
+
     return consumer;
   }
 
   async consume(
-    consumerSubscribeTopic: ConsumerSubscribeTopic,
-    consumerCfg: ConsumerConfig,
-    consumerRunConfig: ConsumerBatchRunConfig | ConsumerMessageRunConfig,
+    consumerTopics: ConsumerSubscribeTopics,
+    consumerConfig: ConsumerConfig,
+    runConfig: ConsumerMessageRunConfig,
     conId: string = DEFAULT_CON_ID,
-  ) {
-    const { topic } = consumerSubscribeTopic;
-    const { groupId } = consumerCfg;
-    const consumer = await this.initConsumer(groupId, consumerCfg, conId);
+  ): Promise<void> {
+    const { topics } = consumerTopics;
+    const { groupId } = consumerConfig;
+    const consumer = await this.initConsumer(groupId, consumerConfig, conId);
 
-    await consumer.subscribe(consumerSubscribeTopic);
-    this.logService.info('[`%s` %s-consumer] of topic `%s` ready to consume', conId, groupId, topic);
+    await consumer.subscribe(consumerTopics);
+    topics.map(t => this.logService.info('[`%s` %s-consumer] of topic `%s` ready to consume', conId, groupId, t));
+    await consumer.run(runConfig);
+  }
 
-    await consumer.run(consumerRunConfig);
+  async consumeBatch(
+    consumerTopics: ConsumerSubscribeTopics,
+    consumerConfig: ConsumerConfig,
+    runConfig: ConsumerBatchRunConfig,
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<void> {
+    const { topics } = consumerTopics;
+    const { groupId } = consumerConfig;
+    const consumer = await this.initConsumer(groupId, consumerConfig, conId);
+
+    await consumer.subscribe(consumerTopics);
+    topics.map(t => this.logService.info('[`%s` %s-consumer] of topic `%s` ready to batch consume', conId, groupId, t));
+    await consumer.run(runConfig);
   }
 
   @PublishKafkaMetric()
-  async publish(record: ProducerTopic, producerConfig: ProducerConfig = {}, conId: string = DEFAULT_CON_ID) {
+  async publish(
+    record: ProducerTopic,
+    producerConfig: ProducerConfig = {},
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<void> {
     const key = record.producerKey ?? record.topic;
     const producer = await this.initProducer(key, producerConfig, conId);
     await producer.send(record);
   }
 
   @PublishKafkaMetric()
-  async publishManyTopic(
+  async publishBatch(
     batch: ProducerManyTopic,
     producerConfig: ProducerConfig = {},
     conId: string = DEFAULT_CON_ID,
-  ) {
+  ): Promise<void> {
     const producer = await this.initProducer(batch.producerKey, producerConfig, conId);
     await producer.sendBatch(batch);
   }

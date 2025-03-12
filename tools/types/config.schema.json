@@ -61842,7 +61842,7 @@
           "type": "number"
         },
         "retry": {
-          "$ref": "#/definitions/RetryOptions"
+          "$ref": "#/definitions/KafkaRetryConfig"
         },
         "debug": {
           "type": "boolean"
@@ -61890,6 +61890,50 @@
       "required": [
         "brokers"
       ]
+    },
+    "KafkaRetryConfig": {
+      "type": "object",
+      "properties": {
+        "factor": {
+          "type": "number"
+        },
+        "minTimeout": {
+          "type": "number"
+        },
+        "maxTimeout": {
+          "type": "number"
+        },
+        "randomize": {
+          "type": "boolean"
+        },
+        "retries": {
+          "type": "number"
+        },
+        "forever": {
+          "type": "boolean"
+        },
+        "unref": {
+          "type": "boolean"
+        },
+        "maxRetryTime": {
+          "type": "number"
+        },
+        "initialRetryTime": {
+          "type": "number"
+        },
+        "multiplier": {
+          "type": "number"
+        },
+        "restartOnFailure": {
+          "type": "object",
+          "properties": {
+            "isFunction": {
+              "type": "boolean",
+              "const": true
+            }
+          }
+        }
+      }
     },
     "SASLOptions": {
       "$ref": "#/definitions/SASLMechanismOptions%3CSASLMechanism%3E"

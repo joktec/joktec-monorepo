@@ -3,3 +3,5 @@ export * from './kafka.service';
 export * from './kafka.config';
 export * from './kafka.client';
 export * from './kafka.metric';
+export * from './loaders';
+export * from './models';
