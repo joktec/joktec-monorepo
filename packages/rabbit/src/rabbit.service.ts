@@ -1,16 +1,21 @@
 import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry, toInt } from '@joktec/core';
-import amqp, { ConfirmChannel, Connection, Options } from 'amqplib';
+import amqp, { ConfirmChannel, Connection } from 'amqplib';
 import { has } from 'lodash';
 import {
   RabbitAssertExchange,
+  RabbitAssertExchangeOptions,
+  RabbitAssertOptions,
   RabbitAssertQueue,
+  RabbitBaseOptions,
+  RabbitBindingOptions,
   RabbitConsumeOptions,
   RabbitEmpty,
   RabbitMessage,
   RabbitPublishOptions,
   RabbitPurgeQueue,
+  RabbitRejectOptions,
 } from './models';
-import { RabbitClient } from './rabbit.client';
+import { RabbitClient, RabbitProp } from './rabbit.client';
 import { RabbitConfig } from './rabbit.config';
 import { RabbitMetric, RabbitMetricService } from './rabbit.metric';
 
@@ -18,8 +23,7 @@ const RETRY_OPTS = 'rabbit.retry';
 
 @Injectable()
 export class RabbitService extends AbstractClientService<RabbitConfig, Connection> implements RabbitClient {
-  private channels: { [conId: string]: ConfirmChannel } = {};
-  private hooks: { [conId: string]: ((conId: string) => Promise<void>)[] } = {};
+  private props: { [conId: string]: RabbitProp } = {};
 
   @Inject() private rabbitMetricService: RabbitMetricService;
 
@@ -29,148 +33,187 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
 
   @Retry(RETRY_OPTS)
   protected async init(config: RabbitConfig): Promise<Connection> {
-    if (!has(this.hooks, config.conId)) this.hooks[config.conId] = [];
-    const connection = await amqp.connect(config);
+    if (!has(this.props, config.conId)) {
+      this.props[config.conId] = { channels: {}, hooks: {} };
+    }
 
+    const connection = await amqp.connect(config);
     connection.on(
       'error',
       (async (error: Error) => {
         this.logService.error(error, '`%s` rabbit connection error', config.conId);
         await this.clientInit(config, false);
-      }).bind(this),
+      }).bind(this, config),
     );
 
     return connection;
   }
 
+  protected async start(client: Connection, conId: string = DEFAULT_CON_ID): Promise<void> {
+    // TODO: Do nothing
+  }
+
+  protected async stop(client: Connection, conId: string = DEFAULT_CON_ID): Promise<void> {
+    const props: RabbitProp = this.props[conId];
+    Object.keys(props.channels).map(channelKey => props.channels[channelKey].close());
+  }
+
   @Retry(RETRY_OPTS)
-  private async createChannel(channelId: string = DEFAULT_CON_ID, conId: string = DEFAULT_CON_ID): Promise<void> {
-    if (!has(this.hooks, channelId)) {
-      this.hooks[channelId] = [];
+  private async createChannel(key: string, conId: string = DEFAULT_CON_ID): Promise<ConfirmChannel> {
+    let channel = this.props[conId].channels[key];
+    if (!channel) {
+      this.props[conId].hooks[key] = [];
+      this.props[conId].channels[key] = channel = await this.getClient(conId).createConfirmChannel();
+      this.logService.info('`%s` rabbit create confirmChannel `%s` success', conId, key);
+
+      channel?.on(
+        'error',
+        (async (error: Error) => {
+          this.logService.error(error, '`%s` rabbit confirmChannel error', conId);
+          await this.createChannel(conId);
+        }).bind(this, key, conId),
+      );
     }
 
-    this.channels[channelId] = await this.getClient(conId).createConfirmChannel();
-    this.logService.info('`%s` rabbit create confirmChannel `%s` success', conId, channelId);
-
-    this.channels[conId]?.on(
-      'error',
-      (async (error: Error) => {
-        this.logService.error(error, '`%s` rabbit confirmChannel error', conId);
-        await this.createChannel(conId);
-      }).bind(this),
-    );
-
-    for (const hook of this.hooks[conId]) {
-      await hook(conId);
+    const hooks = this.props[conId].hooks[key];
+    for (const hook of hooks) {
+      await hook();
     }
+
+    return channel;
   }
 
   @RabbitMetric()
   async sendToQueue(
     queue: string,
     messages: string[] = [],
-    opts?: RabbitPublishOptions,
+    opts: RabbitPublishOptions = {},
     conId: string = DEFAULT_CON_ID,
   ) {
+    const { channelKey = DEFAULT_CON_ID } = opts;
+    const channel = await this.createChannel(channelKey, conId);
     for (const msg of messages) {
-      this.channels[conId].sendToQueue(queue, Buffer.from(msg), opts);
+      channel.sendToQueue(queue, Buffer.from(msg), opts);
     }
-    await this.channels[conId].waitForConfirms();
+    await channel.waitForConfirms();
   }
 
   @RabbitMetric()
   async publish(
     exchange: string,
     messages: { key: string; content: string }[],
-    opts?: RabbitPublishOptions,
+    opts: RabbitPublishOptions = {},
     conId: string = DEFAULT_CON_ID,
   ) {
+    const { channelKey = DEFAULT_CON_ID } = opts;
+    const channel = await this.createChannel(channelKey, conId);
     for (const { key, content } of messages) {
-      this.channels[conId].publish(exchange, key, Buffer.from(content), opts);
+      channel.publish(exchange, key, Buffer.from(content), opts);
     }
-    await this.channels[conId].waitForConfirms();
+    await channel.waitForConfirms();
   }
 
   async consume(
     queue: string,
     callback: (msg: RabbitMessage) => Promise<void>,
-    options: RabbitConsumeOptions = {},
+    opts: RabbitConsumeOptions = {},
     conId: string = DEFAULT_CON_ID,
   ) {
+    const { channelKey = DEFAULT_CON_ID } = opts;
+    const channel = await this.createChannel(channelKey, conId);
+
     const onMessageFn = async (msg: RabbitMessage): Promise<void> => {
       try {
         this.logService.debug('`%s` rabbit consumed message: %s', conId, msg.content?.toString());
         await callback(msg);
-        options.autoCommit && (await this.commit(msg, conId));
+        opts.autoCommit && (await this.commit(msg, opts, conId));
         this.rabbitMetricService.consume('SUCCESS', queue, conId);
       } catch (error) {
         this.logService.error(error, '`%s` rabbit handle message fail', conId);
         this.rabbitMetricService.consume('ERROR', queue, conId);
-        await this.reject(msg, options.requeue ?? true, conId);
+        await this.reject(msg, opts, conId);
       }
     };
 
-    const hook = async (conId: string) => {
-      await this.channels[conId].prefetch(toInt(options.prefetchMessages) ?? 1);
-      await this.channels[conId].consume(queue, onMessageFn, options);
+    const hook = async () => {
+      await channel.prefetch(toInt(opts.prefetchMessages) ?? 1);
+      await channel.consume(queue, onMessageFn, opts);
     };
 
-    this.hooks[conId].push(hook);
-    await hook(conId);
+    this.props[conId].hooks[channelKey].push(hook);
+    await hook();
   }
 
-  async commit(msg: RabbitMessage, conId: string = DEFAULT_CON_ID) {
-    this.channels[conId].ack(msg);
-    await this.channels[conId].waitForConfirms();
+  async commit(msg: RabbitMessage, opts: RabbitBaseOptions = {}, conId: string = DEFAULT_CON_ID) {
+    const { channelKey = DEFAULT_CON_ID } = opts;
+    const channel = await this.createChannel(channelKey, conId);
+    channel.ack(msg);
+    await channel.waitForConfirms();
   }
 
-  async reject(msg: RabbitMessage, requeue?: boolean, conId: string = DEFAULT_CON_ID) {
-    this.channels[conId].reject(msg, requeue ?? true);
-    await this.channels[conId].waitForConfirms();
+  async reject(msg: RabbitMessage, opts: RabbitRejectOptions = {}, conId: string = DEFAULT_CON_ID) {
+    const { channelKey = DEFAULT_CON_ID, requeue = true } = opts;
+    const channel = await this.createChannel(channelKey, conId);
+    channel.reject(msg, requeue);
+    await channel.waitForConfirms();
   }
 
-  async queue(name: string, options?: Options.AssertQueue, conId: string = DEFAULT_CON_ID): Promise<RabbitAssertQueue> {
-    return await this.channels[conId].assertQueue(name, options);
-  }
-
-  async check(name: string, conId: string = DEFAULT_CON_ID): Promise<RabbitAssertQueue> {
-    return await this.channels[conId].checkQueue(name);
-  }
-
-  async purge(name: string, conId: string = DEFAULT_CON_ID): Promise<RabbitPurgeQueue> {
-    return this.channels[conId].purgeQueue(name);
-  }
-
-  async cancel(consumerTag: string, conId: string = DEFAULT_CON_ID): Promise<RabbitEmpty> {
-    return this.channels[conId].cancel(consumerTag);
-  }
-
-  async exchange(
+  async assert(
     name: string,
-    options?: Options.AssertExchange,
+    opts: RabbitAssertOptions = {},
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<RabbitAssertQueue> {
+    const { channelKey = DEFAULT_CON_ID } = opts;
+    const channel = await this.createChannel(channelKey, conId);
+    return await channel.assertQueue(name, opts);
+  }
+
+  async check(name: string, opts: RabbitBaseOptions = {}, conId: string = DEFAULT_CON_ID): Promise<RabbitAssertQueue> {
+    const { channelKey = DEFAULT_CON_ID } = opts;
+    const channel = await this.createChannel(channelKey, conId);
+    return await channel.checkQueue(name);
+  }
+
+  async purge(name: string, opts: RabbitBaseOptions = {}, conId: string = DEFAULT_CON_ID): Promise<RabbitPurgeQueue> {
+    const { channelKey = DEFAULT_CON_ID } = opts;
+    const channel = await this.createChannel(channelKey, conId);
+    return await channel.purgeQueue(name);
+  }
+
+  async cancel(
+    consumerTag: string,
+    opts: RabbitBaseOptions = {},
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<RabbitEmpty> {
+    const { channelKey = DEFAULT_CON_ID } = opts;
+    const channel = await this.createChannel(channelKey, conId);
+    return channel.cancel(consumerTag);
+  }
+
+  async assertExchange(
+    name: string,
+    opts: RabbitAssertExchangeOptions = {},
     conId: string = DEFAULT_CON_ID,
   ): Promise<RabbitAssertExchange> {
-    return await this.channels[conId].assertExchange(name, 'topic', options);
+    const { channelKey = DEFAULT_CON_ID } = opts;
+    const channel = await this.createChannel(channelKey, conId);
+    return await channel.assertExchange(name, 'topic', opts);
   }
 
   async binding(
-    exchange: string,
     queue: string,
-    routingKey: string,
-    exchangeOptions?: Options.AssertExchange,
-    queueOptions?: Options.AssertQueue,
+    exchange: { exchangeKey: string; routingKey: string },
+    opts: RabbitBindingOptions = {},
     conId: string = DEFAULT_CON_ID,
   ) {
-    await this.exchange(exchange, exchangeOptions, conId);
-    await this.queue(queue, queueOptions, conId);
-    await this.channels[conId].bindQueue(queue, exchange, routingKey);
-  }
+    const { channelKey = DEFAULT_CON_ID, queueOptions = {}, exchangeOptions = {} } = opts;
+    const channel = await this.createChannel(channelKey, conId);
 
-  protected async start(client: Connection, conId: string = DEFAULT_CON_ID): Promise<void> {
-    await this.createChannel(conId);
-  }
+    if (!queueOptions.channelKey) queueOptions.channelKey = channelKey;
+    if (!exchangeOptions.channelKey) exchangeOptions.channelKey = channelKey;
 
-  protected async stop(client: Connection, conId: string = DEFAULT_CON_ID): Promise<void> {
-    await client.close();
+    await this.assertExchange(exchange.exchangeKey, exchangeOptions, conId);
+    await this.assert(queue, queueOptions, conId);
+    await channel.bindQueue(queue, exchange.exchangeKey, exchange.routingKey);
   }
 }
