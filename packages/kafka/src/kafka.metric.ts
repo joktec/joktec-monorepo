@@ -23,8 +23,8 @@ export class KafkaMetricService {
   }
 }
 
-export const PublishKafkaMetric = () =>
-  BaseMethodDecorator(
+export const PublishKafkaMetric = (): MethodDecorator => {
+  return BaseMethodDecorator(
     async (options: CallbackMethodOptions) => {
       const { args, method, propertyKey, services } = options;
       const [record = {}, producerConfig, conId = DEFAULT_CON_ID] = args;
@@ -42,3 +42,4 @@ export const PublishKafkaMetric = () =>
     },
     [KafkaMetricService],
   );
+};

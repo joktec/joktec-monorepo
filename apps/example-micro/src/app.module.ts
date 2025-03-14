@@ -13,6 +13,7 @@ import {
 } from '@joktec/core';
 import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
+import { KafkaModule } from '@joktec/kafka';
 import { MailerModule } from '@joktec/mailer';
 import { NotifierModule } from '@joktec/notifier';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -38,6 +39,7 @@ import { RepositoryModule } from './repositories';
     MailerModule,
     NotifierModule,
     CacheModule,
+    KafkaModule,
     RepositoryModule,
     MainModule,
     I18nModule.forRoot({

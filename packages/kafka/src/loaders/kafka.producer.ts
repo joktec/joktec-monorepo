@@ -35,6 +35,7 @@ export function KafkaPublish<T = any>(
   return BaseMethodDecorator(
     async (options: CallbackMethodOptions): Promise<T> => {
       const { method, args, services } = options;
+      const [conId = DEFAULT_CON_ID] = args;
       const kafkaService: KafkaService = services.kafkaService;
 
       try {
@@ -47,7 +48,7 @@ export function KafkaPublish<T = any>(
 
         return result;
       } catch (error) {
-        services.pinoLogger.error(error, `[KafkaPublish] Failed to publish message`);
+        services.pinoLogger.error(error, '`%s` [KafkaPublish] Failed to publish message', conId);
         throw error;
       }
     },

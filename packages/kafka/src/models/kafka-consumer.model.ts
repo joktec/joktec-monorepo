@@ -1,4 +1,9 @@
-import { EachBatchPayload, EachMessagePayload } from 'kafkajs';
+import { Clazz } from '@joktec/core';
+import { KafkaBatchMessage, KafkaEachMessage } from './kafka-message.model';
+
+export type ConsumerInfoType = {
+  [key: string]: { serviceClazz: Clazz; serviceName: string; methodName: string }[];
+};
 
 export interface ConsumerRunCfg {
   autoCommit?: boolean;
@@ -8,10 +13,10 @@ export interface ConsumerRunCfg {
   partitionsConsumedConcurrently?: number;
 }
 
-export type ConsumerBatchRunConfig = ConsumerRunCfg & {
-  eachBatch: (payload: EachBatchPayload) => Promise<void>;
+export type ConsumerMessageRunConfig = ConsumerRunCfg & {
+  eachMessage: (payload: KafkaEachMessage) => Promise<void>;
 };
 
-export type ConsumerMessageRunConfig = ConsumerRunCfg & {
-  eachMessage: (payload: EachMessagePayload) => Promise<void>;
+export type ConsumerBatchRunConfig = ConsumerRunCfg & {
+  eachBatch: (payload: KafkaBatchMessage) => Promise<void>;
 };

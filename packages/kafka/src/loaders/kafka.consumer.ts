@@ -1,18 +1,25 @@
-import { DEFAULT_CON_ID, Injectable, OnModuleInit, Reflector } from '@joktec/core';
-import { EachMessagePayload } from 'kafkajs';
+import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector, toArray } from '@joktec/core';
 import { KafkaService } from '../kafka.service';
-import { ConsumerRunCfg } from '../models';
+import { ConsumerInfoType, ConsumerRunCfg, KafkaEachMessage } from '../models';
+
+const consumerInfos: ConsumerInfoType = {};
 
 export const KAFKA_CONSUME_METADATA = 'kafka:consume';
 
-export function KafkaConsume<T extends (msg: EachMessagePayload, ...args: any[]) => any>(
+export function KafkaConsume<T extends (msg: KafkaEachMessage, ...args: any[]) => any>(
   topics: string | string[],
   groupId: string,
-  runConfig: ConsumerRunCfg,
+  runConfig?: ConsumerRunCfg,
   conId: string = DEFAULT_CON_ID,
 ) {
-  return function <U extends T>(target: any, key: string, descriptor: TypedPropertyDescriptor<U>) {
+  return function <U extends T>(target: any, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<U>) {
+    const serviceName = target.constructor.name;
+    const methodName = propertyKey.toString();
+    const code = `${serviceName}.${methodName}`;
+
+    if (!consumerInfos[code]) consumerInfos[code] = [];
     Reflect.defineMetadata(KAFKA_CONSUME_METADATA, { topics, groupId, runConfig, conId }, descriptor.value);
+    consumerInfos[code].push({ serviceClazz: target.constructor, serviceName, methodName });
   };
 }
 
@@ -21,19 +28,19 @@ export class KafkaConsumerLoader implements OnModuleInit {
   constructor(
     private readonly kafkaService: KafkaService,
     private readonly reflector: Reflector,
+    private readonly moduleRef: ModuleRef,
   ) {}
 
   async onModuleInit() {
-    const providers = Reflect.getMetadataKeys(global) || [];
-    for (const provider of providers) {
-      const instance = global[provider.name] as any;
-      if (!instance) continue;
+    setTimeout(() => this.init(), 5000);
+  }
 
-      const prototype = Object.getPrototypeOf(instance);
-      const methods = Object.getOwnPropertyNames(prototype);
-
-      for (const methodName of methods) {
-        const method = instance[methodName];
+  private async init() {
+    Object.values(consumerInfos)
+      .flat()
+      .map(({ serviceClazz, methodName }) => {
+        const serviceInstance = this.moduleRef.get(serviceClazz, { strict: false });
+        const method = serviceInstance[methodName];
 
         const metadata = this.reflector.get<{
           topics: string | string[];
@@ -43,14 +50,17 @@ export class KafkaConsumerLoader implements OnModuleInit {
         }>(KAFKA_CONSUME_METADATA, method);
 
         if (metadata) {
-          await this.kafkaService.consume(
-            { topics: Array.isArray(metadata.topics) ? metadata.topics : [metadata.topics] },
+          const eachMessage = async (payload: KafkaEachMessage) => {
+            await method.call(serviceInstance, payload);
+          };
+
+          this.kafkaService.consume(
+            { topics: toArray(metadata.topics) },
             { groupId: metadata.groupId },
-            { ...metadata.runConfig, eachMessage: method.bind(instance) },
+            { ...metadata.runConfig, eachMessage },
             metadata.conId,
           );
         }
-      }
-    }
+      });
   }
 }

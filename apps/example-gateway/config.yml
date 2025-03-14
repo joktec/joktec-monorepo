@@ -33,7 +33,7 @@ log:
   level: info
   hideWarning: false
   hideObject: false
-  hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]
+  # hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]
   transport:
     enable: true
     target: pino-mongodb
@@ -100,7 +100,7 @@ mysql:
   database: dispatch
   sync: true
   benchmark:
-    enable: true
+    enable: false
     all: true
 
 storage:
@@ -128,3 +128,7 @@ http:
 
 firebase:
   credential: './credentials/dispatch-d581a.json'
+
+kafka:
+  brokers: [ localhost:9092 ]
+  ssl: false

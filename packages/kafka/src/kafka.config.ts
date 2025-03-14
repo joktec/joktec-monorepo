@@ -60,7 +60,7 @@ export class KafkaConfig extends ClientConfig {
 
   @IsOptional()
   @IsString()
-  clientId?: string = 'kafkajs';
+  clientId?: string;
 
   @IsOptional()
   @IsPositive()
@@ -97,6 +97,7 @@ export class KafkaConfig extends ClientConfig {
     super(props);
     Object.assign(this, {
       ...props,
+      clientId: props.clientId || props.conId,
       retry: new KafkaRetryConfig(props.retry),
       socketFactory: props?.socketFactory,
     });
@@ -108,13 +109,14 @@ export class KafkaConfig extends ClientConfig {
       [logLevel.ERROR]: logService.error.bind(logService),
       [logLevel.INFO]: logService.info.bind(logService),
       [logLevel.DEBUG]: logService.debug.bind(logService),
+      [logLevel.NOTHING]: logService.trace.bind(logService),
     };
 
     this.logCreator =
-      (level: logLevel) =>
+      (_: logLevel) =>
       ({ namespace, level, log }) => {
         const { timestamp, logger, message, ...extra } = log;
-        pinoLog[level](extra, '[`%s` %s] %s}', this.conId, namespace, message);
+        pinoLog[level](extra, '`%s` (%s) %s', this.conId, namespace, message);
       };
   }
 }

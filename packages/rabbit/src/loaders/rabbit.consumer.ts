@@ -1,7 +1,8 @@
-import { DEFAULT_CON_ID, Injectable, OnModuleInit, Reflector } from '@joktec/core';
-import { Type } from '@nestjs/common';
-import { RabbitConsumeOptions, RabbitMessage } from '../models';
+import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector } from '@joktec/core';
+import { ConsumerInfoType, RabbitConsumeOptions, RabbitMessage } from '../models';
 import { RabbitService } from '../rabbit.service';
+
+const consumerInfos: ConsumerInfoType = {};
 
 export const RABBIT_CONSUME_METADATA = 'rabbit:consume';
 
@@ -10,8 +11,14 @@ export function RabbitConsume<T extends (msg: RabbitMessage, ...args: any[]) => 
   options: RabbitConsumeOptions = {},
   conId: string = DEFAULT_CON_ID,
 ) {
-  return function <U extends T>(target: any, key: string, descriptor: TypedPropertyDescriptor<U>) {
+  return function <U extends T>(target: any, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<U>) {
+    const serviceName = target.constructor.name;
+    const methodName = propertyKey.toString();
+    const code = `${serviceName}.${methodName}`;
+
+    if (!consumerInfos[code]) consumerInfos[code] = [];
     Reflect.defineMetadata(RABBIT_CONSUME_METADATA, { queue, options, conId }, descriptor.value);
+    consumerInfos[code].push({ serviceClazz: target.constructor, serviceName, methodName });
   };
 }
 
@@ -20,19 +27,20 @@ export class RabbitConsumerLoader implements OnModuleInit {
   constructor(
     private readonly rabbitService: RabbitService,
     private readonly reflector: Reflector,
+    private readonly moduleRef: ModuleRef,
   ) {}
 
   async onModuleInit() {
-    const providers = Reflect.getMetadataKeys(global) || [];
-    providers.forEach((provider: Type<any>) => {
-      const instance = global[provider.name] as any;
-      if (!instance) return;
+    setTimeout(() => this.init(), 5000);
+  }
 
-      const prototype = Object.getPrototypeOf(instance);
-      const methods = Object.getOwnPropertyNames(prototype);
+  async init() {
+    Object.values(consumerInfos)
+      .flat()
+      .map(({ serviceClazz, methodName }) => {
+        const serviceInstance = this.moduleRef.get(serviceClazz, { strict: false });
+        const method = serviceInstance[methodName];
 
-      methods.forEach(methodName => {
-        const method = instance[methodName];
         const metadata = this.reflector.get<{
           queue: string;
           options: RabbitConsumeOptions;
@@ -40,9 +48,11 @@ export class RabbitConsumerLoader implements OnModuleInit {
         }>(RABBIT_CONSUME_METADATA, method);
 
         if (metadata) {
-          this.rabbitService.consume(metadata.queue, method.bind(instance), metadata.options, metadata.conId);
+          const cb = async (msg: RabbitMessage) => {
+            await method.bind(serviceInstance, msg);
+          };
+          this.rabbitService.consume(metadata.queue, cb, metadata.options, metadata.conId);
         }
       });
-    });
   }
 }

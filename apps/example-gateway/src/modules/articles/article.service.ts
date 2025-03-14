@@ -35,7 +35,7 @@ export class ArticleService extends BaseService<Article, string> {
     super(articleRepo);
   }
 
-  paginate(query: IBaseRequest<Article>): Promise<IPaginationResponse<Article>> {
+  async paginate(query: IBaseRequest<Article>): Promise<IPaginationResponse<Article>> {
     return super.paginate(query);
   }
 

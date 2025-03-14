@@ -28,6 +28,7 @@ export function KafkaBatchPublish<T = any>(
   return BaseMethodDecorator(
     async (options: CallbackMethodOptions): Promise<T> => {
       const { method, args, services } = options;
+      const [conId = DEFAULT_CON_ID] = args;
       const kafkaService: KafkaService = services.kafkaService;
 
       try {
@@ -44,7 +45,7 @@ export function KafkaBatchPublish<T = any>(
         await kafkaService.publishBatch(batch, publishConfig.consumer, connectionId);
         return result;
       } catch (error) {
-        services.pinoLogger.error(error, `[KafkaBatchPublish] Failed to publish batch message:`);
+        services.pinoLogger.error(error, '`%s` [KafkaBatchPublish] Failed to publish message', conId);
         throw error;
       }
     },

@@ -95,3 +95,7 @@ notifier:
   fcm:
     appName: dispatch-19582
     credential: './credentials/dispatch-d581a.json'
+
+kafka:
+  brokers: [ 127.0.0.1:9092 ]
+  ssl: false

@@ -1,5 +1,13 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
-import { Consumer, ConsumerConfig, ConsumerSubscribeTopics, Kafka, Producer, ProducerConfig } from 'kafkajs';
+import {
+  Consumer,
+  ConsumerConfig,
+  ConsumerSubscribeTopics,
+  Kafka,
+  Partitioners,
+  Producer,
+  ProducerConfig,
+} from 'kafkajs';
 import { KafkaClient, KafkaProp } from './kafka.client';
 import { KafkaConfig } from './kafka.config';
 import { PublishKafkaMetric } from './kafka.metric';
@@ -19,7 +27,7 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
   protected async init(config: KafkaConfig): Promise<Kafka> {
     config.log(this.logService);
     this.props[config.conId] = { producers: {}, consumers: {} };
-    return new Kafka(config);
+    return new Kafka({ ...config });
   }
 
   protected async start(client: Kafka, conId: string = DEFAULT_CON_ID): Promise<void> {
@@ -32,18 +40,17 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     Object.keys(props.consumers).map(consumerKey => props.consumers[consumerKey].disconnect());
   }
 
-  private async initProducer(
-    key: string,
-    producerConfig: ProducerConfig = {},
-    conId: string = DEFAULT_CON_ID,
-  ): Promise<Producer> {
+  private async initProducer(key: string, cfg: ProducerConfig = {}, conId: string = DEFAULT_CON_ID): Promise<Producer> {
     let producer = this.props[conId].producers[key];
     if (!producer) {
-      this.props[conId].producers[key] = producer = this.getClient(conId).producer(producerConfig);
-      this.logService.info(producerConfig, '[`%s` %s-producer] created', conId, key);
+      this.props[conId].producers[key] = producer = this.getClient(conId).producer({
+        createPartitioner: Partitioners.LegacyPartitioner,
+        ...cfg,
+      });
+      this.logService.info(cfg, '`%s` [%s-producer] created', conId, key);
 
       await producer.connect();
-      this.logService.info('[`%s` %s-producer] connected', conId, key);
+      this.logService.info('`%s` [%s-producer] connected', conId, key);
     }
     return producer;
   }
@@ -51,13 +58,14 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
   private async initConsumer(groupId: string, cfg: ConsumerConfig, conId: string = DEFAULT_CON_ID): Promise<Consumer> {
     let consumer = this.props[conId].consumers[groupId];
     if (!consumer) {
-      this.props[conId].consumers[groupId] = consumer = this.getClient(conId).consumer(cfg);
-      this.logService.info(cfg, '[`%s` %s-consumer] created', conId, groupId);
+      this.props[conId].consumers[groupId] = consumer = this.getClient(conId).consumer({
+        ...cfg,
+      });
+      this.logService.info(cfg, '`%s` [%s-consumer] created', conId, groupId);
 
       await consumer.connect();
-      this.logService.info('[`%s` %s-consumer] connected', conId, groupId);
+      this.logService.info('`%s` [%s-consumer] connected', conId, groupId);
     }
-
     return consumer;
   }
 
@@ -72,7 +80,7 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     const consumer = await this.initConsumer(groupId, consumerConfig, conId);
 
     await consumer.subscribe(consumerTopics);
-    topics.map(t => this.logService.info('[`%s` %s-consumer] of topic `%s` ready to consume', conId, groupId, t));
+    topics.map(t => this.logService.info('`%s` [%s-consumer] of topic `%s` ready to consume', conId, groupId, t));
     await consumer.run(runConfig);
   }
 
@@ -87,7 +95,7 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     const consumer = await this.initConsumer(groupId, consumerConfig, conId);
 
     await consumer.subscribe(consumerTopics);
-    topics.map(t => this.logService.info('[`%s` %s-consumer] of topic `%s` ready to batch consume', conId, groupId, t));
+    topics.map(t => this.logService.info('`%s` [%s-consumer] of topic `%s` ready to batch consume', conId, groupId, t));
     await consumer.run(runConfig);
   }
 
