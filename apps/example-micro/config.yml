@@ -41,15 +41,29 @@ misc:
   resizeUrl: http://127.0.0.1:9000/dispatch
 
 mongo:
-  replica: false
+  - conId: default
+    replica: false
+    host: localhost
+    port: 27017
+    username: root
+    password: root
+    database: dispatch
+    autoIndex: true
+    params: authSource=admin&directConnection=true&connectTimeoutMS=20000
+    debug: false
+  - conId: logConnection
+    database: dispatch_log
+
+mysql:
   host: localhost
-  port: 27017
+  port: 3306
   username: root
   password: root
   database: dispatch
-  autoIndex: true
-  params: authSource=admin&directConnection=true&connectTimeoutMS=20000
-  debug: false
+  sync: true
+  benchmark:
+    enable: false
+    all: true
 
 storage:
   region: ap-southeast-1

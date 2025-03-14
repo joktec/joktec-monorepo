@@ -22,14 +22,4 @@ export class ArticleHandler {
     }
     await sleep(1000);
   }
-
-  @KafkaConsume('test_topic_2', 'joktec2')
-  async testKafka2(msg: KafkaEachMessage) {
-    if (msg.message.value) {
-      this.logService.info('Handle message %s from topic %s', msg.message.value.toString(), msg.topic);
-    } else {
-      this.logService.info('Not found message from topic %s', msg.topic);
-    }
-    await this.kafkaService.publish({ topic: 'test_topic', messages: [{ value: 'Hello my friend' }] });
-  }
 }

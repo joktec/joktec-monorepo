@@ -1,5 +1,4 @@
 import { BaseService, Injectable } from '@joktec/core';
-import { MailerService } from '@joktec/mailer';
 import { I18nService, TranslateOptions } from 'nestjs-i18n';
 import { LOCALE } from '../../app.constant';
 import { SuccessResponse } from '../../common';
@@ -12,7 +11,7 @@ export class OtpService extends BaseService<Otp, string> {
   constructor(
     protected otpRepo: OtpRepo,
     private i18nService: I18nService,
-    private mailerService: MailerService,
+    // private mailerService: MailerService,
   ) {
     super(otpRepo);
   }
@@ -23,20 +22,20 @@ export class OtpService extends BaseService<Otp, string> {
     const opts: TranslateOptions = { lang: otp.locale };
 
     try {
-      await this.mailerService.send({
-        to: otp.email,
-        subject: this.i18nService.t(`email.${emailType}.SUBJECT`, opts),
-        template: {
-          name: template,
-          context: {
-            title: this.i18nService.t(`email.${emailType}.TITLE`, opts),
-            code: otp.publicCode,
-            logo: 'https://dispatch.cdnser.be/www-renewal-2022/asset/images/dispatch-renewal-logo.png',
-            content: { ...this.buildContent(otp) },
-            footer: { ...this.buildFooter(otp.locale) },
-          },
-        },
-      });
+      // await this.mailerService.send({
+      //   to: otp.email,
+      //   subject: this.i18nService.t(`email.${emailType}.SUBJECT`, opts),
+      //   template: {
+      //     name: template,
+      //     context: {
+      //       title: this.i18nService.t(`email.${emailType}.TITLE`, opts),
+      //       code: otp.publicCode,
+      //       logo: 'https://dispatch.cdnser.be/www-renewal-2022/asset/images/dispatch-renewal-logo.png',
+      //       content: { ...this.buildContent(otp) },
+      //       footer: { ...this.buildFooter(otp.locale) },
+      //     },
+      //   },
+      // });
       return { success: true };
     } catch (err) {
       this.logService.error(err, 'Error when send email %s', err.message);

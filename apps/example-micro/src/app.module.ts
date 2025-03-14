@@ -14,7 +14,6 @@ import {
 import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
 import { KafkaModule } from '@joktec/kafka';
-import { MailerModule } from '@joktec/mailer';
 import { NotifierModule } from '@joktec/notifier';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
@@ -36,7 +35,7 @@ import { RepositoryModule } from './repositories';
     ScheduleModule.forRoot(),
     HttpModule,
     FirebaseModule,
-    MailerModule,
+    // MailerModule,
     NotifierModule,
     CacheModule,
     KafkaModule,

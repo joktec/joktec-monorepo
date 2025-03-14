@@ -1,12 +1,13 @@
-import { IsTimeZone } from '@joktec/core';
+import { IsTimeZone, Type } from '@joktec/core';
 import { CrontabStatus, CrontabType, ICrontabModel } from '@joktec/cron';
-import { Prop, PropType, Schema } from '@joktec/mongo';
+import { Prop, PropType, Ref, Schema } from '@joktec/mongo';
 import { pick } from 'lodash';
 import { BaseSchema, I18nText, I18nTransform } from '../common';
+import { CronHistory } from './cron-history.schema';
 
 @Schema({
   collection: 'crons',
-  textSearch: 'code,title,description.en,description.vi',
+  textSearch: 'title,description.en,description.vi',
   unique: ['code'],
   paranoid: true,
 })
@@ -17,7 +18,7 @@ export class CronSchema extends BaseSchema implements ICrontabModel {
   @Prop({ default: null, comment: 'Optional title for the cron job' })
   title?: string;
 
-  @Prop({ default: null, comment: 'Description of the cron job' })
+  @Prop({ comment: 'Description of the cron job' })
   @I18nTransform()
   description?: I18nText;
 
@@ -54,6 +55,34 @@ export class CronSchema extends BaseSchema implements ICrontabModel {
 
   @Prop({ required: true, enum: CrontabStatus, default: CrontabStatus.ACTIVATED, comment: 'Status of the cron job' })
   status!: CrontabStatus;
+
+  // Virtual
+  @Prop(
+    {
+      type: CronHistory,
+      ref: () => CronHistory,
+      foreignField: 'cronRefId',
+      localField: '_id',
+      options: { sort: { createdAt: -1 } },
+    },
+    PropType.ARRAY,
+  )
+  @Type(() => CronHistory)
+  histories?: Ref<CronHistory>[];
+
+  @Prop(
+    {
+      type: CronHistory,
+      ref: () => CronHistory,
+      foreignField: 'cronRefId',
+      localField: '_id',
+      options: { sort: { createdAt: -1 } },
+      limit: 5,
+    },
+    PropType.ARRAY,
+  )
+  @Type(() => CronHistory)
+  lastHistories?: Ref<CronHistory>[];
 
   public snapshot(): Object {
     return pick(this, [

@@ -40,7 +40,7 @@
     "@joktec/cacher": "0.0.124",
     "@joktec/cron": "0.0.226",
     "@joktec/http": "0.0.183",
-    "@joktec/kafka": "0.0.174",
+    "@joktec/kafka": "0.0.175",
     "@joktec/mailer": "0.0.175",
     "@joktec/mongo": "0.0.239",
     "@joktec/mysql": "0.0.198",
