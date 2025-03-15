@@ -1,4 +1,4 @@
-import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector } from '@joktec/core';
+import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector, toBool, toInt } from '@joktec/core';
 import { ConsumerInfoType, RabbitConsumeOptions, RabbitMessage } from '../models';
 import { RabbitService } from '../rabbit.service';
 
@@ -48,10 +48,18 @@ export class RabbitConsumerLoader implements OnModuleInit {
         }>(RABBIT_CONSUME_METADATA, method);
 
         if (metadata) {
-          const cb = async (msg: RabbitMessage) => {
-            await method.bind(serviceInstance, msg);
+          const callback = async (msg: RabbitMessage, ...args: any[]) => {
+            await method.call(serviceInstance, msg, ...args);
           };
-          this.rabbitService.consume(metadata.queue, cb, metadata.options, metadata.conId);
+
+          const options: RabbitConsumeOptions = {
+            ...metadata.options,
+            autoCommit: toBool(metadata.options?.autoCommit, true),
+            prefetchMessages: toInt(metadata.options?.prefetchMessages, 1),
+            requeue: toBool(metadata.options?.requeue, true),
+          };
+
+          this.rabbitService.consume(metadata.queue, callback, options, metadata.conId);
         }
       });
   }

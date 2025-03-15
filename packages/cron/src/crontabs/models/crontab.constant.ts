@@ -1,3 +1,5 @@
+export type CronTrace = 'all' | 'error' | 'none';
+
 export enum CrontabType {
   CRON = 'cron',
 }

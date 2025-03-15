@@ -32,7 +32,7 @@
     "@joktec/file": "^0.0.173",
     "@joktec/firebase": "^0.0.93",
     "@joktec/http": "^0.0.183",
-    "@joktec/kafka": "^0.0.175",
+    "@joktec/kafka": "^0.0.176",
     "@joktec/mailer": "^0.0.175",
     "@joktec/mongo": "^0.0.239",
     "@joktec/mysql": "^0.0.198",

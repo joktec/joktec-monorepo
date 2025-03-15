@@ -50,8 +50,8 @@ export class KafkaConsumerLoader implements OnModuleInit {
         }>(KAFKA_CONSUME_METADATA, method);
 
         if (metadata) {
-          const eachMessage = async (payload: KafkaEachMessage) => {
-            await method.call(serviceInstance, payload);
+          const eachMessage = async (payload: KafkaEachMessage, ...args: any[]) => {
+            await method.call(serviceInstance, payload, ...args);
           };
 
           this.kafkaService.consume(

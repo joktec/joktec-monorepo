@@ -1,5 +1,5 @@
 import { DeepPartial, IBaseRepository, ICondition, KeyOf } from '@joktec/core';
-import { ICrontabHistoryModel, ICrontabModel } from './crontab.model';
+import { ICrontabHistoryModel, ICrontabModel } from './models';
 
 export interface ICrontabRepo<T extends ICrontabModel, ID> extends IBaseRepository<T, ID> {
   bulkUpsert(docs: Array<DeepPartial<T>>, onConflicts?: KeyOf<T>[], opts?: any): Promise<any>;

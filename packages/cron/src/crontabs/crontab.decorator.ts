@@ -1,26 +1,7 @@
-import { Clazz, InternalServerException } from '@joktec/core';
+import { InternalServerException } from '@joktec/core';
 import dayjs from 'dayjs';
 import { has, isString } from 'lodash';
-import { CrontabType } from './crontab.constant';
-import { ICrontabModel } from './crontab.model';
-
-export type CronTrace = 'all' | 'error' | 'none';
-
-export interface ICrontabMeta {
-  cron: Partial<ICrontabModel>;
-  service: Clazz;
-  verbose?: boolean;
-  trace?: CronTrace;
-}
-
-export interface ICrontabOption {
-  title?: string;
-  timezone?: string;
-  timeout?: number;
-  parameters?: { [key: string]: any };
-  verbose?: boolean;
-  trace?: CronTrace;
-}
+import { CrontabType, ICrontabMeta, ICrontabModel, ICrontabOption } from './models';
 
 global.AllCronMetadata = {};
 

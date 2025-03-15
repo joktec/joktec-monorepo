@@ -39,15 +39,14 @@
     "@joktec/cacher": "0.0.124",
     "@joktec/cron": "0.0.226",
     "@joktec/http": "0.0.183",
-    "@joktec/kafka": "0.0.175",
+    "@joktec/kafka": "0.0.176",
     "@joktec/mailer": "0.0.175",
     "@joktec/mongo": "0.0.239",
     "@joktec/notifier": "0.0.176",
     "@joktec/firebase": "0.0.93",
     "@joktec/storage": "0.0.177",
-    "@nestjs/schedule": "^4.1.1",
+    "@joktec/rabbit": "0.0.175",
     "byte-length": "^1.0.2",
-    "cron": "^3.1.7",
     "gravatar": "^1.8.2",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
@@ -56,8 +55,7 @@
     "nestjs-i18n": "^10.4.9",
     "rxjs": "^7.8.1",
     "pino-mongodb": "^4.3.0",
-    "sharp": "^0.33.5",
-    "timezone-enum": "^1.0.4"
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.9",

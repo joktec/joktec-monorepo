@@ -1,8 +1,6 @@
 import { Injectable } from '@joktec/core';
-import { Crontab } from '@joktec/cron';
-import { CronExpression } from '@nestjs/schedule';
+import { CronExpression, Crontab, CrontabTz } from '@joktec/cron';
 import { head } from 'lodash';
-import Timezone from 'timezone-enum';
 import { ArticleFileType, ArticleStatus, ArticleType, ArtistStatus, UserRole } from '../../models/constants';
 import { ArticleRepo, ArtistRepo, UserRepo } from '../../repositories';
 
@@ -16,7 +14,7 @@ export class ArtistCronner {
 
   @Crontab(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
     title: 'Every day at midnight will get the best photo card (most download) and set avatar for this article',
-    timezone: Timezone['Asia/Seoul'],
+    timezone: CrontabTz['Asia/Seoul'],
   })
   async syncAvatar() {
     const [bizUsers, artists] = await Promise.all([

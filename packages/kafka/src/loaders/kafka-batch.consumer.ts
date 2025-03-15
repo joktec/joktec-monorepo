@@ -50,8 +50,8 @@ export class KafkaBatchConsumerLoader implements OnModuleInit {
         }>(KAFKA_CONSUME_BATCH_METADATA, method);
 
         if (metadata) {
-          const eachBatch = async (payload: KafkaBatchMessage) => {
-            await method.bind(serviceInstance, payload);
+          const eachBatch = async (payload: KafkaBatchMessage, ...args: any[]) => {
+            await method.bind(serviceInstance, payload, ...args);
           };
 
           this.kafkaService.consumeBatch(

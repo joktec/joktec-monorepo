@@ -1,4 +1,21 @@
-import { CrontabHistoryStatus, CrontabHistoryType, CrontabStatus, CrontabType } from './crontab.constant';
+import { Clazz } from '@joktec/core';
+import { CrontabHistoryStatus, CrontabHistoryType, CrontabStatus, CrontabType, CronTrace } from './crontab.constant';
+
+export interface ICrontabMeta {
+  cron: Partial<ICrontabModel>;
+  service: Clazz;
+  verbose?: boolean;
+  trace?: CronTrace;
+}
+
+export interface ICrontabOption {
+  title?: string;
+  timezone?: string;
+  timeout?: number;
+  parameters?: { [key: string]: any };
+  verbose?: boolean;
+  trace?: CronTrace;
+}
 
 export interface ICrontabModel {
   id: string;

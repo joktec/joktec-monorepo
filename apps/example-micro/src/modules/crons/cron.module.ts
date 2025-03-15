@@ -1,5 +1,5 @@
 import { Module } from '@joktec/core';
-import { ScheduleModule } from '@nestjs/schedule';
+import { ScheduleModule } from '@joktec/cron';
 import { CronController } from './cron.controller';
 import { CronScheduler } from './cron.scheduler';
 import { CronService } from './cron.service';

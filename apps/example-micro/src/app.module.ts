@@ -15,7 +15,7 @@ import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
 import { KafkaModule } from '@joktec/kafka';
 import { NotifierModule } from '@joktec/notifier';
-import { ScheduleModule } from '@nestjs/schedule';
+import { RabbitModule } from '@joktec/rabbit';
 import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { appConfigFactory } from './app.config';
 import { LOCALE } from './app.constant';
@@ -32,13 +32,13 @@ import { RepositoryModule } from './repositories';
       useFactory: (cfg: ConfigService) => createPinoHttp(cfg),
     }),
     MicroModule.forRoot({ metric: true }),
-    ScheduleModule.forRoot(),
     HttpModule,
     FirebaseModule,
     // MailerModule,
     NotifierModule,
     CacheModule,
     KafkaModule,
+    RabbitModule,
     RepositoryModule,
     MainModule,
     I18nModule.forRoot({

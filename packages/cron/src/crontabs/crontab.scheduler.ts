@@ -15,9 +15,14 @@ import { CronJob, CronJobParams } from 'cron';
 import { isValidCron } from 'cron-validator';
 import { get, map } from 'lodash';
 import { CrontabConfig } from './crontab.config';
-import { CrontabHistoryStatus, CrontabHistoryType, CrontabStatus } from './crontab.constant';
-import { ICrontabMeta } from './crontab.decorator';
-import { ICrontabHistoryModel, ICrontabModel } from './crontab.model';
+import {
+  CrontabHistoryStatus,
+  CrontabHistoryType,
+  CrontabStatus,
+  ICrontabHistoryModel,
+  ICrontabMeta,
+  ICrontabModel,
+} from './models';
 import { ICrontabHistoryRepo, ICrontabRepo } from './crontab.repo';
 
 export abstract class CrontabScheduler implements OnModuleInit {

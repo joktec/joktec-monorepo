@@ -23,5 +23,5 @@ export interface RabbitClient extends Client<RabbitConfig, Connection> {
 
 export interface RabbitProp {
   channels: { [channelKey: string]: ConfirmChannel };
-  hooks: { [channelKey: string]: (() => Promise<void>)[] };
+  hooks: { [channelKey: string]: ((channel: ConfirmChannel) => Promise<void>)[] };
 }

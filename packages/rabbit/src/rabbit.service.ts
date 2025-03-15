@@ -62,7 +62,7 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
   private async createChannel(key: string, conId: string = DEFAULT_CON_ID): Promise<ConfirmChannel> {
     let channel = this.props[conId].channels[key];
     if (!channel) {
-      this.props[conId].hooks[key] = [];
+      if (!this.props[conId].hooks[key]) this.props[conId].hooks[key] = [];
       this.props[conId].channels[key] = channel = await this.getClient(conId).createConfirmChannel();
       this.logService.info('`%s` rabbit create confirmChannel `%s` success', conId, key);
 
@@ -73,11 +73,11 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
           await this.createChannel(conId);
         }).bind(this, key, conId),
       );
-    }
 
-    const hooks = this.props[conId].hooks[key];
-    for (const hook of hooks) {
-      await hook();
+      const hooks = this.props[conId].hooks[key];
+      for (const hook of hooks) {
+        await hook(this.props[conId].channels[key]);
+      }
     }
 
     return channel;
@@ -135,13 +135,13 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
       }
     };
 
-    const hook = async () => {
-      await channel.prefetch(toInt(opts.prefetchMessages) ?? 1);
-      await channel.consume(queue, onMessageFn, opts);
+    const hook = async (_channel: ConfirmChannel) => {
+      await _channel.prefetch(toInt(opts.prefetchMessages, 1));
+      await _channel.consume(queue, onMessageFn, opts);
     };
 
     this.props[conId].hooks[channelKey].push(hook);
-    await hook();
+    await hook(channel);
   }
 
   async commit(msg: RabbitMessage, opts: RabbitBaseOptions = {}, conId: string = DEFAULT_CON_ID) {
