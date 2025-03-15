@@ -1,8 +1,17 @@
 import { CompressionTypes, ProducerBatch, ProducerConfig, ProducerRecord } from 'kafkajs';
 
 export type KafkaPublishConfig = {
-  record?: { acks?: number; timeout?: number; compression?: CompressionTypes };
   consumer?: ProducerConfig;
+  record?: {
+    acks?: number;
+    timeout?: number;
+    compression?: CompressionTypes;
+  };
+  array?: {
+    mode?: 'combine' | 'split';
+    chunkSize?: number;
+    flatten?: boolean;
+  };
 };
 
 export interface ProducerTopic extends ProducerRecord {
