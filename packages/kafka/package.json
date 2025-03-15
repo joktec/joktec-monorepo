@@ -1,7 +1,7 @@
 {
   "name": "@joktec/kafka",
   "description": "JokTec - Kafka Service",
-  "version": "0.0.175",
+  "version": "0.0.176",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
