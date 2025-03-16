@@ -1,23 +1,27 @@
-import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry, toInt } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry, toArray, toInt } from '@joktec/core';
 import amqp, { ConfirmChannel, Connection } from 'amqplib';
 import { has } from 'lodash';
 import {
+  RABBIT_AUTO_BINDING,
   RabbitAssertExchange,
   RabbitAssertExchangeOptions,
   RabbitAssertOptions,
   RabbitAssertQueue,
+  RabbitAutoBindingRegistry,
   RabbitBaseOptions,
   RabbitBindingOptions,
   RabbitConsumeOptions,
   RabbitEmpty,
+  RabbitExchangeType,
   RabbitMessage,
   RabbitPublishOptions,
+  RabbitPublishResult,
   RabbitPurgeQueue,
   RabbitRejectOptions,
 } from './models';
 import { RabbitClient, RabbitProp } from './rabbit.client';
 import { RabbitConfig } from './rabbit.config';
-import { RabbitMetric, RabbitMetricService } from './rabbit.metric';
+import { RabbitMetric, RabbitMetricService, RabbitPublishStatus } from './rabbit.metric';
 
 const RETRY_OPTS = 'rabbit.retry';
 
@@ -25,6 +29,7 @@ const RETRY_OPTS = 'rabbit.retry';
 export class RabbitService extends AbstractClientService<RabbitConfig, Connection> implements RabbitClient {
   private props: { [conId: string]: RabbitProp } = {};
 
+  @Inject(RABBIT_AUTO_BINDING) private autoBindingRegistry: RabbitAutoBindingRegistry;
   @Inject() private rabbitMetricService: RabbitMetricService;
 
   constructor() {
@@ -50,7 +55,12 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
   }
 
   protected async start(client: Connection, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // TODO: Do nothing
+    if (has(this.autoBindingRegistry, conId)) {
+      const autoBinding = toArray(this.autoBindingRegistry[conId]);
+      for (const { queue, exchangeKey, routingKey, type, opts } of autoBinding) {
+        await this.binding(queue, { exchangeKey, routingKey, type }, opts, conId);
+      }
+    }
   }
 
   protected async stop(client: Connection, conId: string = DEFAULT_CON_ID): Promise<void> {
@@ -86,16 +96,22 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
   @RabbitMetric()
   async sendToQueue(
     queue: string,
-    messages: string[] = [],
+    messages: string[],
     opts: RabbitPublishOptions = {},
     conId: string = DEFAULT_CON_ID,
-  ) {
+  ): Promise<RabbitPublishResult> {
     const { channelKey = DEFAULT_CON_ID } = opts;
     const channel = await this.createChannel(channelKey, conId);
+
+    const result: RabbitPublishResult = { success: 0, failed: 0 };
     for (const msg of messages) {
-      channel.sendToQueue(queue, Buffer.from(msg), opts);
+      const success = channel.sendToQueue(queue, Buffer.from(msg), opts);
+      if (success) result.success++;
+      else result.failed++;
     }
     await channel.waitForConfirms();
+
+    return result;
   }
 
   @RabbitMetric()
@@ -104,13 +120,19 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
     messages: { key: string; content: string }[],
     opts: RabbitPublishOptions = {},
     conId: string = DEFAULT_CON_ID,
-  ) {
+  ): Promise<RabbitPublishResult> {
     const { channelKey = DEFAULT_CON_ID } = opts;
     const channel = await this.createChannel(channelKey, conId);
+
+    const result: RabbitPublishResult = { success: 0, failed: 0 };
     for (const { key, content } of messages) {
-      channel.publish(exchange, key, Buffer.from(content), opts);
+      const success = channel.publish(exchange, key, Buffer.from(content), opts);
+      if (success) result.success++;
+      else result.failed++;
     }
     await channel.waitForConfirms();
+
+    return result;
   }
 
   async consume(
@@ -127,10 +149,10 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
         this.logService.debug('`%s` rabbit consumed message: %s', conId, msg.content?.toString());
         await callback(msg);
         opts.autoCommit && (await this.commit(msg, opts, conId));
-        this.rabbitMetricService.consume('SUCCESS', queue, conId);
+        this.rabbitMetricService.consume(RabbitPublishStatus.SUCCESS, queue, conId);
       } catch (error) {
         this.logService.error(error, '`%s` rabbit handle message fail', conId);
-        this.rabbitMetricService.consume('ERROR', queue, conId);
+        this.rabbitMetricService.consume(RabbitPublishStatus.ERROR, queue, conId);
         await this.reject(msg, opts, conId);
       }
     };
@@ -165,7 +187,18 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
   ): Promise<RabbitAssertQueue> {
     const { channelKey = DEFAULT_CON_ID } = opts;
     const channel = await this.createChannel(channelKey, conId);
-    return await channel.assertQueue(name, opts);
+    return await channel.assertQueue(name, { durable: true, ...opts });
+  }
+
+  async assertExchange(
+    name: string,
+    type: RabbitExchangeType | string = RabbitExchangeType.TOPIC,
+    opts: RabbitAssertExchangeOptions = {},
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<RabbitAssertExchange> {
+    const { channelKey = DEFAULT_CON_ID } = opts;
+    const channel = await this.createChannel(channelKey, conId);
+    return await channel.assertExchange(name, type, { durable: true, ...opts });
   }
 
   async check(name: string, opts: RabbitBaseOptions = {}, conId: string = DEFAULT_CON_ID): Promise<RabbitAssertQueue> {
@@ -190,30 +223,22 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
     return channel.cancel(consumerTag);
   }
 
-  async assertExchange(
-    name: string,
-    opts: RabbitAssertExchangeOptions = {},
-    conId: string = DEFAULT_CON_ID,
-  ): Promise<RabbitAssertExchange> {
-    const { channelKey = DEFAULT_CON_ID } = opts;
-    const channel = await this.createChannel(channelKey, conId);
-    return await channel.assertExchange(name, 'topic', opts);
-  }
-
   async binding(
     queue: string,
-    exchange: { exchangeKey: string; routingKey: string },
+    exchange: { exchangeKey: string; routingKey: string; type?: RabbitExchangeType | string },
     opts: RabbitBindingOptions = {},
     conId: string = DEFAULT_CON_ID,
-  ) {
+  ): Promise<RabbitEmpty> {
     const { channelKey = DEFAULT_CON_ID, queueOptions = {}, exchangeOptions = {} } = opts;
-    const channel = await this.createChannel(channelKey, conId);
+    const exchangeType = exchange.type || RabbitExchangeType.TOPIC;
 
     if (!queueOptions.channelKey) queueOptions.channelKey = channelKey;
     if (!exchangeOptions.channelKey) exchangeOptions.channelKey = channelKey;
 
-    await this.assertExchange(exchange.exchangeKey, exchangeOptions, conId);
+    const channel = await this.createChannel(channelKey, conId);
+
+    await this.assertExchange(exchange.exchangeKey, exchangeType, exchangeOptions, conId);
     await this.assert(queue, queueOptions, conId);
-    await channel.bindQueue(queue, exchange.exchangeKey, exchange.routingKey);
+    return channel.bindQueue(queue, exchange.exchangeKey, exchange.routingKey);
   }
 }

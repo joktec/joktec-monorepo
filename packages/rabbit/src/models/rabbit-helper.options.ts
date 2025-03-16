@@ -11,14 +11,20 @@ export interface RabbitRejectOptions {
 
 export interface RabbitAssertOptions extends Options.AssertQueue {
   channelKey?: string;
-  requeue?: boolean;
 }
 
 export type RabbitAssertQueue = amqp.Replies.AssertQueue;
 
+export enum RabbitExchangeType {
+  DIRECT = 'direct',
+  TOPIC = 'topic',
+  HEADERS = 'headers',
+  FANOUT = 'fanout',
+  MATCH = 'match',
+}
+
 export interface RabbitAssertExchangeOptions extends Options.AssertExchange {
   channelKey?: string;
-  requeue?: boolean;
 }
 
 export interface RabbitBindingOptions {

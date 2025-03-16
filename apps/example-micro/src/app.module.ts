@@ -6,6 +6,7 @@ import {
   ConfigModule,
   ConfigService,
   createPinoHttp,
+  DEFAULT_CON_ID,
   LoggerModule,
   MicroMetricInterceptor,
   MicroModule,
@@ -15,7 +16,7 @@ import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
 import { KafkaModule } from '@joktec/kafka';
 import { NotifierModule } from '@joktec/notifier';
-import { RabbitModule } from '@joktec/rabbit';
+import { RabbitExchangeType, RabbitModule } from '@joktec/rabbit';
 import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { appConfigFactory } from './app.config';
 import { LOCALE } from './app.constant';
@@ -38,7 +39,14 @@ import { RepositoryModule } from './repositories';
     NotifierModule,
     CacheModule,
     KafkaModule,
-    RabbitModule,
+    RabbitModule.forRoot({
+      autoBinding: [
+        { queue: 'error_logs', exchangeKey: 'logs', routingKey: 'logs.error', type: RabbitExchangeType.DIRECT },
+        { queue: 'order_queue', exchangeKey: 'order_exchange', routingKey: 'order.new', type: 'direct' },
+        { queue: 'cancel_queue', exchangeKey: 'order_exchange', routingKey: 'order.cancel', type: 'direct' },
+      ],
+      conId: DEFAULT_CON_ID,
+    }),
     RepositoryModule,
     MainModule,
     I18nModule.forRoot({

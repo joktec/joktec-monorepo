@@ -10,6 +10,11 @@ import {
 export const TOTAL_PUBLISH_RABBIT_METRIC = 'total_publish_rabbit_metric';
 export const TOTAL_CONSUME_RABBIT_METRIC = 'total_consume_rabbit_metric';
 
+export enum RabbitPublishStatus {
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR',
+}
+
 enum PublishType {
   sendToQueue = 'QUEUE',
   publish = 'EXCHANGE',
@@ -22,11 +27,11 @@ export class RabbitMetricService {
     @InjectMetric(TOTAL_CONSUME_RABBIT_METRIC) private totalConsume: Counter<string>,
   ) {}
 
-  publish(type: PublishType, status: 'SUCCESS' | 'ERROR', queue: string, conId: string = DEFAULT_CON_ID) {
+  publish(type: PublishType, status: RabbitPublishStatus, queue: string, conId: string = DEFAULT_CON_ID) {
     this.totalPublish.inc({ type, status, queue, conId });
   }
 
-  consume(status: 'SUCCESS' | 'ERROR', queue: string, conId: string = DEFAULT_CON_ID) {
+  consume(status: RabbitPublishStatus, queue: string, conId: string = DEFAULT_CON_ID) {
     this.totalConsume.inc({ status, queue, conId });
   }
 }
@@ -40,10 +45,10 @@ export const RabbitMetric = () => {
       const rabbitMetricService: RabbitMetricService = services.rabbitMetricService;
       try {
         await method(...args);
-        rabbitMetricService.publish(PublishType[propertyKey], 'SUCCESS', queue, conId);
+        rabbitMetricService.publish(PublishType[propertyKey], RabbitPublishStatus.SUCCESS, queue, conId);
       } catch (error) {
         services.pinoLogger.error(error, '`%s` rabbit service publish error.', conId);
-        rabbitMetricService.publish(PublishType[propertyKey], 'ERROR', queue, conId);
+        rabbitMetricService.publish(PublishType[propertyKey], RabbitPublishStatus.ERROR, queue, conId);
       }
     },
     [RabbitMetricService],

@@ -16,6 +16,7 @@ export class ArticleHandler {
   @Crontab(CronExpression.EVERY_MINUTE)
   @KafkaPublish('test_topic', 'joktec', {}, DEFAULT_CON_ID)
   @RabbitPublish('test_queue', { channelKey: 'joktec' }, DEFAULT_CON_ID)
+  @RabbitPublish('order_exchange', 'order.new', { channelKey: 'joktec' }, DEFAULT_CON_ID)
   async sendToBroker() {
     const randNumber = rand(1000, 9999);
     return { success: true, randNumber };
