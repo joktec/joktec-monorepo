@@ -21,7 +21,7 @@ import {
 } from './models';
 import { RabbitClient, RabbitProp } from './rabbit.client';
 import { RabbitConfig } from './rabbit.config';
-import { RabbitMetric, RabbitMetricService, RabbitPublishStatus } from './rabbit.metric';
+import { RabbitMetricService, RabbitPublishMetric, RabbitPublishStatus } from './rabbit.metric';
 
 const RETRY_OPTS = 'rabbit.retry';
 
@@ -29,10 +29,10 @@ const RETRY_OPTS = 'rabbit.retry';
 export class RabbitService extends AbstractClientService<RabbitConfig, Connection> implements RabbitClient {
   private props: { [conId: string]: RabbitProp } = {};
 
-  @Inject(RABBIT_AUTO_BINDING) private autoBindingRegistry: RabbitAutoBindingRegistry;
-  @Inject() private rabbitMetricService: RabbitMetricService;
-
-  constructor() {
+  constructor(
+    @Inject(RABBIT_AUTO_BINDING) private autoBindingRegistry: RabbitAutoBindingRegistry,
+    @Inject() private rabbitMetricService: RabbitMetricService,
+  ) {
     super('rabbit', RabbitConfig);
   }
 
@@ -93,7 +93,7 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
     return channel;
   }
 
-  @RabbitMetric()
+  @RabbitPublishMetric()
   async sendToQueue(
     queue: string,
     messages: string[],
@@ -114,7 +114,7 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
     return result;
   }
 
-  @RabbitMetric()
+  @RabbitPublishMetric()
   async publish(
     exchange: string,
     messages: { key: string; content: string }[],
@@ -146,12 +146,12 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
 
     const onMessageFn = async (msg: RabbitMessage): Promise<void> => {
       try {
-        this.logService.debug('`%s` rabbit consumed message: %s', conId, msg.content?.toString());
+        this.logService.debug('`%s` [%s] rabbit consumed message: %s', conId, channelKey, msg.content?.toString());
         await callback(msg);
         opts.autoCommit && (await this.commit(msg, opts, conId));
         this.rabbitMetricService.consume(RabbitPublishStatus.SUCCESS, queue, conId);
       } catch (error) {
-        this.logService.error(error, '`%s` rabbit handle message fail', conId);
+        this.logService.error(error, '`%s` [%s] rabbit handle message fail', conId, channelKey);
         this.rabbitMetricService.consume(RabbitPublishStatus.ERROR, queue, conId);
         await this.reject(msg, opts, conId);
       }

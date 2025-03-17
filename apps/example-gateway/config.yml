@@ -30,7 +30,7 @@ bull:
     queues: [ apify_queue ]
 
 log:
-  level: info
+  level: debug
   hideWarning: false
   hideObject: false
   # hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]

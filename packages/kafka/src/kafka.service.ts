@@ -1,8 +1,10 @@
-import { AbstractClientService, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
 import {
   Consumer,
   ConsumerConfig,
   ConsumerSubscribeTopics,
+  EachBatchHandler,
+  EachMessageHandler,
   Kafka,
   Partitioners,
   Producer,
@@ -10,8 +12,15 @@ import {
 } from 'kafkajs';
 import { KafkaClient, KafkaProp } from './kafka.client';
 import { KafkaConfig } from './kafka.config';
-import { PublishKafkaMetric } from './kafka.metric';
-import { ConsumerBatchRunConfig, ConsumerMessageRunConfig, ProducerManyTopic, ProducerTopic } from './models';
+import { KafkaConsumeType, KafkaMetricService, KafkaPublishMetric, KafkaPublishStatus } from './kafka.metric';
+import {
+  ConsumerBatchRunConfig,
+  ConsumerMessageRunConfig,
+  KafkaBatchMessage,
+  KafkaEachMessage,
+  ProducerManyTopic,
+  ProducerTopic,
+} from './models';
 
 const RETRY_OPTS = 'kafka.retry';
 
@@ -19,7 +28,7 @@ const RETRY_OPTS = 'kafka.retry';
 export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> implements KafkaClient {
   private props: { [conId: string]: KafkaProp } = {};
 
-  constructor() {
+  constructor(@Inject() private kafkaMetricService: KafkaMetricService) {
     super('kafka', KafkaConfig);
   }
 
@@ -47,10 +56,10 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
         createPartitioner: Partitioners.LegacyPartitioner,
         ...cfg,
       });
-      this.logService.info(cfg, '`%s` [%s-producer] created', conId, key);
+      this.logService.info(cfg, '`%s` [%s] created', conId, key);
 
       await producer.connect();
-      this.logService.info('`%s` [%s-producer] connected', conId, key);
+      this.logService.info('`%s` [%s] connected', conId, key);
     }
     return producer;
   }
@@ -61,10 +70,10 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
       this.props[conId].consumers[groupId] = consumer = this.getClient(conId).consumer({
         ...cfg,
       });
-      this.logService.info(cfg, '`%s` [%s-consumer] created', conId, groupId);
+      this.logService.info(cfg, '`%s` [%s] created', conId, groupId);
 
       await consumer.connect();
-      this.logService.info('`%s` [%s-consumer] connected', conId, groupId);
+      this.logService.info('`%s` [%s] connected', conId, groupId);
     }
     return consumer;
   }
@@ -80,8 +89,22 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     const consumer = await this.initConsumer(groupId, consumerConfig, conId);
 
     await consumer.subscribe(consumerTopics);
-    topics.map(t => this.logService.info('`%s` [%s-consumer] of topic `%s` ready to consume', conId, groupId, t));
-    await consumer.run(runConfig);
+    topics.map(t => this.logService.info('`%s` [%s] of topic `%s` ready to consume', conId, groupId, t));
+
+    const onMessageFn: EachMessageHandler = async (payload: KafkaEachMessage) => {
+      const key = `${payload.topic}-${payload.partition}`;
+      const content = payload.message.value?.toString();
+      try {
+        this.logService.debug('`%s` [%s] kafka consumed message: %s', conId, groupId, content);
+        await runConfig.eachMessage(payload);
+        this.kafkaMetricService.consume(KafkaConsumeType.EACH, KafkaPublishStatus.SUCCESS, key, conId);
+      } catch (error) {
+        this.logService.error(error, '`%s` [%s] kafka handle message fail', conId, groupId);
+        this.kafkaMetricService.consume(KafkaConsumeType.EACH, KafkaPublishStatus.ERROR, key, conId);
+      }
+    };
+
+    await consumer.run({ ...runConfig, eachMessage: onMessageFn });
   }
 
   async consumeBatch(
@@ -95,11 +118,26 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     const consumer = await this.initConsumer(groupId, consumerConfig, conId);
 
     await consumer.subscribe(consumerTopics);
-    topics.map(t => this.logService.info('`%s` [%s-consumer] of topic `%s` ready to batch consume', conId, groupId, t));
-    await consumer.run(runConfig);
+    topics.map(t => this.logService.info('`%s` [%s] of topic `%s` ready to batch consume', conId, groupId, t));
+
+    const onMessageFn: EachBatchHandler = async (payload: KafkaBatchMessage) => {
+      const key = `${payload.batch.topic}-${payload.batch.partition}`;
+      const totalContent = payload.batch.messages.length;
+      try {
+        this.logService.debug('`%s` [%s] kafka consumed %s message(s)', conId, groupId, totalContent);
+        await runConfig.eachBatch(payload);
+        this.kafkaMetricService.consume(KafkaConsumeType.BATCH, KafkaPublishStatus.SUCCESS, key, conId);
+      } catch (error) {
+        const msg = '`%s` [%s] kafka handle %s message(s) fail';
+        this.logService.error(error, msg, conId, groupId, totalContent);
+        this.kafkaMetricService.consume(KafkaConsumeType.BATCH, KafkaPublishStatus.ERROR, key, conId);
+      }
+    };
+
+    await consumer.run({ ...runConfig, eachBatch: onMessageFn });
   }
 
-  @PublishKafkaMetric()
+  @KafkaPublishMetric()
   async publish(
     record: ProducerTopic,
     producerConfig: ProducerConfig = {},
@@ -110,7 +148,7 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     await producer.send(record);
   }
 
-  @PublishKafkaMetric()
+  @KafkaPublishMetric()
   async publishBatch(
     batch: ProducerManyTopic,
     producerConfig: ProducerConfig = {},

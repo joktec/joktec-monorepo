@@ -36,19 +36,22 @@ export class RabbitMetricService {
   }
 }
 
-export const RabbitMetric = () => {
+export const RabbitPublishMetric = () => {
   return BaseMethodDecorator(
     async (options: CallbackMethodOptions): Promise<any> => {
       const { method, args, propertyKey, services } = options;
-      const conId = args[3] ?? DEFAULT_CON_ID;
-      const queue = args[0];
+      const [queueOrExchange, messages, opts = {}, conId = DEFAULT_CON_ID] = args;
+      const channelKey = opts.channelKey ?? queueOrExchange ?? undefined;
+      const type = PublishType[propertyKey];
       const rabbitMetricService: RabbitMetricService = services.rabbitMetricService;
+
       try {
         await method(...args);
-        rabbitMetricService.publish(PublishType[propertyKey], RabbitPublishStatus.SUCCESS, queue, conId);
+        rabbitMetricService.publish(type, RabbitPublishStatus.SUCCESS, queueOrExchange, conId);
+        services.pinoLogger.debug('`%s` [%s] rabbit %s success', conId, channelKey, type);
       } catch (error) {
-        services.pinoLogger.error(error, '`%s` rabbit service publish error.', conId);
-        rabbitMetricService.publish(PublishType[propertyKey], RabbitPublishStatus.ERROR, queue, conId);
+        rabbitMetricService.publish(type, RabbitPublishStatus.ERROR, queueOrExchange, conId);
+        services.pinoLogger.error(error, '`%s` [%s] rabbit %s error', conId, channelKey, type);
       }
     },
     [RabbitMetricService],
