@@ -1,4 +1,5 @@
-import { applyDecorators, SetMetadata, toPlural } from '@joktec/core';
+import { applyDecorators, SetMetadata } from '@joktec/core';
+import { toPlural } from '@joktec/utils';
 import { modelOptions, Severity } from '@typegoose/typegoose';
 import { Func, ICustomOptions, IndexOptions } from '@typegoose/typegoose/lib/types';
 import { snakeCase, union } from 'lodash';

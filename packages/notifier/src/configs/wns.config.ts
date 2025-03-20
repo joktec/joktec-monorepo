@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsNotEmpty } from '@joktec/core';
+import { IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
 
 export class NotifierWns {
   @IsString()

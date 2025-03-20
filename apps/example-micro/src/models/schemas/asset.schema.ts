@@ -1,4 +1,4 @@
-import { Expose, linkTransform } from '@joktec/core';
+import { Expose, linkTransform } from '@joktec/utils';
 import { ObjectId, Prop, PropType, Ref, Schema } from '@joktec/mongo';
 import { isEmpty } from 'lodash';
 import { appConfig } from '../../app.config';

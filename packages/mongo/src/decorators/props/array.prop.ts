@@ -1,13 +1,5 @@
-import {
-  ApiPropertyOptions,
-  ArrayMaxSize,
-  ArrayMinSize,
-  IsArray,
-  toArray,
-  toInt,
-  Transform,
-  ValidationOptions,
-} from '@joktec/core';
+import { ApiPropertyOptions } from '@joktec/core';
+import { ArrayMaxSize, ArrayMinSize, IsArray, toArray, toInt, Transform, ValidationOptions } from '@joktec/utils';
 import { ArrayPropOptions as PropOptionsForArray } from '@typegoose/typegoose/lib/types';
 import { isArray, isNil, uniq } from 'lodash';
 import { IPropOptions } from '../prop.decorator';

@@ -1,7 +1,17 @@
-import { IsBoolean, IsInt, IsObject, IsOptional, IsString, validateSync, ValidationError } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsObject,
+  IsOptional,
+  IsString,
+  toBool,
+  toInt,
+  validateSync,
+  ValidationError,
+} from '@joktec/utils';
 import { RetryOptions } from '../decorators';
 import { IValidationProperty } from '../exceptions';
-import { buildError, toBool, toInt } from '../utils';
+import { buildError } from '../utils';
 
 export const DEFAULT_CON_ID: string = 'default';
 

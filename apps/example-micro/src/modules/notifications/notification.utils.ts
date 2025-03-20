@@ -1,6 +1,6 @@
-import { Injectable, LogService, toInt } from '@joktec/core';
+import { Injectable, LogService } from '@joktec/core';
 import { NotifierResponse, NotifierService } from '@joktec/notifier';
-import { truncateText } from '../../utils';
+import { toInt, truncateText } from '@joktec/utils';
 
 export interface IMessagingPayload {
   title: string;

@@ -1,4 +1,4 @@
-import { toArray } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import dot from 'dot-object';
 import { get } from 'lodash';
 import { PipelineStage, PopulateOptions, Schema } from 'mongoose';

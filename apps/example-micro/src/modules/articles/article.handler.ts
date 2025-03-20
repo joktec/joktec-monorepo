@@ -1,7 +1,8 @@
-import { DEFAULT_CON_ID, generateUUID, Injectable, LogService, rand } from '@joktec/core';
+import { DEFAULT_CON_ID, Injectable, LogService } from '@joktec/core';
 import { CronExpression, Crontab } from '@joktec/cron';
 import { KafkaPublish, KafkaService } from '@joktec/kafka';
 import { RabbitPublish, RabbitService } from '@joktec/rabbit';
+import { generateUUID, rand } from '@joktec/utils';
 
 @Injectable()
 export class ArticleHandler {

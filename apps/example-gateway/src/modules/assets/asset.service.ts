@@ -1,40 +1,45 @@
 import path from 'path';
 import { BaseService, ClientProxy, Inject, Injectable, JwtPayload, MulterFile } from '@joktec/core';
-import { StorageService, StorageUploadRequest, StorageUploadResponse } from '@joktec/storage';
+import {
+  compressFile,
+  getFilesize,
+  getMetadata,
+  StorageService,
+  StorageUploadRequest,
+  StorageUploadResponse,
+} from '@joktec/storage';
 import { firstValueFrom } from 'rxjs';
 import { TRANSPORT } from '../../app.constant';
 import { AssetStatus } from '../../models/constants';
 import { Asset } from '../../models/schemas';
 import { AssetRepo } from '../../repositories';
-import { AssetUtils } from './asset.utils';
 import { AssetPresigned, AssetPresignedDto } from './models';
 
 @Injectable()
 export class AssetService extends BaseService<Asset, string> {
   constructor(
     protected assetRepo: AssetRepo,
-    @Inject(TRANSPORT.PROXY.ASSET) private assetClient: ClientProxy,
-    private assetUtils: AssetUtils,
     private storageService: StorageService,
+    @Inject(TRANSPORT.PROXY.ASSET) private assetClient: ClientProxy,
   ) {
     super(assetRepo);
   }
 
   async upload(file: MulterFile, payload: JwtPayload, idx: number): Promise<{ idx: number; data: Asset }> {
-    const { prefix, filename, contentType } = this.assetUtils.getMetadata(file.originalname, file.mimetype);
-    const compressBuffer = await this.assetUtils.compress(file.buffer);
+    const { prefix, filename, contentType } = getMetadata(file.originalname, file.mimetype);
+    const compressFileBuffer = await compressFile(file.buffer);
     const asset: Partial<Asset> = {
       originalName: file.originalname,
       filename,
       key: path.posix.join(prefix, filename),
       mimeType: contentType,
       authorId: payload.sub,
-      ...(await this.assetUtils.getSize(compressBuffer)),
+      ...(await getFilesize(compressFileBuffer)),
     };
 
     let resAsset: Asset;
     try {
-      const req: StorageUploadRequest = { file: compressBuffer, prefix, filename, contentType };
+      const req: StorageUploadRequest = { file: compressFileBuffer, prefix, filename, contentType };
       const res: StorageUploadResponse = await this.storageService.upload(req);
       const etag = res.eTag?.replace(/"/g, '') || '';
       resAsset = await this.assetRepo.create({ ...asset, etag, status: AssetStatus.ACTIVATED });

@@ -1,5 +1,6 @@
-import { applyDecorators, Transform } from '@joktec/core';
+import { applyDecorators } from '@joktec/core';
 import { Prop, Schema } from '@joktec/mongo';
+import { Transform } from '@joktec/utils';
 import { isNil, isObject, isString } from 'lodash';
 import { I18nContext } from 'nestjs-i18n';
 import { DEFAULT_LOCALE } from '../../app.constant';

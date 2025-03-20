@@ -6,8 +6,8 @@ import {
   Histogram,
   Injectable,
   InjectMetric,
-  linkTransform,
 } from '@joktec/core';
+import { linkTransform } from '@joktec/utils';
 import axios, { AxiosError, AxiosResponse, ResponseType } from 'axios';
 import { isFunction } from 'lodash';
 import { HttpConfig } from './http.config';

@@ -1,6 +1,6 @@
+import { validateSync, ValidationError, ValidatorOptions } from '@joktec/utils';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigGetOptions, ConfigService as JsConfigService, NoInferType } from '@nestjs/config';
-import { validateSync, ValidationError, ValidatorOptions } from 'class-validator';
 import { ExceptionMessage, InvalidClientConfigException, IValidationProperty } from '../../exceptions';
 import { Constructor } from '../../models';
 import { buildError } from '../../utils';
@@ -30,7 +30,7 @@ export class ConfigService extends JsConfigService implements OnModuleInit {
     defaultValue?: NoInferType<T>,
     options?: ConfigGetOptions,
   ): T {
-    const cfgData = this.get(propertyPath, defaultValue, options);
+    const cfgData = this.get(propertyPath, options) || defaultValue;
     return new clazz(cfgData);
   }
 

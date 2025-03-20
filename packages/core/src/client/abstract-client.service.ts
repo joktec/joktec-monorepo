@@ -1,6 +1,6 @@
+import { sleep, toArray } from '@joktec/utils';
 import { Inject, OnApplicationBootstrap, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { isEmpty } from 'lodash';
-import mergeDeep from 'merge-deep';
+import { isEmpty, merge } from 'lodash';
 import {
   ClientConnectException,
   ExceptionMessage,
@@ -9,7 +9,6 @@ import {
 } from '../exceptions';
 import { Constructor } from '../models';
 import { ConfigService, LogService } from '../modules';
-import { sleep, toArray } from '../utils';
 import { Client } from './client';
 import { ClientConfig, DEFAULT_CON_ID } from './client.config';
 
@@ -41,7 +40,7 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
     const configList: IConfig[] = toArray<IConfig>(config).map(cfg => new this.configClass(cfg));
     for (const cfg of configList) {
       const inheritConfig = cfg.inherit ? configList[0] : {};
-      await this.clientInit(mergeDeep({}, inheritConfig, cfg));
+      await this.clientInit(merge({}, inheritConfig, cfg));
     }
   }
 

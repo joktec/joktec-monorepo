@@ -1,4 +1,5 @@
-import { LogService, toBool, toInt } from '@joktec/core';
+import { LogService } from '@joktec/core';
+import { toBool, toInt } from '@joktec/utils';
 import Redis from 'ioredis';
 import { ICacheStore } from '../cache.client';
 import { CacheConfig } from '../cache.config';

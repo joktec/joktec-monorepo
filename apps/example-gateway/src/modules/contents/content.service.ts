@@ -1,4 +1,4 @@
-import { BaseService, IPaginationResponse, Injectable } from '@joktec/core';
+import { BaseService, Injectable, IPaginationResponse } from '@joktec/core';
 import { IMongoRequest } from '@joktec/mongo';
 import { Content } from '../../models/schemas';
 import { ContentRepo } from '../../repositories';

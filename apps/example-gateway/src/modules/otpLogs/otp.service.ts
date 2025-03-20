@@ -1,4 +1,5 @@
-import { BaseService, generateOTP, generateUUID, Injectable } from '@joktec/core';
+import { BaseService, Injectable } from '@joktec/core';
+import { generateOTP, generateUUID } from '@joktec/utils';
 import moment from 'moment';
 import { appConfig } from '../../app.config';
 import { LOCALE } from '../../app.constant';

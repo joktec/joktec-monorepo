@@ -1,4 +1,4 @@
-import { toArray } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import { index } from '@typegoose/typegoose';
 import { IndexOptions } from '@typegoose/typegoose/lib/types';
 import { get } from 'lodash';

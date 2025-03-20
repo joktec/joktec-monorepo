@@ -1,5 +1,6 @@
-import { ApiPropertyOptional, Expose, isNotEmpty } from '@joktec/core';
+import { ApiPropertyOptional } from '@joktec/core';
 import { Prop, Schema } from '@joktec/mongo';
+import { Expose, isNotEmpty } from '@joktec/utils';
 
 @Schema({ schemaOptions: { _id: false, timestamps: false } })
 export class Address {

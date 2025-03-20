@@ -1,6 +1,6 @@
+import { ClientConfig, LogService, RetryOptions } from '@joktec/core';
 import {
   ArrayNotEmpty,
-  ClientConfig,
   IsArray,
   IsBoolean,
   IsEnum,
@@ -9,9 +9,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
-  LogService,
-  RetryOptions,
-} from '@joktec/core';
+} from '@joktec/utils';
 import { ISocketFactory, logCreator, logLevel, SASLOptions } from 'kafkajs';
 
 export class KafkaRetryConfig implements RetryOptions {

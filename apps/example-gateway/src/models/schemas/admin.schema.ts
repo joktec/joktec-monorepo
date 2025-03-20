@@ -1,4 +1,4 @@
-import { Expose, linkTransform } from '@joktec/core';
+import { Expose, linkTransform } from '@joktec/utils';
 import { Prop, Schema } from '@joktec/mongo';
 import { appConfig } from '../../app.config';
 import { IsCdnUrl } from '../../utils';

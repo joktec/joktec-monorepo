@@ -1,4 +1,5 @@
-import { CounterProviders, DEFAULT_CON_ID, DynamicModule, Global, Module, toArray } from '@joktec/core';
+import { CounterProviders, DEFAULT_CON_ID, DynamicModule, Global, Module } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import { RabbitConsumerLoader } from './loaders';
 import { RABBIT_AUTO_BINDING, RabbitAutoBindingRegistry, RabbitModuleOptions } from './models';
 import { RabbitMetricService, TOTAL_CONSUME_RABBIT_METRIC, TOTAL_PUBLISH_RABBIT_METRIC } from './rabbit.metric';

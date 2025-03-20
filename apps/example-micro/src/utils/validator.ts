@@ -1,4 +1,5 @@
-import { applyDecorators, IsStrongPasswordOptions, linkTransform, Transform } from '@joktec/core';
+import { applyDecorators } from '@joktec/core';
+import { IsStrongPasswordOptions, linkTransform, Transform } from '@joktec/utils';
 import { isArray, isFunction } from 'lodash';
 import { appConfig } from '../app.config';
 

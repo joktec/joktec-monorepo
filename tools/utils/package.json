@@ -1,0 +1,83 @@
+{
+  "name": "@joktec/utils",
+  "description": "JokTec - Utilities",
+  "version": "0.0.0",
+  "private": false,
+  "license": "MIT",
+  "author": "JokTec",
+  "homepage": "https://github.com/joktec/joktec-monorepo.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joktec/joktec-monorepo.git",
+    "directory": "packages/utils"
+  },
+  "main": "dist/index",
+  "types": "dist/index",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "utils"
+  ],
+  "scripts": {
+    "clean": "rimraf -rf dist",
+    "purge": "rimraf -rf dist node_modules",
+    "prebuild": "yarn clean",
+    "build": "nest build -p tsconfig.json",
+    "prepublishOnly": "yarn build",
+    "format": "prettier \"./src/**/*.ts\" --ignore-path ./.prettierignore --write",
+    "lint": "eslint --fix \"./src/**/*.ts\"",
+    "dep:upgrade": "ncu -p yarn -u",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "crypto": "^1.0.1",
+    "dayjs": "^1.11.13",
+    "lodash": "^4.17.21",
+    "pluralize": "^8.0.0",
+    "slug": "^9.1.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/pluralize": "^0.0.33",
+    "@types/slug": "^5.0.9",
+    "@types/uuid": "^10.0.0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write --ignore-path ./.prettierignore",
+      "eslint --fix"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "jest": {
+    "passWithNoTests": true,
+    "preset": "ts-jest",
+    "rootDir": "src",
+    "transform": {
+      "^.+\\.(t|s)s$": "ts-jest"
+    },
+    "coverageDirectory": "<rootDir>/../coverage/",
+    "collectCoverageFrom": [
+      "**/*.{ts,js}",
+      "!**/index.ts",
+      "!**/*.{d,enum}.ts"
+    ]
+  }
+}

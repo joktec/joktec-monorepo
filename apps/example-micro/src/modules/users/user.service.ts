@@ -1,5 +1,6 @@
-import { BaseService, Injectable, toArray, toInt } from '@joktec/core';
+import { BaseService, Injectable } from '@joktec/core';
 import { FirebaseService } from '@joktec/firebase';
+import { toArray, toInt } from '@joktec/utils';
 import { SuccessResponse } from '../../common';
 import { ArticleType, SessionStatus } from '../../models/constants';
 import { UserKeyword } from '../../models/objects';

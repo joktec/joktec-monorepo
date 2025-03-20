@@ -1,4 +1,5 @@
-import { ApiPropertyOptions, IsBoolean } from '@joktec/core';
+import { ApiPropertyOptions } from '@joktec/core';
+import { IsBoolean } from '@joktec/utils';
 import { BasePropOptions } from '@typegoose/typegoose/lib/types';
 import { IPropOptions } from '../prop.decorator';
 

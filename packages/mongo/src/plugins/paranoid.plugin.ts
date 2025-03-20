@@ -1,4 +1,5 @@
-import { Clazz, toArray, toBool } from '@joktec/core';
+import { Clazz } from '@joktec/core';
+import { toArray, toBool } from '@joktec/utils';
 import { isEmpty, isObject, isString } from 'lodash';
 import { QueryOptions, Schema } from 'mongoose';
 import {

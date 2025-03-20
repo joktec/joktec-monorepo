@@ -47,11 +47,12 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.175",
+    "@joktec/utils": "*",
     "lodash": "^4.17.21",
     "mysql": "2.18.1",
     "mysql2": "^3.11.3",
-    "reflect-metadata": "*",
-    "typeorm": "0.3.21-dev.e7649d2"
+    "reflect-metadata": "0.2.0",
+    "typeorm": "^0.3.21"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.10",

@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsOptional, IsString, toBool, toInt } from '@joktec/core';
+import { IsBoolean, IsInt, IsOptional, IsString, toBool, toInt } from '@joktec/utils';
 
 export class CrontabConfig {
   @IsOptional()

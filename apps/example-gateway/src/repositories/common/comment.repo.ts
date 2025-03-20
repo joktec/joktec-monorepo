@@ -1,5 +1,6 @@
-import { Injectable, plainToInstance, toInt } from '@joktec/core';
+import { Injectable } from '@joktec/core';
 import { IMongoPipeline, IMongoRequest, MongoRepo, MongoService, ObjectId } from '@joktec/mongo';
+import { plainToInstance, toInt } from '@joktec/utils';
 import { Comment } from '../../models/schemas';
 
 @Injectable()

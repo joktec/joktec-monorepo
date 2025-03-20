@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString } from '@joktec/core';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
 
 export class NotifierGcm {
   @IsString()

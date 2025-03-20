@@ -1,5 +1,5 @@
-import { IsUrl } from '@joktec/core';
 import { ObjectId, Prop, Ref, Schema } from '@joktec/mongo';
+import { IsUrl } from '@joktec/utils';
 import { IsCdnUrl } from '../../utils';
 import { BaseSchema, I18nText, I18nTransform } from '../common';
 import { PostStatus, PostType } from '../constants';

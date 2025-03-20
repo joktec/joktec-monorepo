@@ -1,4 +1,4 @@
-import { toArray } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import { SelectQueryBuilder } from 'typeorm';
 
 export function printSql(query: string, parameters: any[] = []): string {

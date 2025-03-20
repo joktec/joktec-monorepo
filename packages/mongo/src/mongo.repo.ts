@@ -7,11 +7,9 @@ import {
   KeyOf,
   LogService,
   OnModuleInit,
-  plainToInstance,
   Reflector,
-  toArray,
-  toInt,
 } from '@joktec/core';
+import { plainToInstance, toArray, toInt } from '@joktec/utils';
 import { Ref } from '@typegoose/typegoose';
 import { chunk, isArray, isNil, omit, pick } from 'lodash';
 import { Aggregate, AnyBulkWriteOperation, RefType } from 'mongoose';

@@ -1,4 +1,4 @@
-import { BaseService, ICondition, IPaginationResponse, Inject, Injectable, REQUEST } from '@joktec/core';
+import { BaseService, ICondition, Inject, Injectable, IPaginationResponse, REQUEST } from '@joktec/core';
 import { IRequest } from '../../app.constant';
 import { SuccessResponse } from '../../common';
 import { Notification, User } from '../../models/schemas';

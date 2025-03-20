@@ -1,6 +1,7 @@
-import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, toBool } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable } from '@joktec/core';
 import { HttpRequest, HttpService } from '@joktec/http';
-import mergeDeep from 'merge-deep';
+import { toBool } from '@joktec/utils';
+import { merge } from 'lodash';
 import { ElasticClient } from './elastic.client';
 import { ElasticConfig } from './elastic.config';
 import {
@@ -38,7 +39,7 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
     req: EsSearchRequest,
     conId: string = DEFAULT_CON_ID,
   ): Promise<EsSearchResponse<TDoc, TAgg>> {
-    const config: HttpRequest = mergeDeep({}, this.getConfig(conId), {
+    const config: HttpRequest = merge({}, this.getConfig(conId), {
       url: `${req.index}/_search`,
       method: 'GET',
       data: { ...req },
@@ -51,7 +52,7 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
   }
 
   async index<TDoc = any>(req: EsIndexRequest<TDoc>, conId: string = DEFAULT_CON_ID): Promise<EsWriteResponse> {
-    const config: HttpRequest = mergeDeep({}, this.getConfig(conId), {
+    const config: HttpRequest = merge({}, this.getConfig(conId), {
       url: `${req.index}/_doc/${req.id}`,
       method: 'POST',
       data: req.doc,
@@ -64,7 +65,7 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
   }
 
   async get<TDoc = any>(req: EsGetRequest, conId: string = DEFAULT_CON_ID): Promise<EsGetResponse<TDoc>> {
-    const config: HttpRequest = mergeDeep({}, this.getConfig(conId), {
+    const config: HttpRequest = merge({}, this.getConfig(conId), {
       url: `${req.index}/_doc/${req.id}`,
       method: 'GET',
       params: { pretty: true },
@@ -76,7 +77,7 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
   }
 
   async delete(req: EsDeleteRequest, conId: string = DEFAULT_CON_ID): Promise<EsWriteResponse> {
-    const config: HttpRequest = mergeDeep({}, this.getConfig(conId), {
+    const config: HttpRequest = merge({}, this.getConfig(conId), {
       url: `${req.index}/_doc/${req.id}`,
       method: 'DELETE',
       params: { pretty: true },

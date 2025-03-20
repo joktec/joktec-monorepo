@@ -1,17 +1,14 @@
+import { buildError, ClientConfig, IsTypes, IValidationProperty } from '@joktec/core';
 import {
-  buildError,
-  ClientConfig,
   IsBoolean,
   IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsTypes,
-  IValidationProperty,
   validateSync,
   ValidationError,
-} from '@joktec/core';
+} from '@joktec/utils';
 
 export enum CacheType {
   LOCAL = 'local',

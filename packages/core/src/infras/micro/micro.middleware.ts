@@ -1,9 +1,9 @@
+import { getTimeString } from '@joktec/utils';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Counter, Gauge } from 'prom-client';
 import { LogService } from '../../modules';
-import { getTimeString } from '../../utils';
 import { MICRO_LATENCY_METRIC, MICRO_TOTAL_METRIC, MicroStatus } from './micro.metric';
 
 @Injectable()

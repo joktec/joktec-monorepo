@@ -1,3 +1,4 @@
+import { toSingular } from '@joktec/utils';
 import { Inject, OnModuleInit, Type } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { startCase } from 'lodash';
@@ -5,7 +6,6 @@ import { firstValueFrom } from 'rxjs';
 import { MethodNotAllowedException } from '../exceptions';
 import { Constructor, DeepPartial, Entity, IBaseRequest, IBaseService, IPaginationResponse } from '../models';
 import { ConfigService, JwtPayload, LogService } from '../modules';
-import { toSingular } from '../utils';
 
 export interface IMicroClientProps<T extends Entity> {
   dto: Constructor<T>;

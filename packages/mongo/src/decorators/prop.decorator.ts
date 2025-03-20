@@ -1,20 +1,8 @@
-import {
-  ApiHideProperty,
-  ApiProperty,
-  ApiPropertyOptions,
-  applyDecorators,
-  Clazz,
-  Exclude,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  toArray,
-  Type,
-  ValidateNested,
-} from '@joktec/core';
+import { ApiHideProperty, ApiProperty, ApiPropertyOptions, applyDecorators, Clazz } from '@joktec/core';
+import { Exclude, IsMongoId, IsNotEmpty, IsOptional, toArray, Type, ValidateNested } from '@joktec/utils';
 import { prop, PropType, Severity } from '@typegoose/typegoose';
 import { BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
-import { isArray, isBoolean, isNil, isUndefined, last, unset } from 'lodash';
+import { isArray, isBoolean, isNil, isUndefined, last, merge, unset } from 'lodash';
 import { ObjectId } from '../models';
 import { PROP_DESIGN_TYPE_KEY } from '../mongo.constant';
 import {
@@ -149,7 +137,7 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
     applyDecorators(
       prop(mongooseOpts, kind),
       ...decorators,
-      ApiProperty({ ...swaggerOptions, ...opts.swagger }),
+      ApiProperty(merge(swaggerOptions, opts.swagger)),
     )(target, propertyKey);
     Reflect.defineMetadata(PROP_DESIGN_TYPE_KEY, designType, target, propertyKey);
   };

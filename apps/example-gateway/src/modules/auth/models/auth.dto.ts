@@ -1,13 +1,5 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsStrongPassword,
-  PickType,
-} from '@joktec/core';
+import { ApiProperty, ApiPropertyOptional, PickType } from '@joktec/core';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, IsStrongPassword } from '@joktec/utils';
 import { AuthProviderType, OTPType } from '../../../models/constants';
 import { User } from '../../../models/schemas';
 import { PASSWORD_OPTIONS } from '../../../utils';

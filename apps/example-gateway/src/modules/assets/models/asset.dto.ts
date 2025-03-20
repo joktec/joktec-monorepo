@@ -1,15 +1,5 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-  ArrayMaxSize,
-  ArrayMinSize,
-  IsArray,
-  IsNotEmpty,
-  IsOptional,
-  IsUrl,
-  PartialType,
-  PickType,
-} from '@joktec/core';
+import { ApiProperty, ApiPropertyOptional, PartialType, PickType } from '@joktec/core';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsNotEmpty, IsOptional, IsUrl } from '@joktec/utils';
 import { Asset } from '../../../models/schemas';
 
 export class AssetPresignedDto {

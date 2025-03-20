@@ -46,20 +46,16 @@
     "@joktec/firebase": "0.0.93",
     "@joktec/storage": "0.0.177",
     "@joktec/rabbit": "0.0.177",
-    "byte-length": "^1.0.2",
     "gravatar": "^1.8.2",
     "lodash": "^4.17.21",
-    "mime-types": "^2.1.35",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
-    "nestjs-i18n": "^10.4.9",
-    "rxjs": "^7.8.1",
-    "pino-mongodb": "^4.3.0",
-    "sharp": "^0.33.5"
+    "nestjs-i18n": "^10.5.1",
+    "rxjs": "^7.8.2",
+    "pino-mongodb": "^4.3.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.9",
-    "@types/mime-types": "^2.1.4"
+    "@types/lodash": "^4.17.9"
   },
   "lint-staged": {
     "*.ts": [

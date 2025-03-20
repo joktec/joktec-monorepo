@@ -1,5 +1,6 @@
-import { ApiPropertyOptional, Expose, plainToInstance } from '@joktec/core';
+import { ApiPropertyOptional } from '@joktec/core';
 import { ObjectId, Prop, Ref, Schema } from '@joktec/mongo';
+import { Expose, plainToInstance } from '@joktec/utils';
 import { EXAMPLE_MONGO_ID } from '../../app.constant';
 import { BaseSchema } from '../common';
 import { ArticleResource, ArticleStatus, ArticleType } from '../constants';

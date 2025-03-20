@@ -1,4 +1,5 @@
-import { BaseService, ICondition, Injectable, plainToInstance } from '@joktec/core';
+import { BaseService, ICondition, Injectable } from '@joktec/core';
+import { plainToInstance } from '@joktec/utils';
 import { UserStatus } from '../../models/constants';
 import { AuthProviderProfile } from '../../models/interfaces';
 import { UserProvider } from '../../models/objects';

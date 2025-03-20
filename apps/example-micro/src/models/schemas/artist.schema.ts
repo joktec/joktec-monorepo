@@ -1,5 +1,6 @@
-import { ApiPropertyOptional, Expose, linkTransform } from '@joktec/core';
+import { ApiPropertyOptional } from '@joktec/core';
 import { ObjectId, Prop, Ref, Schema } from '@joktec/mongo';
+import { Expose, linkTransform } from '@joktec/utils';
 import { appConfig } from '../../app.config';
 import { EXAMPLE_MONGO_ID } from '../../app.constant';
 import { IsCdnUrl } from '../../utils';

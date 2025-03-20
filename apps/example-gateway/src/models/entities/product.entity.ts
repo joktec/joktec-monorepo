@@ -1,14 +1,6 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-  IsDate,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Type,
-  MaxLength,
-} from '@joktec/core';
+import { ApiProperty, ApiPropertyOptional } from '@joktec/core';
 import { Column, PrimaryGeneratedColumn, Tables } from '@joktec/mysql';
+import { IsDate, IsNotEmpty, IsOptional, IsString, MaxLength, Type } from '@joktec/utils';
 import { BaseEntity } from '../common';
 
 @Tables<Product>({ name: 'products' })

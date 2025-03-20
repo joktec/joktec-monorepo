@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsDate, IsInt, IsNotEmpty, IsOptional, IsString, Type } from '@joktec/core';
+import { IsArray, IsBoolean, IsDate, IsInt, IsNotEmpty, IsOptional, IsString, Type } from '@joktec/utils';
 import dayjs from 'dayjs';
 import { snakeCase } from 'lodash';
 import { FORMAT, TIMEZONE } from './job.constant';

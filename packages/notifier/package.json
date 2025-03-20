@@ -43,14 +43,13 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.175",
+    "@joktec/utils": "*",
     "lodash": "^4.17.21",
-    "merge-deep": "^3.0.3",
     "node-pushnotifications": "^3.1.1",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.10",
-    "@types/merge-deep": "^3.0.3",
     "@types/node-pushnotifications": "^1.0.8",
     "@types/web-push": "^3.6.3"
   },

@@ -1,4 +1,5 @@
-import { ApiPropertyOptions, IsEnum } from '@joktec/core';
+import { ApiPropertyOptions } from '@joktec/core';
+import { IsEnum } from '@joktec/utils';
 import { PropOptionsForString } from '@typegoose/typegoose/lib/types';
 import { IPropOptions } from '../prop.decorator';
 

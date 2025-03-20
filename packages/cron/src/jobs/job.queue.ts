@@ -1,4 +1,5 @@
-import { getTimeString, LogService, toInt } from '@joktec/core';
+import { LogService } from '@joktec/core';
+import { getTimeString, toInt } from '@joktec/utils';
 import async, { QueueObject } from 'async';
 
 export class QueueConfig<T> {

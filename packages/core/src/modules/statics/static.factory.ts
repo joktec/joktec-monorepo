@@ -1,7 +1,7 @@
 import { resolve } from 'path';
+import { toRoute } from '@joktec/utils';
 import { ServeStaticModuleOptions } from '@nestjs/serve-static';
 import { GatewayConfig } from '../../infras';
-import { toRoute } from '../../utils';
 import { BullConfig } from '../bull';
 import { ConfigModule, ConfigService } from '../config';
 

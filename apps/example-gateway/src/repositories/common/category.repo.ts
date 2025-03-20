@@ -1,5 +1,6 @@
-import { Injectable, plainToInstance } from '@joktec/core';
+import { Injectable } from '@joktec/core';
 import { IMongoPipeline, MongoRepo, MongoService } from '@joktec/mongo';
+import { plainToInstance } from '@joktec/utils';
 import moment from 'moment-timezone';
 import { PipelineStage } from 'mongoose';
 import { ArticleStatus, ArticleType, ArtistStatus, CategoryStatus, EmotionType } from '../../models/constants';

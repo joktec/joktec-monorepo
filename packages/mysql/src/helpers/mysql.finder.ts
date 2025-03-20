@@ -1,4 +1,5 @@
-import { IBaseRequest, ICondition, IPopulate, toArray, toBool } from '@joktec/core';
+import { IBaseRequest, ICondition, IPopulate } from '@joktec/core';
+import { toArray, toBool } from '@joktec/utils';
 import { isNil } from 'lodash';
 import {
   And,

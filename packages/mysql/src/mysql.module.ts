@@ -1,4 +1,5 @@
-import { DEFAULT_CON_ID, DynamicModule, Global, Module, toArray } from '@joktec/core';
+import { DEFAULT_CON_ID, DynamicModule, Global, Module } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import { isEmpty } from 'lodash';
 import {
   MODEL_REGISTRY_KEY,

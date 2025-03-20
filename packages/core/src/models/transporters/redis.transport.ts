@@ -1,5 +1,5 @@
+import { IsNotEmpty, IsObject } from '@joktec/utils';
 import { RedisOptions as NestRedisOptions, Transport } from '@nestjs/microservices';
-import { IsNotEmpty, IsObject } from 'class-validator';
 import { BaseTransport } from './base.transport';
 
 export interface RedisOptions {

@@ -1,4 +1,4 @@
-import { toArray } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import { plugin } from '@typegoose/typegoose';
 import { get } from 'lodash';
 import { ISchemaOptions } from '../decorators';

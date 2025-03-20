@@ -1,5 +1,6 @@
-import { ApiPropertyOptional, Expose } from '@joktec/core';
+import { ApiPropertyOptional } from '@joktec/core';
 import { Prop, Schema } from '@joktec/mongo';
+import { Expose } from '@joktec/utils';
 import { sum } from 'lodash';
 
 @Schema({ schemaOptions: { _id: false, timestamps: false } })

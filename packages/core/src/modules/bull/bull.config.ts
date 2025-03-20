@@ -1,6 +1,5 @@
-import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toArray } from '@joktec/utils';
 import { IsTypes } from '../../decorators/validators/is-type.decorator';
-import { toArray } from '../../utils';
 
 export class BullBoardConfig {
   @IsOptional()

@@ -1,4 +1,4 @@
-import { IsInt, IsOptional } from '@joktec/core';
+import { IsInt, IsOptional } from '@joktec/utils';
 
 export class JobProcessorConfig {
   @IsOptional()

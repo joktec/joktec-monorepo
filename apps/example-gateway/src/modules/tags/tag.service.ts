@@ -1,4 +1,5 @@
-import { BaseService, Injectable, JwtPayload, toArray } from '@joktec/core';
+import { BaseService, Injectable, JwtPayload } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import { chain } from 'lodash';
 import { SuccessResponse } from '../../common';
 import { ArticleType } from '../../models/constants';

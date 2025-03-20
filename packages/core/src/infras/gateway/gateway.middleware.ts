@@ -1,9 +1,9 @@
+import { getTimeString } from '@joktec/utils';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { NextFunction, Request, Response } from 'express';
 import { Counter, Histogram } from 'prom-client';
 import { LogService } from '../../modules';
-import { getTimeString } from '../../utils';
 import { GATEWAY_DURATION_METRIC, GATEWAY_TOTAL_METRIC, GatewayStatus } from './gateway.metric';
 
 @Injectable()

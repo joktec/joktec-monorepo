@@ -1,5 +1,6 @@
-import { Injectable, toInt } from '@joktec/core';
+import { Injectable } from '@joktec/core';
 import { MongoRepo, MongoService } from '@joktec/mongo';
+import { toInt } from '@joktec/utils';
 import { UserKeyword } from '../../models/objects';
 import { User } from '../../models/schemas';
 

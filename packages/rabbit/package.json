@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.175",
+    "@joktec/utils": "*",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.5",
     "lodash": "^4.17.21",

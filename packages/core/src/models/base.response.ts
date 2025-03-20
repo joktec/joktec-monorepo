@@ -1,7 +1,7 @@
+import { Type } from '@joktec/utils';
 import { Type as NestType } from '@nestjs/common';
 import { Field } from '@nestjs/graphql';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import { Constructor, Entity } from './base.dto';
 
 export interface IPaginationResponse<T extends Entity> {

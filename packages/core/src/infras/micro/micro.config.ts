@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional } from '@joktec/utils';
 import { IsTypes } from '../../decorators';
 import {
   GrpcTransport,

@@ -1,18 +1,5 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-  ArrayMinSize,
-  IsArray,
-  IsDate,
-  IsMongoId,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsUrl,
-  PartialType,
-  PickType,
-  Type,
-} from '@joktec/core';
+import { ApiProperty, ApiPropertyOptional, PartialType, PickType } from '@joktec/core';
+import { ArrayMinSize, IsArray, IsDate, IsMongoId, IsNotEmpty, IsObject, IsOptional, IsUrl, Type } from '@joktec/utils';
 import { ArticleFile } from '../../../models/objects';
 import { Article } from '../../../models/schemas';
 

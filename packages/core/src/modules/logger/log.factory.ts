@@ -1,8 +1,8 @@
+import { generateUUID, toArray, toBool, toInt } from '@joktec/utils';
 import { isEmpty, omit } from 'lodash';
 import { Params as LoggerParam } from 'nestjs-pino';
 import pino, { Bindings, DestinationStream, StreamEntry, TransportTargetOptions } from 'pino';
 import { PrettyOptions } from 'pino-pretty';
-import { generateUUID, toArray, toBool, toInt } from '../../utils';
 import { ConfigService, ENV } from '../config';
 import { LogSocket } from './log-socket.config';
 import { LogTransport } from './log-transport.config';

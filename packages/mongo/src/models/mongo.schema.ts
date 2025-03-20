@@ -1,4 +1,5 @@
-import { ApiProperty, Field, ICondition, Type } from '@joktec/core';
+import { ApiProperty, Field, ICondition } from '@joktec/core';
+import { Type } from '@joktec/utils';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { QueryWithHelpers, UpdateWriteOpResult } from 'mongoose';

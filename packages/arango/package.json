@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@joktec/core": "0.0.175",
+    "@joktec/utils": "*",
     "arangojs": "^9.1.0",
     "lodash": "^4.17.21"
   },

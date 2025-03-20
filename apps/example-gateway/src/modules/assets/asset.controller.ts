@@ -12,13 +12,13 @@ import {
   IControllerProps,
   Jwt,
   JwtPayload,
-  linkTransform,
   MulterFile,
   Post,
   UploadedFiles,
   UseInterceptors,
   UsePipes,
 } from '@joktec/core';
+import { linkTransform } from '@joktec/utils';
 import { orderBy } from 'lodash';
 import { appConfig } from '../../app.config';
 import { Asset } from '../../models/schemas';

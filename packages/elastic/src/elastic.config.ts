@@ -1,6 +1,6 @@
-import { IsInt, IsOptional, IsString, toInt } from '@joktec/core';
 import { HttpConfig } from '@joktec/http';
-import mergeDeep from 'merge-deep';
+import { IsInt, IsOptional, IsString, toInt } from '@joktec/utils';
+import { merge } from 'lodash';
 
 export class ElasticConfig extends HttpConfig {
   @IsOptional()
@@ -17,7 +17,8 @@ export class ElasticConfig extends HttpConfig {
 
   constructor(props: ElasticConfig) {
     super(props);
-    mergeDeep(this, props, {
+    merge(this, {
+      ...props,
       protocol: props?.protocol || 'http',
       host: props?.host || 'localhost',
       port: toInt(props?.port, 9200),

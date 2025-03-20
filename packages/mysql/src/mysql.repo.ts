@@ -9,10 +9,8 @@ import {
   LogService,
   OnApplicationBootstrap,
   OnModuleInit,
-  plainToInstance,
-  toArray,
-  toInt,
 } from '@joktec/core';
+import { plainToInstance, toArray, toInt } from '@joktec/utils';
 import { chunk, isArray, isNil, isObject, omit } from 'lodash';
 import { DeepPartial, EntityManager, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';

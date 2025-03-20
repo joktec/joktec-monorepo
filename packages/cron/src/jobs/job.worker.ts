@@ -1,13 +1,5 @@
-import {
-  ConfigService,
-  Constructor,
-  getTimeString,
-  Inject,
-  LogService,
-  OnModuleInit,
-  sleep,
-  toArray,
-} from '@joktec/core';
+import { ConfigService, Constructor, Inject, LogService, OnModuleInit } from '@joktec/core';
+import { getTimeString, sleep, toArray } from '@joktec/utils';
 import dayjs from 'dayjs';
 import { flatten, merge } from 'lodash';
 import { IJobModel, JobStatus } from './job.model';

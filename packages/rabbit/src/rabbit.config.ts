@@ -1,4 +1,5 @@
-import { ClientConfig, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/core';
+import { ClientConfig } from '@joktec/core';
+import { IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
 
 export class RabbitConfig extends ClientConfig {
   @IsString()

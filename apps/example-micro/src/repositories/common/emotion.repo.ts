@@ -1,5 +1,6 @@
-import { DeepPartial, Injectable, plainToInstance } from '@joktec/core';
+import { DeepPartial, Injectable } from '@joktec/core';
 import { MongoRepo, MongoService, UpdateQuery } from '@joktec/mongo';
+import { plainToInstance } from '@joktec/utils';
 import { Emotion } from '../../models/schemas';
 
 @Injectable()

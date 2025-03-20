@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import jwt, { JsonWebTokenError, NotBeforeError, TokenExpiredError } from 'jsonwebtoken';
-import moment from 'moment';
 import ms from 'ms';
 import { ExceptionMessage, InternalServerException, UnauthorizedException } from '../../exceptions';
 import { ExpressRequest } from '../../models';
@@ -32,7 +31,7 @@ export class JwtService {
     const accessPayload: JwtPayload = { type: 'ACCESS', ...payload };
     const jwtToken: JwtToken = {
       accessToken: jwt.sign(accessPayload, secretKey, { expiresIn }),
-      expiredAt: moment().add(expiresIn, 'seconds').toDate(),
+      expiredAt: new Date(Date.now() + expiresIn * 1000),
     };
 
     if (refreshKey) {

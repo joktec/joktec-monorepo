@@ -1,4 +1,5 @@
-import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry, toArray, toInt } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
+import { toArray, toInt } from '@joktec/utils';
 import amqp, { ConfirmChannel, Connection } from 'amqplib';
 import { has } from 'lodash';
 import {

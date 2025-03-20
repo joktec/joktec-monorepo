@@ -5,8 +5,8 @@ import {
   Entity,
   Reflector,
   SetMetadata,
-  plainToInstance,
 } from '@joktec/core';
+import { plainToInstance } from '@joktec/utils';
 import { CacheService } from '../cache.service';
 import { generateCacheKey } from '../cache.utils';
 import { CacheableProps } from '../interceptors';

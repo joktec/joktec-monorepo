@@ -1,4 +1,5 @@
-import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector, toArray } from '@joktec/core';
+import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import { KafkaService } from '../kafka.service';
 import { ConsumerInfoType, ConsumerRunCfg, KafkaEachMessage } from '../models';
 

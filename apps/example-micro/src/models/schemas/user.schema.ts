@@ -1,5 +1,5 @@
-import { Expose, linkTransform } from '@joktec/core';
 import { ObjectId, Prop, Ref, Schema } from '@joktec/mongo';
+import { Expose, linkTransform } from '@joktec/utils';
 import { appConfig } from '../../app.config';
 import { IsCdnUrl } from '../../utils';
 import { BaseSchema } from '../common';

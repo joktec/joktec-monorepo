@@ -1,4 +1,5 @@
-import { ClientConfig, IsNotEmpty, IsString } from '@joktec/core';
+import { ClientConfig } from '@joktec/core';
+import { IsNotEmpty, IsString } from '@joktec/utils';
 
 export class GptConfig extends ClientConfig {
   @IsNotEmpty()

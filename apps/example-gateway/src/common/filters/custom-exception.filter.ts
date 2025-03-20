@@ -6,8 +6,8 @@ import {
   IResponseDto,
   IValidationProperty,
   LogService,
-  toArray,
 } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import { I18nContext } from 'nestjs-i18n';
 
 @Catch()

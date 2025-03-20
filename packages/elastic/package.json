@@ -43,11 +43,10 @@
     "@elastic/elasticsearch": "^8.15.0",
     "@joktec/core": "0.0.175",
     "@joktec/http": "0.0.183",
-    "lodash": "^4.17.21",
-    "merge-deep": "^3.0.3"
+    "@joktec/utils": "*",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@types/merge-deep": "^3.0.3"
   },
   "lint-staged": {
     "*.ts": [

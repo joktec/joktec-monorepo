@@ -1,5 +1,4 @@
-import { IsBoolean, IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
-import { toBool } from '../../utils';
+import { IsBoolean, IsEnum, IsNotEmpty, IsObject, IsOptional, IsString, toBool } from '@joktec/utils';
 import { LogLevel } from './log.enum';
 
 export class LogTransport {

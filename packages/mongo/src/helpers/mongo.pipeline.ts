@@ -1,4 +1,5 @@
-import { ICondition, INear, IPopulate, ISort, toInt } from '@joktec/core';
+import { ICondition, INear, IPopulate, ISort } from '@joktec/core';
+import { toInt } from '@joktec/utils';
 import { getModelWithString, ReturnModelType } from '@typegoose/typegoose';
 import { isEmpty } from 'lodash';
 import { PipelineStage } from 'mongoose';

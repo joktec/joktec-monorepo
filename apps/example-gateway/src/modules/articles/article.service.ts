@@ -2,7 +2,6 @@ import {
   BadRequestException,
   BaseService,
   ClientProxy,
-  generateUUID,
   IBaseRequest,
   Inject,
   Injectable,
@@ -11,6 +10,7 @@ import {
   REQUEST,
 } from '@joktec/core';
 import { IMongoRequest } from '@joktec/mongo';
+import { generateUUID } from '@joktec/utils';
 import { last, map, omit, pick } from 'lodash';
 import moment from 'moment-timezone';
 import { IRequest, TRANSPORT } from '../../app.constant';

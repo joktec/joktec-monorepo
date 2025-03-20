@@ -1,15 +1,6 @@
-import {
-  isArray,
-  isBoolean,
-  isInt,
-  isString,
-  registerDecorator,
-  validateSync,
-  ValidationArguments,
-  ValidationOptions,
-} from 'class-validator';
+import { registerDecorator, toArray, validateSync, ValidationArguments, ValidationOptions } from '@joktec/utils';
+import { isArray, isBoolean, isInteger, isString } from 'lodash';
 import { Clazz } from '../../models';
-import { toArray } from '../../utils';
 
 const primitiveTypeValidator = {
   string(value: any, args: ValidationArguments) {
@@ -19,10 +10,10 @@ const primitiveTypeValidator = {
     return isArray(value) && value.every(v => isString(v));
   },
   int(value: any, args: ValidationArguments) {
-    return isInt(value);
+    return isInteger(value);
   },
   'int[]'(value: any, args: ValidationArguments) {
-    return isArray(value) && value.every(v => isInt(v));
+    return isArray(value) && value.every(v => isInteger(v));
   },
   boolean(value: any, args: ValidationArguments) {
     return isBoolean(value);

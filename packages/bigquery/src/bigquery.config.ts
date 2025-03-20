@@ -1,4 +1,5 @@
-import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@joktec/core';
+import { ClientConfig } from '@joktec/core';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@joktec/utils';
 
 const DEFAULT_AUTO_RETRY = true;
 const DEFAULT_MAX_RETRIES = 5;

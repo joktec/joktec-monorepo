@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
 import { SwaggerUiOptions } from 'swagger-ui-express';
 import { IsTypes } from '../validators';
 

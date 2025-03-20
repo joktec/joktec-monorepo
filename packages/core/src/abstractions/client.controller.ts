@@ -1,3 +1,4 @@
+import { toSingular } from '@joktec/utils';
 import { Inject, OnModuleInit, Type, UsePipes } from '@nestjs/common';
 import {
   Ctx,
@@ -15,7 +16,6 @@ import { set, startCase } from 'lodash';
 import { Constructor, DeepPartial, Entity, IBaseController, IBaseRequest, IPaginationResponse } from '../models';
 import { ConfigService, LogService } from '../modules';
 import { BaseValidationPipe } from '../pipes';
-import { toSingular } from '../utils';
 import { BaseService } from './base.service';
 
 export type MicroContext = TcpContext | RedisContext | NatsContext | MqttContext | RmqContext | KafkaContext;

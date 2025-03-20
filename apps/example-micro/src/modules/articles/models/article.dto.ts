@@ -1,4 +1,5 @@
-import { ApiProperty, IsArray, IsDate, IsMongoId, IsNotEmpty, Type } from '@joktec/core';
+import { ApiProperty } from '@joktec/core';
+import { IsArray, IsDate, IsMongoId, IsNotEmpty, Type } from '@joktec/utils';
 
 export class ArticleViewItemDto {
   @IsNotEmpty()

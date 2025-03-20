@@ -1,6 +1,7 @@
-import { Injectable, LogService, sleep } from '@joktec/core';
+import { Injectable, LogService } from '@joktec/core';
 import { KafkaConsume, KafkaEachMessage } from '@joktec/kafka';
 import { RabbitConsume, RabbitMessage } from '@joktec/rabbit';
+import { sleep } from '@joktec/utils';
 import { UserRepo } from '../../repositories';
 
 @Injectable()

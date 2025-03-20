@@ -1,4 +1,5 @@
-import { ApiProperty, IsArray, IsNotEmpty, IsString, IsStrongPassword, PickType } from '@joktec/core';
+import { ApiProperty, PickType } from '@joktec/core';
+import { IsArray, IsNotEmpty, IsString, IsStrongPassword } from '@joktec/utils';
 import { User } from '../../../models/schemas';
 import { PASSWORD_OPTIONS } from '../../../utils';
 

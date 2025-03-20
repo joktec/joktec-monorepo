@@ -1,4 +1,5 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/core';
+import { IsTypes } from '@joktec/core';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
 
 export class BaseProviderConfig {
   @IsBoolean()

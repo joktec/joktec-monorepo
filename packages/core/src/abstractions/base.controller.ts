@@ -1,3 +1,4 @@
+import { toArray, toBool, toPlural, toSingular } from '@joktec/utils';
 import {
   applyDecorators,
   Body,
@@ -52,7 +53,6 @@ import {
 } from '../models';
 import { ConfigService, LogService } from '../modules';
 import { BaseValidationPipe } from '../pipes';
-import { toArray, toBool, toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';
 
 export interface IEndpointProps {

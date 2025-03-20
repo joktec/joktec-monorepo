@@ -1,9 +1,9 @@
+import { toPlural, toSingular } from '@joktec/utils';
 import { Inject, OnModuleInit, Type } from '@nestjs/common';
 import { Args, Mutation, ObjectType, Query } from '@nestjs/graphql';
 import { startCase } from 'lodash';
 import { Constructor, Entity, IBaseController, IBaseRequest, PagePaginationResponse } from '../models';
 import { ConfigService, LogService } from '../modules';
-import { toPlural, toSingular } from '../utils';
 import { BaseService } from './base.service';
 
 export interface IBaseResolverProps<T extends Entity> {

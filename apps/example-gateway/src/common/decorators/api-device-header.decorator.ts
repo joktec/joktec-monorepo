@@ -1,4 +1,5 @@
-import { ApiHeader, applyDecorators, createParamDecorator, ExecutionContext, toInt } from '@joktec/core';
+import { ApiHeader, applyDecorators, createParamDecorator, ExecutionContext } from '@joktec/core';
+import { toInt } from '@joktec/utils';
 import { IRequest } from '../../app.constant';
 
 export interface IDeviceHeader {
@@ -21,7 +22,7 @@ export function ApiDeviceHeaders() {
   );
 }
 
-export const DeviceHeader = createParamDecorator<any, ExecutionContext, IDeviceHeader>(
+export const DeviceHeader = createParamDecorator<any, IDeviceHeader>(
   (data: any, ctx: ExecutionContext): IDeviceHeader => {
     const req = ctx.switchToHttp().getRequest<IRequest>();
     return {

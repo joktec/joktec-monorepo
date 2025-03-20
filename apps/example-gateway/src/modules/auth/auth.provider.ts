@@ -1,6 +1,7 @@
-import { BadRequestException, ConfigService, hashString, Injectable, LogService } from '@joktec/core';
+import { BadRequestException, ConfigService, Injectable, LogService } from '@joktec/core';
 import { FirebaseService } from '@joktec/firebase';
 import { HttpService } from '@joktec/http';
+import { hashString } from '@joktec/utils';
 import appleSignin from 'apple-signin-auth';
 import gravatar from 'gravatar';
 import { get, head, isString } from 'lodash';

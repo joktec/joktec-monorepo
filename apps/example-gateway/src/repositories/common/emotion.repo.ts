@@ -1,4 +1,5 @@
-import { IPaginationResponse, Injectable, plainToInstance, toInt } from '@joktec/core';
+import { Injectable, IPaginationResponse } from '@joktec/core';
+import { plainToInstance, toInt } from '@joktec/utils';
 import { IMongoPipeline, IMongoRequest, MongoHelper, MongoRepo, MongoService, ObjectId } from '@joktec/mongo';
 import { EmotionStatus, EmotionType } from '../../models/constants';
 import { Article, Emotion, User } from '../../models/schemas';

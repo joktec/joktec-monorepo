@@ -1,4 +1,5 @@
-import { BadRequestException, toArray } from '@joktec/core';
+import { BadRequestException } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import { getModelWithString } from '@typegoose/typegoose';
 import { difference, get, isEmpty, pickBy } from 'lodash';
 import mongoose, { Error, Schema } from 'mongoose';

@@ -1,5 +1,4 @@
-import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { toBool, toInt } from '../../utils';
+import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, toBool, toInt } from '@joktec/utils';
 import { LogSocketMode } from './log.enum';
 
 export class LogSocket {

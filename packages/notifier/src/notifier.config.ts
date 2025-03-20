@@ -1,4 +1,5 @@
-import { ClientConfig, IsOptional, IsTypes, IsBoolean } from '@joktec/core';
+import { ClientConfig, IsTypes } from '@joktec/core';
+import { IsBoolean, IsOptional } from '@joktec/utils';
 import { NotifierAdm, NotifierApn, NotifierFcm, NotifierGcm, NotifierMpns, NotifierWns } from './configs';
 
 export class NotifierConfig extends ClientConfig {

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
+import { sleep } from '@joktec/utils';
 import { Test } from '@nestjs/testing';
 import { JwtService } from '../jwt.service';
 import { ConfigService } from '../../config';
@@ -6,7 +7,6 @@ import { JwtPayload, JwtToken } from '../jwt.model';
 import jwt from 'jsonwebtoken';
 import { JwtConfig } from '../jwt.config';
 import { UnauthorizedException } from '../../../exceptions';
-import { sleep } from '../../../utils';
 
 describe('JwtService class', () => {
   let configService: ConfigService;

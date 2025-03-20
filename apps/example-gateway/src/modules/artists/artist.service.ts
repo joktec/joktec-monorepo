@@ -1,4 +1,4 @@
-import { BaseService, IPaginationResponse, Inject, Injectable, REQUEST } from '@joktec/core';
+import { BaseService, Inject, Injectable, IPaginationResponse, REQUEST } from '@joktec/core';
 import { IMongoRequest } from '@joktec/mongo';
 import { IRequest } from '../../app.constant';
 import { Artist } from '../../models/schemas';

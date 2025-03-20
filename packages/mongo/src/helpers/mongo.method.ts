@@ -1,4 +1,5 @@
-import { DeepPartial, ICondition, INear, toInt } from '@joktec/core';
+import { DeepPartial, ICondition, INear } from '@joktec/core';
+import { toInt } from '@joktec/utils';
 import { queryMethod, types } from '@typegoose/typegoose';
 import { isEmpty, isNil } from 'lodash';
 import { QueryWithHelpers, UpdateWriteOpResult } from 'mongoose';

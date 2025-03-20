@@ -1,4 +1,4 @@
-import { toPlural } from '@joktec/core';
+import { toPlural } from '@joktec/utils';
 import { DefaultNamingStrategy, NamingStrategyInterface } from 'typeorm';
 import { snakeCase } from 'typeorm/util/StringUtils';
 

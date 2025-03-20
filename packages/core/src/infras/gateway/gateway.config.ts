@@ -1,5 +1,5 @@
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
-import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { HelmetOptions } from 'helmet';
 import { IsTypes, SwaggerConfig } from '../../decorators';
 

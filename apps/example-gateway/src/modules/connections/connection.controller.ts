@@ -2,7 +2,7 @@ import { BaseController, Controller, IControllerProps } from '@joktec/core';
 import { AuthGuard, RoleGuard } from '../../common';
 import { Connection } from '../../models/schemas';
 import { ConnectionService } from './connection.service';
-import { ConnectionCreateDto } from './models/connection.dto';
+import { ConnectionCreateDto } from './models';
 
 const props: IControllerProps<Connection> = {
   dto: Connection,

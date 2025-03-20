@@ -1,6 +1,5 @@
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, toBool } from '@joktec/utils';
 import { MicroserviceOptions } from '@nestjs/microservices';
-import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { toBool } from '../../utils';
 
 export enum TransportType {
   TCP = 'tcp',

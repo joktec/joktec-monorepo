@@ -1,5 +1,5 @@
+import { instanceToPlain, nullKeysToObject, toInt } from '@joktec/utils';
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { instanceToPlain } from 'class-transformer';
 import { lookup } from 'geoip-lite';
 import { head, isEmpty, uniq } from 'lodash';
 import requestIp from 'request-ip';
@@ -7,7 +7,6 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import UAParser from 'ua-parser-js';
 import { ExpressRequest, ExpressResponse, GeoIp, IBaseRequest, IResponseDto, IUserAgent } from '../models';
-import { nullKeysToObject, toInt } from '../utils';
 
 export type ExpressResponseType<T> = string | T | IResponseDto<T>;
 

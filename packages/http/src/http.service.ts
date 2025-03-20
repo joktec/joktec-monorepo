@@ -1,18 +1,19 @@
 import { AgentOptions } from 'http';
 import net from 'net';
-import { AbstractClientService, DEFAULT_CON_ID, HttpMethod, Injectable, toArray, toBool } from '@joktec/core';
+import { AbstractClientService, DEFAULT_CON_ID, HttpMethod, Injectable } from '@joktec/core';
+import { toArray, toBool } from '@joktec/utils';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import curlirize from 'axios-curlirize';
 import axiosRetry from 'axios-retry';
 import FormData from 'form-data';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
-import mergeDeep from 'merge-deep';
 import qs from 'qs';
 import { HttpClient } from './http.client';
 import { HttpConfig, HttpProxyConfig } from './http.config';
 import { HttpMetricDecorator } from './http.metric';
 import { HttpAgent, HttpFormRequest, HttpRequest, HttpResponse } from './models';
+import { merge } from 'lodash';
 
 @Injectable()
 export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance> implements HttpClient {
@@ -89,7 +90,7 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
 
   public buildConfig(config: HttpRequest, conId: string = DEFAULT_CON_ID): AxiosRequestConfig {
     const clientConfig = this.getConfig(conId);
-    const cf: AxiosRequestConfig = mergeDeep({}, clientConfig, config, {
+    const cf: AxiosRequestConfig = merge({}, clientConfig, config, {
       paramsSerializer: config.serializer && {
         encode: (params: Record<string, any>) => qs.stringify(params, { arrayFormat: 'brackets' }),
       },
@@ -134,7 +135,7 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
     Object.keys(config.data).map(key => toArray(config.data[key]).map(v => formData.append(key, v, 'file')));
 
     const baseConfig = this.buildConfig(config, conId);
-    const cf: AxiosRequestConfig = mergeDeep({}, baseConfig, {
+    const cf: AxiosRequestConfig = merge({}, baseConfig, {
       method: HttpMethod.POST,
       headers: { ...baseConfig.headers, 'Content-Type': 'multipart/form-data' },
       data: formData,

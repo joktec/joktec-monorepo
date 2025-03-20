@@ -1,6 +1,4 @@
-import { instanceToPlain, plainToInstance } from 'class-transformer';
-import { ClassTransformOptions } from 'class-transformer/types/interfaces';
-import { validateSync, ValidationError } from 'class-validator';
+import { ClassTransformOptions, instanceToPlain, plainToInstance, validateSync, ValidationError } from '@joktec/utils';
 import { Constructor, Entity } from './base.dto';
 
 export abstract class BaseMapper<D, P extends Entity = any> {

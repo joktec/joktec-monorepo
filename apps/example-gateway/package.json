@@ -48,23 +48,17 @@
     "@joktec/rabbit": "0.0.177",
     "@joktec/storage": "0.0.177",
     "apple-signin-auth": "^1.7.6",
-    "nestjs-i18n": "^10.4.9",
-    "byte-length": "^1.0.2",
+    "nestjs-i18n": "^10.5.1",
     "gravatar": "^1.8.2",
     "lodash": "^4.17.21",
-    "mime-types": "^2.1.35",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
-    "rxjs": "^7.8.1",
-    "pino-mongodb": "^4.3.0",
-    "semver": "^7.6.3",
-    "sharp": "^0.33.5"
+    "rxjs": "^7.8.2",
+    "pino-mongodb": "^4.3.0"
   },
   "devDependencies": {
     "@types/gravatar": "^1.8.6",
-    "@types/lodash": "^4.17.9",
-    "@types/mime-types": "^2.1.4",
-    "@types/semver": "^7.5.8"
+    "@types/lodash": "^4.17.9"
   },
   "lint-staged": {
     "*.ts": [

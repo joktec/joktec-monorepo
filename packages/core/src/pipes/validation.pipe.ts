@@ -1,4 +1,14 @@
 import {
+  ClassTransformOptions,
+  instanceToPlain,
+  plainToInstance,
+  toArray,
+  toBool,
+  validate,
+  ValidationError,
+  ValidatorOptions,
+} from '@joktec/utils';
+import {
   ArgumentMetadata,
   Injectable,
   Optional,
@@ -7,11 +17,9 @@ import {
   ValidationPipe,
   ValidationPipeOptions,
 } from '@nestjs/common';
-import { ClassTransformOptions, instanceToPlain, plainToInstance } from 'class-transformer';
-import { validate, ValidationError, ValidatorOptions } from 'class-validator';
 import { isNil, isObject } from 'lodash';
 import { ValidationException } from '../exceptions';
-import { buildError, toArray, toBool } from '../utils';
+import { buildError } from '../utils';
 
 export const DEFAULT_PIPE_OPTIONS: ValidationPipeOptions = {
   transform: true,

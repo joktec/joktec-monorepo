@@ -1,7 +1,6 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
 import fs from 'fs-extra';
 import { Magika } from 'magika';
-import moment from 'moment';
 import { FileClient } from './file.client';
 import { FileConfig } from './file.config';
 import { FileMetric } from './file.metric';
@@ -49,8 +48,8 @@ export class FileService extends AbstractClientService<FileConfig, Magika> imple
     const filenames = await fs.promises.readdir(directory);
 
     const files = filenames?.reduce((files, filename) => {
-      const mtime = moment(fs.statSync(directory + filename).mtime);
-      if (mtime > moment(start) && mtime < moment(end)) {
+      const mtime = new Date(fs.statSync(directory + filename).mtime);
+      if (mtime > new Date(start) && mtime < new Date(end)) {
         files.push({ [filename]: mtime.toISOString() });
       }
       return files;
@@ -88,8 +87,8 @@ export class FileService extends AbstractClientService<FileConfig, Magika> imple
     const filenames = await fs.promises.readdir(directory);
 
     const files = filenames?.reduce((files, filename) => {
-      const mtime = moment(fs.statSync(directory + filename).mtime);
-      if (mtime > moment(start) && mtime < moment(end)) {
+      const mtime = new Date(fs.statSync(directory + filename).mtime);
+      if (mtime > new Date(start) && mtime < new Date(end)) {
         files.push(filename);
       }
       return files;

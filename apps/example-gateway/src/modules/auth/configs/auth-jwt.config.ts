@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsNumber, JwtConfig } from '@joktec/core';
+import { JwtConfig } from '@joktec/core';
+import { IsNotEmpty, IsNumber } from '@joktec/utils';
 
 export class AuthJwtConfig extends JwtConfig {
   @IsNumber()

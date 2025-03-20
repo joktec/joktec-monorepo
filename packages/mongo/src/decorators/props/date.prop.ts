@@ -1,4 +1,5 @@
-import { ApiPropertyOptions, IsDate, MaxDate, MinDate, Type, ValidationOptions } from '@joktec/core';
+import { ApiPropertyOptions } from '@joktec/core';
+import { IsDate, MaxDate, MinDate, Type, ValidationOptions } from '@joktec/utils';
 import { PropOptionsForString } from '@typegoose/typegoose/lib/types';
 import { isArray, isNil } from 'lodash';
 import { IPropOptions } from '../prop.decorator';

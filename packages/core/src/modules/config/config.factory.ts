@@ -1,8 +1,8 @@
 import { execSync } from 'child_process';
 import { existsSync, readFileSync } from 'fs';
+import { flattenKeys, toBool, toInt } from '@joktec/utils';
 import { load } from 'js-yaml';
 import { get, isBoolean, isNumber, pick, set, snakeCase } from 'lodash';
-import { flattenKeys, toBool, toInt } from '../../utils';
 
 export enum ENV {
   DEV = 'develop',

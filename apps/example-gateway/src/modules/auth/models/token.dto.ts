@@ -1,4 +1,5 @@
-import { ApiProperty, ApiPropertyOptional, Expose } from '@joktec/core';
+import { ApiProperty, ApiPropertyOptional } from '@joktec/core';
+import { Expose } from '@joktec/utils';
 import { isEmpty, isNil } from 'lodash';
 import { UserProfileResponse } from '../../profile';
 

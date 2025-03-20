@@ -1,14 +1,5 @@
-import {
-  ClientConfig,
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsTypes,
-} from '@joktec/core';
+import { ClientConfig, IsTypes } from '@joktec/core';
+import { IsArray, IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
 import { pick } from 'lodash';
 
 export class MysqlSlaveConfig {

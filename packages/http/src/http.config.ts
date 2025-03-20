@@ -1,7 +1,5 @@
+import { ClientConfig, HttpMethod, Is2DIntArray, IsTypes, LogService } from '@joktec/core';
 import {
-  ClientConfig,
-  HttpMethod,
-  Is2DIntArray,
   IsArray,
   IsBoolean,
   IsEnum,
@@ -11,14 +9,11 @@ import {
   IsOptional,
   IsPositive,
   IsString,
-  IsTypes,
-  LogService,
   toBool,
-} from '@joktec/core';
+} from '@joktec/utils';
 import { AxiosBasicCredentials, AxiosError, AxiosProxyConfig, type AxiosRequestConfig } from 'axios';
 import axiosRetry, { IAxiosRetryConfig } from 'axios-retry';
-import { chain, inRange, sum } from 'lodash';
-import mergeDeep from 'merge-deep';
+import { chain, inRange, merge, sum } from 'lodash';
 import { IHttpRetryConfig } from './models';
 
 export class HttpRetryConfig implements IHttpRetryConfig {
@@ -155,7 +150,7 @@ export class HttpConfig extends ClientConfig {
 
   constructor(props: HttpConfig) {
     super(props);
-    mergeDeep(this, {
+    merge(this, {
       ...props,
       headers: Object.assign({ accept: 'application/json' }, props?.headers),
       curlirize: toBool(props.curlirize, false),

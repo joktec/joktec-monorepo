@@ -1,14 +1,5 @@
-import {
-  ClientConfig,
-  IsBoolean,
-  IsInt,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsString,
-  toBool,
-  toInt,
-} from '@joktec/core';
+import { ClientConfig } from '@joktec/core';
+import { IsBoolean, IsInt, IsNotEmpty, IsObject, IsOptional, IsString, toBool, toInt } from '@joktec/utils';
 
 export class MongoConfig extends ClientConfig {
   @IsString()

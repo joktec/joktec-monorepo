@@ -2,14 +2,12 @@ import {
   BadRequestException,
   ConfigService,
   ForbiddenException,
-  hashPassword,
   Injectable,
   JwtService,
   LogService,
-  matchPassword,
   NotFoundException,
-  plainToInstance,
 } from '@joktec/core';
+import { hashPassword, matchPassword, plainToInstance } from '@joktec/utils';
 import { head } from 'lodash';
 import moment from 'moment';
 import { I18nContext } from 'nestjs-i18n';

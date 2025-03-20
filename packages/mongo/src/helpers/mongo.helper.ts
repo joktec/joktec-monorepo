@@ -1,4 +1,5 @@
-import { Dictionary, ICondition, IPopulate, IPopulateOption, ISort, toArray } from '@joktec/core';
+import { Dictionary, ICondition, IPopulate, IPopulateOption, ISort } from '@joktec/core';
+import { toArray } from '@joktec/utils';
 import { isArray, isDate, isEmpty, isNil, isObject, isRegExp, isString, omit, pick } from 'lodash';
 import { PopulateOptions } from 'mongoose';
 import { MongoSchema, ObjectId } from '../models';

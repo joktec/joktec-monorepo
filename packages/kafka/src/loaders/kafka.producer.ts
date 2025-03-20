@@ -1,4 +1,5 @@
-import { BaseMethodDecorator, CallbackMethodOptions, DEFAULT_CON_ID, toBool, toInt } from '@joktec/core';
+import { BaseMethodDecorator, CallbackMethodOptions, DEFAULT_CON_ID } from '@joktec/core';
+import { toBool, toInt } from '@joktec/utils';
 import { Message } from 'kafkajs';
 import { merge } from 'lodash';
 import { KafkaService } from '../kafka.service';

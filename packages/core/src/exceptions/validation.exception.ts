@@ -1,6 +1,6 @@
+import { toArray } from '@joktec/utils';
 import { isEmpty, isUndefined } from 'lodash';
 import { BadRequestException, ExceptionMessage } from '../exceptions';
-import { toArray } from '../utils';
 
 export interface IValidationProperty {
   path: string;

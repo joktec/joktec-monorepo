@@ -1,4 +1,5 @@
-import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector, toBool, toInt } from '@joktec/core';
+import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector } from '@joktec/core';
+import { toBool, toInt } from '@joktec/utils';
 import { ConsumerInfoType, RabbitAssertOptions, RabbitConsumeOptions, RabbitMessage } from '../models';
 import { RabbitService } from '../rabbit.service';
 

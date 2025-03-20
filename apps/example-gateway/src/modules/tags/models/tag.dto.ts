@@ -1,15 +1,5 @@
-import {
-  ApiProperty,
-  ApiPropertyOptional,
-  ArrayMinSize,
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsMongoId,
-  IsNotEmpty,
-  IsOptional,
-  ValidateIf,
-} from '@joktec/core';
+import { ApiProperty, ApiPropertyOptional } from '@joktec/core';
+import { ArrayMinSize, IsArray, IsBoolean, IsEnum, IsMongoId, IsNotEmpty, IsOptional, ValidateIf } from '@joktec/utils';
 import { ArticleType } from '../../../models/constants';
 
 export class ClearKeywordDto {

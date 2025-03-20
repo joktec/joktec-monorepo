@@ -1,5 +1,5 @@
+import { ApiPropertyOptions } from '@joktec/core';
 import {
-  ApiPropertyOptions,
   IsEmail,
   isEmail,
   IsHexColor,
@@ -12,7 +12,7 @@ import {
   toBool,
   toInt,
   ValidationOptions,
-} from '@joktec/core';
+} from '@joktec/utils';
 import { PropOptionsForString } from '@typegoose/typegoose/lib/types';
 import { isArray, isNil, isNumber, isObject } from 'lodash';
 import { IsEmailOptions } from 'validator/lib/isEmail';

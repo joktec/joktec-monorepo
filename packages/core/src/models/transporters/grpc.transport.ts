@@ -1,8 +1,7 @@
 import fs from 'fs';
+import { IsNotEmpty, IsObject, toInt } from '@joktec/utils';
 import { GrpcOptions as NestGrpcOptions, Transport } from '@nestjs/microservices';
-import { IsNotEmpty, IsObject } from 'class-validator';
 import glob from 'glob';
-import { toInt } from '../../utils';
 import { BaseTransport } from './base.transport';
 
 export interface GrpcOptions {

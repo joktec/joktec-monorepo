@@ -1,4 +1,5 @@
-import { ClientConfig, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/core';
+import { ClientConfig } from '@joktec/core';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
 import { StorageACL } from './models';
 
 export const DEFAULT_CONTENT_TYPE = 'application/octet-stream';

@@ -1,6 +1,6 @@
+import { IsNotEmpty, IsObject } from '@joktec/utils';
 import { KafkaOptions as NestKafkaOptions, Transport } from '@nestjs/microservices';
 import { BrokersFunction, CompressionTypes } from '@nestjs/microservices/external/kafka.interface';
-import { IsNotEmpty, IsObject } from 'class-validator';
 import { BaseTransport } from './base.transport';
 
 export interface KafkaOptions {

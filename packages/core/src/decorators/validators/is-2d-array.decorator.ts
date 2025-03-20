@@ -1,4 +1,4 @@
-import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator';
+import { registerDecorator, ValidationArguments, ValidationOptions } from '@joktec/utils';
 import { isNumber } from 'lodash';
 
 export function Is2DIntArray(validationOptions?: ValidationOptions) {

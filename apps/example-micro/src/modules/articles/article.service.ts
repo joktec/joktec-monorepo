@@ -1,4 +1,5 @@
-import { BaseService, Injectable, toInt } from '@joktec/core';
+import { BaseService, Injectable } from '@joktec/core';
+import { toInt } from '@joktec/utils';
 import { groupBy } from 'lodash';
 import { SuccessResponse } from '../../common';
 import { EmotionType } from '../../models/constants';

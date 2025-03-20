@@ -1,6 +1,6 @@
-import { IsTimeZone, Type } from '@joktec/core';
 import { CrontabStatus, CrontabType, ICrontabModel } from '@joktec/cron';
 import { Prop, PropType, Ref, Schema } from '@joktec/mongo';
+import { IsTimeZone, Type } from '@joktec/utils';
 import { pick } from 'lodash';
 import { BaseSchema, I18nText, I18nTransform } from '../common';
 import { CronHistory } from './cron-history.schema';
