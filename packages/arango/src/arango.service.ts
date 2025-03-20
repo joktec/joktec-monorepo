@@ -1,7 +1,7 @@
 import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
 import { Database } from 'arangojs';
-import { ArrayCursor } from 'arangojs/cursor';
-import { QueryOptions } from 'arangojs/database';
+import { Cursor } from 'arangojs/cursors';
+import { QueryOptions } from 'arangojs/queries';
 import { pick, values } from 'lodash';
 import { ArangoClient } from './arango.client';
 import { ArangoConfig, CollectionImportOpts } from './arango.config';
@@ -48,7 +48,7 @@ export class ArangoService extends AbstractClientService<ArangoConfig, Database>
     this.logService.debug(result, 'import to `%s` collection success with data:\n %j', col, docs);
   }
 
-  async query(q: ArangoQueryRequest, opts?: QueryOptions, conId: string = DEFAULT_CON_ID): Promise<ArrayCursor> {
+  async query<T = any>(q: ArangoQueryRequest, opts?: QueryOptions, conId: string = DEFAULT_CON_ID): Promise<Cursor<T>> {
     const result = await this.getClient(conId).query(q, opts);
     this.logService.debug(result, 'query success with aql:\n %j', q);
     return result;

@@ -45,11 +45,11 @@
     "@joktec/core": "0.0.175",
     "@joktec/utils": "*",
     "dot-object": "^2.1.5",
-    "ioredis": "^5.4.1",
+    "ioredis": "^5.6.0",
     "lodash": "^4.17.21",
     "memcache-client": "^1.0.5",
     "node-cache": "^5.1.2",
-    "node-persist": "^4.0.3",
+    "node-persist": "^4.0.4",
     "object-hash": "^3.0.0",
     "rxjs": "^7.8.2"
   },

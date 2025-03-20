@@ -1,7 +1,7 @@
 import { ClientConfig, IsTypes } from '@joktec/core';
 import { IsNotEmpty, IsObject, IsOptional, IsString, toBool, toInt } from '@joktec/utils';
-import { CollectionImportOptions } from 'arangojs/collection';
-import { LoadBalancingStrategy } from 'arangojs/connection';
+import { LoadBalancingStrategy } from 'arangojs/configuration';
+import { ImportDocumentsOptions } from 'arangojs/documents';
 
 export class BasicCredentials {
   @IsString()
@@ -28,7 +28,7 @@ export class BearerCredentials {
   }
 }
 
-export type CollectionImportOpts = CollectionImportOptions & {
+export type CollectionImportOpts = ImportDocumentsOptions & {
   type?: 'documents' | 'list' | 'auto';
 };
 

@@ -5,7 +5,7 @@ import { head, isEmpty, uniq } from 'lodash';
 import requestIp from 'request-ip';
 import { catchError, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
-import UAParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 import { ExpressRequest, ExpressResponse, GeoIp, IBaseRequest, IResponseDto, IUserAgent } from '../models';
 
 export type ExpressResponseType<T> = string | T | IResponseDto<T>;
@@ -75,7 +75,7 @@ export class ExpressInterceptor<T = any> implements NestInterceptor<T, ExpressRe
 
   protected resolverUserAgent(req: ExpressRequest): IUserAgent {
     if (!req.headers['user-agent']) return null;
-    return new UAParser(req.headers['user-agent'] as string).getResult();
+    return UAParser(req.headers);
   }
 
   protected resolverGeoIP(req: ExpressRequest): GeoIp {
