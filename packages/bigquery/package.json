@@ -1,7 +1,7 @@
 {
   "name": "@joktec/bigquery",
   "description": "JokTec - Google Cloud BigQuery Service",
-  "version": "0.0.173",
+  "version": "0.1.0",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -40,8 +40,8 @@
   },
   "dependencies": {
     "@google-cloud/bigquery": "^7.9.3",
-    "@joktec/core": "0.0.175",
-    "@joktec/utils": "*",
+    "@joktec/core": "0.1.0",
+    "@joktec/utils": "0.1.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {

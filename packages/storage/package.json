@@ -1,7 +1,7 @@
 {
   "name": "@joktec/storage",
   "description": "JokTec - Storage Service",
-  "version": "0.0.177",
+  "version": "0.1.0",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -44,14 +44,14 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.758.0",
     "@aws-sdk/s3-request-presigner": "^3.758.0",
-    "@joktec/core": "0.0.175",
-    "@joktec/utils": "*",
+    "@joktec/core": "0.1.0",
+    "@joktec/utils": "0.1.0",
     "byte-length": "^1.0.2",
     "image-downloader": "^4.3.0",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
-    "url-parse": "^1.5.10",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "url-parse": "^1.5.10"
   },
   "devDependencies": {
     "@types/mime-types": "^2.1.4",
