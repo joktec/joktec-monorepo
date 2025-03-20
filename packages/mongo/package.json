@@ -46,10 +46,10 @@
   "dependencies": {
     "@joktec/core": "0.0.175",
     "@joktec/utils": "*",
-    "@typegoose/typegoose": "^12.7.0",
+    "@typegoose/typegoose": "^12.13.0",
     "dot-object": "^2.1.5",
     "lodash": "^4.17.21",
-    "mongoose": "^8.6.3"
+    "mongoose": "^8.12.1"
   },
   "devDependencies": {
     "@types/dot-object": "^2.1.6",

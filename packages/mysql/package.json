@@ -50,12 +50,12 @@
     "@joktec/utils": "*",
     "lodash": "^4.17.21",
     "mysql": "2.18.1",
-    "mysql2": "^3.11.3",
-    "reflect-metadata": "0.2.0",
+    "mysql2": "^3.14.0",
+    "reflect-metadata": "0.2.2",
     "typeorm": "^0.3.21"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.10",
+    "@types/lodash": "^4.17.16",
     "@types/mysql": "^2.15.26",
     "@types/validator": "^13.12.2"
   },

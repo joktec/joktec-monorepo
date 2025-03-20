@@ -1,6 +1,6 @@
 import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
 import { toArray, toInt } from '@joktec/utils';
-import amqp, { ConfirmChannel, Connection } from 'amqplib';
+import amqp, { ChannelModel, ConfirmChannel } from 'amqplib';
 import { has } from 'lodash';
 import {
   RABBIT_AUTO_BINDING,
@@ -27,7 +27,7 @@ import { RabbitMetricService, RabbitPublishMetric, RabbitPublishStatus } from '.
 const RETRY_OPTS = 'rabbit.retry';
 
 @Injectable()
-export class RabbitService extends AbstractClientService<RabbitConfig, Connection> implements RabbitClient {
+export class RabbitService extends AbstractClientService<RabbitConfig, ChannelModel> implements RabbitClient {
   private props: { [conId: string]: RabbitProp } = {};
 
   constructor(
@@ -38,7 +38,7 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
   }
 
   @Retry(RETRY_OPTS)
-  protected async init(config: RabbitConfig): Promise<Connection> {
+  protected async init(config: RabbitConfig): Promise<ChannelModel> {
     if (!has(this.props, config.conId)) {
       this.props[config.conId] = { channels: {}, hooks: {} };
     }
@@ -55,7 +55,7 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
     return connection;
   }
 
-  protected async start(client: Connection, conId: string = DEFAULT_CON_ID): Promise<void> {
+  protected async start(client: ChannelModel, conId: string = DEFAULT_CON_ID): Promise<void> {
     if (has(this.autoBindingRegistry, conId)) {
       const autoBinding = toArray(this.autoBindingRegistry[conId]);
       for (const { queue, exchangeKey, routingKey, type, opts } of autoBinding) {
@@ -64,7 +64,7 @@ export class RabbitService extends AbstractClientService<RabbitConfig, Connectio
     }
   }
 
-  protected async stop(client: Connection, conId: string = DEFAULT_CON_ID): Promise<void> {
+  protected async stop(client: ChannelModel, conId: string = DEFAULT_CON_ID): Promise<void> {
     const props: RabbitProp = this.props[conId];
     Object.keys(props.channels).map(channelKey => props.channels[channelKey].close());
   }

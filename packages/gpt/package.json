@@ -43,7 +43,7 @@
   "dependencies": {
     "@joktec/core": "0.0.175",
     "@joktec/utils": "*",
-    "openai": "^4.63.0"
+    "openai": "^4.88.0"
   },
   "devDependencies": {
   },

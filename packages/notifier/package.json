@@ -49,9 +49,9 @@
     "web-push": "^3.6.7"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.10",
+    "@types/lodash": "^4.17.16",
     "@types/node-pushnotifications": "^1.0.8",
-    "@types/web-push": "^3.6.3"
+    "@types/web-push": "^3.6.4"
   },
   "lint-staged": {
     "*.ts": [
