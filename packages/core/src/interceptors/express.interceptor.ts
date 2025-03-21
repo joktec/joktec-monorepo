@@ -42,7 +42,7 @@ export class ExpressInterceptor<T = any> implements NestInterceptor<T, ExpressRe
     req.timezone = this.resolverTimezone(req);
     req.userAgent = this.resolverUserAgent(req);
     req.geoIp = this.resolverGeoIP(req);
-    req.query = this.resolverQuery(req);
+    Object.assign(req.query, this.resolverQuery(req));
   }
 
   protected resolverLanguage(req: ExpressRequest): string {
