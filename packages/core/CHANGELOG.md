@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.1](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.1.0...@joktec/core@0.1.1) (2025-03-21)
+
+
+### Bug Fixes
+
+* interceptor new express version ([2b1bdcc](https://github.com/joktec/joktec-monorepo/commit/2b1bdcca6f581810cf6a01e8ecbac1d459791339))
+
+
+
+
+
 # [0.1.0](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.0.175...@joktec/core@0.1.0) (2025-03-20)
 
 **Note:** Version bump only for package @joktec/core
