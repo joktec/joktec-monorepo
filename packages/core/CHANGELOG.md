@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.2](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.1.1...@joktec/core@0.1.2) (2025-03-23)
+
+
+### Bug Fixes
+
+* express query parserd ([f4dd6c4](https://github.com/joktec/joktec-monorepo/commit/f4dd6c4cfa18553053e2e9f87fb1b90f0f2c3a63))
+
+
+
+
+
 ## [0.1.1](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.1.0...@joktec/core@0.1.1) (2025-03-21)
 
 
