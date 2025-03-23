@@ -1,8 +1,7 @@
 {
   "packages": [
-    "packages/*",
-    "apps/*",
-    "tools/*"
+    "packages/*/*",
+    "apps/*"
   ],
   "command": {
     "publish": {

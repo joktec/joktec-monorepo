@@ -1,80 +1,126 @@
-<h3 align="center">JokTec - The most powerful to build microservice</h3>
-<p align="center">JokTec is a powerful and easy-to-use library designed to approach microservice architecture. It offers a skeleton that can be extendable and is compatible with NestJS framework. Whether you're a beginner or an experienced developer, JokTec can help you to organize and architect microservice simply and quickly.</p>
+<h3 align="center">JokTec - A Powerful Monorepo for Microservices with NestJS</h3>
+
+<p align="center">
+  JokTec is a modular, scalable, and developer-friendly monorepo architecture built with <strong>NestJS</strong>. It provides a solid foundation for developing microservices by organizing shared libraries, adapters, integrations, and services in a clear, maintainable structure.
+</p>
+
 <p align="center">
   <a href="https://opensource.org/licenses/MIT">
-    <img alt="licenses" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square"/>
+    <img alt="license" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square"/>
   </a>
 </p>
 
+---
+
+## 📁 Project Structure
+
+```
+joktec-monorepo/
+├── apps/                # Microservice applications (gateways, workers, etc.)
+│   ├── example-gateway/
+│   └── example-micro/
+└── packages/            # Reusable shared libraries and modules
+    ├── adapters/        # Protocol-based abstractions (cache, storage, mail, notify, ...)
+    ├── brokers/         # Messaging brokers (Kafka, RabbitMQ, etc.)
+    ├── common/          # Shared utilities, types, core services
+    ├── databases/       # Database clients and query layers
+    ├── integrations/    # 3rd-party service integrations (Firebase, GPT, ...)
+    └── tools/           # Internal utilities (file, http, alert, etc.)
+```
+
+---
+
 ## 🚀 Quick Start
-### 1/ Prerequisites
-- node >= 14.x.x
-- yarn >= 1.22.x - Prefer recommended than npm
-```shell
-$ npm install -g yarn
-```
-- lerna (global) - Optional on Unix, required on Window
-```shell
-$ npm install -g lerna
-```
-- nx (global) - Optional on Unix, required on Window
-```shell
-$ npm install -g nx
-```
-- @nestjs/cli (global) - Optional on Unix, required on Window
-```shell
-$ npm install -g @nestjs/cli
+
+### 1️⃣ Prerequisites
+
+- Node.js >= 14.x.x
+- Yarn >= 1.22.x _(preferred over npm)_
+- Optional (required for Windows):
+  ```bash
+  npm install -g lerna nx @nestjs/cli
+  ```
+
+### 2️⃣ Install Dependencies
+
+From the project root:
+
+```bash
+yarn install
 ```
 
-### 2/ Install dependencies
-Stand on the root project and run:
-```shell
-$ yarn install
-# OR
-$ yarn
-```
-It will be install all dependencies for all packages/ or apps/
+This installs all dependencies for all packages and apps in the monorepo.
 
-### 3/ Build project/packages
-```shell
-# Build all packages in project (recommended for first installation)
-$ yarn build
-# Build a single package
-$ yarn build --scope @joktec/core
+### 3️⃣ Build the Project
+
+```bash
+# Build everything
+yarn build
+
+# Build a specific package
+yarn build --scope @joktec/core
+
 # Build multiple packages
-$ yarn build --scope @joktec/core --scope @joktec/graphql
+yarn build --scope @joktec/core --scope @joktec/gpt
 ```
-P/S:
-- After build core package, it will be link to other service automatically. So you don't need to copy build dir (/dist) to node_modules any more
-- If don't have any changes in packages, and retry build again will be read from cached.
 
-### 4/ Run project
-```shell
-$ yarn dev --scope @joktec/example-gateway
-$ yarn dev --scope @joktec/example-micro 
+💡 Tip:
+- Packages are auto-linked after build, no need to manually copy `dist/`.
+- Nx caching ensures re-building is fast when nothing has changed.
+
+### 4️⃣ Run an App in Dev Mode
+
+```bash
+yarn dev --scope @joktec/example-gateway
+yarn dev --scope @joktec/example-micro
 ```
-If conflict port, goto each package will have config.yml file. Edit port in it and re-run
+
+You can customize port and other config by editing the `config.yml` file inside each app:
+
 ```yaml
 gateway:
   port: 9010
-  
+
 micro:
   port: 8010
 ```
-P/S: This only affect on your local, don't impact to deployment
 
-## 🗒️ Documentation
-TBD
+✅ This config only affects local development and does not impact deployment.
 
-## 🙋 Contributing
-Contributions to `@joktec/core` are welcome. If you would like to contribute, please fork the repository, make your changes, and submit a pull request.
+---
 
-Please make sure to update tests as appropriate.
+## 📚 Documentation
+
+Coming soon! Stay tuned.
+
+---
+
+## 🙌 Contributing
+
+We welcome contributions to `@joktec/*` packages.  
+To contribute:
+
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
+
+Please include tests when possible and follow the code style used in the repo.
+
+---
 
 ## 🚨 Issues
-If you encounter any issues while using all those libraries, please feel free to create an issue on our GitHub repository.
 
-## ⭐ Like what we're doing? Give us a star
+Found a bug or have a feature request?  
+Please open an issue on [GitHub](https://github.com/your-repo-link).
 
-## License
-All libraries is licensed under the MIT License.
+---
+
+## ⭐ Like What We're Building?
+
+Star this repo to show your support!
+
+---
+
+## 📄 License
+
+All packages in this repository are licensed under the [MIT License](https://opensource.org/licenses/MIT).

@@ -14,9 +14,8 @@
     "node": ">=14"
   },
   "workspaces": [
-    "packages/*",
-    "apps/*",
-    "tools/*"
+    "packages/*/*",
+    "apps/*"
   ],
   "keywords": [
     "microservices",
