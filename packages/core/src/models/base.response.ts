@@ -28,22 +28,27 @@ export const PagePaginationResponse = <T extends Entity>(dto: Constructor<T>): N
 
     @Field({ defaultValue: 0 })
     @ApiProperty({ default: 0 })
+    @Type(() => Number)
     total: number;
 
     @Field({ nullable: true, defaultValue: null })
     @ApiPropertyOptional({ example: 1 })
+    @Type(() => Number)
     prevPage?: number;
 
     @Field({ nullable: true, defaultValue: 1 })
     @ApiPropertyOptional({ example: 2 })
+    @Type(() => Number)
     currPage?: number;
 
     @Field({ nullable: true, defaultValue: null })
     @ApiPropertyOptional({ example: 3 })
+    @Type(() => Number)
     nextPage?: number;
 
     @Field({ nullable: true, defaultValue: null })
     @ApiPropertyOptional({ example: 10 })
+    @Type(() => Number)
     lastPage?: number;
   }
 
@@ -59,22 +64,27 @@ export const OffsetPaginationResponse = <T extends Entity>(dto: Constructor<T>):
 
     @Field({ defaultValue: 0 })
     @ApiProperty({ default: 0 })
+    @Type(() => Number)
     total: number;
 
     @Field({ nullable: true, defaultValue: null })
     @ApiPropertyOptional({ example: 0 })
+    @Type(() => Number)
     prevOffset?: number;
 
     @Field({ nullable: true, defaultValue: 1 })
     @ApiPropertyOptional({ example: 10 })
+    @Type(() => Number)
     currOffset?: number;
 
     @Field({ nullable: true, defaultValue: null })
     @ApiPropertyOptional({ example: 20 })
+    @Type(() => Number)
     nextOffset?: number;
 
     @Field({ nullable: true, defaultValue: null })
     @ApiPropertyOptional({ example: 100 })
+    @Type(() => Number)
     lastOffset?: number;
   }
 

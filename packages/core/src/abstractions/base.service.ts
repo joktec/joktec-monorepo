@@ -1,4 +1,5 @@
 import { Inject, OnModuleInit } from '@nestjs/common';
+import { isNil } from 'lodash';
 import { DeepPartial, Entity, IBaseRepository, IBaseRequest, IBaseService, IPaginationResponse } from '../models';
 import { ConfigService, LogService } from '../modules';
 import { cloneInstance } from '../utils';
@@ -19,6 +20,10 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
   protected afterModuleInit() {}
 
   public transformPaginate<DTO = T>(items: DTO[], total: number, query: REQ): IPaginationResponse<DTO> {
+    if (isNil(query.page) && isNil(query.offset)) {
+      query.page = 1;
+    }
+
     if (query.page) {
       const { page, limit } = query;
       if (!items.length) return { items, total, prevPage: null, currPage: page, nextPage: null, lastPage: null };
@@ -28,7 +33,7 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
       return { items, total, prevPage, currPage: page, nextPage, lastPage };
     }
 
-    const { limit, offset } = query;
+    const { limit, offset = 0 } = query;
     if (!items.length) {
       return { items, total, prevOffset: null, currOffset: offset, nextOffset: null, lastOffset: null };
     }
