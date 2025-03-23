@@ -4,8 +4,8 @@ This directory contains database-specific packages that encapsulate connection, 
 
 ## Packages
 
-- **arango**: ArangoDB database wrapper and helper utilities.
-- **bigquery**: Google BigQuery integration and query handling.
-- **elastic**: Elasticsearch client and index management.
-- **mongo**: MongoDB (Mongoose/Typegoose) schema and model helpers.
-- **mysql**: MySQL integration using TypeORM or Sequelize with extra decorators and repository helpers.
+- `@joktec/arango`: ArangoDB database wrapper and helper utilities.
+- `@joktec/bigquery`: Google BigQuery integration and query handling.
+- `@joktec/elastic`: Elasticsearch client and index management.
+- `@joktec/mongo`: MongoDB (Mongoose/Typegoose) schema and model helpers.
+- `@joktec/mysql`: MySQL integration using TypeORM or Sequelize with extra decorators and repository helpers.

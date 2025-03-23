@@ -4,7 +4,7 @@ This directory contains shared packages used across the entire monorepo. These a
 
 ## Packages
 
-- **core**: Base services, interceptors, decorators, and shared modules.
-- **cron**: Common cron job utilities and decorators.
-- **types**: Shared TypeScript types and interfaces.
-- **utils**: Low-level utility functions used throughout the codebase.
+- `@joktec/utils`: Low-level utility functions used throughout the codebase.
+- `@joktec/core`: Base services, interceptors, decorators, and shared modules.
+- `@joktec/cron`: Common cron job utilities and decorators.
+- `@joktec/types`: Shared TypeScript types and interfaces.

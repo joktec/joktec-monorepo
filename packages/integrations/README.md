@@ -4,5 +4,5 @@ This directory contains integrations with external third-party services. These a
 
 ## Packages
 
-- **firebase**: Firebase integration including authentication, messaging, and admin features.
-- **gpt**: Integration with OpenAI GPT API for AI-based processing.
+- `@joktec/firebase`: Firebase integration including authentication, messaging, and admin features.
+- `@joktec/gpt`: Integration with OpenAI GPT API for AI-based processing.

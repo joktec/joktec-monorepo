@@ -33,11 +33,7 @@ import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => createPinoHttp(cfg),
     }),
-    GatewayModule.forRoot({
-      useJwt: true,
-      metric: true,
-      static: true,
-    }),
+    GatewayModule.forRoot({ useJwt: true, metric: true, static: true }),
     BullModule.forRoot(),
     HttpModule,
     FirebaseModule,

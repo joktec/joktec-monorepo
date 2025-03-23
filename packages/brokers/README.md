@@ -4,5 +4,5 @@ This directory contains packages that handle message brokering, typically throug
 
 ## Packages
 
-- **kafka**: Kafka client wrapper for producing and consuming events.
-- **rabbit**: RabbitMQ client wrapper for managing queues and message consumption.
+- `@joktec/kafka`: Kafka client wrapper for producing and consuming events.
+- `@joktec/rabbit`: RabbitMQ client wrapper for managing queues and message consumption.

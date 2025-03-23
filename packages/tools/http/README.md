@@ -17,9 +17,9 @@
 To install this library, use either `npm` or `yarn`:
 
 ```bash
-npm install -S @joktec/core @joktec/http
+npm install -S @joktec/http
 # or
-yarn add -S @joktec/core @joktec/http
+yarn add -S @joktec/http
 ```
 
 ## Getting Started
@@ -39,39 +39,57 @@ http:
 Update the values according to your HTTP client details. The raxConfig option is using the retry-axios package to automatically retry failed requests.
 
 ### Module
-Once you have provided the configuration, you can import the `MongoModule` in your `AppModule`:
+Once you have provided the configuration, you can import the `HttpModule` in your `AppModule`:
 ```typescript
-import { CoreModule, Module } from '@joktec/core';
+import { Module } from '@joktec/core';
 import { HttpModule } from '@joktec/http';
 
 @Module({
-  imports: [CoreModule, HttpModule],
+  imports: [
+    // ...
+    HttpModule,
+    // ...
+  ],
 })
 export class AppModule {}
 ```
 
 ### Service
 You can then use the HttpService and do any request:
+
 ```typescript
 import { Injectable } from '@joktec/core';
-import { HttpService, Client, HttpResponse, HttpFormData } from '@joktec/http';
-import { firstValueFrom } from 'rxjs';
+import { HttpService, HttpResponse, HttpRequest } from '@joktec/http';
 
 @Injectable()
 export class MyService {
-  constructor(private readonly httpService: HttpService) {}
-  
-  async request(): Promise<HttpResponse<T>> {
-    return firstValueFrom(this.httpService.request<T>({
-      // ... input config
-    }));
+  constructor(private readonly httpService: HttpService) {
   }
 
-  async upload(): Observable<HttpResponse<T>> {
-    const data: HttpFormData = new HttpFormData();
-    return firstValueFrom(this.httpService.upload<T>({
+  async request(): Promise<HttpResponse<any>> {
+    return this.httpService.request<any>({
+      method: 'GET',
+      baseURL: '',
+      url: '',
+      data: {
+        // ...input data
+      }
       // ... input config
-    }, data));
+    });
+  }
+
+  async upload(): Promise<HttpResponse<any>> {
+    const file = new File();
+    const req: HttpRequest = {
+      method: 'POST',
+      baseURL: '',
+      url: '',
+      formData: {
+        file: file,
+      },
+      // ... input config
+    };
+    return this.httpService.upload<any>(req);
   }
 }
 ```
