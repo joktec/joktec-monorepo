@@ -25,6 +25,7 @@ export class GatewayFactory {
     const gatewayConfig = configService.parseOrThrow(GatewayConfig, 'gateway');
     const { port, contextPath } = gatewayConfig;
 
+    app.set('query parser', 'extended');
     app.setGlobalPrefix(contextPath);
     app.use(bodyParser.json({ limit: '50mb' }));
     app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
