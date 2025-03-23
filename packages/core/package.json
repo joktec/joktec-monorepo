@@ -78,7 +78,6 @@
     "bullmq": "^5.44.0",
     "csurf": "^1.11.0",
     "dataloader": "^2.2.3",
-    "dot-object": "^2.1.5",
     "express": "^5.0.1",
     "express-basic-auth": "^1.2.1",
     "geoip-lite": "^1.4.10",
