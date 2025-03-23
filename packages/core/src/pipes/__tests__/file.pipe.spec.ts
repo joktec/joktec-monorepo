@@ -1,6 +1,7 @@
 import { describe, expect, it, jest } from '@jest/globals';
+import { HttpType } from '@joktec/utils';
 import { FileFilter, isAllowedMimeType } from '../file.pipe';
-import { ExpressRequest, HttpType } from '../../models';
+import { ExpressRequest } from '../../models';
 
 describe('isAllowedMimeType function', () => {
   it('should return true for empty allowedMimeTypes array', () => {

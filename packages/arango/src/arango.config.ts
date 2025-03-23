@@ -1,5 +1,5 @@
-import { ClientConfig, IsTypes } from '@joktec/core';
-import { IsNotEmpty, IsObject, IsOptional, IsString, toBool, toInt } from '@joktec/utils';
+import { ClientConfig } from '@joktec/core';
+import { IsNotEmpty, IsObject, IsOptional, IsString, IsTypes, toBool, toInt } from '@joktec/utils';
 import { LoadBalancingStrategy } from 'arangojs/configuration';
 import { ImportDocumentsOptions } from 'arangojs/documents';
 

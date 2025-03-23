@@ -1,4 +1,4 @@
-import { buildError, ClientConfig, IsTypes, IValidationProperty } from '@joktec/core';
+import { buildError, ClientConfig, IValidationProperty } from '@joktec/core';
 import {
   IsBoolean,
   IsEnum,
@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsTypes,
   validateSync,
   ValidationError,
 } from '@joktec/utils';

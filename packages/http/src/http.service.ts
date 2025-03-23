@@ -1,19 +1,19 @@
 import { AgentOptions } from 'http';
 import net from 'net';
-import { AbstractClientService, DEFAULT_CON_ID, HttpMethod, Injectable } from '@joktec/core';
-import { toArray, toBool } from '@joktec/utils';
+import { AbstractClientService, DEFAULT_CON_ID, Injectable } from '@joktec/core';
+import { HttpMethod, toArray, toBool } from '@joktec/utils';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import curlirize from 'axios-curlirize';
 import axiosRetry from 'axios-retry';
 import FormData from 'form-data';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
+import { merge } from 'lodash';
 import qs from 'qs';
 import { HttpClient } from './http.client';
 import { HttpConfig, HttpProxyConfig } from './http.config';
 import { HttpMetricDecorator } from './http.metric';
 import { HttpAgent, HttpFormRequest, HttpRequest, HttpResponse } from './models';
-import { merge } from 'lodash';
 
 @Injectable()
 export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance> implements HttpClient {

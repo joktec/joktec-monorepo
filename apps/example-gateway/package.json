@@ -48,11 +48,10 @@
     "@joktec/rabbit": "0.1.2",
     "@joktec/storage": "0.1.2",
     "apple-signin-auth": "^1.7.6",
+    "dayjs": "^1.11.13",
     "nestjs-i18n": "^10.5.1",
     "gravatar": "^1.8.2",
     "lodash": "^4.17.21",
-    "moment": "^2.30.1",
-    "moment-timezone": "^0.5.45",
     "rxjs": "^7.8.2",
     "pino-mongodb": "^4.3.0"
   },

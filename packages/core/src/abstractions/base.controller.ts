@@ -1,4 +1,4 @@
-import { toArray, toBool, toPlural, toSingular } from '@joktec/utils';
+import { HttpStatus, toArray, toBool, toPlural, toSingular } from '@joktec/utils';
 import {
   applyDecorators,
   Body,
@@ -46,7 +46,6 @@ import {
   Constructor,
   DeepPartial,
   Entity,
-  HttpStatus,
   IBaseController,
   IBaseRequest,
   PagePaginationResponse,

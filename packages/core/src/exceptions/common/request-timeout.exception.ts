@@ -1,4 +1,4 @@
-import { HttpStatus } from '../../models';
+import { HttpStatus } from '@joktec/utils';
 import { IExceptionMessage } from '../exception';
 import { ExceptionMessage } from '../exception-message';
 import { RuntimeException } from '../runtime.exception';

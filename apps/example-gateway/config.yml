@@ -33,7 +33,7 @@ log:
   level: debug
   hideWarning: false
   hideObject: false
-  # hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]
+  hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]
   transport:
     enable: true
     target: pino-mongodb

@@ -8,8 +8,8 @@ import {
   NotFoundException,
 } from '@joktec/core';
 import { hashPassword, matchPassword, plainToInstance } from '@joktec/utils';
+import dayjs from 'dayjs';
 import { head } from 'lodash';
-import moment from 'moment';
 import { I18nContext } from 'nestjs-i18n';
 import { DEFAULT_LOCALE } from '../../app.constant';
 import { AuthProviderType, AuthScope, OTPStatus, OTPType, SessionStatus, UserStatus } from '../../models/constants';
@@ -76,8 +76,8 @@ export class AuthService {
 
     // 2. Check the last otp is expired, then restrict or retry
     const lastOTP: Otp = head(otpList);
-    const now = moment().startOf('ms');
-    const expired = moment(lastOTP.expired).startOf('ms');
+    const now = dayjs().startOf('ms');
+    const expired = dayjs(lastOTP.expired).startOf('ms');
     if (expired <= now) {
       if (otpList.length >= authConfig.limit) {
         await this.otpService.revokeOtp(lastOTP);
@@ -87,7 +87,7 @@ export class AuthService {
     }
 
     // 3. Still available but reject send otp
-    const duration = moment.duration(now.diff(expired));
+    const duration = dayjs.duration(now.diff(expired));
     const seconds: number = Math.abs(duration.asSeconds());
     throw new BadRequestException('auth.OTP_PENDING', { expiredInSeconds: seconds });
   }
@@ -102,8 +102,8 @@ export class AuthService {
       throw new BadRequestException('auth.PUBLIC_CODE_INVALID');
     }
 
-    const now = moment().startOf('ms');
-    const expired = moment(otp.expired).startOf('ms');
+    const now = dayjs().startOf('ms');
+    const expired = dayjs(otp.expired).startOf('ms');
     if (now >= expired) {
       await this.otpService.update(otp._id, { status: OTPStatus.EXPIRED });
       throw new BadRequestException('auth.PUBLIC_CODE_EXPIRED');

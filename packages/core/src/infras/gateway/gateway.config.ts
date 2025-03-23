@@ -1,7 +1,7 @@
-import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/utils';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { HelmetOptions } from 'helmet';
-import { IsTypes, SwaggerConfig } from '../../decorators';
+import { SwaggerConfig } from '../../decorators';
 
 export class StaticConfig {
   @IsString()

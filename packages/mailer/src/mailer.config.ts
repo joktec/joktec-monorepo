@@ -1,6 +1,6 @@
 import os from 'os';
-import { ClientConfig, IsTypes, LogService } from '@joktec/core';
-import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
+import { ClientConfig, LogService } from '@joktec/core';
+import { IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/utils';
 import { isObject } from 'lodash';
 import shared from 'nodemailer/lib/shared';
 import { EjsOptions, HandlebarOptions, PugOptions } from './stores';

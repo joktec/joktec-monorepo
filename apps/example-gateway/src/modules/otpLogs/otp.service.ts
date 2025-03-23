@@ -1,6 +1,6 @@
 import { BaseService, Injectable } from '@joktec/core';
 import { generateOTP, generateUUID } from '@joktec/utils';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { appConfig } from '../../app.config';
 import { LOCALE } from '../../app.constant';
 import { OTPStatus, OTPType } from '../../models/constants';
@@ -19,8 +19,8 @@ export class OtpService extends BaseService<Otp, string> {
         email,
         type,
         createdAt: {
-          $gte: moment().startOf('date').toDate(),
-          $lte: moment().endOf('date').toDate(),
+          $gte: dayjs().startOf('date').toDate(),
+          $lte: dayjs().endOf('date').toDate(),
         },
         status: { $nin: [OTPStatus.DISABLED, OTPStatus.SUCCESS] },
       },
@@ -46,7 +46,7 @@ export class OtpService extends BaseService<Otp, string> {
       type,
       retry: 1,
       expiredInSeconds: expired,
-      expired: moment().startOf('ms').add(expired, 'second').toDate(),
+      expired: dayjs().startOf('ms').add(expired, 'second').toDate(),
       status: OTPStatus.ACTIVATED,
     });
   }
@@ -66,7 +66,7 @@ export class OtpService extends BaseService<Otp, string> {
       type: lastOTP.type,
       retry,
       expiredInSeconds,
-      expired: moment().startOf('ms').add(expiredInSeconds, 'second').toDate(),
+      expired: dayjs().startOf('ms').add(expiredInSeconds, 'second').toDate(),
       status: OTPStatus.ACTIVATED,
     });
   }

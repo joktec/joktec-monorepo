@@ -1,7 +1,7 @@
 import { Injectable } from '@joktec/core';
 import { IMongoPipeline, MongoRepo, MongoService } from '@joktec/mongo';
 import { plainToInstance } from '@joktec/utils';
-import moment from 'moment-timezone';
+import dayjs from 'dayjs';
 import { PipelineStage } from 'mongoose';
 import { ArticleStatus, ArticleType, ArtistStatus, CategoryStatus, EmotionType } from '../../models/constants';
 import { Article, Category } from '../../models/schemas';
@@ -18,7 +18,7 @@ export class CategoryRepo extends MongoRepo<Category, string> {
     const articleLookup: PipelineStage[] = [{ $addFields: { downloads: '$summary.download' } }];
     if (filter.type === CategoryRankingRange.MONTHLY) {
       articleLookup.shift();
-      const today = moment().tz(timezone);
+      const today = dayjs().tz(timezone);
       const $match: PipelineStage.Match['$match'] = {
         target: Article.name,
         type: EmotionType.DOWNLOAD,

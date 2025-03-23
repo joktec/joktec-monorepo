@@ -57,7 +57,7 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
   }
 
   async stop(client: S3Client, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // Do nothing
+    client.destroy();
   }
 
   async bucketExists(bucket: string, conId: string = DEFAULT_CON_ID): Promise<boolean> {

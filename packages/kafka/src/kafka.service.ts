@@ -45,8 +45,16 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
 
   protected async stop(client: Kafka, conId: string = DEFAULT_CON_ID): Promise<void> {
     const props: KafkaProp = this.props[conId];
-    Object.keys(props.producers).map(producerKey => props.producers[producerKey].disconnect());
-    Object.keys(props.consumers).map(consumerKey => props.consumers[consumerKey].disconnect());
+
+    for (const producerKey of Object.keys(props.producers)) {
+      await props.producers[producerKey].disconnect();
+      this.logService.info('`%s` [%s] disconnect', conId, producerKey);
+    }
+
+    for (const consumerKey of Object.keys(props.consumers)) {
+      await props.consumers[consumerKey].disconnect();
+      this.logService.info('`%s` [%s] disconnect', conId, consumerKey);
+    }
   }
 
   private async initProducer(key: string, cfg: ProducerConfig = {}, conId: string = DEFAULT_CON_ID): Promise<Producer> {

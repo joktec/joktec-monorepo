@@ -1,6 +1,5 @@
-import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/utils';
 import { SwaggerUiOptions } from 'swagger-ui-express';
-import { IsTypes } from '../validators';
 
 export enum SwaggerSecurity {
   BASIC = 'basic',

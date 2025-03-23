@@ -12,20 +12,20 @@ export class FileService extends AbstractClientService<FileConfig, Magika> imple
     super('file', FileConfig);
   }
 
-  async init(_: FileConfig): Promise<Magika> {
+  async init(config: FileConfig): Promise<Magika> {
     const magika = new Magika();
-    await magika.load();
+    await magika.load(config.magika);
     return magika;
   }
 
-  async start(_: any, conId: string = DEFAULT_CON_ID): Promise<void> {
+  async start(client: Magika, conId: string = DEFAULT_CON_ID): Promise<void> {
     const { directory } = this.getConfig(conId);
     if (!fs.existsSync(directory)) {
       fs.mkdirSync(directory, { recursive: true });
     }
   }
 
-  async stop(_: any): Promise<void> {
+  async stop(client: Magika): Promise<void> {
     // Do nothing
   }
 

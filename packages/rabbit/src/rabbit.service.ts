@@ -66,7 +66,12 @@ export class RabbitService extends AbstractClientService<RabbitConfig, ChannelMo
 
   protected async stop(client: ChannelModel, conId: string = DEFAULT_CON_ID): Promise<void> {
     const props: RabbitProp = this.props[conId];
-    Object.keys(props.channels).map(channelKey => props.channels[channelKey].close());
+    for (const channelKey of Object.keys(props.channels)) {
+      await props.channels[channelKey].close();
+      this.logService.info('`%s` rabbit close confirmChannel `%s` success', conId, channelKey);
+    }
+    await client.close();
+    this.logService.info('`%s` rabbit close connection success', conId);
   }
 
   @Retry(RETRY_OPTS)

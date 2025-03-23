@@ -1,5 +1,4 @@
-import { IsTypes } from '@joktec/core';
-import { IsNotEmpty, IsString } from '@joktec/utils';
+import { IsNotEmpty, IsString, IsTypes } from '@joktec/utils';
 
 export class NotifierMpnsOption {
   @IsString()

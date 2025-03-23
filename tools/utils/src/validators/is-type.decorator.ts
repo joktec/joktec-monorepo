@@ -1,6 +1,6 @@
-import { registerDecorator, toArray, validateSync, ValidationArguments, ValidationOptions } from '@joktec/utils';
+import { registerDecorator, validateSync, ValidationArguments, ValidationOptions } from 'class-validator';
 import { isArray, isBoolean, isInteger, isString } from 'lodash';
-import { Clazz } from '../../models';
+import { toArray } from '../helpers';
 
 const primitiveTypeValidator = {
   string(value: any, args: ValidationArguments) {
@@ -20,6 +20,7 @@ const primitiveTypeValidator = {
   },
 };
 
+type Clazz = new (...args: any[]) => any;
 type TypeDefined = 'int' | 'int[]' | 'string' | 'boolean' | 'string[]' | Clazz;
 
 export const IsTypes = (

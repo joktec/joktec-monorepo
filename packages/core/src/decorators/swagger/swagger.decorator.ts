@@ -1,8 +1,8 @@
+import { HttpRequestHeader } from '@joktec/utils';
 import { applyDecorators } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiSecurity } from '@nestjs/swagger';
 import { isBoolean } from 'lodash';
 import { MethodNotAllowedException } from '../../exceptions';
-import { HttpRequestHeader } from '../../models';
 import { ApiSchemaDecorator, IApiFilterQueryOptions } from './swagger.interface';
 
 export const ApiFilterQuery = (opts: IApiFilterQueryOptions): MethodDecorator => {

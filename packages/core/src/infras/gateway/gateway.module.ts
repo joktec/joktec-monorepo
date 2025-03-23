@@ -1,11 +1,12 @@
 import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
-import { MetricModule, StaticModule } from '../../modules';
+import { JwtModule, MetricModule, StaticModule } from '../../modules';
 import { serverStaticFactory } from '../../modules/statics/static.factory';
 import { GatewayController } from './gateway.controller';
 import { GatewayMetricInterceptor } from './gateway.interceptor';
 import { gatewayDuration, gatewayTotal } from './gateway.metric';
 
 export interface GatewayModuleOptions {
+  useJwt?: boolean;
   metric?: boolean;
   static?: boolean;
 }
@@ -17,6 +18,10 @@ export class GatewayModule {
     const providers: Provider[] = [];
     const imports: any[] = [];
     const exports: any[] = [];
+
+    if (options.useJwt) {
+      imports.push(JwtModule);
+    }
 
     if (options.static) {
       imports.push(StaticModule.forRootAsync(serverStaticFactory()));

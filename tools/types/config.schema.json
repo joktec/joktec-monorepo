@@ -61655,11 +61655,31 @@
         },
         "directory": {
           "type": "string"
+        },
+        "magika": {
+          "$ref": "#/definitions/MagikaConfig"
         }
       },
       "required": [
         "directory"
       ]
+    },
+    "MagikaConfig": {
+      "type": "object",
+      "properties": {
+        "modelURL": {
+          "type": "string"
+        },
+        "modelPath": {
+          "type": "string"
+        },
+        "configURL": {
+          "type": "string"
+        },
+        "configPath": {
+          "type": "string"
+        }
+      }
     },
     "Listable<FirebaseConfig>": {
       "anyOf": [

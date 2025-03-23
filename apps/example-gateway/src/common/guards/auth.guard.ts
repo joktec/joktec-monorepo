@@ -6,7 +6,7 @@ import {
   JwtService,
   UnauthorizedException,
 } from '@joktec/core';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { I18nContext } from 'nestjs-i18n';
 import { IRequest } from '../../app.constant';
 import { SessionStatus, UserStatus } from '../../models/constants';
@@ -30,7 +30,7 @@ export class AuthGuard implements CanActivate {
       this.userRepo.findByPayload(req.payload),
     ]);
 
-    if (!session || moment().isSameOrAfter(session?.expiresAt) || session.status === SessionStatus.DISABLED) {
+    if (!session || dayjs().isSameOrAfter(session?.expiresAt) || session.status === SessionStatus.DISABLED) {
       throw new UnauthorizedException('auth.SESSION_EXPIRED');
     }
     if (!loggedUser) throw new UnauthorizedException('user.USER_NOT_FOUND');

@@ -1,10 +1,11 @@
+import { HttpStatus } from '@joktec/utils';
 import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BaseRpcExceptionFilter, RpcException } from '@nestjs/microservices';
 import { get, has, isString } from 'lodash';
 import { PinoLogger } from 'nestjs-pino';
 import { Observable, throwError } from 'rxjs';
-import { HttpStatus, IExceptionFilter, IResponseDto } from '../../models';
+import { IExceptionFilter, IResponseDto } from '../../models';
 import { Exception, IExceptionMessage } from '../exception';
 import { ExceptionMessage } from '../exception-message';
 import { MicroRpcException } from '../micro-rpc.exception';

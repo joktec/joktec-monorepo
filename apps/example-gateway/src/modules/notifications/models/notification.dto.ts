@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@joktec/core';
-import { ArrayMinSize, IsArray, IsBoolean, IsMongoId, IsOptional, ValidateIf } from '@joktec/utils';
 import { IMongoRequest } from '@joktec/mongo';
+import { ArrayMinSize, IsArray, IsBoolean, IsMongoId, IsOptional, ValidateIf } from '@joktec/utils';
 import { Notification } from '../../../models/schemas';
 
 export enum ReadStatus {

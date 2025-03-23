@@ -33,7 +33,7 @@ export class FirebaseService extends AbstractClientService<FirebaseConfig, Fireb
   async start(client: FirebaseInstance, conId: string = DEFAULT_CON_ID): Promise<void> {
     const appCheck = client.appCheck();
     this.logService.info('`%s` AppCheck successful: %s', conId, appCheck.app.name);
-    this.logService.debug('`%s` AppCheck options: %j', conId, appCheck.app.options);
+    this.logService.debug(appCheck.app.options, '`%s` AppCheck options', conId);
   }
 
   async stop(client: FirebaseInstance, conId: string = DEFAULT_CON_ID): Promise<void> {

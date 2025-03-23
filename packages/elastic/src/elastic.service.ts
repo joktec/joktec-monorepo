@@ -28,11 +28,11 @@ export class ElasticService extends AbstractClientService<ElasticConfig, HttpSer
   }
 
   async start(client: HttpService, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // Do nothing
+    await client.start(client.getClient(conId), conId);
   }
 
   async stop(client: HttpService, conId: string = DEFAULT_CON_ID): Promise<void> {
-    // Do nothing
+    await client.stop(client.getClient(conId), conId);
   }
 
   async search<TDoc = any, TAgg = any>(

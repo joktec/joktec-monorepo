@@ -11,8 +11,8 @@ import {
 } from '@joktec/core';
 import { IMongoRequest } from '@joktec/mongo';
 import { generateUUID } from '@joktec/utils';
+import dayjs from 'dayjs';
 import { last, map, omit, pick } from 'lodash';
-import moment from 'moment-timezone';
 import { IRequest, TRANSPORT } from '../../app.constant';
 import { SuccessResponse } from '../../common';
 import { ArticleStatus, ArticleType, EmotionType, UserStatus } from '../../models/constants';
@@ -111,7 +111,7 @@ export class ArticleService extends BaseService<Article, string> {
       delete processQuery.keyword;
     }
 
-    const today = moment().tz(this.request.timezone);
+    const today = dayjs().tz(this.request.timezone);
 
     if (query.popular === PopularType.TODAY) {
       processQuery.condition.updatedAt = {

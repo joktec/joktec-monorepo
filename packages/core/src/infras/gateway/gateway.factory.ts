@@ -2,7 +2,7 @@ import path from 'path';
 import { createBullBoard } from '@bull-board/api';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { ExpressAdapter } from '@bull-board/express';
-import { joinUrl } from '@joktec/utils';
+import { HttpRequestHeader, joinUrl } from '@joktec/utils';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as bodyParser from 'body-parser';
@@ -12,7 +12,6 @@ import basicAuth from 'express-basic-auth';
 import helmet from 'helmet';
 import { ApplicationMiddlewareFactory, resolveMiddleware } from '../../base';
 import { SwaggerConfig, SwaggerSecurity } from '../../decorators';
-import { HttpRequestHeader } from '../../models';
 import { BullConfig, ConfigService, LogService } from '../../modules';
 import { GatewayConfig } from './gateway.config';
 

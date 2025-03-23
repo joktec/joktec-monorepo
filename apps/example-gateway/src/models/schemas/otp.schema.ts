@@ -1,5 +1,5 @@
 import { ObjectId, Prop, Ref, Schema } from '@joktec/mongo';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { DEFAULT_LOCALE, LOCALE } from '../../app.constant';
 import { BaseSchema } from '../common';
 import { OTPStatus, OTPType } from '../constants';
@@ -28,7 +28,7 @@ export class Otp extends BaseSchema {
   @Prop({ required: true, enum: OTPStatus })
   status!: OTPStatus;
 
-  @Prop({ required: true, default: () => moment().startOf('ms').add(30, 's').toDate() })
+  @Prop({ required: true, default: () => dayjs().startOf('ms').add(30, 's').toDate() })
   expired!: Date;
 
   @Prop({ required: true, default: 30, min: 0 })

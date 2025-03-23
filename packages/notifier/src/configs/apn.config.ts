@@ -1,5 +1,4 @@
-import { IsTypes } from '@joktec/core';
-import { IsBoolean, IsNumber, IsOptional, IsString } from '@joktec/utils';
+import { IsBoolean, IsNumber, IsOptional, IsString, IsTypes } from '@joktec/utils';
 
 export class NotifierApnToken {
   @IsOptional()

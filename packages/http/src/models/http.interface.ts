@@ -1,4 +1,4 @@
-import { HttpMethod } from '@joktec/core';
+import { HttpMethod } from '@joktec/utils';
 
 /**
  * Configuration options for retrying failed HTTP requests.

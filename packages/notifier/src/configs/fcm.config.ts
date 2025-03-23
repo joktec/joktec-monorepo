@@ -1,6 +1,5 @@
 import fs from 'fs';
-import { IsTypes } from '@joktec/core';
-import { IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
+import { IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/utils';
 import { isObject, isString } from 'lodash';
 
 export class NotifierFcmCredential {

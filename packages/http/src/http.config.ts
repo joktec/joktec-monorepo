@@ -1,5 +1,7 @@
-import { ClientConfig, HttpMethod, Is2DIntArray, IsTypes, LogService } from '@joktec/core';
+import { ClientConfig, LogService } from '@joktec/core';
 import {
+  HttpMethod,
+  Is2DIntArray,
   IsArray,
   IsBoolean,
   IsEnum,
@@ -9,6 +11,7 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  IsTypes,
   toBool,
 } from '@joktec/utils';
 import { AxiosBasicCredentials, AxiosError, AxiosProxyConfig, type AxiosRequestConfig } from 'axios';

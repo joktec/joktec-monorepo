@@ -1,5 +1,4 @@
-import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional } from '@joktec/utils';
-import { IsTypes } from '../../decorators';
+import { IsArray, IsBoolean, IsInt, IsNotEmpty, IsOptional, IsTypes } from '@joktec/utils';
 import {
   GrpcTransport,
   KafkaTransport,

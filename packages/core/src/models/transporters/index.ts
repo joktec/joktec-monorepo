@@ -1,7 +1,7 @@
+import { toArray } from '@joktec/utils';
 import { ClientProxyFactory } from '@nestjs/microservices';
 import { head } from 'lodash';
 import { ConfigService } from '../../modules';
-import { toArray } from '@joktec/utils';
 import { Clazz } from '../base.dto';
 import { TransportType } from './base.transport';
 import { GrpcTransport } from './grpc.transport';
