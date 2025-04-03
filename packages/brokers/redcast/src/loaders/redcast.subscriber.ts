@@ -50,14 +50,14 @@ export class RedcastSubscriberLoader implements OnModuleInit {
         const { channel, options = {}, conId = DEFAULT_CON_ID } = metadata;
         if (options.pattern) {
           const cb: PSubscribeCallback = async (pattern: string, channel: string, message: string): Promise<void> => {
-            await method.call(serviceInstance, pattern, channel, message);
+            await method.call(serviceInstance, message, channel, pattern);
           };
           await this.redcastService.pSubscribe(channel, cb, conId);
           return;
         }
 
         const cb: SubscribeCallback = async (channel: string, message: string): Promise<void> => {
-          await method.call(serviceInstance, channel, message);
+          await method.call(serviceInstance, message, channel);
         };
         await this.redcastService.subscribe(channel, cb, conId);
       }

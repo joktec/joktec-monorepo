@@ -27,7 +27,8 @@ export class ArticleHandler {
   }
 
   @RedcastSubscribe('test_channel', { pattern: false }, DEFAULT_CON_ID)
-  async testPubSub(msg: string) {
+  async testPubSub(msg: string, channel?: string, pattern?: string) {
+    console.log({ msg, channel, pattern, });
     await this.userRepo.find({});
     await sleep(1000);
   }
