@@ -1,7 +1,7 @@
 import { AbstractClientService, Clazz, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
 import { getModelForClass, getModelWithString } from '@typegoose/typegoose';
 import mongoose, { ClientSession, ClientSessionOptions, Connection as Mongoose } from 'mongoose';
-import { QueryHelper } from './helpers';
+import { mongoDebug, QueryHelper } from './helpers';
 import { MongoSchema } from './models';
 import { MongoClient, MongoModelRegistry, MongoType } from './mongo.client';
 import { MongoConfig } from './mongo.config';
@@ -27,10 +27,11 @@ export class MongoService extends AbstractClientService<MongoConfig, Mongoose> i
     };
 
     mongoose.set('strictQuery', config.strictQuery);
+
     if (config.debug) {
       mongoose.set('debug', (collectionName: string, methodName: string, ...methodArgs: any[]) => {
-        const args = methodArgs.map(arg => JSON.stringify(arg)).join(', ');
-        this.logService.info(`Mongoose: db.getCollection("%s").%s(%s)`, collectionName, methodName, args);
+        const mongoShell = mongoDebug(collectionName, methodName, ...methodArgs);
+        this.logService.info(`MongoDB Shell: %s`, mongoShell);
       });
     }
 
