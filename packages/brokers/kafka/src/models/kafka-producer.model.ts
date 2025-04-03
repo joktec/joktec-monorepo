@@ -7,11 +7,6 @@ export type KafkaPublishConfig = {
     timeout?: number;
     compression?: CompressionTypes;
   };
-  array?: {
-    mode?: 'combine' | 'split';
-    chunkSize?: number;
-    flatten?: boolean;
-  };
 };
 
 export interface ProducerTopic extends ProducerRecord {

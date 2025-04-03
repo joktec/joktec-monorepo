@@ -1,5 +1,5 @@
 import { BaseMethodDecorator, CallbackMethodOptions, DEFAULT_CON_ID } from '@joktec/core';
-import { toBool, toInt } from '@joktec/utils';
+import { toArray } from '@joktec/utils';
 import { Message } from 'kafkajs';
 import { merge } from 'lodash';
 import { KafkaService } from '../kafka.service';
@@ -22,11 +22,7 @@ export function KafkaPublish<T = any>(
   conId?: string,
 ): MethodDecorator {
   let producerKey: string | undefined;
-  let publishConfig: KafkaPublishConfig = {
-    consumer: {},
-    record: {},
-    array: { mode: 'split', chunkSize: 1, flatten: true },
-  };
+  let publishConfig: KafkaPublishConfig = { consumer: {}, record: {} };
   let connectionId: string = DEFAULT_CON_ID;
 
   if (typeof producerKeyOrConfigOrConId === 'string' && !topic) connectionId = producerKeyOrConfigOrConId;
@@ -49,20 +45,7 @@ export function KafkaPublish<T = any>(
         const result: T = await method(...args);
         if (!result || (Array.isArray(result) && !result.length)) return result;
 
-        const messages: Message[] = [];
-        if (Array.isArray(result) && publishConfig?.array?.mode === 'split') {
-          const chunkSize = toInt(publishConfig?.array?.chunkSize, 1);
-          const flatten = toBool(publishConfig?.array?.flatten, true);
-
-          for (let i = 0; i < result.length; i += chunkSize) {
-            const chunk = result.slice(i, i + chunkSize);
-            const messageValue = flatten && chunk.length === 1 ? chunk[0] : chunk;
-            messages.push({ value: JSON.stringify(messageValue) });
-          }
-        } else {
-          messages.push({ value: JSON.stringify(result) });
-        }
-
+        const messages: Message[] = toArray(result).map(value => ({ value: JSON.stringify(value) }));
         const record: ProducerTopic = { producerKey, topic, messages, ...publishConfig.record };
         await kafkaService.publish(record, publishConfig.consumer, connectionId);
 
