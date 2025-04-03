@@ -7,10 +7,10 @@ import {
   InjectMetric,
 } from '@joktec/core';
 
-export const TOTAL_PUBLISH_REDCAST_METRIC = 'total_publish_redcast_metric';
-export const TOTAL_CONSUME_REDCAST_METRIC = 'total_consume_redcast_metric';
+export const TOTAL_SEND_REDCAST_METRIC = 'total_send_redcast_metric';
+export const TOTAL_RECEIVE_REDCAST_METRIC = 'total_receive_redcast_metric';
 
-export enum RedcastPublishStatus {
+export enum RedcastMetricStatus {
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
 }
@@ -18,33 +18,35 @@ export enum RedcastPublishStatus {
 @Injectable()
 export class RedcastMetricService {
   constructor(
-    @InjectMetric(TOTAL_PUBLISH_REDCAST_METRIC) private totalPublish: Counter<string>,
-    @InjectMetric(TOTAL_CONSUME_REDCAST_METRIC) private totalConsume: Counter<string>,
+    @InjectMetric(TOTAL_SEND_REDCAST_METRIC) private totalSend: Counter<string>,
+    @InjectMetric(TOTAL_RECEIVE_REDCAST_METRIC) private totalReceive: Counter<string>,
   ) {}
 
-  publish(status: RedcastPublishStatus, channel: string, conId: string = DEFAULT_CON_ID) {
-    this.totalPublish.inc({ status, channel, conId });
+  send(type: string, status: RedcastMetricStatus, channel: string, conId: string = DEFAULT_CON_ID) {
+    this.totalSend.inc({ type, status, channel, conId });
   }
 
-  consume(status: RedcastPublishStatus, channelOrPattern: string, conId: string = DEFAULT_CON_ID) {
-    this.totalConsume.inc({ status, channel: channelOrPattern, conId });
+  receive(type: string, status: RedcastMetricStatus, channelOrPattern: string, conId: string = DEFAULT_CON_ID) {
+    this.totalReceive.inc({ type, status, channel: channelOrPattern, conId });
   }
 }
 
-export const RedcastPublishMetric = () => {
+export const RedcastSendMetric = () => {
   return BaseMethodDecorator(
     async (options: CallbackMethodOptions): Promise<any> => {
-      const { method, args, services } = options;
+      const { method, args, propertyKey, services } = options;
       const [channel, message, conId = DEFAULT_CON_ID] = args;
+      const type = String(propertyKey);
+
       const redcastMetricService: RedcastMetricService = services.redcastMetricService;
 
       try {
         await method(...args);
-        redcastMetricService.publish(RedcastPublishStatus.SUCCESS, channel, conId);
-        services.pinoLogger.debug('`%s` [%s] redcast publish success', conId, channel);
+        redcastMetricService.send(type, RedcastMetricStatus.SUCCESS, channel, conId);
+        services.pinoLogger.debug('`%s` [%s] redcast %s success', conId, channel, type);
       } catch (error) {
-        redcastMetricService.publish(RedcastPublishStatus.ERROR, channel, conId);
-        services.pinoLogger.error(error, '`%s` [%s] redcast publish error', conId, channel);
+        redcastMetricService.send(type, RedcastMetricStatus.ERROR, channel, conId);
+        services.pinoLogger.error(error, '`%s` [%s] redcast %s error', conId, channel, type);
       }
     },
     [RedcastMetricService],

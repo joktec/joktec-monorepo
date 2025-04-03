@@ -1,10 +1,15 @@
 import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector } from '@joktec/core';
-import { PSubscribeCallback, RedcastSubscribeOptions, SubscribeCallback, SubscriberInfoType } from '../models';
+import {
+  RedcastPSubscribeCallback,
+  RedcastSubscribeCallback,
+  RedcastSubscribeOptions,
+  SubscriberInfoType,
+} from '../models';
 import { RedcastService } from '../redcast.service';
 
 const subscriberInfos: SubscriberInfoType = {};
 
-export const REDCAST_CONSUME_METADATA = 'redcast:subscribe';
+export const REDCAST_SUBSCRIBE_METADATA = 'redcast:subscribe';
 
 export function RedcastSubscribe<T extends (msg: string, ...args: any[]) => any>(
   channel: string,
@@ -17,7 +22,7 @@ export function RedcastSubscribe<T extends (msg: string, ...args: any[]) => any>
     const code = `${serviceName}.${methodName}`;
 
     if (!subscriberInfos[code]) subscriberInfos[code] = [];
-    Reflect.defineMetadata(REDCAST_CONSUME_METADATA, { channel, options, conId }, descriptor.value);
+    Reflect.defineMetadata(REDCAST_SUBSCRIBE_METADATA, { channel, options, conId }, descriptor.value);
     subscriberInfos[code].push({ serviceClazz: target.constructor, serviceName, methodName });
   };
 }
@@ -44,20 +49,20 @@ export class RedcastSubscriberLoader implements OnModuleInit {
         channel: string;
         options: RedcastSubscribeOptions;
         conId?: string;
-      }>(REDCAST_CONSUME_METADATA, method);
+      }>(REDCAST_SUBSCRIBE_METADATA, method);
 
       if (metadata) {
         const { channel, options = {}, conId = DEFAULT_CON_ID } = metadata;
         if (options.pattern) {
-          const cb: PSubscribeCallback = async (pattern: string, channel: string, message: string): Promise<void> => {
-            await method.call(serviceInstance, message, channel, pattern);
+          const cb: RedcastPSubscribeCallback = async (pat: string, ch: string, msg: string): Promise<void> => {
+            await method.call(serviceInstance, msg, ch, pat);
           };
           await this.redcastService.pSubscribe(channel, cb, conId);
           return;
         }
 
-        const cb: SubscribeCallback = async (channel: string, message: string): Promise<void> => {
-          await method.call(serviceInstance, message, channel);
+        const cb: RedcastSubscribeCallback = async (ch: string, msg: string): Promise<void> => {
+          await method.call(serviceInstance, msg, ch);
         };
         await this.redcastService.subscribe(channel, cb, conId);
       }
