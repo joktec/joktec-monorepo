@@ -124,4 +124,5 @@ export interface RedcastClient extends Client<RedcastConfig, Redcast> {
 export interface RedcastProp {
   publisher: Redcast;
   subscriber: Redcast;
+  consumer: Redcast;
 }

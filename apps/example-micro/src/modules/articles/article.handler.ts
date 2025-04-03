@@ -2,7 +2,7 @@ import { DEFAULT_CON_ID, Injectable, LogService } from '@joktec/core';
 import { CronExpression, Crontab } from '@joktec/cron';
 import { KafkaService } from '@joktec/kafka';
 import { RabbitService } from '@joktec/rabbit';
-import { RedcastSend, RedcastService } from '@joktec/redcast';
+import { RedcastPublish, RedcastSend, RedcastService } from '@joktec/redcast';
 import { generateUUID, rand } from '@joktec/utils';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class ArticleHandler {
 
   @Crontab(CronExpression.EVERY_MINUTE)
   @RedcastSend('test_queue', DEFAULT_CON_ID)
-  // @RedcastPublish('test_channel', DEFAULT_CON_ID)
+  @RedcastPublish('test_channel', DEFAULT_CON_ID)
   // @RedcastStream('test_stream_key', DEFAULT_CON_ID)
   async sendToRedis() {
     const randNumber = rand(1000, 9999);

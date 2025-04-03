@@ -1,7 +1,7 @@
 import { DEFAULT_CON_ID, Injectable, LogService } from '@joktec/core';
 import { KafkaEachMessage } from '@joktec/kafka';
 import { RabbitMessage } from '@joktec/rabbit';
-import { RedcastConsume } from '@joktec/redcast';
+import { RedcastConsume, RedcastSubscribe } from '@joktec/redcast';
 import { sleep } from '@joktec/utils';
 import { UserRepo } from '../../repositories';
 
@@ -26,7 +26,7 @@ export class ArticleHandler {
     await sleep(1000);
   }
 
-  // @RedcastSubscribe('test_channel', { pattern: false }, DEFAULT_CON_ID)
+  @RedcastSubscribe('test_channel', { pattern: false }, DEFAULT_CON_ID)
   async testPubSub(msg: string, channel?: string, pattern?: string) {
     this.logService.info('testPubSub data: %j', { msg, channel, pattern });
     await this.userRepo.find({});
