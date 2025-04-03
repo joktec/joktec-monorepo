@@ -30,7 +30,7 @@ bull:
     queues: [ apify_queue ]
 
 log:
-  level: info
+  level: debug
   hideWarning: false
   hideObject: false
   hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]
@@ -139,3 +139,9 @@ rabbit:
   username: guest
   password: guest
   vhost: /
+
+redcast:
+  host: localhost
+  port: 6379
+  password: root
+  database: 0

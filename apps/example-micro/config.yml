@@ -20,7 +20,7 @@ transports:
       db: 0
 
 log:
-  level: info
+  level: debug
   format: json
   hideWarning: true
   hideObject: false
@@ -120,3 +120,9 @@ rabbit:
   username: guest
   password: guest
   vhost: /
+
+redcast:
+  host: localhost
+  port: 6379
+  password: root
+  database: 0

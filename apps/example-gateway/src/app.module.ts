@@ -18,6 +18,7 @@ import { FirebaseModule } from '@joktec/firebase';
 import { HttpModule } from '@joktec/http';
 import { KafkaModule } from '@joktec/kafka';
 import { RabbitModule } from '@joktec/rabbit';
+import { RedcastModule } from '@joktec/redcast';
 import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { appConfigFactory } from './app.config';
 import { DEFAULT_LOCALE } from './app.constant';
@@ -40,6 +41,7 @@ import { RepositoryModule, SessionRepo, UserRepo } from './repositories';
     CacheModule,
     KafkaModule,
     RabbitModule,
+    RedcastModule,
     RepositoryModule,
     MainModule,
     I18nModule.forRoot({

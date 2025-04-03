@@ -17,6 +17,7 @@ import { HttpModule } from '@joktec/http';
 import { KafkaModule } from '@joktec/kafka';
 import { NotifierModule } from '@joktec/notifier';
 import { RabbitExchangeType, RabbitModule } from '@joktec/rabbit';
+import { RedcastModule } from '@joktec/redcast';
 import { AcceptLanguageResolver, CookieResolver, HeaderResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { appConfigFactory } from './app.config';
 import { LOCALE } from './app.constant';
@@ -47,6 +48,7 @@ import { RepositoryModule } from './repositories';
       ],
       conId: DEFAULT_CON_ID,
     }),
+    RedcastModule,
     RepositoryModule,
     MainModule,
     I18nModule.forRoot({
