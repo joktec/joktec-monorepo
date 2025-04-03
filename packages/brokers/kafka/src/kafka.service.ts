@@ -12,7 +12,7 @@ import {
 } from 'kafkajs';
 import { KafkaClient, KafkaProp } from './kafka.client';
 import { KafkaConfig } from './kafka.config';
-import { KafkaConsumeType, KafkaMetricService, KafkaPublishMetric, KafkaPublishStatus } from './kafka.metric';
+import { KafkaMetricService, KafkaMetricStatus, KafkaSendMetric } from './kafka.metric';
 import {
   ConsumerBatchRunConfig,
   ConsumerMessageRunConfig,
@@ -105,10 +105,10 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
       try {
         this.logService.debug('`%s` [%s] kafka consumed message: %s', conId, groupId, content);
         await runConfig.eachMessage(payload);
-        this.kafkaMetricService.consume(KafkaConsumeType.EACH, KafkaPublishStatus.SUCCESS, key, conId);
+        this.kafkaMetricService.receive('consume', KafkaMetricStatus.SUCCESS, key, conId);
       } catch (error) {
         this.logService.error(error, '`%s` [%s] kafka handle message fail', conId, groupId);
-        this.kafkaMetricService.consume(KafkaConsumeType.EACH, KafkaPublishStatus.ERROR, key, conId);
+        this.kafkaMetricService.receive('consume', KafkaMetricStatus.ERROR, key, conId);
       }
     };
 
@@ -134,19 +134,19 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
       try {
         this.logService.debug('`%s` [%s] kafka consumed %s message(s)', conId, groupId, totalContent);
         await runConfig.eachBatch(payload);
-        this.kafkaMetricService.consume(KafkaConsumeType.BATCH, KafkaPublishStatus.SUCCESS, key, conId);
+        this.kafkaMetricService.receive('consumeBatch', KafkaMetricStatus.SUCCESS, key, conId);
       } catch (error) {
         const msg = '`%s` [%s] kafka handle %s message(s) fail';
         this.logService.error(error, msg, conId, groupId, totalContent);
-        this.kafkaMetricService.consume(KafkaConsumeType.BATCH, KafkaPublishStatus.ERROR, key, conId);
+        this.kafkaMetricService.receive('consumeBatch', KafkaMetricStatus.ERROR, key, conId);
       }
     };
 
     await consumer.run({ ...runConfig, eachBatch: onMessageFn });
   }
 
-  @KafkaPublishMetric()
-  async publish(
+  @KafkaSendMetric()
+  async send(
     record: ProducerTopic,
     producerConfig: ProducerConfig = {},
     conId: string = DEFAULT_CON_ID,
@@ -156,8 +156,8 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     await producer.send(record);
   }
 
-  @KafkaPublishMetric()
-  async publishBatch(
+  @KafkaSendMetric()
+  async sendBatch(
     batch: ProducerManyTopic,
     producerConfig: ProducerConfig = {},
     conId: string = DEFAULT_CON_ID,

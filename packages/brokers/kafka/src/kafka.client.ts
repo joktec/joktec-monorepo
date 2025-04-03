@@ -18,9 +18,9 @@ export interface KafkaClient extends Client<KafkaConfig, Kafka> {
     conId: string,
   ): Promise<void>;
 
-  publish(record: ProducerTopic, producerConfig: ProducerConfig, conId: string): Promise<void>;
+  send(record: ProducerTopic, producerConfig: ProducerConfig, conId: string): Promise<void>;
 
-  publishBatch(batch: ProducerManyTopic, producerConfig: ProducerConfig, conId: string): Promise<void>;
+  sendBatch(batch: ProducerManyTopic, producerConfig: ProducerConfig, conId: string): Promise<void>;
 }
 
 export interface KafkaProp {

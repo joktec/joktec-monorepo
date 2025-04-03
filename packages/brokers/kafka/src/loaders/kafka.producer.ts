@@ -5,17 +5,17 @@ import { merge } from 'lodash';
 import { KafkaService } from '../kafka.service';
 import { KafkaPublishConfig, ProducerTopic } from '../models';
 
-export function KafkaPublish(topic: string, conId?: string): MethodDecorator;
-export function KafkaPublish(topic: string, producerKey?: string, conId?: string): MethodDecorator;
-export function KafkaPublish(topic: string, publishConfig?: KafkaPublishConfig, conId?: string): MethodDecorator;
-export function KafkaPublish(
+export function KafkaSend(topic: string, conId?: string): MethodDecorator;
+export function KafkaSend(topic: string, producerKey?: string, conId?: string): MethodDecorator;
+export function KafkaSend(topic: string, publishConfig?: KafkaPublishConfig, conId?: string): MethodDecorator;
+export function KafkaSend(
   topic: string,
   producerKey?: string,
   publishConfig?: KafkaPublishConfig,
   conId?: string,
 ): MethodDecorator;
 
-export function KafkaPublish<T = any>(
+export function KafkaSend<T = any>(
   topic: string,
   producerKeyOrConfigOrConId?: string | KafkaPublishConfig,
   publishConfigOrConId?: KafkaPublishConfig | string,
@@ -47,7 +47,7 @@ export function KafkaPublish<T = any>(
 
         const messages: Message[] = toArray(result).map(value => ({ value: JSON.stringify(value) }));
         const record: ProducerTopic = { producerKey, topic, messages, ...publishConfig.record };
-        await kafkaService.publish(record, publishConfig.consumer, connectionId);
+        await kafkaService.send(record, publishConfig.consumer, connectionId);
 
         return result;
       } catch (error) {

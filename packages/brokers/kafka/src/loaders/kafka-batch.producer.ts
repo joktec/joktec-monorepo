@@ -5,15 +5,15 @@ import { merge } from 'lodash';
 import { KafkaService } from '../kafka.service';
 import { KafkaPublishConfig, ProducerManyTopic } from '../models';
 
-export function KafkaBatchPublish(topic: string[], producerKey: string, conId?: string): MethodDecorator;
-export function KafkaBatchPublish(
+export function KafkaSendBatch(topic: string[], producerKey: string, conId?: string): MethodDecorator;
+export function KafkaSendBatch(
   topic: string[],
   producerKey: string,
   publishConfig?: KafkaPublishConfig,
   conId?: string,
 ): MethodDecorator;
 
-export function KafkaBatchPublish<T = any>(
+export function KafkaSendBatch<T = any>(
   topics: string[],
   producerKey: string,
   publishConfigOrConId?: KafkaPublishConfig | string,
@@ -43,7 +43,7 @@ export function KafkaBatchPublish<T = any>(
           topicMessages: topics.map(topic => ({ topic, messages })),
           ...publishConfig.record,
         };
-        await kafkaService.publishBatch(batch, publishConfig.consumer, connectionId);
+        await kafkaService.sendBatch(batch, publishConfig.consumer, connectionId);
 
         return result;
       } catch (error) {
