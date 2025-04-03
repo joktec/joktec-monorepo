@@ -3,10 +3,9 @@ import { toArray } from '@joktec/utils';
 import { RabbitPublishOptions } from '../models';
 import { RabbitService } from '../rabbit.service';
 
-export function RabbitExchange<T = any>(
-  exchange: string,
-  routingKey: string,
-  options: RabbitPublishOptions = {},
+export function RabbitSend<T = any>(
+  queue: string,
+  options?: RabbitPublishOptions,
   conId: string = DEFAULT_CON_ID,
 ): MethodDecorator {
   const rmqOptions: RabbitPublishOptions = options || {};
@@ -21,15 +20,11 @@ export function RabbitExchange<T = any>(
         const result: T = await method(...args);
         if (!result || (Array.isArray(result) && !result.length)) return result;
 
-        const messages = toArray(result).map((msg: T) => ({
-          key: routingKey,
-          content: JSON.stringify(msg),
-        }));
-
-        await rabbitService.publish(exchange, messages, rmqOptions, rmqConId);
+        const msgArray = toArray(result).map((msg: T) => JSON.stringify(msg));
+        await rabbitService.sendToQueue(queue, msgArray, rmqOptions, rmqConId);
         return result;
       } catch (error) {
-        services.pinoLogger.error(error, `[RabbitPublish] Failed to publish message:`, error);
+        services.pinoLogger.error(error, `[RabbitSend] Failed to send message to queue:`, error);
         throw error;
       }
     },

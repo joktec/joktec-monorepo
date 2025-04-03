@@ -22,7 +22,7 @@ import {
 } from './models';
 import { RabbitClient, RabbitProp } from './rabbit.client';
 import { RabbitConfig } from './rabbit.config';
-import { RabbitMetricService, RabbitPublishMetric, RabbitPublishStatus } from './rabbit.metric';
+import { RabbitMetricService, RabbitMetricStatus, RabbitSendMetric } from './rabbit.metric';
 
 const RETRY_OPTS = 'rabbit.retry';
 
@@ -99,7 +99,7 @@ export class RabbitService extends AbstractClientService<RabbitConfig, ChannelMo
     return channel;
   }
 
-  @RabbitPublishMetric()
+  @RabbitSendMetric()
   async sendToQueue(
     queue: string,
     messages: string[],
@@ -120,7 +120,7 @@ export class RabbitService extends AbstractClientService<RabbitConfig, ChannelMo
     return result;
   }
 
-  @RabbitPublishMetric()
+  @RabbitSendMetric()
   async publish(
     exchange: string,
     messages: { key: string; content: string }[],
@@ -155,10 +155,10 @@ export class RabbitService extends AbstractClientService<RabbitConfig, ChannelMo
         this.logService.debug('`%s` [%s] rabbit consumed message: %s', conId, channelKey, msg.content?.toString());
         await callback(msg);
         opts.autoCommit && (await this.commit(msg, opts, conId));
-        this.rabbitMetricService.consume(RabbitPublishStatus.SUCCESS, queue, conId);
+        this.rabbitMetricService.receive('consume', RabbitMetricStatus.SUCCESS, queue, conId);
       } catch (error) {
         this.logService.error(error, '`%s` [%s] rabbit handle message fail', conId, channelKey);
-        this.rabbitMetricService.consume(RabbitPublishStatus.ERROR, queue, conId);
+        this.rabbitMetricService.receive('consume', RabbitMetricStatus.ERROR, queue, conId);
         await this.reject(msg, opts, conId);
       }
     };

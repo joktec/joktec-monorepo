@@ -2,7 +2,7 @@ import { CounterProviders, DEFAULT_CON_ID, DynamicModule, Global, Module } from 
 import { toArray } from '@joktec/utils';
 import { RabbitConsumerLoader } from './loaders';
 import { RABBIT_AUTO_BINDING, RabbitAutoBindingRegistry, RabbitModuleOptions } from './models';
-import { RabbitMetricService, TOTAL_CONSUME_RABBIT_METRIC, TOTAL_PUBLISH_RABBIT_METRIC } from './rabbit.metric';
+import { RabbitMetricService, TOTAL_RECEIVE_RABBIT_METRIC, TOTAL_SEND_RABBIT_METRIC } from './rabbit.metric';
 import { RabbitService } from './rabbit.service';
 
 const providers = [
@@ -10,8 +10,8 @@ const providers = [
   RabbitConsumerLoader,
   RabbitMetricService,
   ...CounterProviders([
-    { name: TOTAL_PUBLISH_RABBIT_METRIC, label: ['type', 'status', 'queue', 'conId'] },
-    { name: TOTAL_CONSUME_RABBIT_METRIC, label: ['status', 'queue', 'conId'] },
+    { name: TOTAL_SEND_RABBIT_METRIC, label: ['type', 'status', 'queue', 'conId'] },
+    { name: TOTAL_RECEIVE_RABBIT_METRIC, label: ['type', 'status', 'queue', 'conId'] },
   ]),
 ];
 
