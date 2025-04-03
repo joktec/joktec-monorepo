@@ -46,7 +46,7 @@
     "@joktec/firebase": "0.1.3",
     "@joktec/storage": "0.1.3",
     "@joktec/rabbit": "0.1.4",
-    "@joktec/redcast": "0.0.1",
+    "@joktec/redcast": "0.0.2",
     "dayjs": "^1.11.13",
     "gravatar": "^1.8.2",
     "lodash": "^4.17.21",

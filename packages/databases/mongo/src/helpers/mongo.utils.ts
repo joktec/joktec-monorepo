@@ -13,7 +13,7 @@ export const mongoDebug = (collectionName: string, methodName: string, ...method
     const projection = methodArgs[1] || {};
     const options = methodArgs[2] || {};
     mongoShell = `db.${collectionName}.${methodName}(${args}).projection(${JSON.stringify(projection)})`;
-    
+
     if (options.sort) mongoShell += `.sort(${JSON.stringify(options.sort)})`;
     if (options.skip) mongoShell += `.skip(${options.skip})`;
     if (options.limit) mongoShell += `.limit(${options.limit})`;

@@ -68,6 +68,9 @@
         "rabbit": {
           "$ref": "#/definitions/Listable%3CRabbitConfig%3E"
         },
+        "redcast": {
+          "$ref": "#/definitions/Listable%3CRedcastConfig%3E"
+        },
         "storage": {
           "$ref": "#/definitions/Listable%3CStorageConfig%3E"
         },
@@ -63081,6 +63084,76 @@
           "type": "string"
         }
       }
+    },
+    "Listable<RedcastConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/RedcastConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RedcastConfig"
+          }
+        }
+      ]
+    },
+    "RedcastConfig": {
+      "type": "object",
+      "properties": {
+        "conId": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string"
+        },
+        "inherit": {
+          "type": "boolean"
+        },
+        "initTimeout": {
+          "type": "number"
+        },
+        "retry": {
+          "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
+        },
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "number"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "database": {
+          "type": "number"
+        },
+        "readonly": {
+          "type": "boolean"
+        },
+        "retryTimeout": {
+          "type": "number"
+        },
+        "connectTimeout": {
+          "type": "number"
+        },
+        "maxConnections": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "host",
+        "port"
+      ]
     },
     "Listable<StorageConfig>": {
       "anyOf": [
