@@ -1,12 +1,12 @@
 import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector } from '@joktec/core';
-import { RedcastConsumeCallback, RedcastConsumeOptions, SubscriberInfoType } from '../models';
+import { RedcastConsumeCallback, RedcastConsumeOptions, RedcastMessagePayload, SubscriberInfoType } from '../models';
 import { RedcastService } from '../redcast.service';
 
 const consumerInfos: SubscriberInfoType = {};
 
 export const REDCAST_CONSUME_METADATA = 'redcast:consume';
 
-export function RedcastConsume<T extends (msg: string, ...args: any[]) => any>(
+export function RedcastConsume<T extends (payload: RedcastMessagePayload, ...args: any[]) => any>(
   queue: string,
   options: RedcastConsumeOptions = { timeout: 0, reliable: false },
   conId: string = DEFAULT_CON_ID,
@@ -50,7 +50,8 @@ export class RedcastConsumerLoader implements OnModuleInit {
       if (metadata) {
         const { queue, options, conId } = metadata;
         const cb: RedcastConsumeCallback = async (q: string, msg: string): Promise<void> => {
-          await method.call(serviceInstance, msg, q);
+          const payload: RedcastMessagePayload = { message: msg, queue: q };
+          await method.call(serviceInstance, payload);
         };
         await this.redcastService.consume(queue, cb, options, conId);
       }

@@ -20,7 +20,7 @@ transports:
       db: 0
 
 log:
-  level: debug
+  level: info
   format: json
   hideWarning: true
   hideObject: false
@@ -126,3 +126,4 @@ redcast:
   port: 6379
   password: root
   database: 0
+  debug: false

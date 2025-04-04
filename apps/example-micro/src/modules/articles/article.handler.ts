@@ -1,8 +1,8 @@
 import { DEFAULT_CON_ID, Injectable, LogService } from '@joktec/core';
 import { CronExpression, Crontab } from '@joktec/cron';
-import { KafkaService } from '@joktec/kafka';
-import { RabbitService } from '@joktec/rabbit';
-import { RedcastPublish, RedcastSend, RedcastService } from '@joktec/redcast';
+import { KafkaSend, KafkaService } from '@joktec/kafka';
+import { RabbitExchange, RabbitSend, RabbitService } from '@joktec/rabbit';
+import { RedcastPublish, RedcastSend, RedcastService, RedcastStream } from '@joktec/redcast';
 import { generateUUID, rand } from '@joktec/utils';
 
 @Injectable()
@@ -16,25 +16,25 @@ export class ArticleHandler {
     this.logService.setContext(ArticleHandler.name);
   }
 
-  // @Crontab(CronExpression.EVERY_MINUTE)
-  // @KafkaSend('test_topic', 'joktec', {}, DEFAULT_CON_ID)
-  // async sendToKafka() {
-  //   const randNumber = rand(1000, 9999);
-  //   return { success: true, action: 'sendToKafka', randNumber };
-  // }
-  //
-  // @Crontab(CronExpression.EVERY_MINUTE)
-  // @RabbitSend('test_queue', { channelKey: 'joktec' }, DEFAULT_CON_ID)
-  // @RabbitExchange('order_exchange', 'order.new', { channelKey: 'joktec' }, DEFAULT_CON_ID)
-  // async sendToRabbit() {
-  //   const randNumber = rand(1000, 9999);
-  //   return { success: true, action: 'sendToRabbit', randNumber };
-  // }
+  @Crontab(CronExpression.EVERY_MINUTE)
+  @KafkaSend('test_topic', 'joktec', {}, DEFAULT_CON_ID)
+  async sendToKafka() {
+    const randNumber = rand(1000, 9999);
+    return { success: true, action: 'sendToKafka', randNumber };
+  }
+
+  @Crontab(CronExpression.EVERY_MINUTE)
+  @RabbitSend('test_queue', { channelKey: 'joktec' }, DEFAULT_CON_ID)
+  @RabbitExchange('order_exchange', 'order.new', { channelKey: 'joktec' }, DEFAULT_CON_ID)
+  async sendToRabbit() {
+    const randNumber = rand(1000, 9999);
+    return { success: true, action: 'sendToRabbit', randNumber };
+  }
 
   @Crontab(CronExpression.EVERY_MINUTE)
   @RedcastSend('test_queue', DEFAULT_CON_ID)
   @RedcastPublish('test_channel', DEFAULT_CON_ID)
-  // @RedcastStream('test_stream_key', DEFAULT_CON_ID)
+  @RedcastStream('test_stream_key', DEFAULT_CON_ID)
   async sendToRedis() {
     const randNumber = rand(1000, 9999);
     return { success: true, action: 'sendToRedis', randNumber };

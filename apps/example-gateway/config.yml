@@ -30,7 +30,7 @@ bull:
     queues: [ apify_queue ]
 
 log:
-  level: debug
+  level: info
   hideWarning: false
   hideObject: false
   hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]
@@ -145,3 +145,4 @@ redcast:
   port: 6379
   password: root
   database: 0
+  debug: false

@@ -11,3 +11,11 @@ export type RedcastSubscribeCallback = (channel: string, message: string) => Pro
 export type RedcastPSubscribeCallback = (pattern: string, channel: string, message: string) => Promise<void>;
 
 export type RedcastConsumeCallback = (queue: string, message: string) => Promise<void>;
+
+export interface RedcastMessagePayload {
+  message: string;
+  channel?: string;
+  pattern?: string;
+  streamKey?: string;
+  queue?: string;
+}

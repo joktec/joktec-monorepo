@@ -1,5 +1,6 @@
 import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector } from '@joktec/core';
 import {
+  RedcastMessagePayload,
   RedcastPSubscribeCallback,
   RedcastSubscribeCallback,
   RedcastSubscribeOptions,
@@ -11,7 +12,7 @@ const subscriberInfos: SubscriberInfoType = {};
 
 export const REDCAST_SUBSCRIBE_METADATA = 'redcast:subscribe';
 
-export function RedcastSubscribe<T extends (msg: string, ...args: any[]) => any>(
+export function RedcastSubscribe<T extends (payload: RedcastMessagePayload, ...args: any[]) => any>(
   channel: string,
   options: RedcastSubscribeOptions = {},
   conId: string = DEFAULT_CON_ID,
@@ -55,14 +56,16 @@ export class RedcastSubscriberLoader implements OnModuleInit {
         const { channel, options = {}, conId = DEFAULT_CON_ID } = metadata;
         if (options.pattern) {
           const cb: RedcastPSubscribeCallback = async (pat: string, ch: string, msg: string): Promise<void> => {
-            await method.call(serviceInstance, msg, ch, pat);
+            const payload: RedcastMessagePayload = { message: msg, channel: ch, pattern: pat };
+            await method.call(serviceInstance, payload);
           };
           await this.redcastService.pSubscribe(channel, cb, conId);
           return;
         }
 
         const cb: RedcastSubscribeCallback = async (ch: string, msg: string): Promise<void> => {
-          await method.call(serviceInstance, msg, ch);
+          const payload: RedcastMessagePayload = { message: msg, channel: ch };
+          await method.call(serviceInstance, payload);
         };
         await this.redcastService.subscribe(channel, cb, conId);
       }
