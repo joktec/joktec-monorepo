@@ -3,7 +3,6 @@ import { pick } from 'lodash';
 import { DatabaseType, DataSource, EntityManager, Repository } from 'typeorm';
 import { DataSourceOptions } from 'typeorm/data-source/DataSourceOptions';
 import { MysqlModel } from './models';
-import { MysqlBenchmark } from './mysql.benchmark';
 import {
   MODEL_REGISTRY_KEY,
   MysqlClient,
@@ -12,7 +11,7 @@ import {
   SUBSCRIBER_REGISTRY_KEY,
 } from './mysql.client';
 import { MysqlConfig } from './mysql.config';
-import { MysqlNamingStrategy } from './mysql.strategy';
+import { MysqlBenchmark, MysqlNamingStrategy } from './services';
 
 const RETRY_OPTS = 'mysql.retry';
 

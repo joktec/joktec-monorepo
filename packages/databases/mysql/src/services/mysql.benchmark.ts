@@ -1,10 +1,9 @@
-import { Injectable, LogService } from '@joktec/core';
+import { LogService } from '@joktec/core';
 import { Logger } from 'typeorm';
-import { printSql } from './helpers';
-import { MysqlBenchmarkConfig, MysqlLogLevel } from './mysql.config';
-import { MysqlException } from './mysql.exception';
+import { printSql } from '../helpers';
+import { MysqlBenchmarkConfig, MysqlLogLevel } from '../mysql.config';
+import { MysqlException } from '../mysql.exception';
 
-@Injectable()
 export class MysqlBenchmark implements Logger {
   constructor(
     private benchmark: MysqlBenchmarkConfig,
