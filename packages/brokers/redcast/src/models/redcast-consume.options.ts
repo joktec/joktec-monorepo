@@ -43,24 +43,19 @@ export interface RedcastConsumeOptions {
    * @default 1
    */
   batchSize?: number;
-
-  /**
-   * Enable graceful shutdown on SIGTERM
-   * @default false
-   */
-  gracefulShutdown?: boolean;
 }
 
 export interface RedcastProcessMessageOptions {
   queue: string;
   callback: RedcastConsumeCallback;
-  maxRetries: number;
-  retryDelay: number;
-  deadLetterQueue: string;
-  deadLetterTTL: number;
+  maxRetries?: number;
+  retryDelay?: number;
+  deadLetterQueue?: string;
+  deadLetterTTL?: number;
   groupId?: string;
   consumerId?: string;
   streamKey?: string;
   messageId?: string;
   autoAck?: boolean;
+  maxLength?: number;
 }

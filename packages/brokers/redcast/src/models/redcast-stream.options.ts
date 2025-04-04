@@ -52,8 +52,7 @@ export interface RedcastStreamOptions {
   batchSize?: number;
 
   /**
-   * Enable graceful shutdown on SIGTERM
-   * @default false
+   *
    */
-  gracefulShutdown?: boolean;
+  maxLength?: number;
 }
