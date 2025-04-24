@@ -7,6 +7,7 @@ This directory contains packages that handle message brokering, typically throug
 - `@joktec/kafka`: Kafka client wrapper for producing and consuming events.
 - `@joktec/rabbit`: RabbitMQ client wrapper for managing queues and message consumption.
 - `@joktec/redcast`: Redis Pub/Sub client wrapper for lightweight message broadcasting and real-time event handling across distributed services.
+- `@joktec/sqs`: AWS SQS client wrapper for sending and receiving messages in a scalable and reliable FIFO or standard queue system. Designed for seamless integration with AWS infrastructure and supports auto-deletion, long polling, and custom message handling options.
 
 ## Future Roadmap
 
@@ -22,7 +23,6 @@ This `brokers` package group is designed to be extensible and protocol-driven. I
 - **Apache Pulsar**: Cloud-native distributed pub/sub system with segment-based architecture and multi-tenancy.
 - **ZeroMQ**: High-performance messaging patterns with no central broker, for local or embedded communication.
 - **Cloud-native services** (optional):
-  - AWS SQS/SNS
   - Google Pub/Sub
   - Azure Service Bus
 

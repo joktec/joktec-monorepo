@@ -3,6 +3,7 @@ import { CronExpression, Crontab } from '@joktec/cron';
 import { KafkaSend, KafkaService } from '@joktec/kafka';
 import { RabbitExchange, RabbitSend, RabbitService } from '@joktec/rabbit';
 import { RedcastPublish, RedcastSend, RedcastService, RedcastStream } from '@joktec/redcast';
+import { SqsSend, SqsService } from '@joktec/sqs';
 import { generateUUID, rand } from '@joktec/utils';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class ArticleHandler {
     private kafkaService: KafkaService,
     private rabbitService: RabbitService,
     private redcastService: RedcastService,
+    private sqsService: SqsService,
   ) {
     this.logService.setContext(ArticleHandler.name);
   }
@@ -40,6 +42,13 @@ export class ArticleHandler {
     return { success: true, action: 'sendToRedis', randNumber };
   }
 
+  @Crontab(CronExpression.EVERY_MINUTE)
+  @SqsSend('test_sqs_queue', {}, DEFAULT_CON_ID)
+  async sendToSqs() {
+    const randNumber = rand(1000, 9999);
+    return { success: true, action: 'sendToSqs', randNumber };
+  }
+
   // @Crontab(CronExpression.EVERY_MINUTE)
   async customSendToBroker() {
     const randUuid = generateUUID();
@@ -53,6 +62,7 @@ export class ArticleHandler {
     );
     await this.rabbitService.sendToQueue('test_queue', [message], { channelKey: 'joktec' }, DEFAULT_CON_ID);
     await this.redcastService.publish('test_channel', [message], DEFAULT_CON_ID);
+    await this.sqsService.send('test_sqs_queue', [message], {}, DEFAULT_CON_ID);
 
     return result;
   }

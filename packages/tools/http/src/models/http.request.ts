@@ -1,6 +1,7 @@
 import { Agent } from 'http';
 import { AxiosBasicCredentials, AxiosRequestConfig } from 'axios';
 import { IAxiosRetryConfig } from 'axios-retry';
+import { IStringifyOptions } from 'qs';
 import { HttpProxyConfig } from '../http.config';
 import { HttpResponse } from './http.response';
 
@@ -9,6 +10,8 @@ export interface HttpAuthorization {
   bearerToken?: string;
   apiKey?: { key: string; value: string; addTo?: 'header' | 'query' };
 }
+
+export interface HttpSerializer extends IStringifyOptions {}
 
 /**
  * Custom HTTP request configuration that extends AxiosRequestConfig.
@@ -34,7 +37,8 @@ export interface HttpRequest<DATA = any> extends AxiosRequestConfig<DATA> {
    * Enables or disables query parameter serialization before sending the request.
    * Defaults to `false`.
    */
-  serializer?: boolean;
+  serializer?: boolean | HttpSerializer;
+
   /**
    * Prints the request in cURL format for debugging purposes.
    * Defaults to `false`.

@@ -15,6 +15,7 @@ import { MysqlConfig } from '@joktec/mysql';
 import { NotifierConfig } from '@joktec/notifier';
 import { RabbitConfig } from '@joktec/rabbit';
 import { RedcastConfig } from '@joktec/redcast';
+import { SqsConfig } from '@joktec/sqs/src';
 import { StorageConfig } from '@joktec/storage';
 
 export type JoktecConfig = {
@@ -42,6 +43,7 @@ export type JoktecConfig = {
   rabbit?: Listable<RabbitConfig>;
   redcast?: Listable<RedcastConfig>;
   storage?: Listable<StorageConfig>;
+  sqs?: Listable<SqsConfig>;
   crontab?: Listable<CrontabConfig>;
   // Misc
   misc?: Record<string, any>;

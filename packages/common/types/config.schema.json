@@ -74,6 +74,9 @@
         "storage": {
           "$ref": "#/definitions/Listable%3CStorageConfig%3E"
         },
+        "sqs": {
+          "$ref": "#/definitions/Listable%3CSqsConfig%3E"
+        },
         "crontab": {
           "$ref": "#/definitions/Listable%3CCrontabConfig%3E"
         },
@@ -63259,6 +63262,69 @@
         "aws-exec-read",
         "bucket-owner-read",
         "bucket-owner-full-control"
+      ]
+    },
+    "Listable<SqsConfig>": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/SqsConfig"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SqsConfig"
+          }
+        }
+      ]
+    },
+    "SqsConfig": {
+      "type": "object",
+      "properties": {
+        "conId": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string"
+        },
+        "inherit": {
+          "type": "boolean"
+        },
+        "initTimeout": {
+          "type": "number"
+        },
+        "retry": {
+          "$ref": "#/definitions/RetryOptions"
+        },
+        "debug": {
+          "type": "boolean"
+        },
+        "region": {
+          "type": "string"
+        },
+        "accessKey": {
+          "type": "string"
+        },
+        "secretKey": {
+          "type": "string"
+        },
+        "sessionToken": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "sslEnabled": {
+          "type": "boolean"
+        },
+        "maxRetries": {
+          "type": "number"
+        },
+        "timeout": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "region"
       ]
     },
     "Listable<CrontabConfig>": {

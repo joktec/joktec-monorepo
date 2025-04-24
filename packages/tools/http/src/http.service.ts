@@ -8,12 +8,12 @@ import axiosRetry from 'axios-retry';
 import FormData from 'form-data';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
-import { merge } from 'lodash';
+import { isObject, merge } from 'lodash';
 import qs from 'qs';
 import { HttpClient } from './http.client';
 import { HttpConfig, HttpProxyConfig } from './http.config';
 import { HttpMetricDecorator } from './http.metric';
-import { HttpAgent, HttpFormRequest, HttpRequest, HttpResponse } from './models';
+import { HttpAgent, HttpFormRequest, HttpRequest, HttpResponse, HttpSerializer } from './models';
 
 @Injectable()
 export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance> implements HttpClient {
@@ -91,17 +91,23 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
   public buildConfig(config: HttpRequest, conId: string = DEFAULT_CON_ID): AxiosRequestConfig {
     const clientConfig = this.getConfig(conId);
     const cf: AxiosRequestConfig = merge({}, clientConfig, config, {
-      paramsSerializer: config.serializer && {
-        encode: (params: Record<string, any>) => qs.stringify(params, { arrayFormat: 'brackets' }),
-      },
       curlirize: toBool(config.curlirize, clientConfig.curlirize),
     });
+
+    if (!cf.paramsSerializer && (config.serializer === true || isObject(config.serializer))) {
+      const serializer: HttpSerializer = isObject(config.serializer) ? config.serializer : { arrayFormat: 'brackets' };
+      cf.paramsSerializer = { encode: (params: Record<string, any>) => qs.stringify(params, serializer) };
+    }
 
     if (cf.baseURL && cf.baseURL.endsWith('/')) {
       cf.baseURL = cf.baseURL.slice(0, -1);
     }
 
-    const proxy = clientConfig.proxy || config.proxy || null;
+    if (cf.url && !cf.url.startsWith('/')) {
+      cf.url = `/${cf.url}`;
+    }
+
+    const proxy: HttpProxyConfig = clientConfig.proxy || config.proxy || null;
     if (proxy) {
       Object.assign(cf, this.buildAgent(proxy));
       delete cf.proxy;
