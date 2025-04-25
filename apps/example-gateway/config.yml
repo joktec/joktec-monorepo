@@ -147,3 +147,12 @@ redcast:
   password: root
   database: 0
   debug: false
+
+sqs:
+  region: ap-southeast-1
+  accessKey: XXXX
+  secretKey: YYYYYYYY
+  endpoint: https://sqs.ap-southeast-1.amazonaws.com/000000000000/
+  queues:
+    testQueue: Test-Data-Queue
+  debug: false

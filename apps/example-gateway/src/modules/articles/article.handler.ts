@@ -2,8 +2,7 @@ import { DEFAULT_CON_ID, Injectable, LogService } from '@joktec/core';
 import { KafkaConsume, KafkaEachMessage } from '@joktec/kafka';
 import { RabbitConsume, RabbitMessage } from '@joktec/rabbit';
 import { RedcastConsume, RedcastConsumeStream, RedcastMessagePayload, RedcastSubscribe } from '@joktec/redcast';
-import { SqsConsume } from '@joktec/sqs';
-import { SqsMessage } from '@joktec/sqs/src';
+import { SqsConsume, SqsMessage } from '@joktec/sqs';
 import { sleep } from '@joktec/utils';
 import { UserRepo } from '../../repositories';
 
@@ -51,7 +50,7 @@ export class ArticleHandler {
     await sleep(1000);
   }
 
-  @SqsConsume('test_sqs_queue', {}, DEFAULT_CON_ID)
+  @SqsConsume('sqs.queues.testQueue', { UseEnv: true }, DEFAULT_CON_ID)
   async testSqs(msg: SqsMessage) {
     this.logService.info('testSqs data: %j', { ...msg });
     await this.userRepo.find({});

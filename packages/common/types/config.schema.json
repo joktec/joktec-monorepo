@@ -60889,6 +60889,9 @@
         "level": {
           "$ref": "#/definitions/LogLevel"
         },
+        "style": {
+          "$ref": "#/definitions/LogStyle"
+        },
         "contexts": {
           "anyOf": [
             {
@@ -60967,6 +60970,13 @@
         "info",
         "debug",
         "trace"
+      ]
+    },
+    "LogStyle": {
+      "type": "string",
+      "enum": [
+        "pretty",
+        "json"
       ]
     },
     "LogSocket": {
@@ -63321,6 +63331,22 @@
         },
         "timeout": {
           "type": "number"
+        },
+        "queues": {
+          "anyOf": [
+            {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
         }
       },
       "required": [

@@ -1,4 +1,4 @@
-import { DEFAULT_CON_ID, Injectable, LogService } from '@joktec/core';
+import { ConfigService, DEFAULT_CON_ID, Injectable, LogService } from '@joktec/core';
 import { CronExpression, Crontab } from '@joktec/cron';
 import { KafkaSend, KafkaService } from '@joktec/kafka';
 import { RabbitExchange, RabbitSend, RabbitService } from '@joktec/rabbit';
@@ -9,6 +9,7 @@ import { generateUUID, rand } from '@joktec/utils';
 @Injectable()
 export class ArticleHandler {
   constructor(
+    private configService: ConfigService,
     private logService: LogService,
     private kafkaService: KafkaService,
     private rabbitService: RabbitService,
@@ -43,7 +44,7 @@ export class ArticleHandler {
   }
 
   @Crontab(CronExpression.EVERY_MINUTE)
-  @SqsSend('test_sqs_queue', {}, DEFAULT_CON_ID)
+  @SqsSend('sqs.queues.testQueue', { UseEnv: true }, DEFAULT_CON_ID)
   async sendToSqs() {
     const randNumber = rand(1000, 9999);
     return { success: true, action: 'sendToSqs', randNumber };
@@ -62,7 +63,9 @@ export class ArticleHandler {
     );
     await this.rabbitService.sendToQueue('test_queue', [message], { channelKey: 'joktec' }, DEFAULT_CON_ID);
     await this.redcastService.publish('test_channel', [message], DEFAULT_CON_ID);
-    await this.sqsService.send('test_sqs_queue', [message], {}, DEFAULT_CON_ID);
+
+    const sqsQueueName = this.configService.resolveConfigValue('sqs.queues.sendPlan');
+    await this.sqsService.send(sqsQueueName, [message], {}, DEFAULT_CON_ID);
 
     return result;
   }
