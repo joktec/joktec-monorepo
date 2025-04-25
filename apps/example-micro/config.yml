@@ -21,7 +21,7 @@ transports:
 
 log:
   level: info
-  format: json
+  style: pretty
   hideWarning: true
   hideObject: false
   hideContexts: [ RouterExplorer, RoutesResolver, InstanceLoader, I18nService ]

@@ -5,6 +5,7 @@ import { ExceptionMessage, InvalidClientConfigException, IValidationProperty } f
 import { Constructor } from '../../models';
 import { buildError } from '../../utils';
 import { AppConfig, initConfig } from './config.factory';
+import { has, isString, snakeCase } from 'lodash';
 
 @Injectable()
 export class ConfigService extends JsConfigService implements OnModuleInit {
@@ -53,5 +54,18 @@ export class ConfigService extends JsConfigService implements OnModuleInit {
     const errors: ValidationError[] = validateSync(value, options);
     if (!errors.length) return [];
     return buildError(errors);
+  }
+
+  /**
+   * Resolve a key that may point to an ENV variable or config key.
+   * If not found, returns the original keyOrValue.
+   */
+  resolveConfigValue(keyOrValue: string): string {
+    const isEnv = keyOrValue === snakeCase(keyOrValue).toUpperCase();
+    if (isEnv && has(process.env, keyOrValue) && isString(process.env[keyOrValue])) {
+      return process.env[keyOrValue]!;
+    }
+    if (this.exist(keyOrValue)) return this.get<string>(keyOrValue, '');
+    return keyOrValue;
   }
 }

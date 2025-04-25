@@ -1,12 +1,16 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, IsTypes, toArray } from '@joktec/utils';
 import { LogSocket } from './log-socket.config';
 import { LogTransport } from './log-transport.config';
-import { LogLevel } from './log.enum';
+import { LogLevel, LogStyle } from './log.enum';
 
 export class LogConfig {
   @IsNotEmpty()
   @IsEnum(LogLevel)
   level?: LogLevel = 'info';
+
+  @IsNotEmpty()
+  @IsEnum(LogStyle)
+  style?: LogStyle = LogStyle.PRETTY;
 
   @IsOptional()
   @IsTypes(['string', 'string[]'])

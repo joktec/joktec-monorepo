@@ -58,7 +58,10 @@ export const createPinoHttp = async (
   const config: LogConfig = configService.parseOrThrow(LogConfig, 'log');
   const appName = configService.get('name').replace('@', '').replace('/', '-');
 
-  const streams: DestinationStream[] = [createPrettyTransport(config), ...customStreams];
+  const streams: DestinationStream[] = [
+    ...(config.style === 'json' ? [pino.destination(1)] : [createPrettyTransport(config)]),
+    ...customStreams,
+  ];
   if (config.fileDir) streams.push(pino.destination({ dest: `./${config.fileDir}` }));
   if (toArray(config.socket).length) streams.push(...createPinoSocket(config.socket));
   if (toArray(config.transport).length) streams.push(...createPinoTransport(config.transport));
