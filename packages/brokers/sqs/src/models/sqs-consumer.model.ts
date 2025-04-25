@@ -17,4 +17,8 @@ export interface SqsConsumeOptions extends Omit<ReceiveMessageCommandInput, 'Que
   AutoCommit?: boolean;
 }
 
+export interface SqsConsumeDecoratorOptions extends SqsConsumeOptions {
+  UseEnv?: boolean;
+}
+
 export type SqsConsumeCallback = (message: SqsMessage) => Promise<void>;

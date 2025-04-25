@@ -1,5 +1,5 @@
-import { ClientConfig } from '@joktec/core';
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@joktec/utils';
+import { ClientConfig, LogService } from '@joktec/core';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toArray, toBool, toInt } from '@joktec/utils';
 
 export class SqsConfig extends ClientConfig {
   @IsString()
@@ -32,7 +32,10 @@ export class SqsConfig extends ClientConfig {
 
   @IsOptional()
   @IsInt()
-  timeout?: number = 30000;
+  timeout?: number;
+
+  @IsOptional()
+  queues?: Record<string, string> | string[] = [];
 
   constructor(props?: SqsConfig) {
     super(props);
@@ -43,5 +46,27 @@ export class SqsConfig extends ClientConfig {
       timeout: toInt(props.timeout, 30000),
       ...props,
     });
+
+    if (props.queues) {
+      if (Array.isArray(props.queues)) this.queues = toArray(props.queues);
+      else this.queues = props.queues;
+    }
+  }
+
+  bindingLogger(logger: LogService) {
+    const log =
+      (method: 'trace' | 'debug' | 'info' | 'warn' | 'error') =>
+      (...args: any[]) => {
+        for (const arg of args) {
+          if (typeof arg === 'string') {
+            logger[method]('`%s` SQS client - %s', this.conId, arg);
+            continue;
+          }
+          const isSkipMethod = method === 'trace' || method === 'debug' || method === 'info';
+          if (isSkipMethod && arg.commandName === 'ReceiveMessageCommand') continue;
+          logger[method](arg, '`%s` SQS client command %s', this.conId, arg.commandName);
+        }
+      };
+    return { trace: log('trace'), debug: log('debug'), info: log('info'), warn: log('warn'), error: log('error') };
   }
 }

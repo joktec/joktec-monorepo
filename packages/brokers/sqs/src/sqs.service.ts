@@ -23,7 +23,11 @@ export class SqsService extends AbstractClientService<SqsConfig, SQS> implements
     const sqs = new SQS({
       region: config.region,
       endpoint: config.endpoint,
-      credentials: { accessKeyId: config.accessKey, secretAccessKey: config.secretKey },
+      credentials: {
+        accessKeyId: config.accessKey,
+        secretAccessKey: config.secretKey,
+      },
+      logger: config.debug && config.bindingLogger(this.logService),
     });
     this.logService.info('`%s` SQS client initialized for region `%s`', config.conId, config.region);
     return sqs;
@@ -31,17 +35,18 @@ export class SqsService extends AbstractClientService<SqsConfig, SQS> implements
 
   async start(client: SQS, conId: string = DEFAULT_CON_ID): Promise<void> {
     try {
-      const res = await client.listQueues({});
-      this.logService.info(res.QueueUrls || [], '`%s` sqs connected', conId);
+      // const res = await client.listQueues({});
+      this.logService.info('`%s` SQS client connected', conId);
     } catch (err) {
-      this.logService.error(err, '`%s` SQS healthcheck failed', conId);
+      this.logService.error(err, '`%s` SQS client connect failed', conId);
       throw err;
     }
   }
 
   async stop(client: SQS, conId: string = DEFAULT_CON_ID): Promise<void> {
     this.isShuttingDown = true;
-    this.logService.info('`%s` SQS disconnected (no close needed)', conId);
+    client.destroy();
+    this.logService.info('`%s` SQS client disconnected', conId);
   }
 
   private setupGracefulShutdown(): void {
@@ -105,22 +110,17 @@ export class SqsService extends AbstractClientService<SqsConfig, SQS> implements
           if (res.Messages?.length) {
             for (const msg of res.Messages) {
               if (!msg.Body || !msg.ReceiptHandle) continue;
-              try {
-                await onMessageFn(msg);
-              } catch (err) {
-                this.logService.error(err, '`%s` sqs failed to process message from [%s]', conId, queueUrl);
-              }
+              await onMessageFn(msg);
             }
           }
         } catch (err) {
           this.logService.error(err, '`%s` sqs failed to receive from queue [%s]', conId, queueUrl);
+        } finally {
           await sleep(1000);
         }
       }
     };
 
-    loop().catch(err => {
-      this.logService.error(err, '`%s` sqs consumer crashed for queue [%s]', conId, queueUrl);
-    });
+    loop().catch(err => this.logService.error(err, '`%s` sqs consumer crashed for queue [%s]', conId, queueUrl));
   }
 }
