@@ -20,7 +20,7 @@ export class ArticleHandler {
   }
 
   @Crontab(CronExpression.EVERY_MINUTE)
-  @KafkaSend('test_topic', { record: { producerKey: 'joktec' } }, DEFAULT_CON_ID)
+  @KafkaSend('kafka.topics.testTopic', { useEnv: true, record: { producerKey: 'joktec' } }, DEFAULT_CON_ID)
   async sendToKafka() {
     const randNumber = rand(1000, 9999);
     return { success: true, action: 'sendToKafka', randNumber };

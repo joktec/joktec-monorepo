@@ -133,6 +133,8 @@ firebase:
 kafka:
   brokers: [ localhost:9092 ]
   ssl: false
+  topics:
+    testTopic: test_topic
 
 rabbit:
   hostname: localhost
@@ -149,10 +151,10 @@ redcast:
   debug: false
 
 sqs:
-  region: ap-southeast-1
-  accessKey: XXXX
-  secretKey: YYYYYYYY
-  endpoint: https://sqs.ap-southeast-1.amazonaws.com/000000000000/
+  region: us-east-1
+  accessKey: dummy
+  secretKey: dummy
+  endpoint: http://localhost:9324
   queues:
-    testQueue: Test-Data-Queue
+    testQueue: TestQueue
   debug: false

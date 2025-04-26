@@ -111,8 +111,10 @@ notifier:
     credential: './credentials/dispatch-d581a.json'
 
 kafka:
-  brokers: [ 127.0.0.1:9092 ]
+  brokers: [ localhost:9092 ]
   ssl: false
+  topics:
+    testTopic: test_topic
 
 rabbit:
   hostname: localhost
@@ -129,10 +131,10 @@ redcast:
   debug: false
 
 sqs:
-  region: ap-southeast-1
-  accessKey: XXXX
-  secretKey: YYYYYYYY
-  endpoint: https://sqs.ap-southeast-1.amazonaws.com/000000000000/
+  region: us-east-1
+  accessKey: dummy
+  secretKey: dummy
+  endpoint: http://localhost:9324
   queues:
-    testQueue: Test-Data-Queue
+    testQueue: TestQueue
   debug: false

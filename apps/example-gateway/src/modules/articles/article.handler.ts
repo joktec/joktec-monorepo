@@ -15,16 +15,16 @@ export class ArticleHandler {
     this.logService.setContext(ArticleHandler.name);
   }
 
-  @KafkaConsume('test_topic', 'joktec', {}, DEFAULT_CON_ID)
+  @KafkaConsume('kafka.topics.testTopic', 'joktec', { useEnv: true }, DEFAULT_CON_ID)
   async testKafka(msg: KafkaEachMessage) {
-    this.logService.info('testKafka data: %j', { ...msg });
+    this.logService.info('testKafka data: %j', { ...msg, message: msg.message.value.toString() });
     await this.userRepo.find({});
     await sleep(1000);
   }
 
   @RabbitConsume('test_queue', { channelKey: 'joktec', consumerTag: 'joktec' }, DEFAULT_CON_ID)
   async testRabbit(msg: RabbitMessage) {
-    this.logService.info('testRabbit data: %j', { ...msg });
+    this.logService.info('testRabbit data: %j', { ...msg, content: msg.content.toString() });
     await this.userRepo.find({});
     await sleep(1000);
   }
