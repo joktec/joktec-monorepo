@@ -1,25 +1,19 @@
 import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
-import {
-  Consumer,
-  ConsumerConfig,
-  ConsumerSubscribeTopics,
-  EachBatchHandler,
-  EachMessageHandler,
-  Kafka,
-  Partitioners,
-  Producer,
-  ProducerConfig,
-} from 'kafkajs';
+import { toBool } from '@joktec/utils';
+import { Consumer, EachBatchHandler, EachMessageHandler, Kafka, Message, Partitioners, Producer } from 'kafkajs';
+import { isBuffer, isString } from 'lodash';
 import { KafkaClient, KafkaProp } from './kafka.client';
 import { KafkaConfig } from './kafka.config';
 import { KafkaMetricService, KafkaMetricStatus, KafkaSendMetric } from './kafka.metric';
 import {
-  ConsumerBatchRunConfig,
-  ConsumerMessageRunConfig,
   KafkaBatchMessage,
+  KafkaConsumeConfig,
+  KafkaConsumeOptions,
   KafkaEachMessage,
-  ProducerManyTopic,
-  ProducerTopic,
+  KafkaProduceBatch,
+  KafkaProduceBatchOptions,
+  KafkaProduceConfig,
+  KafkaProducerOptions,
 } from './models';
 
 const RETRY_OPTS = 'kafka.retry';
@@ -57,7 +51,11 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     }
   }
 
-  private async initProducer(key: string, cfg: ProducerConfig = {}, conId: string = DEFAULT_CON_ID): Promise<Producer> {
+  private async initProducer(
+    key: string,
+    cfg: KafkaProduceConfig = {},
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<Producer> {
     let producer = this.props[conId].producers[key];
     if (!producer) {
       this.props[conId].producers[key] = producer = this.getClient(conId).producer({
@@ -72,11 +70,16 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
     return producer;
   }
 
-  private async initConsumer(groupId: string, cfg: ConsumerConfig, conId: string = DEFAULT_CON_ID): Promise<Consumer> {
+  private async initConsumer(
+    groupId: string,
+    cfg: KafkaConsumeConfig = {},
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<Consumer> {
     let consumer = this.props[conId].consumers[groupId];
     if (!consumer) {
       this.props[conId].consumers[groupId] = consumer = this.getClient(conId).consumer({
         ...cfg,
+        groupId,
       });
       this.logService.info(cfg, '`%s` [%s] created', conId, groupId);
 
@@ -87,16 +90,14 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
   }
 
   async consume(
-    consumerTopics: ConsumerSubscribeTopics,
-    consumerConfig: ConsumerConfig,
-    runConfig: ConsumerMessageRunConfig,
+    topics: (string | RegExp)[],
+    groupId: string,
+    callback: (payload: KafkaEachMessage) => Promise<void>,
+    options: KafkaConsumeOptions = {},
     conId: string = DEFAULT_CON_ID,
   ): Promise<void> {
-    const { topics } = consumerTopics;
-    const { groupId } = consumerConfig;
-    const consumer = await this.initConsumer(groupId, consumerConfig, conId);
-
-    await consumer.subscribe(consumerTopics);
+    const consumer = await this.initConsumer(groupId, options.config, conId);
+    await consumer.subscribe({ topics, fromBeginning: toBool(options.fromBeginning, false) });
     topics.map(t => this.logService.info('`%s` [%s] of topic `%s` ready to consume', conId, groupId, t));
 
     const onMessageFn: EachMessageHandler = async (payload: KafkaEachMessage) => {
@@ -104,7 +105,7 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
       const content = payload.message.value?.toString();
       try {
         this.logService.debug('`%s` [%s] kafka consumed message: %s', conId, groupId, content);
-        await runConfig.eachMessage(payload);
+        await callback(payload);
         this.kafkaMetricService.receive('consume', KafkaMetricStatus.SUCCESS, key, conId);
       } catch (error) {
         this.logService.error(error, '`%s` [%s] kafka handle message fail', conId, groupId);
@@ -112,20 +113,18 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
       }
     };
 
-    await consumer.run({ ...runConfig, eachMessage: onMessageFn });
+    await consumer.run({ ...options.runConfig, eachMessage: onMessageFn });
   }
 
   async consumeBatch(
-    consumerTopics: ConsumerSubscribeTopics,
-    consumerConfig: ConsumerConfig,
-    runConfig: ConsumerBatchRunConfig,
+    topics: (string | RegExp)[],
+    groupId: string,
+    callback: (payload: KafkaBatchMessage) => Promise<void>,
+    options: KafkaConsumeOptions = {},
     conId: string = DEFAULT_CON_ID,
   ): Promise<void> {
-    const { topics } = consumerTopics;
-    const { groupId } = consumerConfig;
-    const consumer = await this.initConsumer(groupId, consumerConfig, conId);
-
-    await consumer.subscribe(consumerTopics);
+    const consumer = await this.initConsumer(groupId, options.config, conId);
+    await consumer.subscribe({ topics, fromBeginning: toBool(options.fromBeginning, false) });
     topics.map(t => this.logService.info('`%s` [%s] of topic `%s` ready to batch consume', conId, groupId, t));
 
     const onMessageFn: EachBatchHandler = async (payload: KafkaBatchMessage) => {
@@ -133,7 +132,7 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
       const totalContent = payload.batch.messages.length;
       try {
         this.logService.debug('`%s` [%s] kafka consumed %s message(s)', conId, groupId, totalContent);
-        await runConfig.eachBatch(payload);
+        await callback(payload);
         this.kafkaMetricService.receive('consumeBatch', KafkaMetricStatus.SUCCESS, key, conId);
       } catch (error) {
         const msg = '`%s` [%s] kafka handle %s message(s) fail';
@@ -142,27 +141,32 @@ export class KafkaService extends AbstractClientService<KafkaConfig, Kafka> impl
       }
     };
 
-    await consumer.run({ ...runConfig, eachBatch: onMessageFn });
+    await consumer.run({ ...options.runConfig, eachBatch: onMessageFn });
   }
 
   @KafkaSendMetric()
   async send(
-    record: ProducerTopic,
-    producerConfig: ProducerConfig = {},
+    topic: string,
+    messages: (string | Buffer | Message)[],
+    options: KafkaProducerOptions = {},
     conId: string = DEFAULT_CON_ID,
   ): Promise<void> {
-    const key = record.producerKey ?? record.topic;
-    const producer = await this.initProducer(key, producerConfig, conId);
-    await producer.send(record);
+    const key = options.record?.producerKey ?? topic;
+    const producer = await this.initProducer(key, options.config, conId);
+    await producer.send({
+      ...options.record,
+      topic,
+      messages: messages.map(msg => (isBuffer(msg) || isString(msg) ? { value: msg } : msg) as Message),
+    });
   }
 
   @KafkaSendMetric()
   async sendBatch(
-    batch: ProducerManyTopic,
-    producerConfig: ProducerConfig = {},
+    batch: KafkaProduceBatch,
+    options: KafkaProduceBatchOptions = {},
     conId: string = DEFAULT_CON_ID,
   ): Promise<void> {
-    const producer = await this.initProducer(batch.producerKey, producerConfig, conId);
+    const producer = await this.initProducer(batch.producerKey, options.config, conId);
     await producer.sendBatch(batch);
   }
 }

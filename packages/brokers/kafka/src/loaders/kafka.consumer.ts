@@ -1,7 +1,15 @@
-import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector } from '@joktec/core';
+import {
+  ConfigService,
+  DEFAULT_CON_ID,
+  Injectable,
+  LogService,
+  ModuleRef,
+  OnModuleInit,
+  Reflector,
+} from '@joktec/core';
 import { toArray } from '@joktec/utils';
 import { KafkaService } from '../kafka.service';
-import { ConsumerInfoType, ConsumerRunCfg, KafkaEachMessage } from '../models';
+import { ConsumerInfoType, KafkaBatchMessage, KafkaConsumeDecoratorOptions, KafkaEachMessage } from '../models';
 
 const consumerInfos: ConsumerInfoType = {};
 
@@ -10,7 +18,7 @@ export const KAFKA_CONSUME_METADATA = 'kafka:consume';
 export function KafkaConsume<T extends (msg: KafkaEachMessage, ...args: any[]) => any>(
   topics: string | string[],
   groupId: string,
-  runConfig?: ConsumerRunCfg,
+  options: KafkaConsumeDecoratorOptions = { useEnv: false, mode: 'each' },
   conId: string = DEFAULT_CON_ID,
 ) {
   return function <U extends T>(target: any, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<U>) {
@@ -19,7 +27,7 @@ export function KafkaConsume<T extends (msg: KafkaEachMessage, ...args: any[]) =
     const code = `${serviceName}.${methodName}`;
 
     if (!consumerInfos[code]) consumerInfos[code] = [];
-    Reflect.defineMetadata(KAFKA_CONSUME_METADATA, { topics, groupId, runConfig, conId }, descriptor.value);
+    Reflect.defineMetadata(KAFKA_CONSUME_METADATA, { topics, groupId, options, conId }, descriptor.value);
     consumerInfos[code].push({ serviceClazz: target.constructor, serviceName, methodName });
   };
 }
@@ -27,41 +35,66 @@ export function KafkaConsume<T extends (msg: KafkaEachMessage, ...args: any[]) =
 @Injectable()
 export class KafkaConsumerLoader implements OnModuleInit {
   constructor(
+    private readonly configService: ConfigService,
+    private readonly logService: LogService,
     private readonly kafkaService: KafkaService,
     private readonly reflector: Reflector,
     private readonly moduleRef: ModuleRef,
-  ) {}
+  ) {
+    this.logService.setContext(KafkaConsumerLoader.name);
+  }
 
   async onModuleInit() {
     setTimeout(() => this.init(), 5000);
   }
 
   private async init() {
-    Object.values(consumerInfos)
-      .flat()
-      .map(({ serviceClazz, methodName }) => {
-        const serviceInstance = this.moduleRef.get(serviceClazz, { strict: false });
-        const method = serviceInstance[methodName];
+    const infos = Object.values(consumerInfos).flat();
+    for (const { serviceClazz, methodName } of infos) {
+      const serviceInstance = this.moduleRef.get(serviceClazz, { strict: false });
+      const method = serviceInstance[methodName];
 
-        const metadata = this.reflector.get<{
-          topics: string | string[];
-          groupId: string;
-          runConfig: ConsumerRunCfg;
-          conId?: string;
-        }>(KAFKA_CONSUME_METADATA, method);
+      const metadata = this.reflector.get<{
+        topics: string | string[];
+        groupId: string;
+        options: KafkaConsumeDecoratorOptions;
+        conId?: string;
+      }>(KAFKA_CONSUME_METADATA, method);
 
-        if (metadata) {
-          const eachMessage = async (payload: KafkaEachMessage, ...args: any[]) => {
-            await method.call(serviceInstance, payload, ...args);
-          };
+      if (metadata) {
+        const options: KafkaConsumeDecoratorOptions = metadata.options;
 
-          this.kafkaService.consume(
-            { topics: toArray(metadata.topics) },
-            { groupId: metadata.groupId },
-            { ...metadata.runConfig, eachMessage },
-            metadata.conId,
-          );
+        let topicNames = toArray(metadata.topics);
+        if (options.useEnv) {
+          const newTopicNames: string[] = [];
+          for (const topicKey of toArray(metadata.topics)) {
+            const resolveTopic = this.configService.resolveConfigValue(topicKey, false);
+            if (!resolveTopic) {
+              this.logService.warn("`%s` Can't resolve topic name from config: %s", metadata.conId, topicKey);
+              continue;
+            }
+            newTopicNames.push(resolveTopic);
+          }
+          topicNames = newTopicNames;
         }
-      });
+
+        if (!topicNames.length) {
+          this.logService.error("`%s` Topics are empty or can't resolve any topic names", metadata.conId);
+          return;
+        }
+
+        const runner =
+          options.mode === 'batch'
+            ? this.kafkaService.consumeBatch.bind(this.kafkaService)
+            : this.kafkaService.consume.bind(this.kafkaService);
+
+        const handler =
+          options.mode === 'batch'
+            ? async (payload: KafkaBatchMessage, ...args: any[]) => method.call(serviceInstance, payload, ...args)
+            : async (payload: KafkaEachMessage, ...args: any[]) => method.call(serviceInstance, payload, ...args);
+
+        await runner(topicNames, metadata.groupId, handler, options, metadata.conId);
+      }
+    }
   }
 }

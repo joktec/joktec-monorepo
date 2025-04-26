@@ -20,7 +20,7 @@ export class ArticleHandler {
   }
 
   @Crontab(CronExpression.EVERY_MINUTE)
-  @KafkaSend('test_topic', 'joktec', {}, DEFAULT_CON_ID)
+  @KafkaSend('test_topic', { record: { producerKey: 'joktec' } }, DEFAULT_CON_ID)
   async sendToKafka() {
     const randNumber = rand(1000, 9999);
     return { success: true, action: 'sendToKafka', randNumber };
@@ -56,11 +56,7 @@ export class ArticleHandler {
     const result = { success: true, randUuid };
     const message: string = JSON.stringify(result);
 
-    await this.kafkaService.send(
-      { topic: 'test_topic', producerKey: 'joktec', messages: [{ value: message }] },
-      {},
-      DEFAULT_CON_ID,
-    );
+    await this.kafkaService.send('test_topic', [message], { record: { producerKey: 'joktec' } }, DEFAULT_CON_ID);
     await this.rabbitService.sendToQueue('test_queue', [message], { channelKey: 'joktec' }, DEFAULT_CON_ID);
     await this.redcastService.publish('test_channel', [message], DEFAULT_CON_ID);
 

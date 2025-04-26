@@ -1,7 +1,7 @@
 import { CounterProviders, Global, Module } from '@joktec/core';
 import { KafkaMetricService, TOTAL_RECEIVE_KAFKA_METRIC, TOTAL_SEND_KAFKA_METRIC } from './kafka.metric';
 import { KafkaService } from './kafka.service';
-import { KafkaBatchConsumerLoader, KafkaConsumerLoader } from './loaders';
+import { KafkaConsumerLoader } from './loaders';
 
 @Global()
 @Module({
@@ -9,7 +9,6 @@ import { KafkaBatchConsumerLoader, KafkaConsumerLoader } from './loaders';
   providers: [
     KafkaService,
     KafkaConsumerLoader,
-    KafkaBatchConsumerLoader,
     KafkaMetricService,
     ...CounterProviders([
       { name: TOTAL_SEND_KAFKA_METRIC, label: ['type', 'status', 'key', 'conId'] },
