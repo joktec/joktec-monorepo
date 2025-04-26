@@ -155,6 +155,6 @@ sqs:
   accessKey: dummy
   secretKey: dummy
   endpoint: http://localhost:9324
+  debug: false
   queues:
     testQueue: TestQueue
-  debug: false

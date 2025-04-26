@@ -34,6 +34,10 @@ export class SqsConfig extends ClientConfig {
   @IsInt()
   timeout?: number;
 
+  @IsOptional()
+  @IsBoolean()
+  ping?: boolean;
+
   constructor(props?: SqsConfig) {
     super(props);
     Object.assign(this, {

@@ -61,7 +61,7 @@ export class ArticleHandler {
     await this.redcastService.publish('test_channel', [message], DEFAULT_CON_ID);
 
     const sqsQueueName = this.configService.resolveConfigValue('sqs.queues.sendPlan');
-    await this.sqsService.send(sqsQueueName, [message], {}, DEFAULT_CON_ID);
+    await this.sqsService.sendToQueue(sqsQueueName, [message], {}, DEFAULT_CON_ID);
 
     return result;
   }

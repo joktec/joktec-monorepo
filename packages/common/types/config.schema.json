@@ -63331,6 +63331,9 @@
         },
         "timeout": {
           "type": "number"
+        },
+        "ping": {
+          "type": "boolean"
         }
       },
       "required": [
