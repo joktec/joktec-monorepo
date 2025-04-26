@@ -19,25 +19,6 @@ yarn add @joktec/sqs
 - Graceful shutdown handling for consumers
 
 
-## Usage Example
-
-```typescript
-import { SqsService } from '@joktec/sqs';
-
-// Initialize and send a message
-const sqsService = new SqsService();
-await sqsService.sendToQueue('my-queue', ['Hello, world!']);
-
-// Consume messages
-await sqsService.consume('my-queue', async (msg) => {
-  console.log('Received message:', msg.Body);
-});
-
-// Publish to SNS topic
-await sqsService.publish('my-topic', ['Broadcast event']);
-await sqsService.bindQueueToTopic('my-topic', 'my-queue');
-```
-
 ## Configuration
 
 You can configure SQS/SNS settings via your application configuration file (`config.yaml` or equivalent):
