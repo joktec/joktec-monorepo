@@ -1,11 +1,11 @@
 import { validateSync, ValidationError, ValidatorOptions } from '@joktec/utils';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigGetOptions, ConfigService as JsConfigService, NoInferType } from '@nestjs/config';
+import { has, isString, snakeCase } from 'lodash';
 import { ExceptionMessage, InvalidClientConfigException, IValidationProperty } from '../../exceptions';
 import { Constructor } from '../../models';
 import { buildError } from '../../utils';
 import { AppConfig, initConfig } from './config.factory';
-import { has, isString, snakeCase } from 'lodash';
 
 @Injectable()
 export class ConfigService extends JsConfigService implements OnModuleInit {
@@ -60,12 +60,13 @@ export class ConfigService extends JsConfigService implements OnModuleInit {
    * Resolve a key that may point to an ENV variable or config key.
    * If not found, returns the original keyOrValue.
    */
-  resolveConfigValue(keyOrValue: string): string {
+  resolveConfigValue(keyOrValue: string, fallback: boolean = true): string {
+    const fallbackValue = fallback ? keyOrValue : null;
     const isEnv = keyOrValue === snakeCase(keyOrValue).toUpperCase();
     if (isEnv && has(process.env, keyOrValue) && isString(process.env[keyOrValue])) {
       return process.env[keyOrValue]!;
     }
-    if (this.exist(keyOrValue)) return this.get<string>(keyOrValue, '');
-    return keyOrValue;
+    if (this.exist(keyOrValue)) return this.get<string>(keyOrValue, fallbackValue);
+    return fallbackValue;
   }
 }
