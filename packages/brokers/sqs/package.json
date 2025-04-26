@@ -1,7 +1,7 @@
 {
   "name": "@joktec/sqs",
   "description": "JokTec - Amazon SQS client wrapper for sending and receiving messages",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -41,8 +41,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.797.0",
     "@aws-sdk/client-sns": "^3.797.0",
+    "@aws-sdk/client-sqs": "^3.797.0",
     "@joktec/core": "0.2.0",
     "@joktec/utils": "0.1.1",
     "lodash": "^4.17.21"
