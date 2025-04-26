@@ -1,4 +1,4 @@
-import { RabbitBindingOptions, RabbitExchangeType } from './rabbit.model';
+import { RabbitBindingOptions, RabbitExchangeType } from './rabbit-base.model';
 
 export const RABBIT_AUTO_BINDING = 'RABBIT_AUTO_BINDING';
 
