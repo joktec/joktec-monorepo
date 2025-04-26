@@ -1,7 +1,7 @@
 import { Message, SQS } from '@aws-sdk/client-sqs';
 import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
 import { sleep, toBool } from '@joktec/utils';
-import { SqsAssertOptions, SqsConsumeCallback, SqsConsumeOptions, SqsSendOptions, SqsSendResult } from './models';
+import { SqsAssertOptions, SqsConsumeOptions, SqsMessage, SqsProduceOptions, SqsProduceResult } from './models';
 import { SqsClient } from './sqs.client';
 import { SqsConfig } from './sqs.config';
 import { SqsMetricService, SqsMetricStatus, SqsSendMetric } from './sqs.metric';
@@ -65,12 +65,12 @@ export class SqsService extends AbstractClientService<SqsConfig, SQS> implements
   async send(
     queue: string,
     messages: string[],
-    options: SqsSendOptions = {},
+    options: SqsProduceOptions = {},
     conId: string = DEFAULT_CON_ID,
-  ): Promise<SqsSendResult[]> {
+  ): Promise<SqsProduceResult[]> {
     const client = this.getClient(conId);
     const queueUrl = await this.assert(queue, options, conId);
-    const results: SqsSendResult[] = [];
+    const results: SqsProduceResult[] = [];
 
     for (const message of messages) {
       const res = await client.sendMessage({ QueueUrl: queueUrl, MessageBody: message, ...options });
@@ -83,7 +83,7 @@ export class SqsService extends AbstractClientService<SqsConfig, SQS> implements
 
   async consume(
     queue: string,
-    callback: SqsConsumeCallback,
+    callback: (message: SqsMessage) => Promise<void>,
     options: SqsConsumeOptions = {},
     conId: string = DEFAULT_CON_ID,
   ): Promise<void> {

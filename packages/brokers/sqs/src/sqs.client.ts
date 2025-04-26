@@ -1,6 +1,6 @@
 import { SQS } from '@aws-sdk/client-sqs';
 import { Client } from '@joktec/core';
-import { SqsAssertOptions, SqsConsumeCallback, SqsConsumeOptions, SqsSendOptions, SqsSendResult } from './models';
+import { SqsAssertOptions, SqsMessage, SqsConsumeOptions, SqsProduceOptions, SqsProduceResult } from './models';
 import { SqsConfig } from './sqs.config';
 
 export interface SqsClient extends Client<SqsConfig, SQS> {
@@ -24,7 +24,7 @@ export interface SqsClient extends Client<SqsConfig, SQS> {
    * @param conId - Optional connection ID for multi-connection environments
    * @returns An array of results for each message sent, including MessageId and metadata
    */
-  send(queue: string, messages: string[], options?: SqsSendOptions, conId?: string): Promise<SqsSendResult[]>;
+  send(queue: string, messages: string[], options?: SqsProduceOptions, conId?: string): Promise<SqsProduceResult[]>;
 
   /**
    * Continuously receives and processes messages from the specified SQS queue.
@@ -36,5 +36,10 @@ export interface SqsClient extends Client<SqsConfig, SQS> {
    * @param options - Optional polling and visibility options
    * @param conId - Optional connection ID for multi-connection environments
    */
-  consume(queue: string, callback: SqsConsumeCallback, options?: SqsConsumeOptions, conId?: string): Promise<void>;
+  consume(
+    queue: string,
+    callback: (message: SqsMessage) => Promise<void>,
+    options?: SqsConsumeOptions,
+    conId?: string,
+  ): Promise<void>;
 }

@@ -1,19 +1,18 @@
-import { BaseMethodDecorator, CallbackMethodOptions, ConfigService, DEFAULT_CON_ID } from '@joktec/core';
+import { BaseMethodDecorator, CallbackMethodOptions, DEFAULT_CON_ID } from '@joktec/core';
 import { toArray } from '@joktec/utils';
-import { SqsSendDecoratorOptions } from '../models';
+import { SqsProduceDecoratorOptions } from '../models';
 import { SqsService } from '../sqs.service';
 
 export function SqsSend<T = any>(
   queue: string,
-  options: SqsSendDecoratorOptions = {},
+  options: SqsProduceDecoratorOptions = { UseEnv: false },
   conId: string = DEFAULT_CON_ID,
 ): MethodDecorator {
-  const sqsOptions: SqsSendDecoratorOptions = options || {};
+  const sqsOptions: SqsProduceDecoratorOptions = options || {};
 
   return BaseMethodDecorator(
     async (options: CallbackMethodOptions): Promise<T> => {
       const { method, args, services } = options;
-      const configService: ConfigService = services.configService;
       const sqsService: SqsService = services.sqsService;
 
       try {
@@ -22,7 +21,11 @@ export function SqsSend<T = any>(
 
         let queueName = queue;
         if (sqsOptions?.UseEnv) {
-          queueName = configService.resolveConfigValue(queueName);
+          queueName = services.configService.resolveConfigValue(queue, false);
+          if (!queueName) {
+            services.pinoLogger.warn("`%s` Can't resolve queue name from config: %s", conId, queue);
+            queueName = queue;
+          }
         }
 
         const msgArray = toArray(result).map((msg: T) => JSON.stringify(msg));

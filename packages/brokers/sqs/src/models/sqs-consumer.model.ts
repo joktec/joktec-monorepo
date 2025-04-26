@@ -1,11 +1,12 @@
-import { ReceiveMessageCommandInput } from '@aws-sdk/client-sqs';
+import { Message, ReceiveMessageCommandInput } from '@aws-sdk/client-sqs';
 import { Clazz } from '@joktec/core';
-import { SqsAssertOptions } from './sqs-assert.model';
-import { SqsMessage } from './sqs-message.model';
+import { SqsAssertOptions } from './sqs-base.model';
 
 export type ConsumerInfoType = {
   [key: string]: { serviceClazz: Clazz; serviceName: string; methodName: string }[];
 };
+
+export interface SqsMessage extends Message {}
 
 export interface SqsConsumeOptions extends Omit<ReceiveMessageCommandInput, 'QueueUrl'>, SqsAssertOptions {
   /**
@@ -20,5 +21,3 @@ export interface SqsConsumeOptions extends Omit<ReceiveMessageCommandInput, 'Que
 export interface SqsConsumeDecoratorOptions extends SqsConsumeOptions {
   UseEnv?: boolean;
 }
-
-export type SqsConsumeCallback = (message: SqsMessage) => Promise<void>;

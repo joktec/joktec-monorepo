@@ -1,5 +1,5 @@
 import { ClientConfig, LogService } from '@joktec/core';
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toArray, toBool, toInt } from '@joktec/utils';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@joktec/utils';
 
 export class SqsConfig extends ClientConfig {
   @IsString()
@@ -34,9 +34,6 @@ export class SqsConfig extends ClientConfig {
   @IsInt()
   timeout?: number;
 
-  @IsOptional()
-  queues?: Record<string, string> | string[] = [];
-
   constructor(props?: SqsConfig) {
     super(props);
     Object.assign(this, {
@@ -46,11 +43,6 @@ export class SqsConfig extends ClientConfig {
       timeout: toInt(props.timeout, 30000),
       ...props,
     });
-
-    if (props.queues) {
-      if (Array.isArray(props.queues)) this.queues = toArray(props.queues);
-      else this.queues = props.queues;
-    }
   }
 
   bindingLogger(logger: LogService) {

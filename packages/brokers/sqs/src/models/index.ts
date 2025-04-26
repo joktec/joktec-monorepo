@@ -1,4 +1,3 @@
-export * from './sqs-assert.model';
+export * from './sqs-base.model';
 export * from './sqs-consumer.model';
-export * from './sqs-message.model';
-export * from './sqs-send.model';
+export * from './sqs-producer.model';

@@ -8,12 +8,12 @@ import {
   Reflector,
 } from '@joktec/core';
 import { toBool } from '@joktec/utils';
-import { ConsumerInfoType, SqsConsumeDecoratorOptions, SqsConsumeOptions, SqsMessage } from '../models';
+import { ConsumerInfoType, SqsConsumeDecoratorOptions, SqsMessage, SqsConsumeOptions } from '../models';
 import { SqsService } from '../sqs.service';
 
 const consumerInfos: ConsumerInfoType = {};
 
-export const SQS_CONSUME_METADATA = 'sqs:consume';
+const SQS_CONSUME_METADATA = 'sqs:consume';
 
 export function SqsConsume<T extends (msg: SqsMessage, ...args: any[]) => any>(
   queue: string,
@@ -60,18 +60,22 @@ export class SqsConsumerLoader implements OnModuleInit {
       }>(SQS_CONSUME_METADATA, method);
 
       if (metadata) {
-        const { options = {}, conId = DEFAULT_CON_ID } = metadata;
+        const options: SqsConsumeDecoratorOptions = metadata.options;
 
         let queueName = metadata.queue;
         if (options?.UseEnv) {
-          queueName = this.configService.resolveConfigValue(metadata.queue);
+          queueName = this.configService.resolveConfigValue(metadata.queue, false);
+          if (!queueName) {
+            this.logService.warn("`%s` Can't resolve queue name from config: %s", metadata.conId, metadata.queue);
+            queueName = metadata.queue;
+          }
         }
 
         const consumeOptions: SqsConsumeOptions = { ...options, AutoCommit: toBool(options.AutoCommit, true) };
         const callback = async (msg: SqsMessage, ...args: any[]) => {
           await method.call(serviceInstance, msg, ...args);
         };
-        await this.sqsService.consume(queueName, callback, consumeOptions, conId);
+        await this.sqsService.consume(queueName, callback, consumeOptions, metadata.conId);
       }
     }
   }
