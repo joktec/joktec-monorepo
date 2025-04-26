@@ -1,6 +1,20 @@
-import { DEFAULT_CON_ID, Injectable, ModuleRef, OnModuleInit, Reflector } from '@joktec/core';
+import {
+  ConfigService,
+  DEFAULT_CON_ID,
+  Injectable,
+  LogService,
+  ModuleRef,
+  OnModuleInit,
+  Reflector,
+} from '@joktec/core';
 import { toBool, toInt } from '@joktec/utils';
-import { ConsumerInfoType, RabbitAssertOptions, RabbitConsumeOptions, RabbitMessage } from '../models';
+import {
+  ConsumerInfoType,
+  RabbitAssertOptions,
+  RabbitConsumeDecoratorOptions,
+  RabbitConsumeOptions,
+  RabbitMessage,
+} from '../models';
 import { RabbitService } from '../rabbit.service';
 
 const consumerInfos: ConsumerInfoType = {};
@@ -9,7 +23,7 @@ export const RABBIT_CONSUME_METADATA = 'rabbit:consume';
 
 export function RabbitConsume<T extends (msg: RabbitMessage, ...args: any[]) => any>(
   queue: string,
-  options: RabbitConsumeOptions & { durable?: boolean } = {},
+  options: RabbitConsumeDecoratorOptions = { useEnv: false },
   conId: string = DEFAULT_CON_ID,
 ) {
   return function <U extends T>(target: any, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<U>) {
@@ -26,10 +40,14 @@ export function RabbitConsume<T extends (msg: RabbitMessage, ...args: any[]) => 
 @Injectable()
 export class RabbitConsumerLoader implements OnModuleInit {
   constructor(
+    private readonly configService: ConfigService,
+    private readonly logService: LogService,
     private readonly rabbitService: RabbitService,
     private readonly reflector: Reflector,
     private readonly moduleRef: ModuleRef,
-  ) {}
+  ) {
+    this.logService.setContext(RabbitConsumerLoader.name);
+  }
 
   async onModuleInit() {
     setTimeout(() => this.init(), 5000);
@@ -43,12 +61,21 @@ export class RabbitConsumerLoader implements OnModuleInit {
 
       const metadata = this.reflector.get<{
         queue: string;
-        options: RabbitConsumeOptions & { durable?: boolean };
+        options: RabbitConsumeDecoratorOptions;
         conId?: string;
       }>(RABBIT_CONSUME_METADATA, method);
 
       if (metadata) {
-        const { queue, options = {}, conId = DEFAULT_CON_ID } = metadata;
+        const options: RabbitConsumeDecoratorOptions = metadata.options;
+
+        let queueName = metadata.queue;
+        if (options.useEnv) {
+          queueName = this.configService.resolveConfigValue(metadata.queue, false);
+          if (!queueName) {
+            this.logService.warn("`%s` Can't resolve queue name from config: %s", metadata.conId, metadata.queue);
+            queueName = metadata.queue;
+          }
+        }
 
         const assertOptions: RabbitAssertOptions = {
           channelKey: options.channelKey,
@@ -62,12 +89,9 @@ export class RabbitConsumerLoader implements OnModuleInit {
           requeue: toBool(options.requeue, true),
         };
 
-        const callback = async (msg: RabbitMessage, ...args: any[]) => {
-          await method.call(serviceInstance, msg, ...args);
-        };
-
-        await this.rabbitService.assert(queue, assertOptions, conId);
-        await this.rabbitService.consume(queue, callback, consumeOptions, conId);
+        const callback = async (msg: RabbitMessage, ...args: any[]) => method.call(serviceInstance, msg, ...args);
+        await this.rabbitService.assert(queueName, assertOptions, metadata.conId);
+        await this.rabbitService.consume(queueName, callback, consumeOptions, metadata.conId);
       }
     }
   }

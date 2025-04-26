@@ -15,6 +15,8 @@ import {
   RabbitEmpty,
   RabbitExchangeType,
   RabbitMessage,
+  RabbitProduceOptions,
+  RabbitProduceResult,
   RabbitPublishOptions,
   RabbitPublishResult,
   RabbitPurgeQueue,
@@ -103,13 +105,13 @@ export class RabbitService extends AbstractClientService<RabbitConfig, ChannelMo
   async sendToQueue(
     queue: string,
     messages: string[],
-    opts: RabbitPublishOptions = {},
+    opts: RabbitProduceOptions = {},
     conId: string = DEFAULT_CON_ID,
-  ): Promise<RabbitPublishResult> {
+  ): Promise<RabbitProduceResult> {
     const { channelKey = DEFAULT_CON_ID } = opts;
     const channel = await this.createChannel(channelKey, conId);
 
-    const result: RabbitPublishResult = { success: 0, failed: 0 };
+    const result: RabbitProduceResult = { success: 0, failed: 0 };
     for (const msg of messages) {
       const success = channel.sendToQueue(queue, Buffer.from(msg), opts);
       if (success) result.success++;
