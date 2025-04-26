@@ -9,15 +9,7 @@ import {
 import { sleep, toBool, toInt } from '@joktec/utils';
 import { Command } from 'ioredis';
 import { has, pick } from 'lodash';
-import {
-  RedcastConsumeCallback,
-  RedcastConsumeOptions,
-  RedcastDeadLetterOptions,
-  RedcastProcessMessageOptions,
-  RedcastPSubscribeCallback,
-  RedcastStreamOptions,
-  RedcastSubscribeCallback,
-} from './models';
+import { RedcastConsumeOptions, RedcastDeadLetterOptions, RedcastProcessMessageOptions } from './models';
 import { Redcast, RedcastClient, RedcastProp } from './redcast.client';
 import { RedcastConfig } from './redcast.config';
 import { RedcastMetricService, RedcastMetricStatus, RedcastSendMetric } from './redcast.metric';
@@ -123,7 +115,11 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
     return subscribers;
   }
 
-  async subscribe(channel: string, callback: RedcastSubscribeCallback, conId: string = DEFAULT_CON_ID): Promise<void> {
+  async subscribe(
+    channel: string,
+    callback: (channel: string, message: string) => Promise<void>,
+    conId: string = DEFAULT_CON_ID,
+  ): Promise<void> {
     const { subscriber } = this.props[conId];
 
     const onMessageFn = async (ch: string, msg: string): Promise<void> => {
@@ -141,7 +137,11 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
     await subscriber.subscribe(channel);
   }
 
-  async pSubscribe(pattern: string, callback: RedcastPSubscribeCallback, conId: string = DEFAULT_CON_ID) {
+  async pSubscribe(
+    pattern: string,
+    callback: (pattern: string, channel: string, message: string) => Promise<void>,
+    conId: string = DEFAULT_CON_ID,
+  ) {
     const { subscriber } = this.props[conId];
 
     const onMessageFn = async (pat: string, ch: string, msg: string): Promise<void> => {
@@ -194,8 +194,8 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
   }
 
   private async processMessage(consumer: Redcast, msg: string, opts: RedcastProcessMessageOptions) {
-    const { queue, groupId, consumerId, streamKey, messageId, callback } = opts;
-    const metricType = streamKey ? 'consumeStream' : 'consume';
+    const { queue, groupId, consumerId, messageId, callback } = opts;
+    const metricType = queue ? 'consumeStream' : 'consume';
     const maxRetries = toInt(opts.maxRetries, 3);
     const retryDelay = toInt(opts.retryDelay, 1000);
     const maxLength = toInt(opts.maxLength, 1000);
@@ -205,9 +205,9 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
     while (retries < maxRetries) {
       try {
         await callback(queue, msg);
-        if (streamKey && groupId && messageId && autoAck) {
-          await consumer.xack(streamKey, groupId, messageId);
-          !!maxLength && (await consumer.xtrim(streamKey, 'MAXLEN', '~', maxLength));
+        if (queue && groupId && messageId && autoAck) {
+          await consumer.xack(queue, groupId, messageId);
+          !!maxLength && (await consumer.xtrim(queue, 'MAXLEN', '~', maxLength));
         }
         this.redcastMetricService.receive(metricType, RedcastMetricStatus.SUCCESS, queue, DEFAULT_CON_ID);
         break;
@@ -261,7 +261,7 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
 
   async consume(
     queue: string,
-    callback: RedcastConsumeCallback,
+    callback: (queue: string, message: string) => Promise<void>,
     opts: RedcastConsumeOptions = {},
     conId: string = DEFAULT_CON_ID,
   ) {
@@ -311,22 +311,22 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
   }
 
   @RedcastSendMetric()
-  async sendToStream(streamKey: string, messages: string[], conId: string = DEFAULT_CON_ID): Promise<number> {
+  async sendToStream(queue: string, messages: string[], conId: string = DEFAULT_CON_ID): Promise<number> {
     await this.checkVersion(conId);
 
     const { publisher } = this.props[conId];
     let count = 0;
     for (const message of messages) {
-      await publisher.xadd(streamKey, '*', 'message', message);
+      await publisher.xadd(queue, '*', 'message', message);
       count++;
     }
     return count;
   }
 
   async consumeStream(
-    stream: string,
-    callback: RedcastConsumeCallback,
-    opts: RedcastStreamOptions = {},
+    queue: string,
+    callback: (queue: string, message: string) => Promise<void>,
+    opts: RedcastConsumeOptions = {},
     conId: string = DEFAULT_CON_ID,
   ): Promise<void> {
     await this.checkVersion(conId);
@@ -338,17 +338,17 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
     const batchSize = toInt(opts.batchSize, 1);
 
     try {
-      await consumer.xgroup('CREATE', stream, groupId, '$', 'MKSTREAM');
+      await consumer.xgroup('CREATE', queue, groupId, '$', 'MKSTREAM');
     } catch (err: any) {
       if (!err?.message?.includes('BUSYGROUP')) throw err;
     }
 
     const processOpts: RedcastProcessMessageOptions = {
-      queue: stream,
+      queue,
       callback,
       groupId,
       consumerId,
-      deadLetterQueue: opts.deadLetterQueue || `${stream}:dead-letter`,
+      deadLetterQueue: opts.deadLetterQueue || `${queue}:dead-letter`,
       ...pick(opts, ['maxRetries', 'retryDelay', 'deadLetterTTL', 'autoAck', 'maxLength']),
     };
 
@@ -364,24 +364,24 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
             'BLOCK',
             timeout * 1000,
             'STREAMS',
-            stream,
+            queue,
             '>',
           );
           if (!streams) continue;
 
-          for (const [streamKey, entries] of streams as [string, [string, string[]][]][]) {
-            const messages = entries.map(([id, fields]) => ({ message: fields[1], id, streamKey })).map(m => m.message);
-            await this.processBatch(consumer, messages, { ...processOpts, streamKey });
+          for (const [queue, entries] of streams as [string, [string, string[]][]][]) {
+            const messages = entries.map(([id, fields]) => ({ message: fields[1], id, queue })).map(m => m.message);
+            await this.processBatch(consumer, messages, { ...processOpts, queue });
           }
         } catch (error) {
-          this.logService.error(error, '`%s` redcast failed to consume from stream [%s]', conId, stream);
+          this.logService.error(error, '`%s` redcast failed to consume from stream [%s]', conId, queue);
           await sleep(1000);
         }
       }
     };
 
     loop().catch(err => {
-      this.logService.error(err, '`%s` redcast stream consumer loop crashed for stream [%s]', conId, stream);
+      this.logService.error(err, '`%s` redcast stream consumer loop crashed for queue [%s]', conId, queue);
     });
   }
 

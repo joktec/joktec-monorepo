@@ -1,12 +1,6 @@
 import { Client } from '@joktec/core';
 import { Redis } from 'ioredis';
-import {
-  RedcastConsumeCallback,
-  RedcastConsumeOptions,
-  RedcastPSubscribeCallback,
-  RedcastStreamOptions,
-  RedcastSubscribeCallback,
-} from './models';
+import { RedcastConsumeOptions } from './models';
 import { RedcastConfig } from './redcast.config';
 
 export class Redcast extends Redis {}
@@ -30,7 +24,11 @@ export interface RedcastClient extends Client<RedcastConfig, Redcast> {
    * @param callback - Callback function to handle each message
    * @param conId - Optional Redis connection ID
    */
-  subscribe(channel: string, callback: RedcastSubscribeCallback, conId?: string): Promise<void>;
+  subscribe(
+    channel: string,
+    callback: (channel: string, message: string) => Promise<void>,
+    conId?: string,
+  ): Promise<void>;
 
   /**
    * Unsubscribes from a specific channel.
@@ -45,7 +43,11 @@ export interface RedcastClient extends Client<RedcastConfig, Redcast> {
    * @param callback - Callback function to handle each message
    * @param conId - Optional Redis connection ID
    */
-  pSubscribe(pattern: string, callback: RedcastPSubscribeCallback, conId?: string): Promise<void>;
+  pSubscribe(
+    pattern: string,
+    callback: (pattern: string, channel: string, message: string) => Promise<void>,
+    conId?: string,
+  ): Promise<void>;
 
   /**
    * Unsubscribes from a pattern-based subscription.
@@ -76,7 +78,7 @@ export interface RedcastClient extends Client<RedcastConfig, Redcast> {
    */
   consume(
     queue: string,
-    callback: RedcastConsumeCallback,
+    callback: (queue: string, message: string) => Promise<void>,
     options?: RedcastConsumeOptions,
     conId?: string,
   ): Promise<void>;
@@ -85,24 +87,24 @@ export interface RedcastClient extends Client<RedcastConfig, Redcast> {
 
   /**
    * Adds one or more messages to a Redis stream.
-   * @param streamKey - Redis stream key
+   * @param queue - Redis stream key
    * @param messages - Messages to add to the stream
    * @param conId - Optional Redis connection ID
    * @returns Number of messages added
    */
-  sendToStream(streamKey: string, messages: string[], conId?: string): Promise<number>;
+  sendToStream(queue: string, messages: string[], conId?: string): Promise<number>;
 
   /**
    * Consumes messages from a Redis Stream using a consumer group.
-   * @param streamKey - Redis stream key
+   * @param queue - Redis stream key
    * @param callback - Function to process each message
    * @param options - Stream consumption options
    * @param conId - Optional Redis connection ID
    */
   consumeStream(
-    streamKey: string,
-    callback: RedcastConsumeCallback,
-    options: RedcastStreamOptions,
+    queue: string,
+    callback: (queue: string, message: string) => Promise<void>,
+    options: RedcastConsumeOptions,
     conId?: string,
   ): Promise<void>;
 

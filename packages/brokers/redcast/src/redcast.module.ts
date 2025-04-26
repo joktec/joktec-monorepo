@@ -1,5 +1,5 @@
 import { CounterProviders, Global, Module } from '@joktec/core';
-import { RedcastConsumerLoader, RedcastStreamerLoader, RedcastSubscriberLoader } from './loaders';
+import { RedcastConsumerLoader, RedcastSubscriberLoader } from './loaders';
 import { RedcastMetricService, TOTAL_RECEIVE_REDCAST_METRIC, TOTAL_SEND_REDCAST_METRIC } from './redcast.metric';
 import { RedcastService } from './redcast.service';
 
@@ -10,7 +10,6 @@ import { RedcastService } from './redcast.service';
     RedcastService,
     RedcastSubscriberLoader,
     RedcastConsumerLoader,
-    RedcastStreamerLoader,
     RedcastMetricService,
     ...CounterProviders([
       { name: TOTAL_SEND_REDCAST_METRIC, label: ['type', 'status', 'channel', 'conId'] },

@@ -1,5 +1,3 @@
-import { RedcastConsumeCallback } from './redcast.model';
-
 export interface RedcastConsumeOptions {
   /**
    * Timeout for blocking pop operations (e.g. BRPOP, BRPOPLPUSH).
@@ -43,18 +41,46 @@ export interface RedcastConsumeOptions {
    * @default 1
    */
   batchSize?: number;
+
+  /**
+   * Name of the consumer group. Required when using XREADGROUP.
+   * Use with mode `stream`
+   */
+  groupId?: string;
+
+  /**
+   * Unique consumer ID within the group.
+   * Use with mode `stream`
+   */
+  consumerId?: string;
+
+  /**
+   * Whether to automatically acknowledge (XACK) after processing.
+   * Use with mode `stream`
+   * @default true
+   */
+  autoAck?: boolean;
+
+  /**
+   * Use with mode `stream`
+   */
+  maxLength?: number;
+}
+
+export interface RedcastConsumeDecoratorOptions extends RedcastConsumeOptions {
+  useEnv?: boolean;
+  mode?: 'list' | 'stream';
 }
 
 export interface RedcastProcessMessageOptions {
   queue: string;
-  callback: RedcastConsumeCallback;
+  callback: (queue: string, message: string) => Promise<void>;
   maxRetries?: number;
   retryDelay?: number;
   deadLetterQueue?: string;
   deadLetterTTL?: number;
   groupId?: string;
   consumerId?: string;
-  streamKey?: string;
   messageId?: string;
   autoAck?: boolean;
   maxLength?: number;

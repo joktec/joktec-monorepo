@@ -1,7 +1,7 @@
 import { DEFAULT_CON_ID, Injectable, LogService } from '@joktec/core';
 import { KafkaConsume, KafkaEachMessage } from '@joktec/kafka';
 import { RabbitConsume, RabbitMessage } from '@joktec/rabbit';
-import { RedcastConsume, RedcastConsumeStream, RedcastMessagePayload, RedcastSubscribe } from '@joktec/redcast';
+import { RedcastConsume, RedcastMessage, RedcastSubscribe } from '@joktec/redcast';
 import { SqsConsume, SqsMessage } from '@joktec/sqs';
 import { sleep } from '@joktec/utils';
 import { UserRepo } from '../../repositories';
@@ -30,21 +30,21 @@ export class ArticleHandler {
   }
 
   @RedcastSubscribe('test_channel', { pattern: false }, DEFAULT_CON_ID)
-  async testPubSub(msg: RedcastMessagePayload) {
+  async testPubSub(msg: RedcastMessage) {
     this.logService.info('testPubSub data: %j', { ...msg });
     await this.userRepo.find({});
     await sleep(1000);
   }
 
   @RedcastConsume('test_queue', { timeout: 0 }, DEFAULT_CON_ID)
-  async testRedisQueue(msg: RedcastMessagePayload) {
+  async testRedisQueue(msg: RedcastMessage) {
     this.logService.info('testRedisQueue data: %j', { ...msg });
     await this.userRepo.find({});
     await sleep(1000);
   }
 
-  @RedcastConsumeStream('test_stream_key', { groupId: 'joktec', consumerId: 'joktec', timeout: 0 }, DEFAULT_CON_ID)
-  async testRedisStream(msg: RedcastMessagePayload) {
+  @RedcastConsume('test_stream_key', { groupId: 'joktec', timeout: 0, mode: 'stream' }, DEFAULT_CON_ID)
+  async testRedisStream(msg: RedcastMessage) {
     this.logService.info('testRedisStream data: %j', { ...msg });
     await this.userRepo.find({});
     await sleep(1000);
