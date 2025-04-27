@@ -146,7 +146,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
       const verbose = this.cronMeta[cron.code].verbose;
       const execLog = this.cronMeta[cron.code].execLog;
 
-      execLog && this.logService.info('Start to execute CronJob %s', cron.code);
+      if (execLog) this.logService.info('Start to execute CronJob %s', cron.code);
       const timeout = toInt(cron.timeout, 0);
       if (timeout > 0) await sleep(timeout);
 
@@ -159,11 +159,9 @@ export abstract class CrontabScheduler implements OnModuleInit {
         cronStatus = CrontabHistoryStatus.COMPLETED;
       } catch (err) {
         cronError = err;
-        if (err instanceof Exception) {
-          cronError = { ...err.getError(), stack: err.stack };
-        }
+        if (err instanceof Exception) cronError = { ...err.getError(), stack: err.stack };
         cronStatus = CrontabHistoryStatus.FAILED;
-        verbose && this.logService.error(err, 'Error when executing CronJob %s', cron.code);
+        if (verbose) this.logService.error(err, 'Error when executing CronJob %s', cron.code);
       }
 
       const lastExecution = this.schedulerRegistry.getCronJob(cronName).lastDate();
@@ -183,7 +181,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
           res: cronRes ? { data: cronRes } : null,
           error: cronError ? { msg: cronError.message, stack: cronError.stack } : null,
         }));
-      execLog && this.logService.info('End to execute CronJob %s', cron.code);
+      if (execLog) this.logService.info('End to execute CronJob %s', cron.code);
     };
 
     const onComplete = null;
