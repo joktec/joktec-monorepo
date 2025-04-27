@@ -143,7 +143,10 @@ export abstract class CrontabScheduler implements OnModuleInit {
     }
 
     const onTick = async () => {
-      this.logService.info('Start to execute CronJob %s', cron.code);
+      const verbose = this.cronMeta[cron.code].verbose;
+      const execLog = this.cronMeta[cron.code].execLog;
+
+      execLog && this.logService.info('Start to execute CronJob %s', cron.code);
       const timeout = toInt(cron.timeout, 0);
       if (timeout > 0) await sleep(timeout);
 
@@ -160,9 +163,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
           cronError = { ...err.getError(), stack: err.stack };
         }
         cronStatus = CrontabHistoryStatus.FAILED;
-        if (this.cronMeta[cron.code].verbose) {
-          this.logService.error(err, 'Error when executing CronJob %s', cron.code);
-        }
+        verbose && this.logService.error(err, 'Error when executing CronJob %s', cron.code);
       }
 
       const lastExecution = this.schedulerRegistry.getCronJob(cronName).lastDate();
@@ -182,7 +183,7 @@ export abstract class CrontabScheduler implements OnModuleInit {
           res: cronRes ? { data: cronRes } : null,
           error: cronError ? { msg: cronError.message, stack: cronError.stack } : null,
         }));
-      this.logService.info('End to execute CronJob %s', cron.code);
+      execLog && this.logService.info('End to execute CronJob %s', cron.code);
     };
 
     const onComplete = null;

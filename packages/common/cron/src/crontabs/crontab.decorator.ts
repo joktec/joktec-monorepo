@@ -2,6 +2,7 @@ import { InternalServerException } from '@joktec/core';
 import dayjs from 'dayjs';
 import { has, isString } from 'lodash';
 import { CrontabType, ICrontabMeta, ICrontabModel, ICrontabOption } from './models';
+import { toBool } from '@joktec/utils';
 
 global.AllCronMetadata = {};
 
@@ -39,8 +40,9 @@ export function Crontab(expression: string | Date, cronOpts: ICrontabOption = {}
     global.AllCronMetadata[code] = {
       cron,
       service: target.constructor,
-      verbose: cronOpts.verbose,
-      trace: cronOpts.trace,
+      trace: cronOpts.trace || 'all',
+      verbose: toBool(cronOpts.verbose, false),
+      execLog: toBool(cronOpts.execLog, true),
     } as ICrontabMeta;
   };
 }

@@ -4,8 +4,9 @@ import { CrontabHistoryStatus, CrontabHistoryType, CrontabStatus, CrontabType, C
 export interface ICrontabMeta {
   cron: Partial<ICrontabModel>;
   service: Clazz;
-  verbose?: boolean;
   trace?: CronTrace;
+  verbose?: boolean;
+  execLog?: boolean;
 }
 
 export interface ICrontabOption {
@@ -13,8 +14,9 @@ export interface ICrontabOption {
   timezone?: string;
   timeout?: number;
   parameters?: { [key: string]: any };
-  verbose?: boolean;
   trace?: CronTrace;
+  verbose?: boolean;
+  execLog?: boolean;
 }
 
 export interface ICrontabModel {
