@@ -1,7 +1,7 @@
 {
   "name": "@joktec/redcast",
   "description": "JokTec - Redis Pub/Sub Service",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": false,
   "license": "MIT",
   "author": "JokTec",

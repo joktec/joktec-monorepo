@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.4](https://github.com/joktec/joktec-monorepo/compare/@joktec/redcast@0.1.3...@joktec/redcast@0.1.4) (2025-04-29)
+
+
+### Bug Fixes
+
+* redcast remove queue when move to dlq ([316335e](https://github.com/joktec/joktec-monorepo/commit/316335e2fb5bcf6315dbe1abe3d6e2ff95f7bc22))
+
+
+
+
+
 ## [0.1.3](https://github.com/joktec/joktec-monorepo/compare/@joktec/redcast@0.1.2...@joktec/redcast@0.1.3) (2025-04-29)
 
 
