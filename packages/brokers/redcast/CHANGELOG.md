@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.3](https://github.com/joktec/joktec-monorepo/compare/@joktec/redcast@0.1.2...@joktec/redcast@0.1.3) (2025-04-29)
+
+
+### Bug Fixes
+
+* redcast process throw error ([481ff4c](https://github.com/joktec/joktec-monorepo/commit/481ff4c26c48395922faffb635a7ab0f13b0eb37))
+
+
+
+
+
 ## [0.1.2](https://github.com/joktec/joktec-monorepo/compare/@joktec/redcast@0.1.1...@joktec/redcast@0.1.2) (2025-04-29)
 
 
