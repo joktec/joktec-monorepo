@@ -83,6 +83,11 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
       designType = isArray(opts.type) ? opts.type[0] : opts.type;
       swaggerOptions.type = isObjectIdType(typeFunction) ? String : typeFunction;
       swaggerOptions.isArray = isArrayType;
+
+      if (isObjectIdType(typeFunction)) {
+        if (isArrayType) opts.example = ['00000020f51bb4362eee2a4d'] as any;
+        else opts.example = '00000020f51bb4362eee2a4d' as any;
+      }
     }
 
     if (opts.required) {
