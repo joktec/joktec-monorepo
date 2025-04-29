@@ -213,7 +213,7 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
         break;
       } catch (error) {
         retries++;
-        this.logService.warn('`%s` redcast failed to process message on attempt %s/%s', conId, retries, maxRetries);
+        this.logService.warn('`%s` redcast failed to process message (%s) on attempt %s', conId, messageId, retries);
         if (retries < maxRetries) {
           await sleep(retryDelay * retries);
           continue;
@@ -223,6 +223,12 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
         const deadLetterOpts: RedcastDeadLetterOptions = { deadLetterQueue, deadLetterTTL, queue, groupId, consumerId };
         await this.moveToDeadLetter(consumer, msg, error, deadLetterOpts);
         this.redcastMetricService.receive(metricType, RedcastMetricStatus.ERROR, queue, conId);
+
+        if (isStream) {
+          await consumer.xack(queue, groupId, messageId);
+          await consumer.xdel(queue, messageId);
+        }
+
         throw error;
       }
     }
