@@ -223,6 +223,7 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
         const deadLetterOpts: RedcastDeadLetterOptions = { deadLetterQueue, deadLetterTTL, queue, groupId, consumerId };
         await this.moveToDeadLetter(consumer, msg, error, deadLetterOpts);
         this.redcastMetricService.receive(metricType, RedcastMetricStatus.ERROR, queue, conId);
+        throw error;
       }
     }
   }
