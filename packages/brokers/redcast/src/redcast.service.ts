@@ -189,46 +189,38 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
       ...(groupId && { groupId }),
       ...(consumerId && { consumerId }),
     };
-    await consumer.rpush(deadLetterQueue, JSON.stringify(deadLetterMessage));
+    await consumer.rpush(deadLetterKey, JSON.stringify(deadLetterMessage));
     await consumer.expire(deadLetterKey, deadLetterTTL);
   }
 
   private async processMessage(consumer: Redcast, msg: string, opts: RedcastProcessMessageOptions) {
-    const { queue, groupId, consumerId, messageId, callback } = opts;
-    const metricType = queue ? 'consumeStream' : 'consume';
+    const { queue, groupId, consumerId, messageId, callback, conId = DEFAULT_CON_ID } = opts;
+    const isStream = queue && groupId && messageId;
+    const metricType = isStream ? 'consumeStream' : 'consume';
     const maxRetries = toInt(opts.maxRetries, 3);
     const retryDelay = toInt(opts.retryDelay, 1000);
-    const maxLength = toInt(opts.maxLength, 1000);
     const autoAck = toBool(opts.autoAck, true);
 
     let retries = 0;
     while (retries < maxRetries) {
       try {
         await callback(queue, msg);
-        if (queue && groupId && messageId && autoAck) {
-          await consumer.xack(queue, groupId, messageId);
-          !!maxLength && (await consumer.xtrim(queue, 'MAXLEN', '~', maxLength));
-        }
-        this.redcastMetricService.receive(metricType, RedcastMetricStatus.SUCCESS, queue, DEFAULT_CON_ID);
+        if (isStream && autoAck) await consumer.xack(queue, groupId, messageId);
+        this.redcastMetricService.receive(metricType, RedcastMetricStatus.SUCCESS, queue, conId);
         break;
       } catch (error) {
         retries++;
-        if (retries !== maxRetries) {
+        this.logService.warn('`%s` redcast failed to process message on attempt %s/%s', conId, retries, maxRetries);
+        if (retries < maxRetries) {
           await sleep(retryDelay * retries);
-          return;
+          continue;
         }
 
         const { deadLetterQueue, deadLetterTTL } = opts;
         const deadLetterOpts: RedcastDeadLetterOptions = { deadLetterQueue, deadLetterTTL, queue, groupId, consumerId };
         await this.moveToDeadLetter(consumer, msg, error, deadLetterOpts);
-        this.redcastMetricService.receive(metricType, RedcastMetricStatus.ERROR, queue, DEFAULT_CON_ID);
+        this.redcastMetricService.receive(metricType, RedcastMetricStatus.ERROR, queue, conId);
       }
-    }
-  }
-
-  private async processBatch(consumer: Redcast, messages: string[], options: RedcastProcessMessageOptions) {
-    for (const msg of messages) {
-      await this.processMessage(consumer, msg, options);
     }
   }
 
@@ -275,19 +267,22 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
       callback,
       deadLetterQueue: opts.deadLetterQueue || `${queue}:dead-letter`,
       ...pick(opts, ['maxRetries', 'retryDelay', 'deadLetterTTL']),
+      conId,
     };
 
     const brpop = async (): Promise<void> => {
       const messages = await this.brpopMessages(consumer, queue, batchSize, timeout);
-      if (messages.length) {
-        await this.processBatch(consumer, messages, processOpts);
+      for (const message of messages) {
+        await this.processMessage(consumer, message, processOpts);
       }
     };
 
     const rpoplpush = async (): Promise<void> => {
       const messages = await this.rpoplpushMessages(consumer, queue, processingQueue, batchSize);
       if (messages.length) {
-        await this.processBatch(consumer, messages, processOpts);
+        for (const message of messages) {
+          await this.processMessage(consumer, message, processOpts);
+        }
         await consumer.del(processingQueue);
       } else {
         await sleep(timeout * 1000);
@@ -349,7 +344,8 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
       groupId,
       consumerId,
       deadLetterQueue: opts.deadLetterQueue || `${queue}:dead-letter`,
-      ...pick(opts, ['maxRetries', 'retryDelay', 'deadLetterTTL', 'autoAck', 'maxLength']),
+      ...pick(opts, ['maxRetries', 'retryDelay', 'deadLetterTTL', 'autoAck']),
+      conId,
     };
 
     const loop = async () => {
@@ -370,8 +366,10 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
           if (!streams) continue;
 
           for (const [queue, entries] of streams as [string, [string, string[]][]][]) {
-            const messages = entries.map(([id, fields]) => ({ message: fields[1], id, queue })).map(m => m.message);
-            await this.processBatch(consumer, messages, { ...processOpts, queue });
+            for (const [id, fields] of entries) {
+              const msg = fields[1];
+              await this.processMessage(consumer, msg, { ...processOpts, messageId: id, queue });
+            }
           }
         } catch (error) {
           this.logService.error(error, '`%s` redcast failed to consume from stream [%s]', conId, queue);

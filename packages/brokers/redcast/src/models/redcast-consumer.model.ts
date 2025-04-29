@@ -60,11 +60,6 @@ export interface RedcastConsumeOptions {
    * @default true
    */
   autoAck?: boolean;
-
-  /**
-   * Use with mode `stream`
-   */
-  maxLength?: number;
 }
 
 export interface RedcastConsumeDecoratorOptions extends RedcastConsumeOptions {
@@ -77,11 +72,11 @@ export interface RedcastProcessMessageOptions {
   callback: (queue: string, message: string) => Promise<void>;
   maxRetries?: number;
   retryDelay?: number;
-  deadLetterQueue?: string;
-  deadLetterTTL?: number;
   groupId?: string;
   consumerId?: string;
   messageId?: string;
   autoAck?: boolean;
-  maxLength?: number;
+  conId?: string;
+  deadLetterQueue?: string;
+  deadLetterTTL?: number;
 }
