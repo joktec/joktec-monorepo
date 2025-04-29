@@ -195,7 +195,7 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
 
   private async processMessage(consumer: Redcast, msg: string, opts: RedcastProcessMessageOptions) {
     const { queue, groupId, consumerId, messageId, callback, conId = DEFAULT_CON_ID } = opts;
-    const isStream = queue && groupId && messageId;
+    const isStream = !!queue && !!groupId && !!messageId;
     const metricType = isStream ? 'consumeStream' : 'consume';
     const maxRetries = toInt(opts.maxRetries, 3);
     const retryDelay = toInt(opts.retryDelay, 1000);
@@ -205,7 +205,10 @@ export class RedcastService extends AbstractClientService<RedcastConfig, Redcast
     while (retries < maxRetries) {
       try {
         await callback(queue, msg);
-        if (isStream && autoAck) await consumer.xack(queue, groupId, messageId);
+        if (isStream && autoAck) {
+          await consumer.xack(queue, groupId, messageId);
+          await consumer.xdel(queue, messageId);
+        }
         this.redcastMetricService.receive(metricType, RedcastMetricStatus.SUCCESS, queue, conId);
         break;
       } catch (error) {
