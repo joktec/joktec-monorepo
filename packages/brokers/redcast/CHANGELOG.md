@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.1.2](https://github.com/joktec/joktec-monorepo/compare/@joktec/redcast@0.1.1...@joktec/redcast@0.1.2) (2025-04-29)
+
+
+### Bug Fixes
+
+* redcast auto ack ([ad93049](https://github.com/joktec/joktec-monorepo/commit/ad930494f84397b7fad73c6a872c94ab3e491811))
+
+
+
+
+
 ## [0.1.1](https://github.com/joktec/joktec-monorepo/compare/@joktec/redcast@0.1.0...@joktec/redcast@0.1.1) (2025-04-29)
 
 
