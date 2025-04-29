@@ -38,7 +38,7 @@
   "dependencies": {
     "@joktec/core": "0.2.0",
     "@joktec/cacher": "0.2.0",
-    "@joktec/cron": "0.2.0",
+    "@joktec/cron": "0.2.2",
     "@joktec/http": "0.2.0",
     "@joktec/kafka": "0.2.0",
     "@joktec/mailer": "0.2.0",
@@ -48,7 +48,7 @@
     "@joktec/rabbit": "0.2.0",
     "@joktec/redcast": "0.1.0",
     "@joktec/storage": "0.2.0",
-    "@joktec/sqs": "^0.1.0",
+    "@joktec/sqs": "^0.1.1",
     "apple-signin-auth": "^1.7.6",
     "dayjs": "^1.11.13",
     "nestjs-i18n": "^10.5.1",
