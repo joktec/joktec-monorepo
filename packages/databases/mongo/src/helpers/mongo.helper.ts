@@ -1,7 +1,8 @@
 import { Dictionary, ICondition, IPopulate, IPopulateOption, ISort } from '@joktec/core';
 import { toArray } from '@joktec/utils';
-import { isArray, isDate, isEmpty, isNil, isObject, isRegExp, isString, omit, pick } from 'lodash';
-import { PopulateOptions } from 'mongoose';
+import { Ref } from '@typegoose/typegoose';
+import { isArray, isBuffer, isDate, isEmpty, isNil, isNumber, isObject, isRegExp, isString, omit, pick } from 'lodash';
+import { PopulateOptions, RefType } from 'mongoose';
 import { MongoSchema, ObjectId } from '../models';
 
 export class MongoHelper {
@@ -150,5 +151,28 @@ export class MongoHelper {
 
       return populateOptions;
     });
+  }
+
+  static parseSimpleCondition<T extends MongoSchema, ID extends RefType = string>(
+    cond: ID | ObjectId | Ref<T, ID> | ICondition<T>,
+  ): ICondition<T> {
+    const condition: ICondition<T> = {};
+    switch (true) {
+      case isObject(cond):
+      case isArray(cond):
+        Object.assign(condition, cond);
+        break;
+
+      case ObjectId.isValid(String(cond)):
+        Object.assign(condition, { _id: ObjectId.create(String(cond)) });
+        break;
+
+      case isString(cond):
+      case isNumber(cond):
+      case isBuffer(cond):
+      default:
+        Object.assign(condition, { _id: ObjectId.create(String(cond)) });
+    }
+    return condition;
   }
 }

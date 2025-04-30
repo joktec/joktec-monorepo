@@ -134,10 +134,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
     query: Omit<IMongoRequest<T>, 'condition'> = {},
     options: IMongoOptions<T> = {},
   ): Promise<T> {
-    const condition: ICondition<T> = {};
-    if (ObjectId.isValid(String(cond))) Object.assign(condition, { _id: ObjectId.create(String(cond)) });
-    else Object.assign(condition, cond);
-
+    const condition: ICondition<T> = MongoHelper.parseSimpleCondition(cond);
     const mergeQuery = Object.assign({}, query, { condition });
     const doc = await this.qb(mergeQuery, options).findOne().exec();
     return this.transform(doc) as T;
@@ -156,10 +153,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
     body: IMongoUpdate<T>,
     options: IMongoOptions<T> = {},
   ): Promise<T> {
-    const condition: ICondition<T> = {};
-    if (ObjectId.isValid(String(cond))) Object.assign(condition, { _id: ObjectId.create(String(cond)) });
-    else Object.assign(condition, cond);
-
+    const condition: ICondition<T> = MongoHelper.parseSimpleCondition(cond);
     const transformBody: T = this.transform(body) as T;
     const _options = Object.assign({}, UPDATE_OPTIONS, options);
     const doc = await this.qb({ condition }, _options).findOneAndUpdate(transformBody).exec();
@@ -175,10 +169,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
 
   @MongoCatch
   async delete(cond: ID | ObjectId | Ref<T, ID> | ICondition<T>, options: IMongoOptions<T> = {}): Promise<T> {
-    const condition: ICondition<T> = {};
-    if (ObjectId.isValid(String(cond))) Object.assign(condition, { _id: ObjectId.create(String(cond)) });
-    else Object.assign(condition, cond);
-
+    const condition: ICondition<T> = MongoHelper.parseSimpleCondition(cond);
     const doc = await this.qb().destroyOne(condition, options).exec();
     return this.transform(doc) as T;
   }
@@ -192,10 +183,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
 
   @MongoCatch
   async restore(cond: ID | ObjectId | Ref<T, ID> | ICondition<T>, options: IMongoOptions<T> = {}): Promise<T> {
-    const condition: ICondition<T> = {};
-    if (ObjectId.isValid(String(cond))) Object.assign(condition, { _id: ObjectId.create(String(cond)) });
-    else Object.assign(condition, cond);
-
+    const condition: ICondition<T> = MongoHelper.parseSimpleCondition(cond);
     const doc = await this.qb().restore(condition, options).exec();
     return this.transform(doc) as T;
   }
