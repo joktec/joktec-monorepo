@@ -147,7 +147,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   async create(body: IMongoUpdate<T>, options: IMongoOptions<T> = {}): Promise<T> {
     const transformBody: T = this.transform(body) as T;
     const doc = await this.model.create(transformBody);
-    return this.findOne({ condition: { _id: String(doc._id) } } as any, options);
+    return this.findOne(doc._id as ID, options);
   }
 
   @MongoCatch
@@ -164,6 +164,13 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
     const _options = Object.assign({}, UPDATE_OPTIONS, options);
     const doc = await this.qb({ condition }, _options).findOneAndUpdate(transformBody).exec();
     return this.transform(doc) as T;
+  }
+
+  async updateMany(condition: ICondition<T>, body: IMongoUpdate<T>, options: IMongoOptions<T> = {}): Promise<T[]> {
+    const transformBody: T = this.transform(body) as T;
+    const _options = Object.assign({}, UPDATE_OPTIONS, options);
+    await this.qb({ condition }, _options).updateMany(transformBody).exec();
+    return this.find({ condition });
   }
 
   @MongoCatch

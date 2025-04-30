@@ -1,8 +1,8 @@
-import { Client, IBaseRepository } from '@joktec/core';
+import { Client, IBaseRepository, ICondition } from '@joktec/core';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ClientSession, ClientSessionOptions, Connection, RefType } from 'mongoose';
 import { QueryHelper } from './helpers';
-import { IMongoAggregateOptions, IMongoPipeline, MongoSchema } from './models';
+import { IMongoAggregateOptions, IMongoOptions, IMongoPipeline, IMongoUpdate, MongoSchema } from './models';
 import { MongoConfig } from './mongo.config';
 
 export interface MongoModuleOptions {
@@ -25,5 +25,9 @@ export interface MongoClient extends Client<MongoConfig, Connection> {
 }
 
 export interface IMongoRepository<T extends MongoSchema, ID extends RefType = string> extends IBaseRepository<T, ID> {
+  updateMany(condition: ICondition<T>, body: IMongoUpdate<T>, options?: IMongoOptions<T>): Promise<T[]>;
+
+  deleteMany(cond: ICondition<T>, options?: IMongoOptions<T>): Promise<T[]>;
+
   aggregate<U = T>(pipeline: IMongoPipeline[], opts?: IMongoAggregateOptions<U>): Promise<U[]>;
 }
