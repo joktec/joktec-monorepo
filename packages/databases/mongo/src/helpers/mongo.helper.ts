@@ -158,18 +158,18 @@ export class MongoHelper {
   ): ICondition<T> {
     const condition: ICondition<T> = {};
     switch (true) {
+      case ObjectId.isValid(String(cond)):
+      case isString(cond):
+      case isNumber(cond):
+      case isBuffer(cond):
+        Object.assign(condition, { _id: ObjectId.create(String(cond)) });
+        break;
+
       case isObject(cond):
       case isArray(cond):
         Object.assign(condition, cond);
         break;
 
-      case ObjectId.isValid(String(cond)):
-        Object.assign(condition, { _id: ObjectId.create(String(cond)) });
-        break;
-
-      case isString(cond):
-      case isNumber(cond):
-      case isBuffer(cond):
       default:
         Object.assign(condition, { _id: ObjectId.create(String(cond)) });
     }
