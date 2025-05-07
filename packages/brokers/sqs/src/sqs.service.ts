@@ -36,25 +36,43 @@ export class SqsService extends AbstractClientService<SqsConfig, SqsInstance> im
     this.setupGracefulShutdown();
   }
 
-  @Retry(RETRY_OPTS)
-  protected async init(config: SqsConfig): Promise<SqsInstance> {
+  protected async validateConfig(config: SqsConfig): Promise<SqsConfig> {
     if (config.assumeRole) {
-      const sts = new STSClient({ endpoint: config.assumeRole.stsEndpoint });
-      const resp = await sts.send(
-        new AssumeRoleCommand({
-          RoleArn: config.assumeRole.roleArn!,
-          RoleSessionName: config.assumeRole.roleSessionName || 'AssumeRoleSession',
-          DurationSeconds: config.assumeRole.durationSeconds || 3600,
-          ExternalId: config.assumeRole.externalId,
-        }),
-      );
+      const sts = new STSClient({ region: config.region });
+      const command = new AssumeRoleCommand({
+        RoleArn: config.assumeRole.roleArn!,
+        RoleSessionName: config.assumeRole.roleSessionName || 'AssumeRoleSession',
+        DurationSeconds: config.assumeRole.durationSeconds || 3600,
+        ExternalId: config.assumeRole.externalId,
+      });
 
+      const resp = await sts.send(command);
       config.accessKey = resp.Credentials?.AccessKeyId;
       config.secretKey = resp.Credentials?.SecretAccessKey;
       config.sessionToken = resp.Credentials?.SessionToken;
     }
 
-    const sqs = new SQS({
+    return super.validateConfig(config);
+  }
+
+  @Retry(RETRY_OPTS)
+  protected async init(config: SqsConfig): Promise<SqsInstance> {
+    if (config.assumeRole) {
+      const sts = new STSClient({ region: config.region });
+      const command = new AssumeRoleCommand({
+        RoleArn: config.assumeRole.roleArn!,
+        RoleSessionName: config.assumeRole.roleSessionName || 'AssumeRoleSession',
+        DurationSeconds: config.assumeRole.durationSeconds || 3600,
+        ExternalId: config.assumeRole.externalId,
+      });
+
+      const resp = await sts.send(command);
+      config.accessKey = resp.Credentials?.AccessKeyId;
+      config.secretKey = resp.Credentials?.SecretAccessKey;
+      config.sessionToken = resp.Credentials?.SessionToken;
+    }
+
+    const awsConfig = {
       region: config.region,
       endpoint: config.endpoint,
       credentials: {
@@ -63,19 +81,10 @@ export class SqsService extends AbstractClientService<SqsConfig, SqsInstance> im
         sessionToken: config.sessionToken,
       },
       logger: config.debug && config.bindingLogger(this.logService),
-    });
+    };
 
-    const sns = new SNS({
-      region: config.region,
-      endpoint: config.endpoint,
-      credentials: {
-        accessKeyId: config.accessKey,
-        secretAccessKey: config.secretKey,
-        sessionToken: config.sessionToken,
-      },
-      logger: config.debug && config.bindingLogger(this.logService),
-    });
-
+    const sqs = new SQS(awsConfig);
+    const sns = new SNS(awsConfig);
     this.logService.info('`%s` SQS client initialized for region `%s`', config.conId, config.region);
     return { dispatcher: sqs, broadcaster: sns };
   }

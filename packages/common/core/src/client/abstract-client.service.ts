@@ -44,13 +44,23 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
     }
   }
 
+  protected async validateConfig(config: IConfig): Promise<IConfig> {
+    const cfg = new this.configClass(config);
+    const error = cfg.validate();
+    if (error?.length) {
+      this.logService.error(error, `${this.service} invalid config`);
+      throw new InvalidClientConfigException(ExceptionMessage.INVALID_CONFIG, error);
+    }
+    return cfg;
+  }
+
   protected async clientInit(config: IConfig, first: boolean = true) {
     const cfg = new this.configClass(config);
     const { conId = DEFAULT_CON_ID } = cfg;
     const beginMessage = first ? 'initializing...' : 're-initializing...';
     const endMessage = first ? 'initialized' : 're-initialized';
 
-    this.configs[conId] = this.validateConfig(cfg);
+    this.configs[conId] = await this.validateConfig(cfg);
     if (!first && this.configs[conId].initTimeout > 0) {
       const second = Math.round(this.configs[conId].initTimeout / 1000);
       this.logService.debug('`%s` %s is delayed after %s second(s)', conId, this.service, second);
@@ -66,16 +76,6 @@ export abstract class AbstractClientService<IConfig extends ClientConfig, IClien
     } catch (err) {
       throw new ClientConnectException(ExceptionMessage.CLIENT_CONNECTION_FAILED, err);
     }
-  }
-
-  private validateConfig(config: IConfig): IConfig {
-    const cfg = new this.configClass(config);
-    const error = cfg.validate();
-    if (error?.length) {
-      this.logService.error(error, `${this.service} invalid config`);
-      throw new InvalidClientConfigException(ExceptionMessage.INVALID_CONFIG, error);
-    }
-    return cfg;
   }
 
   onModuleDestroy() {

@@ -38,24 +38,27 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
     super('storage', StorageConfig);
   }
 
-  @Retry(RETRY_OPTS)
-  protected async init(config: StorageConfig): Promise<S3Client> {
+  protected async validateConfig(config: StorageConfig): Promise<StorageConfig> {
     if (config.assumeRole) {
-      const sts = new STSClient({ endpoint: config.assumeRole.stsEndpoint });
-      const resp = await sts.send(
-        new AssumeRoleCommand({
-          RoleArn: config.assumeRole.roleArn!,
-          RoleSessionName: config.assumeRole.roleSessionName || 'AssumeRoleSession',
-          DurationSeconds: config.assumeRole.durationSeconds || 3600,
-          ExternalId: config.assumeRole.externalId,
-        }),
-      );
+      const sts = new STSClient({ region: config.region });
+      const command = new AssumeRoleCommand({
+        RoleArn: config.assumeRole.roleArn!,
+        RoleSessionName: config.assumeRole.roleSessionName || 'AssumeRoleSession',
+        DurationSeconds: config.assumeRole.durationSeconds || 3600,
+        ExternalId: config.assumeRole.externalId,
+      });
 
+      const resp = await sts.send(command);
       config.accessKey = resp.Credentials?.AccessKeyId;
       config.secretKey = resp.Credentials?.SecretAccessKey;
       config.sessionToken = resp.Credentials?.SessionToken;
     }
 
+    return super.validateConfig(config);
+  }
+
+  @Retry(RETRY_OPTS)
+  protected async init(config: StorageConfig): Promise<S3Client> {
     return new S3Client({
       ...config,
       credentials: {
