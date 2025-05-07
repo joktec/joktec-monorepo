@@ -1,5 +1,30 @@
 import { ClientConfig, LogService } from '@joktec/core';
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, toBool, toInt } from '@joktec/utils';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toBool, toInt } from '@joktec/utils';
+
+export class SqsAssumeRoleConfig {
+  @IsString()
+  @IsOptional()
+  roleArn?: string;
+
+  @IsString()
+  @IsOptional()
+  roleSessionName?: string = 'AssumeRoleSession';
+
+  @IsString()
+  @IsOptional()
+  externalId?: string;
+
+  @IsInt()
+  @IsOptional()
+  durationSeconds?: number = 3600;
+
+  @IsOptional()
+  stsEndpoint?: string;
+
+  constructor(props?: Partial<SqsAssumeRoleConfig>) {
+    Object.assign(this, props);
+  }
+}
 
 export class SqsConfig extends ClientConfig {
   @IsString()
@@ -38,6 +63,10 @@ export class SqsConfig extends ClientConfig {
   @IsBoolean()
   ping?: boolean;
 
+  @IsOptional()
+  @IsTypes(SqsAssumeRoleConfig)
+  assumeRole?: SqsAssumeRoleConfig;
+
   constructor(props?: SqsConfig) {
     super(props);
     Object.assign(this, {
@@ -47,6 +76,7 @@ export class SqsConfig extends ClientConfig {
       timeout: toInt(props.timeout, 30000),
       ...props,
     });
+    if (props.assumeRole) this.assumeRole = new SqsAssumeRoleConfig(props.assumeRole);
   }
 
   bindingLogger(logger: LogService) {

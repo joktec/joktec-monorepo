@@ -1,32 +1,57 @@
 import { ClientConfig } from '@joktec/core';
-import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from '@joktec/utils';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/utils';
 import { StorageACL } from './models';
 
 export const DEFAULT_CONTENT_TYPE = 'application/octet-stream';
 
+export class StorageAssumeRoleConfig {
+  @IsString()
+  @IsOptional()
+  roleArn?: string;
+
+  @IsString()
+  @IsOptional()
+  roleSessionName?: string = 'AssumeRoleSession';
+
+  @IsString()
+  @IsOptional()
+  externalId?: string;
+
+  @IsInt()
+  @IsOptional()
+  durationSeconds?: number = 3600;
+
+  @IsOptional()
+  stsEndpoint?: string;
+
+  constructor(props?: Partial<StorageAssumeRoleConfig>) {
+    Object.assign(this, props);
+  }
+}
+
 export class StorageConfig extends ClientConfig {
   @IsString()
-  @IsOptional()
-  region?: string = '';
-
-  @IsString()
-  @IsOptional()
-  accessKey?: string = '';
-
-  @IsString()
   @IsNotEmpty()
-  secretKey!: string;
+  region?: string = 'ap-southeast-1';
 
   @IsString()
-  @IsNotEmpty()
-  endpoint!: string;
+  @IsOptional()
+  accessKey?: string;
+
+  @IsString()
+  @IsOptional()
+  secretKey?: string;
+
+  @IsString()
+  @IsOptional()
+  endpoint?: string;
 
   @IsString()
   @IsOptional()
   sessionToken?: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   bucket?: string;
 
   @IsBoolean()
@@ -76,12 +101,14 @@ export class StorageConfig extends ClientConfig {
   @IsOptional()
   transport?: object;
 
+  @IsOptional()
+  @IsTypes(StorageAssumeRoleConfig)
+  assumeRole?: StorageAssumeRoleConfig;
+
   constructor(props: StorageConfig) {
     super(props);
-    Object.assign(this, {
-      ...props,
-      linkFormat: props?.linkFormat || props?.endpoint,
-    });
+    Object.assign(this, { ...props, linkFormat: props?.linkFormat || props?.endpoint });
+    if (props.assumeRole) this.assumeRole = new StorageAssumeRoleConfig(props.assumeRole);
   }
 
   public buildLink(key: string, bucket: string = ''): string {

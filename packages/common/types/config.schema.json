@@ -63255,12 +63255,11 @@
         },
         "transport": {
           "type": "object"
+        },
+        "assumeRole": {
+          "$ref": "#/definitions/StorageAssumeRoleConfig"
         }
-      },
-      "required": [
-        "secretKey",
-        "endpoint"
-      ]
+      }
     },
     "StorageACL": {
       "type": "string",
@@ -63273,6 +63272,26 @@
         "bucket-owner-read",
         "bucket-owner-full-control"
       ]
+    },
+    "StorageAssumeRoleConfig": {
+      "type": "object",
+      "properties": {
+        "roleArn": {
+          "type": "string"
+        },
+        "roleSessionName": {
+          "type": "string"
+        },
+        "externalId": {
+          "type": "string"
+        },
+        "durationSeconds": {
+          "type": "number"
+        },
+        "stsEndpoint": {
+          "type": "string"
+        }
+      }
     },
     "Listable<SqsConfig>": {
       "anyOf": [
@@ -63334,11 +63353,34 @@
         },
         "ping": {
           "type": "boolean"
+        },
+        "assumeRole": {
+          "$ref": "#/definitions/SqsAssumeRoleConfig"
         }
       },
       "required": [
         "region"
       ]
+    },
+    "SqsAssumeRoleConfig": {
+      "type": "object",
+      "properties": {
+        "roleArn": {
+          "type": "string"
+        },
+        "roleSessionName": {
+          "type": "string"
+        },
+        "externalId": {
+          "type": "string"
+        },
+        "durationSeconds": {
+          "type": "number"
+        },
+        "stsEndpoint": {
+          "type": "string"
+        }
+      }
     },
     "Listable<CrontabConfig>": {
       "anyOf": [

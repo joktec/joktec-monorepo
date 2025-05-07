@@ -1,5 +1,6 @@
 import { SNS } from '@aws-sdk/client-sns';
 import { Message, SQS } from '@aws-sdk/client-sqs';
+import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
 import { sleep, toArray, toBool } from '@joktec/utils';
 import { has } from 'lodash';
@@ -37,12 +38,29 @@ export class SqsService extends AbstractClientService<SqsConfig, SqsInstance> im
 
   @Retry(RETRY_OPTS)
   protected async init(config: SqsConfig): Promise<SqsInstance> {
+    if (config.assumeRole) {
+      const sts = new STSClient({ endpoint: config.assumeRole.stsEndpoint });
+      const resp = await sts.send(
+        new AssumeRoleCommand({
+          RoleArn: config.assumeRole.roleArn!,
+          RoleSessionName: config.assumeRole.roleSessionName || 'AssumeRoleSession',
+          DurationSeconds: config.assumeRole.durationSeconds || 3600,
+          ExternalId: config.assumeRole.externalId,
+        }),
+      );
+
+      config.accessKey = resp.Credentials?.AccessKeyId;
+      config.secretKey = resp.Credentials?.SecretAccessKey;
+      config.sessionToken = resp.Credentials?.SessionToken;
+    }
+
     const sqs = new SQS({
       region: config.region,
       endpoint: config.endpoint,
       credentials: {
         accessKeyId: config.accessKey,
         secretAccessKey: config.secretKey,
+        sessionToken: config.sessionToken,
       },
       logger: config.debug && config.bindingLogger(this.logService),
     });
@@ -53,6 +71,7 @@ export class SqsService extends AbstractClientService<SqsConfig, SqsInstance> im
       credentials: {
         accessKeyId: config.accessKey,
         secretAccessKey: config.secretKey,
+        sessionToken: config.sessionToken,
       },
       logger: config.debug && config.bindingLogger(this.logService),
     });

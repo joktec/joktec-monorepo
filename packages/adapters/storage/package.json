@@ -42,15 +42,16 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.758.0",
-    "@aws-sdk/s3-request-presigner": "^3.758.0",
+    "@aws-sdk/client-s3": "^3.804.0",
+    "@aws-sdk/client-sts": "^3.804.0",
+    "@aws-sdk/s3-request-presigner": "^3.804.0",
     "@joktec/core": "0.2.0",
     "@joktec/utils": "0.1.1",
     "byte-length": "^1.0.2",
     "image-downloader": "^4.3.0",
     "lodash": "^4.17.21",
-    "mime-types": "^2.1.35",
-    "sharp": "^0.33.5",
+    "mime-types": "^3.0.1",
+    "sharp": "0.33.5",
     "url-parse": "^1.5.10"
   },
   "devDependencies": {

@@ -10,6 +10,7 @@ import {
   PutObjectCommandInput,
   S3Client,
 } from '@aws-sdk/client-s3';
+import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AbstractClientService, Clazz, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import mime from 'mime-types';
@@ -39,6 +40,22 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
 
   @Retry(RETRY_OPTS)
   protected async init(config: StorageConfig): Promise<S3Client> {
+    if (config.assumeRole) {
+      const sts = new STSClient({ endpoint: config.assumeRole.stsEndpoint });
+      const resp = await sts.send(
+        new AssumeRoleCommand({
+          RoleArn: config.assumeRole.roleArn!,
+          RoleSessionName: config.assumeRole.roleSessionName || 'AssumeRoleSession',
+          DurationSeconds: config.assumeRole.durationSeconds || 3600,
+          ExternalId: config.assumeRole.externalId,
+        }),
+      );
+
+      config.accessKey = resp.Credentials?.AccessKeyId;
+      config.secretKey = resp.Credentials?.SecretAccessKey;
+      config.sessionToken = resp.Credentials?.SessionToken;
+    }
+
     return new S3Client({
       ...config,
       credentials: {
