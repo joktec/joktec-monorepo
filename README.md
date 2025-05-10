@@ -8,6 +8,9 @@
   <a href="https://opensource.org/licenses/MIT">
     <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="License" />
   </a>
+  <a href="https://deepwiki.com/joktec/joktec-monorepo">
+    <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki" />
+  </a>
 </p>
 
 ---
