@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty, ApiPropertyOptions, applyDecorators, Clazz } from '@joktec/core';
-import { Exclude, IsMongoId, IsNotEmpty, IsOptional, toArray, Type, ValidateNested } from '@joktec/utils';
+import { Exclude, Expose, IsMongoId, IsNotEmpty, IsOptional, toArray, Type, ValidateNested } from '@joktec/utils';
 import { prop, PropType, Severity } from '@typegoose/typegoose';
 import { BasePropOptions, MapPropOptions, VirtualOptions } from '@typegoose/typegoose/lib/types';
 import { isArray, isBoolean, isNil, isUndefined, last, merge, unset } from 'lodash';
@@ -101,6 +101,8 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
     if (opts.hidden) {
       decorators.push(Exclude({ toPlainOnly: true }));
       decorators.push(ApiHideProperty());
+    } else {
+      decorators.push(Expose({ toPlainOnly: true }));
     }
 
     if (opts.nested) {
