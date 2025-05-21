@@ -103,8 +103,10 @@ export class HttpService extends AbstractClientService<HttpConfig, AxiosInstance
       cf.baseURL = cf.baseURL.slice(0, -1);
     }
 
-    if (cf.url && !cf.url.startsWith('/')) {
-      cf.url = `/${cf.url}`;
+    if (cf.url) {
+      if (!cf.url.startsWith('http')) {
+        if (!cf.url.startsWith('/')) cf.url = `/${cf.url}`;
+      }
     }
 
     const proxy: HttpProxyConfig = clientConfig.proxy || config.proxy || null;
