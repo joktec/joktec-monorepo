@@ -1,6 +1,6 @@
 import { SNS } from '@aws-sdk/client-sns';
 import { Message, SQS } from '@aws-sdk/client-sqs';
-import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
+import { fromIni, fromTemporaryCredentials } from '@aws-sdk/credential-providers';
 import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
 import { sleep, toArray, toBool } from '@joktec/utils';
 import { has } from 'lodash';
@@ -36,55 +36,36 @@ export class SqsService extends AbstractClientService<SqsConfig, SqsInstance> im
     this.setupGracefulShutdown();
   }
 
-  protected async validateConfig(config: SqsConfig): Promise<SqsConfig> {
-    if (config.assumeRole) {
-      const sts = new STSClient({ region: config.region });
-      const command = new AssumeRoleCommand({
-        RoleArn: config.assumeRole.roleArn!,
-        RoleSessionName: config.assumeRole.roleSessionName || 'AssumeRoleSession',
-        DurationSeconds: config.assumeRole.durationSeconds || 3600,
-        ExternalId: config.assumeRole.externalId,
-      });
-
-      const resp = await sts.send(command);
-      config.accessKey = resp.Credentials?.AccessKeyId;
-      config.secretKey = resp.Credentials?.SecretAccessKey;
-      config.sessionToken = resp.Credentials?.SessionToken;
-    }
-
-    return super.validateConfig(config);
-  }
-
   @Retry(RETRY_OPTS)
   protected async init(config: SqsConfig): Promise<SqsInstance> {
-    if (config.assumeRole) {
-      const sts = new STSClient({ region: config.region });
-      const command = new AssumeRoleCommand({
-        RoleArn: config.assumeRole.roleArn!,
-        RoleSessionName: config.assumeRole.roleSessionName || 'AssumeRoleSession',
-        DurationSeconds: config.assumeRole.durationSeconds || 3600,
-        ExternalId: config.assumeRole.externalId,
-      });
+    const baseCredentials =
+      !config.accessKey || !config.secretKey
+        ? fromIni()
+        : { accessKeyId: config.accessKey, secretAccessKey: config.secretKey, sessionToken: config.sessionToken };
 
-      const resp = await sts.send(command);
-      config.accessKey = resp.Credentials?.AccessKeyId;
-      config.secretKey = resp.Credentials?.SecretAccessKey;
-      config.sessionToken = resp.Credentials?.SessionToken;
-    }
+    const credentials = !config.assumeRole
+      ? baseCredentials
+      : fromTemporaryCredentials({
+          masterCredentials: baseCredentials,
+          clientConfig: { region: config.region, endpoint: config.endpoint },
+          params: {
+            RoleArn: config.assumeRole.arn,
+            RoleSessionName: config.assumeRole.sessionName,
+            ExternalId: config.assumeRole.externalId,
+            DurationSeconds: config.assumeRole.durationSeconds,
+          },
+        });
 
     const awsConfig = {
       region: config.region,
       endpoint: config.endpoint,
-      credentials: {
-        accessKeyId: config.accessKey,
-        secretAccessKey: config.secretKey,
-        sessionToken: config.sessionToken,
-      },
+      credentials,
       logger: config.debug && config.bindingLogger(this.logService),
     };
 
     const sqs = new SQS(awsConfig);
     const sns = new SNS(awsConfig);
+
     this.logService.info('`%s` SQS client initialized for region `%s`', config.conId, config.region);
     return { dispatcher: sqs, broadcaster: sns };
   }

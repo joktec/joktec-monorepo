@@ -63276,10 +63276,10 @@
     "StorageAssumeRoleConfig": {
       "type": "object",
       "properties": {
-        "roleArn": {
+        "arn": {
           "type": "string"
         },
-        "roleSessionName": {
+        "sessionName": {
           "type": "string"
         },
         "externalId": {
@@ -63287,9 +63287,6 @@
         },
         "durationSeconds": {
           "type": "number"
-        },
-        "stsEndpoint": {
-          "type": "string"
         }
       }
     },
@@ -63365,10 +63362,10 @@
     "SqsAssumeRoleConfig": {
       "type": "object",
       "properties": {
-        "roleArn": {
+        "arn": {
           "type": "string"
         },
-        "roleSessionName": {
+        "sessionName": {
           "type": "string"
         },
         "externalId": {
@@ -63376,9 +63373,6 @@
         },
         "durationSeconds": {
           "type": "number"
-        },
-        "stsEndpoint": {
-          "type": "string"
         }
       }
     },

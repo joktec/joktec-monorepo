@@ -1,4 +1,4 @@
-import { ClientConfig } from '@joktec/core';
+import { ClientConfig, LogService } from '@joktec/core';
 import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/utils';
 import { StorageACL } from './models';
 
@@ -7,11 +7,11 @@ export const DEFAULT_CONTENT_TYPE = 'application/octet-stream';
 export class StorageAssumeRoleConfig {
   @IsString()
   @IsOptional()
-  roleArn?: string;
+  arn?: string;
 
   @IsString()
   @IsOptional()
-  roleSessionName?: string = 'AssumeRoleSession';
+  sessionName?: string = 'AssumeRoleSession';
 
   @IsString()
   @IsOptional()
@@ -20,9 +20,6 @@ export class StorageAssumeRoleConfig {
   @IsInt()
   @IsOptional()
   durationSeconds?: number = 3600;
-
-  @IsOptional()
-  stsEndpoint?: string;
 
   constructor(props?: Partial<StorageAssumeRoleConfig>) {
     Object.assign(this, props);
@@ -117,5 +114,22 @@ export class StorageConfig extends ClientConfig {
       ?.replace('<key>', key)
       ?.replace('<region>', this.region || '')
       ?.replace('<namespace>', this.namespace || '');
+  }
+
+  bindingLogger(logger: LogService) {
+    const log =
+      (method: 'trace' | 'debug' | 'info' | 'warn' | 'error') =>
+      (...args: any[]) => {
+        for (const arg of args) {
+          if (typeof arg === 'string') {
+            logger[method]('`%s` SQS client - %s', this.conId, arg);
+            continue;
+          }
+          const isSkipMethod = method === 'trace' || method === 'debug' || method === 'info';
+          if (isSkipMethod && arg.commandName === 'ReceiveMessageCommand') continue;
+          logger[method](arg, '`%s` SQS client command %s', this.conId, arg.commandName);
+        }
+      };
+    return { trace: log('trace'), debug: log('debug'), info: log('info'), warn: log('warn'), error: log('error') };
   }
 }

@@ -10,7 +10,7 @@ import {
   PutObjectCommandInput,
   S3Client,
 } from '@aws-sdk/client-s3';
-import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
+import { fromIni, fromTemporaryCredentials } from '@aws-sdk/credential-providers';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AbstractClientService, Clazz, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
 import mime from 'mime-types';
@@ -38,34 +38,30 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
     super('storage', StorageConfig);
   }
 
-  protected async validateConfig(config: StorageConfig): Promise<StorageConfig> {
-    if (config.assumeRole) {
-      const sts = new STSClient({ region: config.region });
-      const command = new AssumeRoleCommand({
-        RoleArn: config.assumeRole.roleArn!,
-        RoleSessionName: config.assumeRole.roleSessionName || 'AssumeRoleSession',
-        DurationSeconds: config.assumeRole.durationSeconds || 3600,
-        ExternalId: config.assumeRole.externalId,
-      });
-
-      const resp = await sts.send(command);
-      config.accessKey = resp.Credentials?.AccessKeyId;
-      config.secretKey = resp.Credentials?.SecretAccessKey;
-      config.sessionToken = resp.Credentials?.SessionToken;
-    }
-
-    return super.validateConfig(config);
-  }
-
   @Retry(RETRY_OPTS)
   protected async init(config: StorageConfig): Promise<S3Client> {
+    const baseCredentials =
+      !config.accessKey || !config.secretKey
+        ? fromIni()
+        : { accessKeyId: config.accessKey, secretAccessKey: config.secretKey, sessionToken: config.sessionToken };
+
+    const credentials = !config.assumeRole
+      ? baseCredentials
+      : fromTemporaryCredentials({
+          masterCredentials: baseCredentials,
+          clientConfig: { region: config.region, endpoint: config.endpoint },
+          params: {
+            RoleArn: config.assumeRole.arn,
+            RoleSessionName: config.assumeRole.sessionName,
+            ExternalId: config.assumeRole.externalId,
+            DurationSeconds: config.assumeRole.durationSeconds,
+          },
+        });
+
     return new S3Client({
       ...config,
-      credentials: {
-        accessKeyId: config.accessKey,
-        secretAccessKey: config.secretKey,
-        sessionToken: config.sessionToken,
-      },
+      credentials,
+      logger: config.debug && config.bindingLogger(this.logService),
     });
   }
 

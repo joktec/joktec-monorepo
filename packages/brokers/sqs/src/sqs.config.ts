@@ -4,11 +4,11 @@ import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes, toBool, to
 export class SqsAssumeRoleConfig {
   @IsString()
   @IsOptional()
-  roleArn?: string;
+  arn?: string;
 
   @IsString()
   @IsOptional()
-  roleSessionName?: string = 'AssumeRoleSession';
+  sessionName?: string = 'AssumeRoleSession';
 
   @IsString()
   @IsOptional()
@@ -17,9 +17,6 @@ export class SqsAssumeRoleConfig {
   @IsInt()
   @IsOptional()
   durationSeconds?: number = 3600;
-
-  @IsOptional()
-  stsEndpoint?: string;
 
   constructor(props?: Partial<SqsAssumeRoleConfig>) {
     Object.assign(this, props);
