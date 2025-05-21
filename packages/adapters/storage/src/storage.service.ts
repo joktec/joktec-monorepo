@@ -10,9 +10,16 @@ import {
   PutObjectCommandInput,
   S3Client,
 } from '@aws-sdk/client-s3';
-import { fromIni, fromTemporaryCredentials } from '@aws-sdk/credential-providers';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { AbstractClientService, Clazz, DEFAULT_CON_ID, Injectable, Retry } from '@joktec/core';
+import {
+  AbstractClientService,
+  bindingAwsLogger,
+  Clazz,
+  DEFAULT_CON_ID,
+  getAwsCredentials,
+  Injectable,
+  Retry,
+} from '@joktec/core';
 import mime from 'mime-types';
 import {
   StorageDownloadRequest,
@@ -40,28 +47,10 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
 
   @Retry(RETRY_OPTS)
   protected async init(config: StorageConfig): Promise<S3Client> {
-    const baseCredentials =
-      !config.accessKey || !config.secretKey
-        ? fromIni()
-        : { accessKeyId: config.accessKey, secretAccessKey: config.secretKey, sessionToken: config.sessionToken };
-
-    const credentials = !config.assumeRole
-      ? baseCredentials
-      : fromTemporaryCredentials({
-          masterCredentials: baseCredentials,
-          clientConfig: { region: config.region, endpoint: config.endpoint },
-          params: {
-            RoleArn: config.assumeRole.arn,
-            RoleSessionName: config.assumeRole.sessionName,
-            ExternalId: config.assumeRole.externalId,
-            DurationSeconds: config.assumeRole.durationSeconds,
-          },
-        });
-
     return new S3Client({
       ...config,
-      credentials,
-      logger: config.debug && config.bindingLogger(this.logService),
+      credentials: getAwsCredentials(config),
+      logger: config.debug && bindingAwsLogger(this.logService, 'storage', config.conId),
     });
   }
 

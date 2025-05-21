@@ -1,3 +1,4 @@
+export * from './aws';
 export * from './bull';
 export * from './config';
 export * from './jwt';

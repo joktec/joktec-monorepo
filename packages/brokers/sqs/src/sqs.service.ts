@@ -1,7 +1,14 @@
 import { SNS } from '@aws-sdk/client-sns';
 import { Message, SQS } from '@aws-sdk/client-sqs';
-import { fromIni, fromTemporaryCredentials } from '@aws-sdk/credential-providers';
-import { AbstractClientService, DEFAULT_CON_ID, Inject, Injectable, Retry } from '@joktec/core';
+import {
+  AbstractClientService,
+  bindingAwsLogger,
+  DEFAULT_CON_ID,
+  getAwsCredentials,
+  Inject,
+  Injectable,
+  Retry,
+} from '@joktec/core';
 import { sleep, toArray, toBool } from '@joktec/utils';
 import { has } from 'lodash';
 import {
@@ -38,29 +45,11 @@ export class SqsService extends AbstractClientService<SqsConfig, SqsInstance> im
 
   @Retry(RETRY_OPTS)
   protected async init(config: SqsConfig): Promise<SqsInstance> {
-    const baseCredentials =
-      !config.accessKey || !config.secretKey
-        ? fromIni()
-        : { accessKeyId: config.accessKey, secretAccessKey: config.secretKey, sessionToken: config.sessionToken };
-
-    const credentials = !config.assumeRole
-      ? baseCredentials
-      : fromTemporaryCredentials({
-          masterCredentials: baseCredentials,
-          clientConfig: { region: config.region, endpoint: config.endpoint },
-          params: {
-            RoleArn: config.assumeRole.arn,
-            RoleSessionName: config.assumeRole.sessionName,
-            ExternalId: config.assumeRole.externalId,
-            DurationSeconds: config.assumeRole.durationSeconds,
-          },
-        });
-
     const awsConfig = {
       region: config.region,
       endpoint: config.endpoint,
-      credentials,
-      logger: config.debug && config.bindingLogger(this.logService),
+      credentials: getAwsCredentials(config),
+      logger: config.debug && bindingAwsLogger(this.logService, 'SQS', config.conId),
     };
 
     const sqs = new SQS(awsConfig);

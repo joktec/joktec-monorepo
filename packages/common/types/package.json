@@ -39,8 +39,8 @@
     "@joktec/notifier": "^0.2.1",
     "@joktec/rabbit": "^0.2.1",
     "@joktec/redcast": "^0.1.5",
-    "@joktec/storage": "^0.2.2",
-    "@joktec/sqs": "^0.1.3",
+    "@joktec/storage": "^0.2.3",
+    "@joktec/sqs": "^0.1.4",
     "ts-json-schema-generator": "^1.5.0",
     "ts-node": "^10.9.2",
     "typescript": "~5.4.5"

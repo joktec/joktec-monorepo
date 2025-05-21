@@ -63217,6 +63217,12 @@
         "sessionToken": {
           "type": "string"
         },
+        "maxRetries": {
+          "type": "number"
+        },
+        "assumeRole": {
+          "$ref": "#/definitions/StorageAssumeRoleConfig"
+        },
         "bucket": {
           "type": "string"
         },
@@ -63241,9 +63247,6 @@
         "maxRedirects": {
           "type": "number"
         },
-        "maxRetries": {
-          "type": "number"
-        },
         "sslEnabled": {
           "type": "boolean"
         },
@@ -63255,23 +63258,8 @@
         },
         "transport": {
           "type": "object"
-        },
-        "assumeRole": {
-          "$ref": "#/definitions/StorageAssumeRoleConfig"
         }
       }
-    },
-    "StorageACL": {
-      "type": "string",
-      "enum": [
-        "private",
-        "public-read",
-        "public-read-write",
-        "authenticated-read",
-        "aws-exec-read",
-        "bucket-owner-read",
-        "bucket-owner-full-control"
-      ]
     },
     "StorageAssumeRoleConfig": {
       "type": "object",
@@ -63289,6 +63277,18 @@
           "type": "number"
         }
       }
+    },
+    "StorageACL": {
+      "type": "string",
+      "enum": [
+        "private",
+        "public-read",
+        "public-read-write",
+        "authenticated-read",
+        "aws-exec-read",
+        "bucket-owner-read",
+        "bucket-owner-full-control"
+      ]
     },
     "Listable<SqsConfig>": {
       "anyOf": [
@@ -63333,31 +63333,28 @@
         "secretKey": {
           "type": "string"
         },
-        "sessionToken": {
-          "type": "string"
-        },
         "endpoint": {
           "type": "string"
         },
-        "sslEnabled": {
-          "type": "boolean"
+        "sessionToken": {
+          "type": "string"
         },
         "maxRetries": {
           "type": "number"
+        },
+        "assumeRole": {
+          "$ref": "#/definitions/SqsAssumeRoleConfig"
+        },
+        "sslEnabled": {
+          "type": "boolean"
         },
         "timeout": {
           "type": "number"
         },
         "ping": {
           "type": "boolean"
-        },
-        "assumeRole": {
-          "$ref": "#/definitions/SqsAssumeRoleConfig"
         }
-      },
-      "required": [
-        "region"
-      ]
+      }
     },
     "SqsAssumeRoleConfig": {
       "type": "object",
