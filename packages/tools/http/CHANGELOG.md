@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.3](https://github.com/joktec/joktec-monorepo/compare/@joktec/http@0.2.2...@joktec/http@0.2.3) (2025-05-21)
+
+
+### Bug Fixes
+
+* http parse url config ([6110e2c](https://github.com/joktec/joktec-monorepo/commit/6110e2c9420df6e91d38995b2694e84e207925ca))
+
+
+
+
+
 ## [0.2.2](https://github.com/joktec/joktec-monorepo/compare/@joktec/http@0.2.1...@joktec/http@0.2.2) (2025-05-21)
 
 **Note:** Version bump only for package @joktec/http
