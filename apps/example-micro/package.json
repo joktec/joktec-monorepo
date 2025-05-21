@@ -41,7 +41,7 @@
     "@joktec/http": "0.2.1",
     "@joktec/kafka": "0.2.1",
     "@joktec/mailer": "0.2.1",
-    "@joktec/mongo": "0.2.5",
+    "@joktec/mongo": "0.2.6",
     "@joktec/notifier": "0.2.1",
     "@joktec/firebase": "0.2.1",
     "@joktec/storage": "0.2.2",
