@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.2](https://github.com/joktec/joktec-monorepo/compare/@joktec/notifier@0.2.1...@joktec/notifier@0.2.2) (2025-05-21)
+
+**Note:** Version bump only for package @joktec/notifier
+
+
+
+
+
 ## [0.2.1](https://github.com/joktec/joktec-monorepo/compare/@joktec/notifier@0.2.0...@joktec/notifier@0.2.1) (2025-05-07)
 
 **Note:** Version bump only for package @joktec/notifier

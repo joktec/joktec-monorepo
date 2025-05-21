@@ -1,7 +1,7 @@
 {
   "name": "@joktec/mongo",
   "description": "JokTec - Mongo Service",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -44,7 +44,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.2.1",
+    "@joktec/core": "0.2.2",
     "@joktec/utils": "0.1.1",
     "@typegoose/typegoose": "^12.13.0",
     "dot-object": "^2.1.5",
