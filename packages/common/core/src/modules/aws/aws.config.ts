@@ -26,6 +26,10 @@ export class AwsBaseAssumeRoleConfig {
 export class AwsBaseConfig extends ClientConfig {
   @IsString()
   @IsNotEmpty()
+  clientName?: string;
+
+  @IsString()
+  @IsNotEmpty()
   region?: string = 'ap-southeast-1';
 
   @IsString()

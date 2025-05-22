@@ -1,5 +1,5 @@
 import { SNS } from '@aws-sdk/client-sns';
-import { Message, SQS } from '@aws-sdk/client-sqs';
+import { Message, SQS, SQSClientConfig } from '@aws-sdk/client-sqs';
 import {
   AbstractClientService,
   bindingAwsLogger,
@@ -45,11 +45,12 @@ export class SqsService extends AbstractClientService<SqsConfig, SqsInstance> im
 
   @Retry(RETRY_OPTS)
   protected async init(config: SqsConfig): Promise<SqsInstance> {
-    const awsConfig = {
+    const logger = bindingAwsLogger(this.logService, config);
+    const awsConfig: SQSClientConfig = {
       region: config.region,
       endpoint: config.endpoint,
-      credentials: getAwsCredentials(config),
-      logger: config.debug && bindingAwsLogger(this.logService, 'SQS', config.conId),
+      credentials: getAwsCredentials(config, logger),
+      logger,
     };
 
     const sqs = new SQS(awsConfig);

@@ -65,7 +65,11 @@ export class StorageConfig extends AwsBaseConfig {
 
   constructor(props: StorageConfig) {
     super(props);
-    Object.assign(this, { ...props, linkFormat: props?.linkFormat || props?.endpoint });
+    Object.assign(this, {
+      clientName: 'storage',
+      linkFormat: props?.linkFormat || props?.endpoint,
+      ...props,
+    });
     if (props.assumeRole) this.assumeRole = new StorageAssumeRoleConfig(props.assumeRole);
   }
 

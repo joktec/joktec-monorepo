@@ -39,7 +39,7 @@
     "@joktec/core": "0.2.2",
     "@joktec/cacher": "0.2.2",
     "@joktec/cron": "0.2.4",
-    "@joktec/http": "0.2.2",
+    "@joktec/http": "0.2.3",
     "@joktec/kafka": "0.2.2",
     "@joktec/mailer": "0.2.2",
     "@joktec/mongo": "0.2.7",

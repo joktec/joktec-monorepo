@@ -28,6 +28,7 @@ export class SqsConfig extends AwsBaseConfig {
   constructor(props?: SqsConfig) {
     super(props);
     Object.assign(this, {
+      clientName: 'SQS',
       sslEnabled: toBool(props.sslEnabled, true),
       timeout: toInt(props.timeout, 30000),
       ...props,

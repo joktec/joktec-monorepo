@@ -47,10 +47,11 @@ export class StorageService extends AbstractClientService<StorageConfig, S3Clien
 
   @Retry(RETRY_OPTS)
   protected async init(config: StorageConfig): Promise<S3Client> {
+    const logger = bindingAwsLogger(this.logService, config);
     return new S3Client({
       ...config,
-      credentials: getAwsCredentials(config),
-      logger: config.debug && bindingAwsLogger(this.logService, 'storage', config.conId),
+      credentials: getAwsCredentials(config, logger),
+      logger,
     });
   }
 

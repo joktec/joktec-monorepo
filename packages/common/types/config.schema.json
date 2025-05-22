@@ -63202,6 +63202,9 @@
         "debug": {
           "type": "boolean"
         },
+        "clientName": {
+          "type": "string"
+        },
         "region": {
           "type": "string"
         },
@@ -63323,6 +63326,9 @@
         },
         "debug": {
           "type": "boolean"
+        },
+        "clientName": {
+          "type": "string"
         },
         "region": {
           "type": "string"
