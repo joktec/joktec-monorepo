@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/utils';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsTypes } from '@joktec/utils';
 import { ClientConfig } from '../../client/client.config';
 
 export class AwsBaseAssumeRoleConfig {
@@ -55,6 +55,10 @@ export class AwsBaseConfig extends ClientConfig {
   @IsOptional()
   @IsTypes(AwsBaseAssumeRoleConfig)
   assumeRole?: AwsBaseAssumeRoleConfig;
+
+  @IsOptional()
+  @IsBoolean()
+  fromIni?: boolean = false;
 
   constructor(props: AwsBaseConfig) {
     super(props);

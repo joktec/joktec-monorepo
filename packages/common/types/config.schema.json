@@ -63226,6 +63226,9 @@
         "assumeRole": {
           "$ref": "#/definitions/StorageAssumeRoleConfig"
         },
+        "fromIni": {
+          "type": "boolean"
+        },
         "bucket": {
           "type": "string"
         },
@@ -63350,6 +63353,9 @@
         },
         "assumeRole": {
           "$ref": "#/definitions/SqsAssumeRoleConfig"
+        },
+        "fromIni": {
+          "type": "boolean"
         },
         "sslEnabled": {
           "type": "boolean"

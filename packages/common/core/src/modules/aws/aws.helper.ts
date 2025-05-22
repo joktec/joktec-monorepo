@@ -24,15 +24,16 @@ export const bindingAwsLogger = (logger: PinoLogger, config: AwsBaseConfig): Log
 };
 
 export const getAwsCredentials = (awsConfig: AwsBaseConfig, awsLogger?: Logger): any => {
-  const { region, accessKey, secretKey, sessionToken, assumeRole } = awsConfig;
+  const { region, accessKey, secretKey, sessionToken, assumeRole, fromIni: useIniProfile } = awsConfig;
 
   const baseCredentials =
-    !accessKey || !secretKey
-      ? fromIni({ logger: awsLogger })
-      : { accessKeyId: accessKey, secretAccessKey: secretKey, sessionToken };
+    accessKey && secretKey
+      ? { accessKeyId: accessKey, secretAccessKey: secretKey, sessionToken }
+      : useIniProfile
+        ? fromIni({ logger: awsLogger })
+        : undefined;
 
-  if (!assumeRole) return baseCredentials;
-
+  if (!assumeRole) return baseCredentials ?? undefined;
   const { arn, sessionName, externalId, durationSeconds } = assumeRole;
   return fromTemporaryCredentials({
     masterCredentials: baseCredentials,
