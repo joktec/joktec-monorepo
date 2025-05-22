@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.4](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.2.3...@joktec/core@0.2.4) (2025-05-22)
+
+
+### Bug Fixes
+
+* aws from ini ([5c12875](https://github.com/joktec/joktec-monorepo/commit/5c128751ca58a6b83e0b7085a69c870be1e4fa3b))
+
+
+
+
+
 ## [0.2.3](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.2.2...@joktec/core@0.2.3) (2025-05-22)
 
 

@@ -1,7 +1,7 @@
 {
   "name": "@joktec/arango",
   "description": "JokTec - ArangoDB Service",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": false,
   "license": "MIT",
   "author": "JokTec",
@@ -39,7 +39,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@joktec/core": "0.2.3",
+    "@joktec/core": "0.2.4",
     "@joktec/utils": "0.1.1",
     "arangojs": "^10.1.1",
     "lodash": "^4.17.21"
