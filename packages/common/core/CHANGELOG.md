@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.5](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.2.4...@joktec/core@0.2.5) (2025-05-26)
+
+
+### Bug Fixes
+
+* replace ua-parser-js ([109595e](https://github.com/joktec/joktec-monorepo/commit/109595e872a33e7b48ee9e1214a66f4e47188c61))
+
+
+
+
+
 ## [0.2.4](https://github.com/joktec/joktec-monorepo/compare/@joktec/core@0.2.3...@joktec/core@0.2.4) (2025-05-22)
 
 

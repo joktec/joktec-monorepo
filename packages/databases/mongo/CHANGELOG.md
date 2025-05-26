@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.10](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.2.9...@joktec/mongo@0.2.10) (2025-05-26)
+
+
+### Bug Fixes
+
+* replace ua-parser-js ([109595e](https://github.com/joktec/joktec-monorepo/commit/109595e872a33e7b48ee9e1214a66f4e47188c61))
+
+
+
+
+
 ## [0.2.9](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.2.8...@joktec/mongo@0.2.9) (2025-05-22)
 
 **Note:** Version bump only for package @joktec/mongo
