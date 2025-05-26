@@ -5,8 +5,8 @@ import { head, isEmpty, uniq } from 'lodash';
 import requestIp from 'request-ip';
 import { catchError, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { UAParser } from 'ua-parser-js';
-import { ExpressRequest, ExpressResponse, GeoIp, IBaseRequest, IResponseDto, IUserAgent } from '../models';
+import useragent from 'useragent';
+import { ExpressRequest, ExpressResponse, GeoIp, IBaseRequest, IResponseDto, UserAgent } from '../models';
 
 export type ExpressResponseType<T> = string | T | IResponseDto<T>;
 
@@ -42,7 +42,9 @@ export class ExpressInterceptor<T = any> implements NestInterceptor<T, ExpressRe
     req.timezone = this.resolverTimezone(req);
     req.userAgent = this.resolverUserAgent(req);
     req.geoIp = this.resolverGeoIP(req);
-    Object.assign(req.query, this.resolverQuery(req));
+
+    const overrideQuery = Object.assign(req.query, this.resolverQuery(req));
+    Object.defineProperty(req, 'query', { value: overrideQuery, writable: false });
   }
 
   protected resolverLanguage(req: ExpressRequest): string {
@@ -73,9 +75,9 @@ export class ExpressInterceptor<T = any> implements NestInterceptor<T, ExpressRe
     return !req.headers['accept-timezone'] ? 'UTC' : (req.headers['accept-timezone'] as string);
   }
 
-  protected resolverUserAgent(req: ExpressRequest): IUserAgent {
+  protected resolverUserAgent(req: ExpressRequest): UserAgent {
     if (!req.headers['user-agent']) return null;
-    return UAParser(req.headers);
+    return useragent.parse(req.headers['user-agent']);
   }
 
   protected resolverGeoIP(req: ExpressRequest): GeoIp {

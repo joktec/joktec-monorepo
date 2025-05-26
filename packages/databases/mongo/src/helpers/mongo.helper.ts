@@ -141,7 +141,7 @@ export class MongoHelper {
   static parsePopulate<T extends MongoSchema>(populate: IPopulate<T> = {}): PopulateOptions[] {
     if (isNil(populate) || isEmpty(populate)) return [];
     return Object.entries(populate).map(([path, populate]) => {
-      const populateOptions: PopulateOptions = { path };
+      const populateOptions: PopulateOptions = { path, options: { lean: true } };
       const options: IPopulateOption = populate === '*' ? {} : populate;
 
       if (options.select) populateOptions.select = options.select;

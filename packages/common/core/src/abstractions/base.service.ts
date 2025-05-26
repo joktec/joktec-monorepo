@@ -19,7 +19,7 @@ export abstract class BaseService<T extends Entity, ID = string, REQ extends IBa
 
   protected afterModuleInit() {}
 
-  public transformPaginate<DTO = T>(items: DTO[], total: number, query: REQ): IPaginationResponse<DTO> {
+  public transformPaginate<T>(items: T[], total: number, query: REQ): IPaginationResponse<T> {
     if (isNil(query.page) && isNil(query.offset)) {
       query.page = 1;
     }

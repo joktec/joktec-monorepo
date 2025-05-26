@@ -1,13 +1,10 @@
-import { IData, IResult } from 'ua-parser-js';
+import { Agent, Device, OperatingSystem } from 'useragent';
 
-export interface IUserAgentData<T> extends IData<T> {
-  is(val: string): boolean;
+export class UserAgentOs extends OperatingSystem {}
 
-  toString(): string;
+export class UserAgentDevice extends Device {}
 
-  withClientHints(): PromiseLike<T> | T;
-
-  withFeatureCheck(): PromiseLike<T> | T;
+export class UserAgent extends Agent {
+  os: UserAgentOs;
+  device: UserAgentDevice;
 }
-
-export interface IUserAgent extends IResult {}

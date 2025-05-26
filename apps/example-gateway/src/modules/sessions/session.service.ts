@@ -4,11 +4,11 @@ import {
   Inject,
   Injectable,
   IPaginationResponse,
-  IUserAgent,
   JwtPayload,
   JwtService,
   JwtToken,
   REQUEST,
+  UserAgent,
 } from '@joktec/core';
 import { IMongoRequest } from '@joktec/mongo';
 import { generateUUID } from '@joktec/utils';
@@ -50,7 +50,7 @@ export class SessionService extends BaseService<Session, string> {
     providerType: AuthProviderType,
     fcmToken?: string,
   ): Promise<JwtToken> {
-    const userAgent: IUserAgent = this.request.userAgent;
+    const userAgent: UserAgent = this.request.userAgent;
     const issuer = this.configService.get<string>('gateway.swagger.server', 'http://localhost:9011');
     const payload: JwtPayload = {
       iss: issuer,
@@ -80,7 +80,7 @@ export class SessionService extends BaseService<Session, string> {
       appVersion: this.request.appVersion,
       appBuild: this.request.appBuild,
       ipAddress: this.request.geoIp?.ipAddress,
-      userAgent: userAgent?.ua || this.request.headers['user-agent'],
+      userAgent: userAgent?.toString() || this.request.headers['user-agent'],
       locale: I18nContext.current()?.lang || user.config.language,
     });
 

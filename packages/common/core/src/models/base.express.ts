@@ -4,7 +4,7 @@ import { Multer } from 'multer';
 import { JwtPayload } from '../modules';
 import { DeepPartial, Dictionary, Entity } from './base.dto';
 import { IBaseRequest } from './base.request';
-import { GeoIp, IUserAgent } from './utils';
+import { GeoIp, UserAgent } from './utils';
 
 export interface ExpressResponse<T extends Entity = any> extends Response<DeepPartial<T> | Dictionary, Dictionary> {}
 
@@ -12,7 +12,7 @@ export interface ExpressRequest<T extends Entity = any, U = any>
   extends Request<Dictionary, ExpressResponse<T>, DeepPartial<T> & Dictionary, IBaseRequest<T>, Dictionary> {
   payload?: JwtPayload;
   loggedUser?: U;
-  userAgent?: IUserAgent;
+  userAgent?: UserAgent;
   geoIp?: GeoIp;
   locale?: string;
   timezone?: string;
