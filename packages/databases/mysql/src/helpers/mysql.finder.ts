@@ -24,7 +24,8 @@ export class MysqlFinder {
     const offset = typeof query.offset === 'number' && query.offset >= 0 ? query.offset : undefined;
 
     if (limit && page) return { limit, offset: (page - 1) * limit };
-    else if (limit) return { limit, offset: offset ?? 0 };
+    if (limit) return { limit, offset: offset ?? 0 };
+    return {};
   }
 
   static parseFilter<T>(query: IBaseRequest<T>): FindManyOptions<T> {

@@ -77,7 +77,8 @@ export class MongoHelper {
     const offset = typeof query.offset === 'number' && query.offset >= 0 ? query.offset : undefined;
 
     if (limit && page) return { limit, offset: (page - 1) * limit };
-    else if (limit) return { limit, offset: offset ?? 0 };
+    if (limit) return { limit, offset: offset ?? 0 };
+    return {};
   }
 
   static parseProjection(select: string | string[] | Record<string, number | boolean | object>): Record<string, 1 | 0> {
