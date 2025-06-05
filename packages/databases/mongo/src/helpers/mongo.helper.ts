@@ -3,7 +3,7 @@ import { toArray } from '@joktec/utils';
 import { Ref } from '@typegoose/typegoose';
 import { isArray, isBuffer, isDate, isEmpty, isNil, isNumber, isObject, isRegExp, isString, omit, pick } from 'lodash';
 import { PopulateOptions, RefType } from 'mongoose';
-import { MongoSchema, ObjectId } from '../models';
+import { IMongoRequest, MongoSchema, ObjectId } from '../models';
 
 export class MongoHelper {
   static flatten(obj: Dictionary, omitKeys?: string[]): Dictionary {
@@ -69,6 +69,15 @@ export class MongoHelper {
     Object.assign(result, pick(obj, rootQuery));
     recurse(omit(obj, rootQuery));
     return result;
+  }
+
+  static parsePagination(query: IMongoRequest<any> = {}): { limit?: number; offset?: number } {
+    const limit = typeof query.limit === 'number' && query.limit > 0 ? query.limit : undefined;
+    const page = typeof query.page === 'number' && query.page > 0 ? query.page : undefined;
+    const offset = typeof query.offset === 'number' && query.offset >= 0 ? query.offset : undefined;
+
+    if (limit && page) return { limit, offset: (page - 1) * limit };
+    else if (limit) return { limit, offset: offset ?? 0 };
   }
 
   static parseProjection(select: string | string[] | Record<string, number | boolean | object>): Record<string, 1 | 0> {

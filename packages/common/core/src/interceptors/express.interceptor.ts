@@ -89,21 +89,40 @@ export class ExpressInterceptor<T = any> implements NestInterceptor<T, ExpressRe
    * Transform and normalize query parameters
    */
   protected resolverQuery(req: ExpressRequest): IBaseRequest<any> {
-    const page = toInt(req.query?.page, 1);
-    const limit = toInt(req.query?.limit, 20);
-    const offset = toInt(req.query?.offset, (page - 1) * limit);
+    const rawPage = req.query?.page;
+    const rawLimit = req.query?.limit;
+    const rawOffset = req.query?.offset;
+
+    const page = toInt(rawPage);
+    const limit = toInt(rawLimit, 20);
+    const offset = toInt(rawOffset);
+
+    let resolvedPage: number | undefined;
+    let resolvedOffset: number | undefined;
+
+    if (page && page > 0) {
+      resolvedPage = page;
+      resolvedOffset = (page - 1) * limit;
+    } else if (offset !== undefined && offset >= 0) {
+      resolvedPage = undefined;
+      resolvedOffset = offset;
+    } else {
+      resolvedPage = 1;
+      resolvedOffset = 0;
+    }
 
     const query: IBaseRequest<any> = {
       ...req.query,
       condition: nullKeysToObject(req.query?.condition || {}),
       sort: req.query?.sort || {},
-      page,
       limit,
-      offset,
+      offset: resolvedOffset,
       language: req.query?.language || req.locale || '*',
     };
 
-    if (req.query?.offset) delete query.page;
+    if (resolvedPage !== undefined) query.page = resolvedPage;
+    else delete query.page;
+
     return query;
   }
 

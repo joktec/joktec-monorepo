@@ -1,7 +1,17 @@
 import { ICondition, IPopulate, ISort } from '@joktec/core';
 import { SelectQueryBuilder } from 'typeorm';
+import { IMysqlRequest } from '../models';
 
 export class MysqlHelper {
+  static applyPagination<T>(qb: SelectQueryBuilder<T>, query: IMysqlRequest<T> = {}) {
+    const limit = typeof query.limit === 'number' && query.limit > 0 ? query.limit : undefined;
+    const page = typeof query.page === 'number' && query.page > 0 ? query.page : undefined;
+    const offset = typeof query.offset === 'number' && query.offset >= 0 ? query.offset : undefined;
+
+    if (limit && page) qb.take(limit).skip((page - 1) * limit);
+    else if (limit) qb.take(limit).skip(offset ?? 0);
+  }
+
   static applyCondition<T>(qb: SelectQueryBuilder<T>, condition?: ICondition<T>) {
     if (!condition) return;
 

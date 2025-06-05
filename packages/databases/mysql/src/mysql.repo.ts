@@ -62,11 +62,7 @@ export abstract class MysqlRepo<T extends MysqlModel, ID extends MysqlId = Mysql
     if (query.condition) MysqlHelper.applyCondition(qb, query.condition);
     if (query.select) MysqlHelper.applyProjection(qb, query.select);
     if (query.sort) MysqlHelper.applyOrder(qb, query.sort);
-    if (query.limit) qb.take(query.limit);
-    if (query.limit && query.page) {
-      qb.take(query.limit);
-      qb.skip((query.page - 1) * query.limit);
-    }
+    MysqlHelper.applyPagination(qb, query);
     if (query.populate) MysqlHelper.applyRelations(qb, query.populate);
     if (opts.withDeleted) qb.withDeleted();
     if (opts.comment) qb.comment(opts.comment);
@@ -80,15 +76,14 @@ export abstract class MysqlRepo<T extends MysqlModel, ID extends MysqlId = Mysql
 
   public finder(query: IMysqlRequest<T> = {}, opts: IMysqlOption<T> = {}): FindManyOptions<T> {
     const options: FindManyOptions<T> = MysqlFinder.parseFilter(query);
+    const { limit, offset } = MysqlFinder.parsePagination(query);
+
     // if (query?.near) qb.center(query.near); // TODO: Handle
     // if (query?.keyword) qb.search(query.keyword); // TODO: Handle
     if (query.select) options.select = MysqlFinder.parseProjection(query.select);
     if (query.sort) options.order = MysqlFinder.parseOrder(query.sort);
-    if (query.limit) options.take = query.limit;
-    if (query.limit && query.page) {
-      options.take = query.limit;
-      options.skip = (query.page - 1) * query.limit;
-    }
+    if (offset !== undefined) options.skip = offset;
+    if (limit !== undefined) options.take = limit;
     if (query.populate) options.relations = MysqlFinder.parseRelations(query.populate);
 
     return { ...opts, ...options };

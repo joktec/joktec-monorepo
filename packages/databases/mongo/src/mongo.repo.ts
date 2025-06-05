@@ -61,14 +61,15 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   public qb(query?: IMongoRequest<T>, options: IMongoOptions<T> = {}) {
     const qb = this.model.find<T>();
     qb.setOptions({ ...options });
+    const { limit, offset } = MongoHelper.parsePagination(query);
 
     if (query?.near) qb.center(query.near);
     if (query?.keyword) qb.search(query.keyword);
     qb.where(Object.assign({}, query?.condition || {}));
     if (query?.select) qb.select(query.select as any);
     if (query?.sort) qb.sort(MongoHelper.parseSort(query.sort));
-    if (query?.offset) qb.skip(query.offset);
-    if (query?.limit) qb.limit(query.limit);
+    if (offset !== undefined) qb.skip(offset);
+    if (limit !== undefined) qb.limit(limit);
     if (query?.populate) qb.populate(MongoHelper.parsePopulate(query.populate));
 
     return qb.lean();
@@ -77,14 +78,15 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
   public cursor(query: IMongoRequest<T>, options: IMongoOptions<T> = {}) {
     const qb = this.model.find<T>();
     qb.setOptions({ ...options });
+    const { limit, offset } = MongoHelper.parsePagination(query);
 
     if (query?.near) qb.center(query.near);
     if (query?.keyword) qb.search(query.keyword);
     if (query?.condition) qb.where(MongoHelper.parseFilter(query.condition));
     if (query?.select) qb.select(MongoHelper.parseProjection(query.select));
     if (query?.sort) qb.sort(MongoHelper.parseSort(query.sort));
-    if (query?.offset) qb.skip(query.offset);
-    if (query?.limit) qb.limit(query.limit);
+    if (offset !== undefined) qb.skip(offset);
+    if (limit !== undefined) qb.limit(limit);
     if (query?.populate) qb.populate(MongoHelper.parsePopulate(query.populate));
 
     return qb.lean().cursor();
@@ -92,6 +94,7 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
 
   public pipeline<U = T>(query?: IMongoRequest<T>, options?: IMongoAggregateOptions<U>): Aggregate<Array<U>> {
     const aggregations = this.model.aggregate();
+    const { limit, offset } = MongoHelper.parsePagination(query);
 
     if (options) aggregations.option({ ...options });
     if (query?.near) MongoPipeline.near(query.near).map(near => aggregations.near(near));
@@ -99,8 +102,8 @@ export abstract class MongoRepo<T extends MongoSchema, ID extends RefType = stri
     if (query?.condition) aggregations.match(MongoPipeline.match(query.condition));
     if (query?.select) aggregations.project(MongoPipeline.projection(query.select));
     if (query?.sort) aggregations.sort(MongoPipeline.sort(query.sort));
-    if (query?.offset) aggregations.skip(query.offset);
-    if (query?.limit) aggregations.limit(query.limit);
+    if (offset !== undefined) aggregations.skip(offset);
+    if (limit !== undefined) aggregations.limit(limit);
     if (query?.populate) MongoPipeline.lookup(query.populate, this.model).map(p => aggregations.append(p));
     if (query?.aggregations?.length) aggregations.append(...query.aggregations);
 

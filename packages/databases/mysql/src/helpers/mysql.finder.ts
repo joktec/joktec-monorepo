@@ -14,10 +14,19 @@ import {
   MoreThanOrEqual,
   Not,
 } from 'typeorm';
-import { MysqlModel } from '../models';
+import { IMysqlRequest, MysqlModel } from '../models';
 import { MysqlException } from '../mysql.exception';
 
 export class MysqlFinder {
+  static parsePagination<T>(query: IMysqlRequest<T> = {}): { limit?: number; offset?: number } {
+    const limit = typeof query.limit === 'number' && query.limit > 0 ? query.limit : undefined;
+    const page = typeof query.page === 'number' && query.page > 0 ? query.page : undefined;
+    const offset = typeof query.offset === 'number' && query.offset >= 0 ? query.offset : undefined;
+
+    if (limit && page) return { limit, offset: (page - 1) * limit };
+    else if (limit) return { limit, offset: offset ?? 0 };
+  }
+
   static parseFilter<T>(query: IBaseRequest<T>): FindManyOptions<T> {
     const { condition = {}, keyword } = query;
     const where: FindManyOptions<T>['where'] = MysqlFinder.parseCondition(condition);
