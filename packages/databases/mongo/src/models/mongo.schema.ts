@@ -1,5 +1,5 @@
 import { ApiProperty, Field, ICondition } from '@joktec/core';
-import { Type } from '@joktec/utils';
+import { Expose, Type } from '@joktec/utils';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Base, TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { QueryWithHelpers, UpdateWriteOpResult } from 'mongoose';
@@ -11,6 +11,7 @@ export class MongoSchema extends TimeStamps implements Omit<Base<string>, 'id'> 
   @ApiProperty()
   @Field(() => String, { nullable: true })
   @Type(() => String)
+  @Expose()
   _id: string;
 
   @Prop({ type: Date, default: () => new Date(), immutable: true })
