@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.13](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.2.12...@joktec/mongo@0.2.13) (2025-06-12)
+
+
+### Bug Fixes
+
+* mongo export _id ([332b2c9](https://github.com/joktec/joktec-monorepo/commit/332b2c91cb27bc87931d769e5d7b058c914f4464))
+
+
+
+
+
 ## [0.2.12](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.2.11...@joktec/mongo@0.2.12) (2025-06-05)
 
 
