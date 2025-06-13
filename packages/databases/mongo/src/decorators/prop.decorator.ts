@@ -102,7 +102,7 @@ export const Prop = <T = any>(opts: IPropOptions<T> = {}, kind?: PropType): Prop
       decorators.push(Exclude({ toPlainOnly: true }));
       decorators.push(ApiHideProperty());
     } else {
-      decorators.push(Expose({ toPlainOnly: true }));
+      decorators.push(Expose({ toPlainOnly: true, groups: opts?.groups }));
     }
 
     if (opts.nested) {
