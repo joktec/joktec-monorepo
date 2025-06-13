@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.15](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.2.14...@joktec/mongo@0.2.15) (2025-06-13)
+
+
+### Bug Fixes
+
+* mongo prop expose ([ffa6db2](https://github.com/joktec/joktec-monorepo/commit/ffa6db252078518f3c8a9086b3b62375550e85ea))
+
+
+
+
+
 ## [0.2.14](https://github.com/joktec/joktec-monorepo/compare/@joktec/mongo@0.2.13...@joktec/mongo@0.2.14) (2025-06-13)
 
 **Note:** Version bump only for package @joktec/mongo
