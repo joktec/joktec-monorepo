@@ -53,6 +53,14 @@ export class CronHistory extends BaseSchema implements ICrontabHistoryModel {
   })
   cron?: Ref<CronSchema>;
 
+  get id(): string {
+    return this._id?.toString();
+  }
+
+  set id(value: string) {
+    this._id = value;
+  }
+
   get cronId(): string {
     return this.cronRefId?.toString();
   }

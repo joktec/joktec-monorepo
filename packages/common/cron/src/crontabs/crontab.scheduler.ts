@@ -70,8 +70,8 @@ export abstract class CrontabScheduler implements OnModuleInit {
     const disableCrons = await this.cronRepo.find({ condition: { code: { $nin: cronNames } } });
     if (disableCrons.length) {
       await Promise.all([
-        this.cronHistoryRepo.deleteMany({ cronId: { $in: map(disableCrons, 'id') } }),
-        this.cronRepo.deleteMany({ id: { $in: map(disableCrons, 'id') } }),
+        this.cronHistoryRepo.deleteMany({ cronId: { $in: map(disableCrons, 'id') } }, { force: true }),
+        this.cronRepo.deleteMany({ id: { $in: map(disableCrons, 'id') } }, { force: true }),
       ]);
     }
 

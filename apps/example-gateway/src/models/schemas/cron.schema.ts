@@ -84,6 +84,14 @@ export class CronSchema extends BaseSchema implements ICrontabModel {
   @Type(() => CronHistory)
   lastHistories?: Ref<CronHistory>[];
 
+  get id(): string {
+    return this._id?.toString();
+  }
+
+  set id(value: string) {
+    this._id = value;
+  }
+
   public snapshot(): Object {
     return pick(this, [
       'code',
