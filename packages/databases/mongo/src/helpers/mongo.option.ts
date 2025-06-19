@@ -13,6 +13,7 @@ export const UPSERT_OPTIONS: QueryOptions = {
   upsert: true,
   new: true,
   runValidators: true,
+  setDefaultsOnInsert: true,
 };
 
 export const PARANOID_OPTIONS: QueryOptions = {

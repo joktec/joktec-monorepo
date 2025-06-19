@@ -58,12 +58,14 @@ export abstract class CrontabScheduler implements OnModuleInit {
     this.logService.info('Start process to init Crontab');
 
     // Save all cron into database
-    const insertCrons = Object.values(this.cronMeta).map(meta => ({
-      ...meta.cron,
-      timezone: meta.cron.timezone || this.config.timezone,
-      expression: this.getAndValidExpression(meta.cron.expression),
-    }));
-    await this.cronRepo.bulkUpsert(insertCrons, ['code']);
+    for (const meta of Object.values(this.cronMeta)) {
+      const cronData = {
+        ...meta.cron,
+        timezone: meta.cron.timezone || this.config.timezone,
+        expression: this.getAndValidExpression(meta.cron.expression),
+      };
+      await this.cronRepo.upsert(cronData, ['code']);
+    }
 
     // Remove crons not exist in definition
     const cronNames = Object.keys(this.cronMeta);

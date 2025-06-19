@@ -6366,11 +6366,6 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.16.tgz#94ae78fab4a38d73086e962d0b65c30d816bfb0a"
   integrity sha512-HX7Em5NYQAXKW+1T+FiuG27NGwzJfCX3s1GjOa7ujxZa52kjJLOr4FUxT+giF6Tgxv1e+/czV/iTtBw27WTU9g==
 
-"@types/lodash@^4.17.17":
-  version "4.17.17"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.17.tgz#fb85a04f47e9e4da888384feead0de05f7070355"
-  integrity sha512-RRVJ+J3J+WmyOTqnz3PiBLA501eKwXl2noseKOrNo/6+XEHjTAxO4xHvxQB6QuNm+s4WRbn6rSiap8+EA+ykFQ==
-
 "@types/lodash@^4.17.9":
   version "4.17.9"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.17.9.tgz#0dc4902c229f6b8e2ac5456522104d7b1a230290"
@@ -6398,11 +6393,6 @@
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@types/mime-types/-/mime-types-2.1.4.tgz#93a1933e24fed4fb9e4adc5963a63efcbb3317a2"
   integrity sha512-lfU4b34HOri+kAY5UheuFMWPDOI+OPceBSHZKp69gEyTL/mmJ4cnU6Y/rlme3UL3GyOn6Y42hyIEw0/q8sWx5w==
-
-"@types/mime-types@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@types/mime-types/-/mime-types-3.0.1.tgz#7fb74656179257c27cd48aa503eb918811727115"
-  integrity sha512-xRMsfuQbnRq1Ef+C+RKaENOxXX87Ygl38W1vDfPHRku02TgQr+Qd8iivLtAMcR0KF5/29xlnFihkTlbqFrGOVQ==
 
 "@types/mime@*":
   version "3.0.1"
@@ -6442,13 +6432,6 @@
   integrity sha512-pQ2hoqvXiJt2FP9WQVLPRO+AmiIm/ZYkavPlIQnx282u4ZrVdztx0pkh3jjpQt0Kz+YI0YhSG264y08UJKoUQg==
   dependencies:
     "@types/express" "*"
-
-"@types/murmurhash@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@types/murmurhash/-/murmurhash-2.0.0.tgz#31de9549153d1a43bb32c3f0a02dbb2c657644a6"
-  integrity sha512-AYKjtkyGM6Stia77QpgOwmxJs4cPhFr2/pjufU7aiOkhd81tfBcPyW35gT2OpBLJiZePoJc4dsQ1pYFaUt26xQ==
-  dependencies:
-    murmurhash "*"
 
 "@types/mysql@^2.15.26":
   version "2.15.26"
@@ -7212,14 +7195,6 @@ apple-signin-auth@^1.7.6:
   dependencies:
     jsonwebtoken "^9.0.0"
     node-fetch "^2.6.7"
-    node-rsa "^1.1.1"
-
-apple-signin-auth@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/apple-signin-auth/-/apple-signin-auth-2.0.0.tgz#429a41a9df266eb43f59e7bd0255ff5766cff8ee"
-  integrity sha512-/O5gvAby7OU2K7baYQCzY0e0tCiHzhFkzt9L2v3bMd2I2w0ckCZ/4hdVUOrbolRGMppME+Zo8TAKPVru8aYnzg==
-  dependencies:
-    jsonwebtoken "^9.0.0"
     node-rsa "^1.1.1"
 
 aproba@2.0.0, "aproba@^1.0.3 || ^2.0.0":
@@ -14614,11 +14589,6 @@ muri@^1.3:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/muri/-/muri-1.3.0.tgz#aeccf3db64c56aa7c5b34e00f95b7878527a4721"
   integrity sha512-FiaFwKl864onHFFUV/a2szAl7X0fxVlSKNdhTf+BM8i8goEgYut8u5P9MqQqIYwvaMxjzVESsoEm/2kfkFH1rg==
-
-murmurhash@*, murmurhash@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/murmurhash/-/murmurhash-2.0.1.tgz#4097720e08cf978872194ad84ea5be2dec9b610f"
-  integrity sha512-5vQEh3y+DG/lMPM0mCGPDnyV8chYg/g7rl6v3Gd8WMF9S429ox3Xk8qrk174kWhG767KQMqqxLD1WnGd77hiew==
 
 mute-stream@0.0.8:
   version "0.0.8"
